@@ -1,3 +1,4 @@
+let isPlaying: boolean;
 /**========================================================================
  *!                                  INTERFACES
  *========================================================================**/
@@ -70,7 +71,9 @@ const game: Game = {
 	}
 };
 
+let scoreMax: number = 11;
 let anim: number;
+let winner: string;
 
 /**========================================================================
  *!                                  FUNCTIONS
@@ -137,12 +140,21 @@ function resetPos() {
 	game.ball.speed.x = 2;
 }
 
+function resetGame() {
+	resetPos();
+	game.player1.score = 0;
+	game.player2.score = 0;
+	draw();
+}
+
 function collide(player: Player, otherPlayer: Player) {
 	//player missed the ball
 	if (game.ball.y < player.y || game.ball.y > player.y + paddleHeight)
 	{
 		resetPos();
 		otherPlayer.score++;
+		if (otherPlayer.score == scoreMax)
+			isPlaying = false;
 	}
 	//player touched the ball
 	else
@@ -157,13 +169,24 @@ function moveAll() {
 
 function stop() {
 	cancelAnimationFrame(anim);
-	resetPos();
-	game.player1.score = 0;
-	game.player2.score = 0;
-	draw();
+	resetGame();
+}
+
+function displayWinner() {
+	ctx.fillStyle = "white";
+	ctx.font = "40px Arial";
+	ctx.textAlign = "center";
+
+	winner = game.player1.score > game.player2.score ? "Player 1 Wins!" : "Player 2 Wins!";
+	ctx.fillText(winner, canvasWidth / 2, canvasHeight / 2);
 }
 
 function play() {
+	if (!isPlaying)
+	{
+		displayWinner();
+		return;
+	}
 	moveAll();
 	draw();
 	anim = requestAnimationFrame(play);
@@ -189,5 +212,13 @@ document.addEventListener("keyup", (e) => {
 	if (e.key === "l" || e.key === "L") game.player2.movingDown = false;
 })
 
-document.querySelector('#start-game')?.addEventListener('click', play);
-document.querySelector('#stop-game')?.addEventListener('click', stop);
+document.querySelector('#start-game')?.addEventListener('click', () => {
+	resetGame();
+	isPlaying = true;
+	play();
+});
+
+document.querySelector('#stop-game')?.addEventListener('click', () => {
+	isPlaying = false;
+	stop();
+});

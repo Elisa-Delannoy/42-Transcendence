@@ -1,8 +1,6 @@
 "use strict";
-/**========================================================================
- *!                                  INTERFACES
- *========================================================================**/
 var _a, _b;
+let isPlaying;
 /**========================================================================
  *!                                  VARIABLES
  *========================================================================**/
@@ -40,7 +38,9 @@ const game = {
         }
     }
 };
+let scoreMax = 11;
 let anim;
+let winner;
 /**========================================================================
  *!                                  FUNCTIONS
  *========================================================================**/
@@ -94,11 +94,19 @@ function resetPos() {
     game.ball.y = canvas.height / 2;
     game.ball.speed.x = 2;
 }
+function resetGame() {
+    resetPos();
+    game.player1.score = 0;
+    game.player2.score = 0;
+    draw();
+}
 function collide(player, otherPlayer) {
     //player missed the ball
     if (game.ball.y < player.y || game.ball.y > player.y + paddleHeight) {
         resetPos();
         otherPlayer.score++;
+        if (otherPlayer.score == scoreMax)
+            isPlaying = false;
     }
     //player touched the ball
     else
@@ -111,12 +119,20 @@ function moveAll() {
 }
 function stop() {
     cancelAnimationFrame(anim);
-    resetPos();
-    game.player1.score = 0;
-    game.player2.score = 0;
-    draw();
+    resetGame();
+}
+function displayWinner() {
+    ctx.fillStyle = "white";
+    ctx.font = "40px Arial";
+    ctx.textAlign = "center";
+    winner = game.player1.score > game.player2.score ? "Player 1 Wins!" : "Player 2 Wins!";
+    ctx.fillText(winner, canvasWidth / 2, canvasHeight / 2);
 }
 function play() {
+    if (!isPlaying) {
+        displayWinner();
+        return;
+    }
     moveAll();
     draw();
     anim = requestAnimationFrame(play);
@@ -145,5 +161,12 @@ document.addEventListener("keyup", (e) => {
     if (e.key === "l" || e.key === "L")
         game.player2.movingDown = false;
 });
-(_a = document.querySelector('#start-game')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', play);
-(_b = document.querySelector('#stop-game')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', stop);
+(_a = document.querySelector('#start-game')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
+    resetGame();
+    isPlaying = true;
+    play();
+});
+(_b = document.querySelector('#stop-game')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => {
+    isPlaying = false;
+    stop();
+});
