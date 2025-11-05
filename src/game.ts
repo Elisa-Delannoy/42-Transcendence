@@ -7,6 +7,7 @@ interface Player {
 	movingUp: boolean;
 	movingDown: boolean;
 	speed: number;
+	score: number;
 }
 
 interface Ball {
@@ -46,14 +47,16 @@ const game: Game = {
 		y: canvasHeight / 2 - paddleHeight / 2,
 		movingUp: false,
 		movingDown: false,
-		speed: 5
+		speed: 5,
+		score: 0
 	},
 
 	player2: {
 		y: canvasHeight / 2 - paddleHeight / 2,
 		movingUp: false,
 		movingDown: false,
-		speed: 5
+		speed: 5,
+		score: 0
 	},
 
 	ball: {
@@ -67,9 +70,7 @@ const game: Game = {
 	}
 };
 
-//score
-let player1Score = 0;
-let player2Score = 0;
+let anim: number;
 
 /**========================================================================
  *!                                  FUNCTIONS
@@ -97,6 +98,13 @@ function draw() {
 	ctx.fillStyle = 'white';
 	ctx.arc(game.ball.x, game.ball.y, game.ball.r, 0, Math.PI * 2, false);
 	ctx.fill();
+
+	//score
+	ctx.fillStyle = 'white';
+	ctx.font = "40px Verdana";
+	ctx.textAlign = "center";
+	ctx.fillText(`${game.player1.score}`, canvasWidth / 4, 50);
+	ctx.fillText(`${game.player2.score}`, (canvasWidth / 4) * 3, 50);
 }
 
 function movePlayer(player: Player) {
@@ -113,42 +121,59 @@ function moveBall() {
 		game.ball.speed.y *= -1;
 
 	if (game.ball.x > canvas.width - paddleWidth)
-		collide(game.player2);
+		collide(game.player2, game.player1);
 	else if (game.ball.x < paddleWidth)
-		collide(game.player1);
+		collide(game.player1, game.player2);
 
 	game.ball.x += game.ball.speed.x;
 	game.ball.y += game.ball.speed.y;
 }
 
-function collide(player: Player) {
+function resetPos() {
+	game.player1.y = canvas.height / 2 - paddleHeight / 2;
+	game.player2.y = canvas.height / 2 - paddleHeight / 2;
+	game.ball.x = canvas.width / 2;
+	game.ball.y = canvas.height / 2;
+	game.ball.speed.x = 2;
+}
+
+function collide(player: Player, otherPlayer: Player) {
 	//player missed the ball
 	if (game.ball.y < player.y || game.ball.y > player.y + paddleHeight)
 	{
-		game.ball.x = canvas.width / 2;
-		game.ball.y = canvas.height / 2;
-		game.player1.y = canvas.height / 2 - paddleHeight / 2;
-		game.player2.y = canvas.height / 2 - paddleHeight / 2;
-		game.ball.speed.x = 2;
+		resetPos();
+		otherPlayer.score++;
 	}
+	//player touched the ball
 	else
 		game.ball.speed.x *= -1.2;
 }
 
-function play() {
-	//players
+function moveAll() {
 	movePlayer(game.player1);
 	movePlayer(game.player2);
-
-	//ball
 	moveBall();
 }
 
-function gameLoop() {
-	play();
+function stop() {
+	cancelAnimationFrame(anim);
+	resetPos();
+	game.player1.score = 0;
+	game.player2.score = 0;
 	draw();
-	requestAnimationFrame(gameLoop);
 }
+
+function play() {
+	moveAll();
+	draw();
+	anim = requestAnimationFrame(play);
+}
+
+draw();
+
+/**========================================================================
+ *!                                  EVENTS
+ *========================================================================**/
 
 document.addEventListener("keydown", (e) => {
 	if (e.key === "w" || e.key === "W") game.player1.movingUp = true;
@@ -164,4 +189,5 @@ document.addEventListener("keyup", (e) => {
 	if (e.key === "l" || e.key === "L") game.player2.movingDown = false;
 })
 
-gameLoop();
+document.querySelector('#start-game')?.addEventListener('click', play);
+document.querySelector('#stop-game')?.addEventListener('click', stop);

@@ -1,0 +1,36 @@
+body {
+	margin: 0;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: rgb(39, 39, 39);
+}
+
+.game-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+}
+
+canvas {
+	border: 2px solid white;
+	background-color: #000;
+}
+
+.game-buttons button {
+	background: white;
+	color: black;
+	border: none;
+	padding: 8px 16px;
+	margin: 0 20px;
+	font-size: 16px;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.game-buttons button:hover {
+	background: #ccc;
+}
