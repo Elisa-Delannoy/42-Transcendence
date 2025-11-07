@@ -10,7 +10,7 @@ const ctx = canvas.getContext("2d");
 const canvasHeight = canvas.height;
 const canvasWidth = canvas.width;
 //sound
-const hitSound = new Audio("./sounds/hit.wav");
+let audioCtx;
 //Paddles
 const paddleHeight = 60;
 const paddleWidth = 10;
@@ -53,6 +53,17 @@ let increaseSpeed = -1.1;
 /**========================================================================
  *!                                  FUNCTIONS
  *========================================================================**/
+function playSound(frequency, duration) {
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    oscillator.type = "square";
+    oscillator.frequency.value = frequency;
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + duration / 1000);
+}
 function draw() {
     //field
     ctx.fillStyle = "black";
@@ -87,8 +98,10 @@ function movePlayer(player) {
 }
 function moveBall() {
     //rebounds on top and bottom
-    if (game.ball.y > canvas.height || game.ball.y < 0)
+    if (game.ball.y > canvas.height || game.ball.y < 0) {
+        playSound(500, 60);
         game.ball.speed.y *= -1;
+    }
     if (game.ball.x > canvas.width - paddleWidth)
         collide(game.player2, game.player1);
     else if (game.ball.x < paddleWidth)
@@ -125,6 +138,7 @@ function increaseBallSpeed() {
 function collide(player, otherPlayer) {
     //player missed the ball
     if (game.ball.y < player.y || game.ball.y > player.y + paddleHeight) {
+        playSound(300, 300);
         resetPos();
         otherPlayer.score++;
         game.ball.speed.x = player.attraction;
@@ -133,9 +147,7 @@ function collide(player, otherPlayer) {
     }
     //player touched the ball
     else {
-        hitSound.currentTime = 0.01;
-        console.log(hitSound.duration);
-        hitSound.play();
+        playSound(700, 80);
         increaseBallSpeed();
     }
 }
@@ -189,6 +201,7 @@ document.addEventListener("keyup", (e) => {
         game.player2.movingDown = false;
 });
 (_a = document.querySelector('#start-game')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
+    audioCtx = new (window.AudioContext);
     randomValue = Math.random() < 0.5 ? -2 : 2;
     game.ball.speed.x = randomValue;
     resetGame();

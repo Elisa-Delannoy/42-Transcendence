@@ -43,7 +43,7 @@ const canvasHeight = canvas.height;
 const canvasWidth = canvas.width;
 
 //sound
-const hitSound = new Audio("./sounds/hit.wav");
+let audioCtx: AudioContext;
 
 //Paddles
 const paddleHeight = 60;
@@ -94,6 +94,18 @@ let increaseSpeed: number = -1.1;
  *!                                  FUNCTIONS
  *========================================================================**/
 
+function playSound(frequency: number, duration: number) {
+	const oscillator = audioCtx.createOscillator();
+	const gainNode = audioCtx.createGain();
+	oscillator.connect(gainNode);
+	gainNode.connect(audioCtx.destination);
+	oscillator.type = "square";
+	oscillator.frequency.value = frequency;
+	gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+	oscillator.start();
+	oscillator.stop(audioCtx.currentTime + duration / 1000);
+}
+
 function draw() {
 	//field
 	ctx.fillStyle = "black";
@@ -136,7 +148,10 @@ function movePlayer(player: Player) {
 function moveBall() {
 	//rebounds on top and bottom
 	if (game.ball.y > canvas.height || game.ball.y < 0)
+	{
+		playSound(500, 60);
 		game.ball.speed.y *= -1;
+	}
 
 	if (game.ball.x > canvas.width - paddleWidth)
 		collide(game.player2, game.player1);
@@ -183,6 +198,7 @@ function collide(player: Player, otherPlayer: Player) {
 	//player missed the ball
 	if (game.ball.y < player.y || game.ball.y > player.y + paddleHeight)
 	{
+		playSound(300, 300);
 		resetPos();
 		otherPlayer.score++;
 		game.ball.speed.x = player.attraction;
@@ -192,9 +208,7 @@ function collide(player: Player, otherPlayer: Player) {
 	//player touched the ball
 	else
 	{
-		hitSound.currentTime = 0.01;
-		console.log(hitSound.duration);
-		hitSound.play();
+		playSound(700, 80);
 		increaseBallSpeed();
 	}
 }
@@ -251,6 +265,7 @@ document.addEventListener("keyup", (e) => {
 })
 
 document.querySelector('#start-game')?.addEventListener('click', () => {
+	audioCtx = new(window.AudioContext);
 	randomValue = Math.random() < 0.5 ? -2 : 2;
 	game.ball.speed.x = randomValue;
 	resetGame();
