@@ -10,8 +10,8 @@ const ctx = canvas.getContext("2d");
 const canvasHeight = canvas.height;
 const canvasWidth = canvas.width;
 //Paddles
-const paddleHeight = 100;
-const paddleWidth = 5;
+const paddleHeight = 60;
+const paddleWidth = 10;
 //game
 const game = {
     player1: {
@@ -19,20 +19,24 @@ const game = {
         movingUp: false,
         movingDown: false,
         speed: 5,
-        score: 0
+        score: 0,
+        attraction: -2
     },
     player2: {
         y: canvasHeight / 2 - paddleHeight / 2,
         movingUp: false,
         movingDown: false,
         speed: 5,
-        score: 0
+        score: 0,
+        attraction: 2
     },
     ball: {
         x: canvas.width / 2,
         y: canvas.height / 2,
         r: 5,
         speed: {
+            maxY: 1.6,
+            minY: -1.6,
             x: 2,
             y: 2
         }
@@ -41,6 +45,7 @@ const game = {
 let scoreMax = 11;
 let anim;
 let winner;
+let randomValue;
 /**========================================================================
  *!                                  FUNCTIONS
  *========================================================================**/
@@ -67,8 +72,8 @@ function draw() {
     ctx.fillStyle = 'white';
     ctx.font = "40px Verdana";
     ctx.textAlign = "center";
-    ctx.fillText(`${game.player1.score}`, canvasWidth / 4, 50);
-    ctx.fillText(`${game.player2.score}`, (canvasWidth / 4) * 3, 50);
+    ctx.fillText(`${game.player1.score}`, (canvasWidth / 4) * 1.75, 50);
+    ctx.fillText(`${game.player2.score}`, (canvasWidth / 4) * 2.25, 50);
 }
 function movePlayer(player) {
     if (player.movingUp && player.y > 0)
@@ -92,7 +97,8 @@ function resetPos() {
     game.player2.y = canvas.height / 2 - paddleHeight / 2;
     game.ball.x = canvas.width / 2;
     game.ball.y = canvas.height / 2;
-    game.ball.speed.x = 2;
+    randomValue = Math.random() * (game.ball.speed.maxY - game.ball.speed.minY) + game.ball.speed.minY;
+    game.ball.speed.y = randomValue;
 }
 function resetGame() {
     resetPos();
@@ -105,6 +111,7 @@ function collide(player, otherPlayer) {
     if (game.ball.y < player.y || game.ball.y > player.y + paddleHeight) {
         resetPos();
         otherPlayer.score++;
+        game.ball.speed.x = player.attraction;
         if (otherPlayer.score == scoreMax)
             isPlaying = false;
     }
@@ -162,6 +169,8 @@ document.addEventListener("keyup", (e) => {
         game.player2.movingDown = false;
 });
 (_a = document.querySelector('#start-game')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
+    randomValue = Math.random() < 0.5 ? -2 : 2;
+    game.ball.speed.x = randomValue;
     resetGame();
     isPlaying = true;
     play();

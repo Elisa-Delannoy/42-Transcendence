@@ -1,4 +1,5 @@
 let isPlaying: boolean;
+
 /**========================================================================
  *!                                  INTERFACES
  *========================================================================**/
@@ -9,6 +10,7 @@ interface Player {
 	movingDown: boolean;
 	speed: number;
 	score: number;
+	attraction: number;
 }
 
 interface Ball {
@@ -16,6 +18,8 @@ interface Ball {
 	y: number;
 	r: number;
 	speed: {
+		maxY: number,
+		minY: number,
 		x: number;
 		y: number;
 	}
@@ -38,8 +42,8 @@ const canvasHeight = canvas.height;
 const canvasWidth = canvas.width;
 
 //Paddles
-const paddleHeight = 100;
-const paddleWidth = 5;
+const paddleHeight = 60;
+const paddleWidth = 10;
 
 //game
 const game: Game = {
@@ -49,7 +53,8 @@ const game: Game = {
 		movingUp: false,
 		movingDown: false,
 		speed: 5,
-		score: 0
+		score: 0,
+		attraction: -2
 	},
 
 	player2: {
@@ -57,7 +62,8 @@ const game: Game = {
 		movingUp: false,
 		movingDown: false,
 		speed: 5,
-		score: 0
+		score: 0,
+		attraction: 2
 	},
 
 	ball: {
@@ -65,6 +71,8 @@ const game: Game = {
 		y: canvas.height / 2,
 		r: 5,
 		speed: {
+			maxY: 1.6,
+			minY: -1.6,
 			x: 2,
 			y: 2
 		}
@@ -74,6 +82,7 @@ const game: Game = {
 let scoreMax: number = 11;
 let anim: number;
 let winner: string;
+let randomValue: number;
 
 /**========================================================================
  *!                                  FUNCTIONS
@@ -106,8 +115,8 @@ function draw() {
 	ctx.fillStyle = 'white';
 	ctx.font = "40px Verdana";
 	ctx.textAlign = "center";
-	ctx.fillText(`${game.player1.score}`, canvasWidth / 4, 50);
-	ctx.fillText(`${game.player2.score}`, (canvasWidth / 4) * 3, 50);
+	ctx.fillText(`${game.player1.score}`, (canvasWidth / 4) * 1.75, 50);
+	ctx.fillText(`${game.player2.score}`, (canvasWidth / 4) * 2.25, 50);
 }
 
 function movePlayer(player: Player) {
@@ -137,7 +146,8 @@ function resetPos() {
 	game.player2.y = canvas.height / 2 - paddleHeight / 2;
 	game.ball.x = canvas.width / 2;
 	game.ball.y = canvas.height / 2;
-	game.ball.speed.x = 2;
+	randomValue = Math.random() * (game.ball.speed.maxY - game.ball.speed.minY) + game.ball.speed.minY;
+	game.ball.speed.y = randomValue;
 }
 
 function resetGame() {
@@ -153,6 +163,7 @@ function collide(player: Player, otherPlayer: Player) {
 	{
 		resetPos();
 		otherPlayer.score++;
+		game.ball.speed.x = player.attraction;
 		if (otherPlayer.score == scoreMax)
 			isPlaying = false;
 	}
@@ -213,6 +224,8 @@ document.addEventListener("keyup", (e) => {
 })
 
 document.querySelector('#start-game')?.addEventListener('click', () => {
+	randomValue = Math.random() < 0.5 ? -2 : 2;
+	game.ball.speed.x = randomValue;
 	resetGame();
 	isPlaying = true;
 	play();
