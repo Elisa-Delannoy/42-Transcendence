@@ -9,11 +9,12 @@ const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const canvasHeight = canvas.height;
 const canvasWidth = canvas.width;
-//sound
+//Sound
 let audioCtx;
 //Paddles
 const paddleHeight = 60;
 const paddleWidth = 10;
+let paddleCenter;
 //game
 const game = {
     player1: {
@@ -45,11 +46,13 @@ const game = {
         }
     }
 };
+//others
 let scoreMax = 11;
 let winner;
 let anim;
 let randomValue;
 let increaseSpeed = -1.1;
+const maxAngle = Math.PI / 4;
 /**========================================================================
  *!                                  FUNCTIONS
  *========================================================================**/
@@ -102,9 +105,9 @@ function moveBall() {
         playSound(500, 60);
         game.ball.speed.y *= -1;
     }
-    if (game.ball.x > canvas.width - paddleWidth)
+    if (game.ball.x > canvas.width - paddleWidth / 2)
         collide(game.player2, game.player1);
-    else if (game.ball.x < paddleWidth)
+    else if (game.ball.x < paddleWidth / 2)
         collide(game.player1, game.player2);
     game.ball.x += game.ball.speed.x;
     game.ball.y += game.ball.speed.y;
@@ -129,11 +132,23 @@ function increaseBallSpeed() {
         sign = -1;
     else
         sign = 1;
+    //check if ball is faster than maxSpeed 
     if (Math.abs(game.ball.speed.x * increaseSpeed) > game.ball.speed.maxX)
         game.ball.speed.x = game.ball.speed.maxX * sign;
     else
         game.ball.speed.x *= increaseSpeed;
     console.log(game.ball.speed.x);
+}
+function modifyBallAngle(player) {
+    paddleCenter = player.y + paddleHeight / 2;
+    let hitPos = game.ball.y - paddleCenter;
+    // -1 on top, +1 on bottom
+    let normalized = hitPos / (paddleHeight / 2);
+    // calculate new angle
+    let bounceAngle = normalized * maxAngle;
+    // add speed with angle
+    let speed = Math.sqrt(Math.pow(game.ball.speed.x, 2) + Math.pow(game.ball.speed.y, 2));
+    game.ball.speed.y = speed * Math.sin(bounceAngle);
 }
 function collide(player, otherPlayer) {
     //player missed the ball
@@ -141,13 +156,16 @@ function collide(player, otherPlayer) {
         playSound(300, 300);
         resetPos();
         otherPlayer.score++;
+        //send ball to loser
         game.ball.speed.x = player.attraction;
+        //stop game if max score is reached
         if (otherPlayer.score == scoreMax)
             isPlaying = false;
     }
     //player touched the ball
     else {
         playSound(700, 80);
+        modifyBallAngle(player);
         increaseBallSpeed();
     }
 }
