@@ -25,8 +25,7 @@ export function router() {
   // Protection : dashboard → login si non connecté
   if (match.path === "/dashboard" && !isLoggedIn()) {
     return navigateTo("/login");
-  }
-
+  } 
   document.querySelector("#app")!.innerHTML = match.view();
 }
 
@@ -38,7 +37,7 @@ export function initRouter() {
       navigateTo(target.getAttribute("href")!);
     }
   });
-
+ 
   window.addEventListener("popstate", router);
   router();
 }
