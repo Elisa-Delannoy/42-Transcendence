@@ -4,7 +4,7 @@
 Permet aux joueurs de se connecter et de jouer en direct.
 Gère les connexions WebSocket pour les échanges rapides : positions, actions, événements de jeu.
 Peut maintenir un état minimal du jeu côté serveur (position de la balle, score, etc.), ou juste relayer les infos si les clients calculent eux-mêmes la logique.
--> utiliser express et ws 
+-> utiliser FASTIFY et ws 
 
 2️⃣ API REST (ou similaire) 
 (= Representational State Transfer / style d’architecture qui utilise :
