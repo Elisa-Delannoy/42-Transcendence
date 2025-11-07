@@ -18,6 +18,7 @@ interface Ball {
 	y: number;
 	r: number;
 	speed: {
+		maxX: number,
 		maxY: number,
 		minY: number,
 		x: number;
@@ -40,6 +41,9 @@ const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 const canvasHeight = canvas.height;
 const canvasWidth = canvas.width;
+
+//sound
+const hitSound = new Audio("./sounds/hit.wav");
 
 //Paddles
 const paddleHeight = 60;
@@ -71,6 +75,7 @@ const game: Game = {
 		y: canvas.height / 2,
 		r: 5,
 		speed: {
+			maxX: 25,
 			maxY: 1.6,
 			minY: -1.6,
 			x: 2,
@@ -80,9 +85,10 @@ const game: Game = {
 };
 
 let scoreMax: number = 11;
-let anim: number;
 let winner: string;
+let anim: number;
 let randomValue: number;
+let increaseSpeed: number = -1.1;
 
 /**========================================================================
  *!                                  FUNCTIONS
@@ -157,6 +163,22 @@ function resetGame() {
 	draw();
 }
 
+function increaseBallSpeed() {
+	let sign: number;
+
+	if ((game.ball.speed.x * increaseSpeed) < 0)
+		sign = -1;
+	else
+		sign = 1;
+
+	if (Math.abs(game.ball.speed.x * increaseSpeed) > game.ball.speed.maxX)
+		game.ball.speed.x = game.ball.speed.maxX * sign;
+	else
+		game.ball.speed.x *= increaseSpeed;
+
+	console.log(game.ball.speed.x);
+}
+
 function collide(player: Player, otherPlayer: Player) {
 	//player missed the ball
 	if (game.ball.y < player.y || game.ball.y > player.y + paddleHeight)
@@ -169,7 +191,12 @@ function collide(player: Player, otherPlayer: Player) {
 	}
 	//player touched the ball
 	else
-		game.ball.speed.x *= -1.2;
+	{
+		hitSound.currentTime = 0.01;
+		console.log(hitSound.duration);
+		hitSound.play();
+		increaseBallSpeed();
+	}
 }
 
 function moveAll() {
