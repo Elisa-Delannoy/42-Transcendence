@@ -36,14 +36,7 @@ function LoginView() {
       }
     });
   }, 0);
-  return `
-    <h1>Connexion</h1>
-    <form id="login-form">
-      <input id="username" placeholder="username" required />
-      <input id="password" type="password" placeholder="password" required />
-      <button>Se connecter</button>
-    </form>
-  `;
+  return document.getElementById("test").innerHTML;
 }
 
 // src/views/dashboard.ts
@@ -89,16 +82,19 @@ function router() {
   if (match.path === "/dashboard" && !isLoggedIn()) {
     return navigateTo("/login");
   }
+  console.log("yeetstedtest");
   document.querySelector("#app").innerHTML = match.view();
 }
 function initRouter() {
   document.body.addEventListener("click", (e) => {
+    console.log("Click d\xE9tect\xE9 !");
     const target = e.target;
     if (target.matches("[data-link]")) {
       e.preventDefault();
       navigateTo(target.getAttribute("href"));
     }
   });
+  console.log("Apr\xE8s addEventListener");
   window.addEventListener("popstate", router);
   router();
 }

@@ -16,13 +16,5 @@ export function LoginView(): string {
       }
     });
   }, 0);
-
-  return `
-    <h1>Connexion</h1>
-    <form id="login-form">
-      <input id="username" placeholder="username" required />
-      <input id="password" type="password" placeholder="password" required />
-      <button>Se connecter</button>
-    </form>
-  `;
+  return (document.getElementById("test") as HTMLTemplateElement).innerHTML;
 }
