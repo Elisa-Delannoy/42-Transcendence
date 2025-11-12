@@ -1,9 +1,32 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
-    "outDir": "dist",
-    "strict": true
+    /* ===== Sortie & Structure ===== */
+    "rootDir": "./back",
+    "outDir": "./dist",
+
+    /* ===== Cible & Modules ===== */
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    /* ===== TypeScript / Node ===== */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+
+    /* ===== Autres Options ===== */
+    "sourceMap": true,
+    "declaration": true,
+    "resolveJsonModule": true,
+
+    /* ===== Vérifications Avancées ===== */
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    /* ===== Exclusions ===== */
+    "isolatedModules": true
   },
-  "include": ["src"]
+  "include": ["back/**/*.ts"],
+  "exclude": ["node_modules"]
 }
+
