@@ -9,13 +9,16 @@
       <a href="/" data-link>Accueil</a>
       <a href="/login" data-link>Connexion</a>
       <a href="/dashboard" data-link>Dashboard</a>
+      <a href="/register" data-link>register</a>
     </nav>
 
     <main id="app"></main>
 
     <script type="module" src="./public/app.js"></script>
-	
-	<template id="test">
+
+  </body>
+
+	<template id="loginhtml">
 		   <h1>Connexion</h1>
     	<form id="login-form">
      		<input id="username" placeholder="username" required />
@@ -23,5 +26,28 @@
       			<button>Se connecter</button>
     	</form>
 	</template>
-  </body>
+
+	<template id="homehtml">
+    <h1>Bienvenue 👋</h1>
+    <p>C'est la page d'accueil.</p>
+	</template>
+
+	<template id="dashboardhtml">
+    <h1>Dashboard 🎮</h1>
+    <button id="logout-btn">Se déconnecter</button>
+	</template>
+
+  <template id="registerhtml">
+     <div class="register-container">
+      <h1>Register</h1>
+      <form id="register-form">
+        <input type="text" name="username" placeholder="Username" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <button type="submit">Register</button>
+      </form>
+      <p id="register-message"></p>
+    </div>
+  </template>
+
 </html>

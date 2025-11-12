@@ -1,5 +1,5 @@
-import { logout } from "../auth.ts";
-import { navigateTo } from "../router.ts";
+import { logout } from "../auth";
+import { navigateTo } from "../router";
 
 export function DashboardView(): string {
   setTimeout(() => {
@@ -10,8 +10,5 @@ export function DashboardView(): string {
     });
   }, 0);
 
-  return `
-    <h1>Dashboard 🎮</h1>
-    <button id="logout-btn">Se déconnecter</button>
-  `;
+  return (document.getElementById("dashboardhtml") as HTMLTemplateElement).innerHTML;
 }

@@ -1,12 +1,14 @@
-import { HomeView } from "./views/home.ts";
-import { LoginView } from "./views/login.ts";
-import { DashboardView } from "./views/dashboard.ts";
-import { isLoggedIn } from "./auth.ts";
+import { HomeView } from "./views/home";
+import { LoginView } from "./views/login";
+import { DashboardView } from "./views/dashboard";
+import { isLoggedIn } from "./auth";
+import { RegisterView, initRegister } from "./views/register";
 
 const routes = [
   { path: "/", view: HomeView },
   { path: "/login", view: LoginView },
   { path: "/dashboard", view: DashboardView },
+  { path: "/register", view: RegisterView, init: initRegister}
 ];
 
 export function navigateTo(url: string) {
@@ -27,6 +29,7 @@ export function router() {
     return navigateTo("/login");
   } 
   document.querySelector("#app")!.innerHTML = match.view();
+  match.init?.();
 }
 
 export function initRouter() {

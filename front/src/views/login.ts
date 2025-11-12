@@ -1,5 +1,5 @@
-import { login } from "../auth.ts";
-import { navigateTo } from "../router.ts";
+import { login } from "../auth";
+import { navigateTo } from "../router";
 
 export function LoginView(): string {
   setTimeout(() => {
@@ -16,5 +16,5 @@ export function LoginView(): string {
       }
     });
   }, 0);
-  return (document.getElementById("test") as HTMLTemplateElement).innerHTML;
+  return (document.getElementById("loginhtml") as HTMLTemplateElement).innerHTML;
 }
