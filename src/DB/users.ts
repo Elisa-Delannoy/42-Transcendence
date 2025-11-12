@@ -1,0 +1,51 @@
+import { ManageDB } from "./manageDB";
+
+export class Users
+{
+	private _db: ManageDB;
+
+	user_id: number;
+	email: string;
+	pseudo: string;
+	password: string;
+	status: UserStatus;
+	creation_date: Date;
+	money: number;
+	elo: number;
+
+	constructor (db: ManageDB, email: string, pseudo: string, password: string)
+	{
+		this._db = db;
+		this.user_id = 0
+		this.email = email;
+		this.pseudo = pseudo;
+		this.password = password;
+		this.status = UserStatus.offline;
+		this.creation_date = new Date();
+		this.money = 0
+		this.elo = 0;
+	}
+
+	static async createUserTable(db: ManageDB)
+	{
+		await db.execute(`
+			CREATE TABLE IF NOT EXISTS Users (
+				user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT NOT NULL,
+                pseudo TEXT NOT NULL,
+                password TEXT NOT NULL,
+                status INTEGER NOT NULL,
+                creation_date TEXT NOT NULL,
+                money INTEGER DEFAULT 0,
+                elo INTEGER DEFAULT 0
+			)
+		`);
+	}
+}
+
+enum UserStatus
+{
+	offline, 
+	online,
+	playing
+}
