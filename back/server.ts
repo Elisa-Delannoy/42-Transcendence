@@ -31,8 +31,8 @@ fastify.post("/api/register", async (request, reply) => {
 
 const start = async () => {
   try {
-    await db.connect();
-    await fastify.listen({ port: 3000 });
+	  await fastify.listen({ port: 3000 });
+	  await db.connect();
     // await Users.deleteUserTable(db);
     await Users.createUserTable(db);
     console.log("🚀 Serveur lancé sur http://localhost:3000");
