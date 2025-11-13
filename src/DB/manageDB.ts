@@ -61,5 +61,15 @@ export class ManageDB
 			});
 		});
 	}
+
+	async deleteUserTable(table: string, db: ManageDB) {
+	if (!/^[a-zA-Z0-9_]+$/.test(table)) {
+		throw new Error("Nom de table invalide");
+	}
+
+	const query = `DROP TABLE IF EXISTS ${table}`;
+	await db.execute(query);
+}
+
 }
 
