@@ -1,9 +1,25 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "es6",
+    "module": "commonjs",
     "outDir": "dist",
-    "strict": true
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",    // résolution des imports à la Node
+    "rootDir": ".",                 // racine du projet
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "sourceMap": true,              // pour debugger
+    "declaration": true,            // génère les fichiers .d.ts
+    "resolveJsonModule": true
   },
-  "include": ["src"]
+  "include": [
+    "back/**/*.ts",
+    "front/src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "front/public"
+  ]
 }

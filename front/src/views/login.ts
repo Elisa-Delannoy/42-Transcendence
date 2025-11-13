@@ -1,5 +1,5 @@
-import { login } from "../auth.ts";
-import { navigateTo } from "../router.ts";
+import { login } from "../auth";
+import { navigateTo } from "../router";
 
 export function LoginView(): string {
   setTimeout(() => {
@@ -16,13 +16,5 @@ export function LoginView(): string {
       }
     });
   }, 0);
-
-  return `
-    <h1>Connexion</h1>
-    <form id="login-form">
-      <input id="username" placeholder="username" required />
-      <input id="password" type="password" placeholder="password" required />
-      <button>Se connecter</button>
-    </form>
-  `;
+  return (document.getElementById("loginhtml") as HTMLTemplateElement).innerHTML;
 }

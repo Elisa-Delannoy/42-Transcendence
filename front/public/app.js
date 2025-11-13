@@ -1,9 +1,6 @@
 // src/views/home.ts
 function HomeView() {
-  return `
-    <h1>Bienvenue \u{1F44B}</h1>
-    <p>C'est la page d'accueil.</p>
-  `;
+  return document.getElementById("homehtml").innerHTML;
 }
 
 // src/auth.ts
@@ -36,14 +33,7 @@ function LoginView() {
       }
     });
   }, 0);
-  return `
-    <h1>Connexion</h1>
-    <form id="login-form">
-      <input id="username" placeholder="username" required />
-      <input id="password" type="password" placeholder="password" required />
-      <button>Se connecter</button>
-    </form>
-  `;
+  return document.getElementById("loginhtml").innerHTML;
 }
 
 // src/views/dashboard.ts
@@ -55,26 +45,45 @@ function DashboardView() {
       navigateTo("/login");
     });
   }, 0);
-  return `
-    <h1>Dashboard \u{1F3AE}</h1>
-    <button id="logout-btn">Se d\xE9connecter</button>
-  `;
+  return document.getElementById("dashboardhtml").innerHTML;
+}
+
+// src/views/register.ts
+function RegisterView() {
+  return document.getElementById("registerhtml").innerHTML;
+}
+function initRegister() {
+  const form = document.getElementById("register-form");
+  const message = document.getElementById("register-message");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const data = {
+      username: formData.get("username"),
+      email: formData.get("email"),
+      password: formData.get("password")
+    };
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      message.textContent = result.message;
+    } catch (err) {
+      message.textContent = "Erreur serveur...";
+      console.error(err);
+    }
+  });
 }
 
 // src/router.ts
 var routes = [
-  {
-    path: "/",
-    view: HomeView
-  },
-  {
-    path: "/login",
-    view: LoginView
-  },
-  {
-    path: "/dashboard",
-    view: DashboardView
-  }
+  { path: "/", view: HomeView },
+  { path: "/login", view: LoginView },
+  { path: "/dashboard", view: DashboardView },
+  { path: "/register", view: RegisterView, init: initRegister }
 ];
 function navigateTo(url) {
   history.pushState(null, "", url);
@@ -90,6 +99,7 @@ function router() {
     return navigateTo("/login");
   }
   document.querySelector("#app").innerHTML = match.view();
+  match.init?.();
 }
 function initRouter() {
   document.body.addEventListener("click", (e) => {
