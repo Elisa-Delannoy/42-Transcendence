@@ -16,7 +16,7 @@ export class Users
 		await db.execute(`
 			CREATE TABLE IF NOT EXISTS Users (
 				user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                pseudo UNIQUE TEXT NOT NULL,
+                pseudo TEXT UNIQUE NOT NULL,
                 email TEXT NOT NULL,
                 password TEXT NOT NULL,
 				avatar TEXT NOT NULL,
@@ -46,7 +46,7 @@ export class Users
 		0,
 		0
 		];
-		
+		console.log(pseudo, email, password)
 		await this._db.execute(query, parameters);
 	}
 

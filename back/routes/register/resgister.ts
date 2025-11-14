@@ -1,4 +1,4 @@
-import { db } from "../../server";
+import { db, user } from "../../server";
 import { Users } from '../../DB/users';
 import { error } from "console";
 
@@ -11,8 +11,7 @@ export function manageRegister(username: string, email: string, password: string
 	{
 		return (err as Error).message;
 	}
-	const user = new Users(db, username, email, password);
-	user.addUser();
+	user.addUser(username, email, password);
 	return "User have been register successfully";
 }
 
