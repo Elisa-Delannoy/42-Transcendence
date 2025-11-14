@@ -3,7 +3,7 @@ function HomeView() {
   return document.getElementById("homehtml").innerHTML;
 }
 
-// src/auth.ts
+// front/src/auth.ts
 async function login(username, password) {
   try {
     const res = await fetch("/api/login", {
@@ -90,27 +90,27 @@ function initRegister() {
   });
 }
 
-// src/views/p_homelogin.ts
+// front/src/views/p_homelogin.ts
 function HomeLoginView() {
   return document.getElementById("homeloginhtml").innerHTML;
 }
 
-// src/views/p_profil.ts
+// front/src/views/p_profil.ts
 function ProfilView() {
   return document.getElementById("profilhtml").innerHTML;
 }
 
-// src/views/p_game.ts
+// front/src/views/p_game.ts
 function GameView() {
   return document.getElementById("gamehtml").innerHTML;
 }
 
-// src/views/p_tournament.ts
+// front/src/views/p_tournament.ts
 function TournamentView() {
   return document.getElementById("tournamenthtml").innerHTML;
 }
 
-// src/router.ts
+// front/src/router.ts
 var routes = [
   { path: "/", view: HomeView },
   { path: "/login", view: LoginView, init: toLogin },

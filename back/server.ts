@@ -4,12 +4,9 @@ import { join } from "path";
 import { request } from "http";
 import  { ManageDB } from "./DB/manageDB";
 import { Users } from './DB/users';
-<<<<<<< HEAD
 import { GameInfo } from "./DB/gameinfo";
-=======
 import { checkLogin } from './login';
 import { manageRegister } from "./routes/register/resgister";
->>>>>>> main
 
 export const db = new ManageDB("./back/DB/database.db");
 export const user = new Users(db);
@@ -28,13 +25,8 @@ fastify.get("/", async (request, reply) => {
 });
 
 fastify.post("/api/register", async (request, reply) => {
-<<<<<<< HEAD
 	const { username, email, password } = request.body as any;
-
-	const user = new Users(db, username, email, password);
-	await user.addUser();
-
-	return { message: `Utilisateur ${username} enregistré avec succès !` };
+	return { message: manageRegister(username, email, password) };
 });
 
 fastify.post("/api/gameinfo/add", async (request, reply) => {
@@ -43,10 +35,6 @@ fastify.post("/api/gameinfo/add", async (request, reply) => {
 	const game = new GameInfo(db, winner_id, loser_id, adversary_name);
 	await game.addGameInfo();
 	return { message: "Game info added!" };
-=======
-  const { username, email, password } = request.body as any;
-  return { message: manageRegister(username, email, password) };
->>>>>>> main
 });
 
 fastify.post("/api/login", async (request, reply) => {
