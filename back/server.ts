@@ -25,7 +25,7 @@ fastify.get("/", async (request, reply) => {
 
 fastify.post("/api/register", async (request, reply) => {
   const { username, email, password } = request.body as any;
-  return { message: await manageRegister(username, email, password) };
+  return { message: await manageRegister(username.tri, email, password) };
 });
 
 fastify.post("/api/login", async (request, reply) => {

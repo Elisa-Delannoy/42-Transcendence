@@ -21,15 +21,18 @@ async function checkPseudo(pseudo: string)
 {
 	const info = await user.checkInfoExist(pseudo, "SELECT * FROM Users WHERE pseudo = ?");
 	if (pseudo.length > 16)
-		throw new Error("Pseudo too long ! 16 character maximum.");
-	if (info.pseudo === pseudo)
-		throw new Error("Pseudo already exist.");
+		throw new Error("Pseudo too long! 16 character maximum.");
+	if (info?.pseudo === pseudo)
+		throw new Error("Pseudo already exists.");
 }
 
 async function checkEmail(email: string)
 {
 	if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
 		throw new Error("Invalid email format.");
+	const info = await user.checkInfoExist(email, "SELECT * FROM Users WHERE email = ?");
+	if (info?.email === email)
+		throw new Error("Email already in use.");
 }
 
 async function checkPasswordd(password: string)
