@@ -10,6 +10,8 @@ import { manageRegister } from "./routes/register/resgister";
 export const db = new ManageDB("./back/DB/database.db");
 export const user = new Users(db);
 
+let login = ""
+
 const fastify = Fastify({
   logger: true,
 });
@@ -31,10 +33,26 @@ fastify.post("/api/register", async (request, reply) => {
 fastify.post("/api/login", async (request, reply) => {
   const { username, password } = request.body as any;
   const success = await checkLogin(username, password);
-  if (success)
+  if (success) {
+    login = username;
     return reply.code(200).send({message: `Welcome ${username} !` });
-  else
+  } else {
     return reply.code(401).send({message: `Error login` });
+  }
+});
+
+fastify.get("/api/profil", async (request, reply) => {
+  try {
+    const profil = await user.getInfoUser(login)
+    if (!profil || profil === 0)
+    {
+      return reply.code(404).send({message: "User not found"})
+    }
+    return profil;
+  } catch (error) {
+    fastify.log.error(error)
+    return reply.code(500).send({message: "Internal Server Error"});
+  }
 });
 
 const start = async () => {
