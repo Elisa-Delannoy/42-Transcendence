@@ -18,7 +18,6 @@ export function manageRegister(username: string, email: string, password: string
 
 function checkUsername(username: string)
 {
-	db.get("")
 	if (username.length < 12)
 		throw new Error("Username too short ! lenght > 12.");
 }
