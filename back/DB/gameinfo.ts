@@ -29,13 +29,14 @@ export class GameInfo
 	static async createGameInfoTable(db: ManageDB) {
 		await db.execute(`
 			CREATE TABLE IF NOT EXISTS game_info (
-				status INTEGER NOT NULL
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				status INTEGER NOT NULL,
 				winner_id INTEGER,
-				looser_id INTEGER,
-				date_game DATE,
+				loser_id INTEGER,
+				date_game TEXT,
 				duration_game INTEGER,
 				adversary_name TEXT,
-				winner_score INTEGER
+				winner_score INTEGER,
 				loser_score INTEGER
 			)
 		`);
@@ -44,8 +45,9 @@ export class GameInfo
 	async addGameInfo(): Promise<void>
 	{
 		const query = `
-			INSERT INTO game_info (status, winner_id, loser_id, date_game, duration_game, adversary_name, winner_score, loser_score)
-			VALUES (?,?,?,?,?,?,?)
+			INSERT INTO game_info (status, winner_id, loser_id,
+			 date_game, duration_game, adversary_name, winner_score, loser_score)
+			VALUES (?,?,?,?,?,?,?,?)
 			`;
 		const parameters = [
 			this.status,

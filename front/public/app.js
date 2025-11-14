@@ -1,9 +1,9 @@
-// src/views/home.ts
+// front/src/views/home.ts
 function HomeView() {
   return document.getElementById("homehtml").innerHTML;
 }
 
-// src/auth.ts
+// front/src/auth.ts
 function login(username, password) {
   if (username === "admin" && password === "42") {
     localStorage.setItem("token", "OK");
@@ -18,7 +18,7 @@ function logout() {
   localStorage.removeItem("token");
 }
 
-// src/views/login.ts
+// front/src/views/login.ts
 function LoginView() {
   setTimeout(() => {
     const form = document.getElementById("login-form");
@@ -36,7 +36,7 @@ function LoginView() {
   return document.getElementById("loginhtml").innerHTML;
 }
 
-// src/views/dashboard.ts
+// front/src/views/dashboard.ts
 function DashboardView() {
   setTimeout(() => {
     const btn = document.getElementById("logout-btn");
@@ -48,7 +48,7 @@ function DashboardView() {
   return document.getElementById("dashboardhtml").innerHTML;
 }
 
-// src/views/register.ts
+// front/src/views/register.ts
 function RegisterView() {
   return document.getElementById("registerhtml").innerHTML;
 }
@@ -78,7 +78,7 @@ function initRegister() {
   });
 }
 
-// src/router.ts
+// front/src/router.ts
 var routes = [
   { path: "/", view: HomeView },
   { path: "/login", view: LoginView },
@@ -113,7 +113,7 @@ function initRouter() {
   router();
 }
 
-// src/main.ts
+// front/src/main.ts
 document.addEventListener("DOMContentLoaded", () => {
   initRouter();
 });
