@@ -5,11 +5,13 @@ import { request } from "http";
 import  { ManageDB } from "./DB/manageDB";
 import { Users } from './DB/users';
 import { GameInfo } from "./DB/gameinfo";
-import { checkLogin } from './login';
+import { manageLogin } from './routes/login/login';
 import { manageRegister } from "./routes/register/resgister";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const user = new Users(db);
+
+let login = ""
 
 const fastify = Fastify({
 	logger: true,
@@ -39,26 +41,35 @@ fastify.post("/api/gameinfo/add", async (request, reply) => {
 
 fastify.post("/api/login", async (request, reply) => {
   const { username, password } = request.body as any;
-  const success = await checkLogin(username, password);
-  if (success)
-    return reply.code(200).send({message: `Welcome ${username} !` });
-  else
-    return reply.code(401).send({message: `Error login` });
+  return { message: await manageLogin(username, password)};
 });
 
+fastify.get("/api/profil", async (request, reply) => {
+  try {
+    const profil = await user.getInfoUser(login)
+    if (!profil || profil === 0)
+    {
+      return reply.code(404).send({message: "User not found"})
+    }
+    return profil;
+  } catch (error) {
+    fastify.log.error(error)
+    return reply.code(500).send({message: "Internal Server Error"});
+  }
+});
 
 const start = async () => {
-	try {
-		await fastify.listen({ port: 3000 });
-		await db.connect();
-		// await Users.deleteUserTable(db);
-		await Users.createUserTable(db);
-		await GameInfo.createGameInfoTable(db);
-		console.log("🚀 Serveur lancé sur http://localhost:3000");
-	} catch (err) {
-		fastify.log.error(err);
-		process.exit(1);
-	}
+  try {
+	  await fastify.listen({ port: 3000 });
+	  await db.connect();
+    await Users.deleteUserTable(db);
+    await Users.createUserTable(db);
+	await GameInfo.createGameInfoTable(db);
+    console.log("🚀 Serveur lancé sur http://localhost:3000");
+  } catch (err) {
+    fastify.log.error(err);
+    process.exit(1);
+  }
 };
 
 start();

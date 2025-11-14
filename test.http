@@ -1,0 +1,17 @@
+### test with REST client
+
+### GET index
+GET http://localhost:3000/ HTTP/1.1
+
+
+### login
+POST http://localhost:3000/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+	"username": "thisistester1",
+	"password": "4242"
+}
+
+### get profile
+GET http://localhost:3000/api/profil HTTP/1.1
