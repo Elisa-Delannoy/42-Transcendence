@@ -1,20 +1,26 @@
-import { login } from "../auth";
-import { navigateTo } from "../router";
+;import { login } from "../auth";
+import { navigateTo, updateNav} from "../router";
 
 export function LoginView(): string {
-  setTimeout(() => {
-    const form = document.getElementById("login-form") as HTMLFormElement;
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const username = (document.getElementById("username") as HTMLInputElement).value;
-      const password = (document.getElementById("password") as HTMLInputElement).value;
-
-      if (login(username, password)) {
-        navigateTo("/dashboard");
-      } else {
-        alert("Identifiants incorrects");
-      }
-    });
-  }, 0);
-  return (document.getElementById("loginhtml") as HTMLTemplateElement).innerHTML;
+  return (document.getElementById("loginhtml") as HTMLFormElement).innerHTML;
 }
+
+export function toLogin()
+{
+	const form = document.getElementById("login-form") as HTMLFormElement;
+	form.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const username = (document.getElementById("username") as HTMLInputElement).value;
+		const password = (document.getElementById("password") as HTMLInputElement).value;
+
+	const success = await login(username, password)
+   	if (success)
+	{
+		updateNav()
+		navigateTo("/homelogin");
+	}
+    else
+    	alert("Identifiants incorrects");
+    });
+}
+

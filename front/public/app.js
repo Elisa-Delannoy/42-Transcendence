@@ -4,12 +4,23 @@ function HomeView() {
 }
 
 // src/auth.ts
-function login(username, password) {
-  if (username === "admin" && password === "42") {
-    localStorage.setItem("token", "OK");
-    return true;
+async function login(username, password) {
+  try {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+    const result = await res.json();
+    if (res.ok) {
+      localStorage.setItem("token", "OK");
+      return true;
+    } else
+      return false;
+  } catch (err) {
+    console.error("Erreur serveur:", err);
+    return false;
   }
-  return false;
 }
 function isLoggedIn() {
   return localStorage.getItem("token") !== null;
@@ -20,20 +31,21 @@ function logout() {
 
 // src/views/login.ts
 function LoginView() {
-  setTimeout(() => {
-    const form = document.getElementById("login-form");
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-      if (login(username, password)) {
-        navigateTo("/dashboard");
-      } else {
-        alert("Identifiants incorrects");
-      }
-    });
-  }, 0);
   return document.getElementById("loginhtml").innerHTML;
+}
+function toLogin() {
+  const form = document.getElementById("login-form");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const success = await login(username, password);
+    if (success) {
+      updateNav();
+      navigateTo("/homelogin");
+    } else
+      alert("Identifiants incorrects");
+  });
 }
 
 // src/views/dashboard.ts
@@ -78,16 +90,57 @@ function initRegister() {
   });
 }
 
+// src/views/p_homelogin.ts
+function HomeLoginView() {
+  return document.getElementById("homeloginhtml").innerHTML;
+}
+
+// src/views/p_profil.ts
+function ProfilView() {
+  return document.getElementById("profilhtml").innerHTML;
+}
+
+// src/views/p_game.ts
+function GameView() {
+  return document.getElementById("gamehtml").innerHTML;
+}
+
+// src/views/p_tournament.ts
+function TournamentView() {
+  return document.getElementById("tournamenthtml").innerHTML;
+}
+
 // src/router.ts
 var routes = [
   { path: "/", view: HomeView },
-  { path: "/login", view: LoginView },
+  { path: "/login", view: LoginView, init: toLogin },
   { path: "/dashboard", view: DashboardView },
-  { path: "/register", view: RegisterView, init: initRegister }
+  { path: "/register", view: RegisterView, init: initRegister },
+  { path: "/homelogin", view: HomeLoginView },
+  { path: "/profil", view: ProfilView },
+  { path: "/game", view: GameView },
+  { path: "/tournament", view: TournamentView }
 ];
 function navigateTo(url) {
   history.pushState(null, "", url);
   router();
+}
+function updateNav() {
+  const publicNav = document.getElementById("public-nav");
+  const privateNav = document.getElementById("private-nav");
+  if (isLoggedIn()) {
+    publicNav.style.display = "none";
+    privateNav.style.display = "block";
+    const button = document.getElementById("butlogout");
+    button.addEventListener("click", () => {
+      logout();
+      updateNav();
+      navigateTo("/");
+    });
+  } else {
+    publicNav.style.display = "block";
+    privateNav.style.display = "none";
+  }
 }
 function router() {
   const match = routes.find((r) => r.path === location.pathname);
@@ -100,6 +153,7 @@ function router() {
   }
   document.querySelector("#app").innerHTML = match.view();
   match.init?.();
+  updateNav();
 }
 function initRouter() {
   document.body.addEventListener("click", (e) => {
@@ -110,6 +164,7 @@ function initRouter() {
     }
   });
   window.addEventListener("popstate", router);
+  localStorage.removeItem("token");
   router();
 }
 

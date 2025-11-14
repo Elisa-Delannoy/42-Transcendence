@@ -5,11 +5,19 @@
     <title>SPA TS + Deno</title>
   </head>
   <body>
-    <nav>
+    <nav id="public-nav">
       <a href="/" data-link>Accueil</a>
       <a href="/login" data-link>Connexion</a>
       <a href="/dashboard" data-link>Dashboard</a>
       <a href="/register" data-link>register</a>
+    </nav>
+
+    <nav id="private-nav">
+      <a href="/homelogin"></a>
+      <a href="/profil" data-link>Profil</a>
+      <a href="/game" data-link>Quick Game</a>
+      <a href="/tournament" data-link>Tournament</a>
+      <button id="butlogout">Logout</button>
     </nav>
 
     <main id="app"></main>
@@ -48,6 +56,21 @@
       </form>
       <p id="register-message"></p>
     </div>
+  </template>
+
+  <template id="homeloginhtml">
+    <h1>Loged Homepage👋</h1>
+  </template>
+
+  <template id="profilhtml">
+    <h1>Page profil</h1>
+  </template>
+
+  <template id="gamehtml">
+    <h1>Page game</h1>
+  </template>
+  <template id="tournamenthtml">
+    <h1>Page tournament</h1>
   </template>
 
 </html>
