@@ -56,6 +56,15 @@ export class Users
 		await db.execute(query, []);
 	}
 
+	async checkInfoExist(element: string, query: string)
+	{
+		const infos: any[] = await this._db.query(query, [element]);
+		if (infos.length  === 0)
+			return [];
+		else
+			return infos[0];
+	}
+
 	async getInfoUser(pseudo: string)
 	{
 		const infos: any[] = await this._db.query(`SELECT * FROM Users WHERE pseudo = ?`, [pseudo])

@@ -29,17 +29,17 @@ export function updateNav() {
 	const privateNav = document.getElementById("private-nav")!;
 
 	if (isLoggedIn()) {
-	publicNav.style.display = "none";
-	privateNav.style.display = "block";
-  const button = document.getElementById("butlogout")!;
-	button.addEventListener("click", () => {
-	logout();
-  updateNav();
-	navigateTo("/");
-	});
+	  publicNav.style.display = "none";
+	  privateNav.style.display = "block";
+	const button = document.getElementById("butlogout")!;
+	  button.addEventListener("click", () => {
+	  logout();
+	updateNav();
+	  navigateTo("/");
+	  });
 	}	else {
-	publicNav.style.display = "block";
-	privateNav.style.display = "none";
+  	publicNav.style.display = "block";
+	  privateNav.style.display = "none";
 	}
 }
 

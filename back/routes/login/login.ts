@@ -1,7 +1,7 @@
 import { log } from "console";
-import  { ManageDB } from "./DB/manageDB";
-import { Users } from './DB/users';
-import { user } from './server';
+import  { ManageDB } from "../../DB/manageDB";
+import { Users } from '../../DB/users';
+import { user } from '../../server';
 
 export async function checkLogin(pseudo: string, password: string): Promise<boolean>
 {

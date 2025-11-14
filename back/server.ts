@@ -4,7 +4,7 @@ import { join } from "path";
 import { request } from "http";
 import  { ManageDB } from "./DB/manageDB";
 import { Users } from './DB/users';
-import { checkLogin } from './login';
+import { checkLogin } from './routes/login/login';
 import { manageRegister } from "./routes/register/resgister";
 
 export const db = new ManageDB("./back/DB/database.db");
@@ -27,7 +27,7 @@ fastify.get("/", async (request, reply) => {
 
 fastify.post("/api/register", async (request, reply) => {
   const { username, email, password } = request.body as any;
-  return { message: manageRegister(username, email, password) };
+  return { message: await manageRegister(username.tri, email, password) };
 });
 
 fastify.post("/api/login", async (request, reply) => {
@@ -59,7 +59,7 @@ const start = async () => {
   try {
 	  await fastify.listen({ port: 3000 });
 	  await db.connect();
-    // await Users.deleteUserTable(db);
+    await Users.deleteUserTable(db);
     await Users.createUserTable(db);
     console.log("🚀 Serveur lancé sur http://localhost:3000");
   } catch (err) {
