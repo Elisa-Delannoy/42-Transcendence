@@ -4,7 +4,7 @@ import { join } from "path";
 import { request } from "http";
 import  { ManageDB } from "./DB/manageDB";
 import { Users } from './DB/users';
-import { checkLogin } from './routes/login/login';
+import { manageLogin } from './routes/login/login';
 import { manageRegister } from "./routes/register/resgister";
 
 export const db = new ManageDB("./back/DB/database.db");
@@ -32,13 +32,7 @@ fastify.post("/api/register", async (request, reply) => {
 
 fastify.post("/api/login", async (request, reply) => {
   const { username, password } = request.body as any;
-  const success = await checkLogin(username, password);
-  if (success) {
-    login = username;
-    return reply.code(200).send({message: `Welcome ${username} !` });
-  } else {
-    return reply.code(401).send({message: `Error login` });
-  }
+  return { message: await manageLogin(username, password)};
 });
 
 fastify.get("/api/profil", async (request, reply) => {
