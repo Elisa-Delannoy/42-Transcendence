@@ -5,7 +5,7 @@ export function RegisterView(): string {
 }
 
 export function initRegister() {
-  const form = document.getElementById("register-form") as HTMLFormElement;
+	const form = document.getElementById("register-form") as HTMLFormElement;
   const message = document.getElementById("register-message") as HTMLElement;
 
   form.addEventListener("submit", async (e) => {

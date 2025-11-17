@@ -3,9 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <title>SPA TS + Deno</title>
-	<link rel="stylesheet" href="./public/output.css">
   </head>
-  <body class="bg-white-500 text-black-800 font-sans">
+  <body>
     <nav id="public-nav">
       <a href="/" data-link>Accueil</a>
       <a href="/login" data-link>Connexion</a>
@@ -73,7 +72,7 @@
         <button id="start-game">Start</button>
         <button id="stop-game">Stop</button>
       </div>
-      <canvas width="600" height="480"></canvas>
+      <canvas id="canvas" width="600" height="480"></canvas>
     </div>
   </template>
 

@@ -1,20 +1,7 @@
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __esm = (fn, res) => function __init() {
-  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-};
-var __commonJS = (cb, mod) => function __require() {
-  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-};
-
 // front/src/views/home.ts
 function HomeView() {
   return document.getElementById("homehtml").innerHTML;
 }
-var init_home = __esm({
-  "front/src/views/home.ts"() {
-    "use strict";
-  }
-});
 
 // front/src/auth.ts
 async function login(username, password) {
@@ -41,11 +28,6 @@ function isLoggedIn() {
 function logout() {
   localStorage.removeItem("token");
 }
-var init_auth = __esm({
-  "front/src/auth.ts"() {
-    "use strict";
-  }
-});
 
 // front/src/views/login.ts
 function LoginView() {
@@ -65,25 +47,11 @@ function initLogin() {
       alert("Identifiants incorrects");
   });
 }
-var init_login = __esm({
-  "front/src/views/login.ts"() {
-    "use strict";
-    init_auth();
-    init_router();
-  }
-});
 
 // front/src/views/dashboard.ts
 function DashboardView() {
   return document.getElementById("dashboardhtml").innerHTML;
 }
-var init_dashboard = __esm({
-  "front/src/views/dashboard.ts"() {
-    "use strict";
-    init_auth();
-    init_router();
-  }
-});
 
 // front/src/views/register.ts
 function RegisterView() {
@@ -114,55 +82,28 @@ function initRegister() {
     }
   });
 }
-var init_register = __esm({
-  "front/src/views/register.ts"() {
-    "use strict";
-  }
-});
 
 // front/src/views/p_homelogin.ts
 function HomeLoginView() {
   return document.getElementById("homeloginhtml").innerHTML;
 }
-var init_p_homelogin = __esm({
-  "front/src/views/p_homelogin.ts"() {
-    "use strict";
-  }
-});
 
 // front/src/views/p_profil.ts
 function ProfilView() {
   return document.getElementById("profilhtml").innerHTML;
 }
-var init_p_profil = __esm({
-  "front/src/views/p_profil.ts"() {
-    "use strict";
-  }
-});
 
 // front/src/views/p_game.ts
 function GameView() {
   return document.getElementById("gamehtml").innerHTML;
 }
-var init_p_game = __esm({
-  "front/src/views/p_game.ts"() {
-    "use strict";
-  }
-});
 
 // front/src/views/p_tournament.ts
 function TournamentView() {
   return document.getElementById("tournamenthtml").innerHTML;
 }
-var init_p_tournament = __esm({
-  "front/src/views/p_tournament.ts"() {
-    "use strict";
-  }
-});
 
 // front/src/router.ts
-<<<<<<< HEAD
-=======
 var routes = [
   { path: "/", view: HomeView },
   { path: "/login", view: LoginView, init: initLogin },
@@ -173,7 +114,6 @@ var routes = [
   { path: "/game", view: GameView },
   { path: "/tournament", view: TournamentView }
 ];
->>>>>>> main
 function navigateTo(url) {
   history.pushState(null, "", url);
   router();
@@ -206,7 +146,7 @@ function router() {
   updateNav();
   if (match.path == "/game") {
     const script = document.createElement("script");
-    script.src = "/game/game.js";
+    script.src = "/src/game/game.js";
     script.defer = true;
     document.body.appendChild(script);
   }
@@ -223,46 +163,8 @@ function initRouter() {
   localStorage.removeItem("token");
   router();
 }
-<<<<<<< HEAD
-var routes;
-var init_router = __esm({
-  "front/src/router.ts"() {
-    "use strict";
-    init_home();
-    init_login();
-    init_dashboard();
-    init_auth();
-    init_register();
-    init_p_homelogin();
-    init_p_profil();
-    init_p_game();
-    init_p_tournament();
-    routes = [
-      { path: "/", view: HomeView },
-      { path: "/login", view: LoginView, init: toLogin },
-      { path: "/dashboard", view: DashboardView },
-      { path: "/register", view: RegisterView, init: initRegister },
-      { path: "/homelogin", view: HomeLoginView },
-      { path: "/profil", view: ProfilView },
-      { path: "/game", view: GameView },
-      { path: "/tournament", view: TournamentView }
-    ];
-  }
-=======
 
 // front/src/main.ts
 document.addEventListener("DOMContentLoaded", () => {
   initRouter();
->>>>>>> main
 });
-
-// front/src/main.ts
-var require_main = __commonJS({
-  "front/src/main.ts"() {
-    init_router();
-    document.addEventListener("DOMContentLoaded", () => {
-      initRouter();
-    });
-  }
-});
-export default require_main();

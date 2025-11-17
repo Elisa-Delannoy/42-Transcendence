@@ -56,7 +56,7 @@ export function router() {
   if (match.path == "/game")
   {
     const script = document.createElement("script");
-    script.src = "/game/game.js";
+    script.src = "/src/game/game.js";
     script.defer = true;
     document.body.appendChild(script);
   }
