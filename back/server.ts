@@ -7,6 +7,7 @@ import { Users } from './DB/users';
 import { manageLogin } from './routes/login/login';
 import { manageRegister } from "./routes/register/resgister";
 import { GameInfo } from "./DB/gameinfo";
+import fastifyCookie from "fastify-cookie";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -21,6 +22,10 @@ fastify.register(fastifyStatic, {
   root: join(process.cwd(), "front"),
   prefix: "/",
 });
+
+fastify.register(fastifyCookie, {
+  parseOptions: {}
+})
 
 fastify.get("/", async (request, reply) => {
   return reply.sendFile("index.html");
@@ -41,7 +46,7 @@ fastify.post("/api/gameinfo/add", async (request, reply) => {
 
 fastify.post("/api/login", async (request, reply) => {
   const { username, password } = request.body as any;
-  return { message: await manageLogin(username, password)};
+  await manageLogin(username, password, reply);
 });
 
 fastify.get("/api/profil", async (request, reply) => {

@@ -34,8 +34,8 @@ export function updateNav() {
 	const button = document.getElementById("butlogout")!;
 	  button.addEventListener("click", () => {
 	  logout();
-	updateNav();
 	  navigateTo("/");
+    updateNav();
 	  });
 	}	else {
   	publicNav.style.display = "block";

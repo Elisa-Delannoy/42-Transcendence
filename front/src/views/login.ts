@@ -1,4 +1,3 @@
-;import { login } from "../auth";
 import { navigateTo, updateNav} from "../router";
 
 export function LoginView(): string {
@@ -19,8 +18,32 @@ export function initLogin()
 		updateNav()
 		navigateTo("/homelogin");
 	}
-    else
-    	alert("Identifiants incorrects");
-    });
+	else
+		alert("Identifiants incorrects");
+	});
 }
+
+export async function login(username: string, password: string): Promise<boolean> {
+
+try {
+	  const res = await fetch("/api/login", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({username, password}),
+		credentials: "include"
+	  });
+	  const result = await res.json();
+	  if (res.ok)
+	  {
+		localStorage.setItem("token", "OK");
+		return true;
+	  }
+	  else
+		return false;
+	} catch (err) {
+	  console.error("Erreur serveur:", err);
+	  return false;     
+  }
+}
+
 

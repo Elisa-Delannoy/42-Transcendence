@@ -44,7 +44,6 @@ export class Users
 		0,
 		0
 		];
-		console.log(pseudo, email, password)
 		await this._db.execute(query, parameters);
 	}
 
@@ -65,8 +64,8 @@ export class Users
 
 	async getPseudoUser(pseudo: string)
 	{
+		
 		const infos: any[] = await this._db.query(`SELECT * FROM Users WHERE pseudo = ?`, [pseudo])
-		console.log(infos);
 		if (infos.length  === 0)
 			return [];
 		else

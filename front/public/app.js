@@ -3,32 +3,6 @@ function HomeView() {
   return document.getElementById("homehtml").innerHTML;
 }
 
-// front/src/auth.ts
-async function login(username, password) {
-  try {
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
-    });
-    const result = await res.json();
-    if (res.ok) {
-      localStorage.setItem("token", "OK");
-      return true;
-    } else
-      return false;
-  } catch (err) {
-    console.error("Erreur serveur:", err);
-    return false;
-  }
-}
-function isLoggedIn() {
-  return localStorage.getItem("token") !== null;
-}
-function logout() {
-  localStorage.removeItem("token");
-}
-
 // front/src/views/login.ts
 function LoginView() {
   return document.getElementById("loginhtml").innerHTML;
@@ -47,10 +21,36 @@ function initLogin() {
       alert("Identifiants incorrects");
   });
 }
+async function login(username, password) {
+  try {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+    const result = await res.json();
+    if (res.ok) {
+      localStorage.setItem("token", "OK");
+      return true;
+    } else
+      return false;
+  } catch (err) {
+    console.error("Erreur serveur:", err);
+    return false;
+  }
+}
 
 // front/src/views/dashboard.ts
 function DashboardView() {
   return document.getElementById("dashboardhtml").innerHTML;
+}
+
+// front/src/auth.ts
+function isLoggedIn() {
+  return localStorage.getItem("token") !== null;
+}
+function logout() {
+  localStorage.removeItem("token");
 }
 
 // front/src/views/register.ts
@@ -127,8 +127,8 @@ function updateNav() {
     const button = document.getElementById("butlogout");
     button.addEventListener("click", () => {
       logout();
-      updateNav();
       navigateTo("/");
+      updateNav();
     });
   } else {
     publicNav.style.display = "block";
