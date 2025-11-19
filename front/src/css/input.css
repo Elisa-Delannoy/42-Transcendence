@@ -14,7 +14,7 @@
 
 @layer components {
 	.btn {
-		@apply bg-amber-700 text-white px-14 py-4 
+		@apply bg-amber-700 text-white text-center py-4 
 			rounded-lg hover:bg-gray-700 duration-300 cursor-pointer
 			block mx-auto mt-10;
 	}

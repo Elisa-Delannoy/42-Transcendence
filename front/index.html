@@ -1,42 +1,74 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="">
   <head>
     <meta charset="UTF-8" />
     <title>Croissandance</title>
 	<link href="public/output.css" rel="stylesheet" />
   </head>
   <body>
-    <nav id="public-nav" class="flex justify-start items-center text-amber-400">
-      <ul class="flex gap-5 underline">
-		<li><a href="/" data-link>Accueil</a></li>
-		<li><a href="/login" data-link>Connexion</a></li>
-		<li><a href="/register" data-link>register</a></li>
-	  </ul>
-    </nav>
+	<img src="src/asset/image/croissants-francais-dans-un-espace-de-copie-de-plaque.jpg" 
+		alt="bgcroissant"
+		class="absolute block dark:hidden -z-10 object-cover w-full h-screen">
+	<img src="src/asset/image/croissants-avec-cafe.jpg" 
+		alt="bgcroissant"
+		class="absolute -z-10 hidden dark:block object-cover w-full h-screen">
+	<main id="app"></main>
 
-    <nav id="private-nav">
-      <a href="/homelogin"></a>
-      <a href="/profil" data-link>Profil</a>
-      <a href="/game" data-link>Quick Game</a>
-      <a href="/dashboard" data-link>Dashboard</a>
-      <a href="/tournament" data-link>Tournament</a>
-      <button id="butlogout">Logout</button>
-    </nav>
     <script type="module" src="./public/app.js"></script>
   </body>
 
 	<template id="loginhtml">
-		   <h1>Connexion</h1>
-    	<form id="login-form">
-     		<input id="username" placeholder="username" required />
-     		<input id="password" type="password" placeholder="password" required />
-      			<button>Se connecter</button>
+		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+			<a href="/" data-link class="block dark:hidden ml-4">
+				<img src="src/asset/image/croissant white.png" alt="croissantw"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			<a href="/" data-link class="hidden dark:block ml-4">
+				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+		</header>
+    	<form id="login-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-64 h-80 mx-auto">
+     		<h1 class="mt-4 font-bold text-xl">Welcome Back</h1>
+			<div class="mt-6">
+				<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+					focus:ring-2 focus:ring-amber-500 px-2" 
+					id="username" placeholder="username" required />
+				<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+					focus:ring-2 focus:ring-amber-500 px-2" 
+					id="password" type="password" placeholder="password" required />
+			</div>
+      			<button class="mt-12 btn w-40">Log in</button>
+			<a class="mt-2 text-sm" href="/register" data-link>Create account ?</a>
     	</form>
 	</template>
 
 	<template id="homehtml">
-    <h1>Bienvenue 👋</h1>
-    <p>C'est la page d'accueil.</p>
+		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+			<a href="/" data-link class="block dark:hidden ml-4">
+				<img src="src/asset/image/croissant white.png" alt="croissantw"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			<a href="/" data-link class="hidden dark:block ml-4">
+				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+		</header>
+		<main class="flex mx-auto flex-col mt-[10vh] grow">
+			<h1 class="text-4xl md:text-7xl font-bold mx-auto 
+				bg-linear-to-r from-amber-800 via-amber-600 to-orange-500 
+				bg-clip-text text-transparent drop-shadow-lg
+				hover:bg-linear-to-r hover:from-orange-500 hover:via-amber-800 hover:to-amber-600
+				animate-pulse">
+				Croiscendence</h1>
+			<div class="mt-14">
+				<nav id="public-nav">
+					<a href="/login" data-link class="btn w-48">Log in</a>
+					<a href="/register" data-link class="btn w-48">Register</a>
+				</nav>
+			</div>
+			<p class="absolute mb-4 opacity-60 bottom-0 w-full text-center">This isn't a bakery at all — it's the Pong game from 42!</p>
+		</main>
 	</template>
 
 	<template id="dashboardhtml">

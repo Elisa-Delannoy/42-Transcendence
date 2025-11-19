@@ -1,5 +1,5 @@
 ;import { login } from "../auth";
-import { navigateTo, updateNav} from "../router";
+import { navigateTo } from "../router";
 
 export function LoginView(): string {
   return (document.getElementById("loginhtml") as HTMLFormElement).innerHTML;
@@ -15,10 +15,7 @@ export function initLogin()
 
 	const success = await login(username, password)
    	if (success)
-	{
-		updateNav()
 		navigateTo("/homelogin");
-	}
     else
     	alert("Identifiants incorrects");
     });

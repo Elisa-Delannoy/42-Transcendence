@@ -40,10 +40,9 @@ function initLogin() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
     const success = await login(username, password);
-    if (success) {
-      updateNav();
+    if (success)
       navigateTo("/homelogin");
-    } else
+    else
       alert("Identifiants incorrects");
   });
 }
@@ -146,7 +145,7 @@ function router() {
   updateNav();
   if (match.path == "/game") {
     const script = document.createElement("script");
-    script.src = "/src/game/game.js";
+    script.src = "/../game/game.js";
     script.defer = true;
     document.body.appendChild(script);
   }
