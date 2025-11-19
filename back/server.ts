@@ -7,11 +7,13 @@ import { Users } from './DB/users';
 import { manageLogin } from './routes/login/login';
 import { manageRegister } from "./routes/register/resgister";
 import { GameInfo } from "./DB/gameinfo";
+import * as GameModule from "./DB/game";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
-export const game = new GameInfo(db);
+export const gameInfo = new GameInfo(db);
 
+// const games = new Map<number, Game>();
 let login = ""
 
 const fastify = Fastify({
@@ -52,25 +54,49 @@ fastify.get("/api/profil", async (request, reply) => {
 	}
 });
 
-fastify.post("/api/game/end", async (request, reply) => {
-  const { winner_id, loser_id, winner_score, loser_score, duration_game } = request.body as any;
+fastify.post("/api/game/create", async (request, reply) => {
+	const { adversary_name } = request.body as { adversary_name: string };
 
-  await game.addGameInfo(winner_id, loser_id, winner_score, loser_score, duration_game, "Bob");
-  return { message: "Game saved!" };
-})
+	const gameId = await gameInfo.createGame(adversary_name);
+
+	const game = new GameModule.Game(gameId);
+	GameModule.games.set(gameId, game);
+
+	reply.send({ gameId });
+});
+
+fastify.post("/api/game/update", async (request, reply) => {
+	const { gameId, ballPos, paddlePos } = request.body as {
+		gameId: number;
+		ballPos: { x: number, y: number };
+		paddlePos: { player1: number, player2: number };
+	};
+
+	GameModule.updateGame(gameId, { ballPos, paddlePos });
+
+	return { ok: true };
+});
+
+fastify.post("/api/game/end", async (request, reply) => {
+	const { game_id, winner_id, loser_id, winner_score, loser_score, duration_game } = request.body as any;
+
+	await gameInfo.finishGame(game_id, winner_id, loser_id, winner_score, loser_score, duration_game);
+	return { message: "Game saved!" };
+});
 
 const start = async () => {
-  try {
-	  await fastify.listen({ port: 3000 });
-	  await db.connect();
-	// await Users.deleteUserTable(db);
-	await users.createUserTable();
-	await GameInfo.createGameInfoTable(db);
-	console.log("🚀 Serveur lancé sur http://localhost:3000");
-  } catch (err) {
-	fastify.log.error(err);
-	process.exit(1);
-  }
+	try {
+		await fastify.listen({ port: 3000 });
+		await db.connect();
+		// await Users.deleteUserTable(db);
+		await gameInfo.deleteGameInfoTable();
+		await users.createUserTable();
+		await gameInfo.createGameInfoTable();
+		console.log("🚀 Serveur lancé sur http://localhost:3000");
+	} catch (err) {
+		fastify.log.error(err);
+		process.exit(1);
+	}
 };
 
 start();

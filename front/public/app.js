@@ -98,6 +98,24 @@ function GameView() {
   return document.getElementById("gamehtml").innerHTML;
 }
 function initGame() {
+  const button = document.getElementById("start-quickgame");
+  button?.addEventListener("click", async () => {
+    const res = await fetch("/api/game/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ adversary_name: "QuickMatch" })
+    });
+    const { gameId } = await res.json();
+    navigateTo(`/quickgame/${gameId}`);
+  });
+}
+
+// front/src/views/p_quickgame.ts
+function QuickGameView(params) {
+  return document.getElementById("quickgamehtml").innerHTML;
+}
+function initQuickGame(params) {
+  console.log("Game ID =", params?.id);
   setupGame();
 }
 function setupGame() {
@@ -352,6 +370,7 @@ var routes = [
   { path: "/homelogin", view: HomeLoginView },
   { path: "/profil", view: ProfilView },
   { path: "/game", view: GameView, init: initGame },
+  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame },
   { path: "/tournament", view: TournamentView }
 ];
 function navigateTo(url) {
@@ -375,14 +394,30 @@ function updateNav() {
     privateNav.style.display = "none";
   }
 }
+function matchRoute(pathname) {
+  for (const r of routes) {
+    if (r.path.includes(":")) {
+      const base = r.path.split("/:")[0];
+      if (pathname.startsWith(base + "/")) {
+        const id = pathname.substring(base.length + 1);
+        return { route: r, params: { id } };
+      }
+    }
+    if (r.path === pathname) {
+      return { route: r, params: {} };
+    }
+  }
+  return null;
+}
 function router() {
-  const match = routes.find((r) => r.path === location.pathname);
+  const match = matchRoute(location.pathname);
   if (!match) {
     document.querySelector("#app").innerHTML = "<h1>404 Not Found</h1>";
     return;
   }
-  document.querySelector("#app").innerHTML = match.view();
-  match.init?.();
+  const { route, params } = match;
+  document.querySelector("#app").innerHTML = route.view(params);
+  route.init?.(params);
   updateNav();
 }
 function initRouter() {

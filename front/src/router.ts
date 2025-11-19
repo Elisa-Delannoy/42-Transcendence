@@ -6,6 +6,7 @@ import { RegisterView, initRegister } from "./views/register";
 import { HomeLoginView} from "./views/p_homelogin";
 import { ProfilView} from "./views/p_profil";
 import { GameView, initGame} from "./views/p_game";
+import { QuickGameView, initQuickGame} from "./views/p_quickgame";
 import { TournamentView} from "./views/p_tournament";
 
 const routes = [
@@ -16,6 +17,7 @@ const routes = [
   { path: "/homelogin", view: HomeLoginView},
   { path: "/profil", view: ProfilView},
   { path: "/game", view: GameView, init: initGame},
+  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame},
   { path: "/tournament", view: TournamentView}
 ];
 
@@ -43,15 +45,38 @@ export function updateNav() {
 	}
 }
 
+function matchRoute(pathname: string) {
+	for (const r of routes) {
+		// Route dynamique : /game/:id
+		if (r.path.includes(":")) {
+			const base = r.path.split("/:")[0]; // "/game"
+			if (pathname.startsWith(base + "/")) {
+				const id = pathname.substring(base.length + 1); // récupère "12" par ex.
+				return { route: r, params: { id } };
+			}
+		}
+
+		// Route statique
+		if (r.path === pathname) {
+			return { route: r, params: {} };
+		}
+	}
+
+	return null;
+}
+
+
 export function router() {
-  const match = routes.find((r) => r.path === location.pathname);
+//   const match = routes.find((r) => r.path === location.pathname);
+	const match = matchRoute(location.pathname);
 
   if (!match) {
 	document.querySelector("#app")!.innerHTML = "<h1>404 Not Found</h1>";
 	return;
   }
-  document.querySelector("#app")!.innerHTML = match.view();
-  match.init?.();
+  const { route, params } = match;
+  document.querySelector("#app")!.innerHTML = route.view(params);
+  route.init?.(params);
   updateNav();
 }
 

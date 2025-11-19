@@ -9,13 +9,13 @@ export class GameInfo
 		this._db = db;
 	}
 
-	static async createGameInfoTable(db: ManageDB) {
-		await db.execute(`
+	async createGameInfoTable() {
+		await this._db.execute(`
 			CREATE TABLE IF NOT EXISTS game_info (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				game_id INTEGER PRIMARY KEY AUTOINCREMENT,
 				status INTEGER NOT NULL,
-				winner_id INTEGER NOT NULL,
-				loser_id INTEGER NOT NULL,
+				winner_id INTEGER,
+				loser_id INTEGER,
 				date_game TEXT NOT NULL,
 				duration_game INTEGER DEFAULT 0,
 				adversary_name TEXT NOT NULL,
@@ -25,22 +25,45 @@ export class GameInfo
 		`);
 	};
 
-	async addGameInfo(winner_id: number, loser_id: number, winner_score: number, loser_score: number, duration_game: number, adversary_name: string): Promise<void>
+	async createGame(adversary_name: string): Promise<number>
 	{
 		const query = `
 			INSERT INTO game_info (status, winner_id, loser_id,
 			 date_game, duration_game, adversary_name, winner_score, loser_score)
-			VALUES (?,?,?,?,?,?,?,?)
+			VALUES (?,NULL,NULL,?,0,?,0,0)
 			`;
+		const parameters = [
+			GameInfoStatus.ongoing,
+			new Date(),
+			adversary_name
+		];
+
+		const lastId = await this._db.runAndReturnId(query, parameters);
+		return lastId;
+	}
+
+	async finishGame(id: number, winner_id: number, loser_id: number, winner_score: number,
+		loser_score: number, duration_game: number): Promise<void>
+	{
+		const query = `
+			UPDATE game_info
+			SET status = ?,
+			winner_id = ?,
+			loser_id = ?,
+			winner_score = ?,
+			loser_score = ?,
+			duration_game = ?
+			WHERE game_id = ?
+		`;
+
 		const parameters = [
 			GameInfoStatus.finished,
 			winner_id,
 			loser_id,
-			new Date(),
-			duration_game,
-			adversary_name,
 			winner_score,
-			loser_score
+			loser_score,
+			duration_game,
+			id
 		];
 
 		await this._db.execute(query, parameters);
@@ -55,7 +78,7 @@ export class GameInfo
 
 enum GameInfoStatus
 {
-	playing,
+	ongoing,
 	finished,
 	error
 }
