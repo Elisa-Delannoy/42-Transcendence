@@ -1,101 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>BUSY BAR - Landing page</title>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Croissandance</title>
 	<link href="public/output.css" rel="stylesheet" />
-</head>
-<body>
-	<!-- VIDEO -->
-	<video src="src/asset/image/welcome.mp4" autoplay loop muted
-			class="absolute -z-10 object-cover w-full h-screen"></video>
-	<!-- MAIN -->
-	<main class="container mx-auto min-h-screen flex flex-col">
-		<!-- HEADER -->
-		<header class="flex items-center justify-between text-gray-500 pt-2">
-			<ul class="flex gap-5">
-				<li>Busy Bar</li>
-				<li><a href="#" class="underline">Boutique</a></li>
-				<li><a href="#" class="underline">Telechargement</a></li>
-				<li><a href="#" class="underline">Blog</a></li>
-			</ul>
-			<a href="#">
-				<img src="src/asset/image/badge.svg"
-				 alt="badge" 
-				 class="w-52 grayscale-100 hover:grayscale-0 duration-200 hover:-translate-y-1"/>
-			 </a>
-		</header>
-		<!-- CENTRE -->
-		<section class="mt-[40vh] flex mx-auto flex-col max-w-[550px] text-xl grow">
-			<p>
-				<span class="font-bold">Busy Bar</span> est un dispositif multi-outil de productivite avec un ecran LED pixelise.
-				Minuteur de concentration avec fonction de blocage des distractions sur votre telephone et PC.
-				Entierement personnalisable, open-source et pret pour la maison connectee.
-			</p>
-			<button class="bg-orange-500 text-white px-14 py-4 
-			rounded-lg hover:bg-black duration-300 cursor-pointer
-			block mx-auto mt-10">Acheter</button>
-		</section>
-		<!-- FONCTIONNALITE -->
-		<section class="grid grid-cols-4 gap-5 pb-4 opacity-80">
-			<!-- 1 -->
-			<div class="flex items-start gap-3">
-				<img src="src/asset/image/feature-one.svg" 
-					alt="feature-one"
-					class="w-14">
-				<div>
-					<h3 class="text-xl mb-1.5">Outil de Productivite</h3>
-					<div class="text-sm">
-						Blocage des distractions, message BUSY
-						personnalise, minuteur de concentration,
-						synchronisation multiplateforme
-					</div>
-				</div>
-			</div>
-			<!-- 2 -->
-			<div class="flex items-start gap-3">
-				<img src="src/asset/image/feature-two.svg" 
-					alt="feature-two"
-					class="w-14">
-				<div>
-					<h3 class="text-xl mb-1.5">Application et integration</h3>
-					<div class="text-sm">
-						Blocage des distractions, message BUSY
-						personnalise, minuteur de concentration,
-						synchronisation multiplateforme
-					</div>
-				</div>
-			</div>
-			<!-- 3 -->
-			<div class="flex items-start gap-3">
-				<img src="src/asset/image/feature-three.svg"
-					alt="feature-three"
-					class="w-14">
-				<div>
-					<h3 class="text-xl mb-1.5">Support maison connectee</h3>
-					<div class="text-sm">
-						Blocage des distractions, message BUSY
-						personnalise, minuteur de concentration,
-						synchronisation multiplateforme
-					</div>
-				</div>
-			</div>
-			<!-- 4 -->
-			<div class="flex items-start gap-3">
-				<img src="src/asset/image/feature-four.svg"
-					alt="feature-four"
-					class="w-14">
-				<div>
-					<h3 class="text-xl mb-1.5">Pour les developpeurs</h3>
-					<div class="text-sm">
-						Blocage des distractions, message BUSY
-						personnalise, minuteur de concentration,
-						synchronisation multiplateforme
-					</div>
-				</div>
-			</div>
-		</section>
-	</main>
-</body>
+  </head>
+  <body>
+    <nav id="public-nav" class="flex justify-start items-center text-amber-400">
+      <ul class="flex gap-5 underline">
+		<li><a href="/" data-link>Accueil</a></li>
+		<li><a href="/login" data-link>Connexion</a></li>
+		<li><a href="/register" data-link>register</a></li>
+	  </ul>
+    </nav>
+
+    <nav id="private-nav">
+      <a href="/homelogin"></a>
+      <a href="/profil" data-link>Profil</a>
+      <a href="/game" data-link>Quick Game</a>
+      <a href="/dashboard" data-link>Dashboard</a>
+      <a href="/tournament" data-link>Tournament</a>
+      <button id="butlogout">Logout</button>
+    </nav>
+    <script type="module" src="./public/app.js"></script>
+  </body>
+
+	<template id="loginhtml">
+		   <h1>Connexion</h1>
+    	<form id="login-form">
+     		<input id="username" placeholder="username" required />
+     		<input id="password" type="password" placeholder="password" required />
+      			<button>Se connecter</button>
+    	</form>
+	</template>
+
+	<template id="homehtml">
+    <h1>Bienvenue 👋</h1>
+    <p>C'est la page d'accueil.</p>
+	</template>
+
+	<template id="dashboardhtml">
+    <h1>Dashboard 🎮</h1>
+	</template>
+
+  <template id="registerhtml">
+     <div class="register-container">
+      <h1>Register</h1>
+      <form id="register-form">
+        <input type="text" name="username" placeholder="Username" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <button type="submit">Register</button>
+      </form>
+      <p id="register-message"></p>
+    </div>
+  </template>
+
+  <template id="homeloginhtml">
+    <h1>Loged Homepage👋</h1>
+  </template>
+
+  <template id="profilhtml">
+    <h1>Page profil</h1>
+  </template>
+
+  <template id="gamehtml">
+    <h1>Page game</h1>
+    <div class="game-container">
+      <div class="game-buttons">
+        <button id="start-game">Start</button>
+        <button id="stop-game">Stop</button>
+      </div>
+      <canvas id="canvas" width="600" height="480"></canvas>
+    </div>
+  </template>
+
+  <template id="tournamenthtml">
+    <h1>Page tournament</h1>
+  </template>
+
 </html>

@@ -1,1 +1,25 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Ponnala&display=swap');
+
+@theme {
+	--font-ponnala: "Ponnala", sans-serif;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+	a {
+	}
+}
+
+@layer components {
+	.btn {
+		@apply bg-amber-700 text-white px-14 py-4 
+			rounded-lg hover:bg-gray-700 duration-300 cursor-pointer
+			block mx-auto mt-10;
+	}
+}
+
+@utility flex-centered {
+	@apply flex justify-center items-center;
+}

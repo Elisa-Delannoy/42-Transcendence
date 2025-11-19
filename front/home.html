@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="public/output.css" rel="stylesheet" />
+	<title>Document</title>
+</head>
+<body>
+	<img src="src/asset/image/croissants-francais-dans-un-espace-de-copie-de-plaque.jpg" 
+		alt="bgcroissant"
+		class="absolute block dark:hidden -z-10 object-cover w-full h-screen">
+	<img src="src/asset/image/croissants-avec-cafe.jpg" 
+		alt="bgcroissant"
+		class="absolute -z-10 hidden dark:block object-cover w-full h-screen">
+	<main class="container mx-auto min-h-screen flex flex-col">
+		<header class="flex items-center pt-2">
+			<a href="/" data-link class="block dark:hidden">
+				<img src="src/asset/image/croissant white.png" alt="croissantw"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			<a href="/" data-link class="hidden dark:block">
+				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+		</header>
+		<section class="flex mx-auto flex-col mt-[10vh] grow">
+			<h1 class="text-7xl font-bold mx-auto 
+				bg-linear-to-r from-amber-800 via-amber-600 to-orange-500 
+				bg-clip-text text-transparent drop-shadow-lg
+				hover:bg-linear-to-r hover:from-orange-500 hover:via-amber-800 hover:to-amber-600
+				animate-pulse">
+				Croiscendence</h1>
+			<div class="mt-14">
+				<a href="/login">
+					<button class="btn w-48">Connexion</button>
+				</a>
+				<a href="/register">
+					<button class="btn w-48">Register</button>
+				</a>
+			</div>
+		</section>
+	</main>
+	
+</body>
+</html>
