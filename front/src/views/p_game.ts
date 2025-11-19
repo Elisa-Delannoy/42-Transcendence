@@ -311,7 +311,6 @@ function setupGame() {
 	/**========================================================================
 	 *!                                  EVENTS
 	 *========================================================================**/
-	
 	document.addEventListener("keydown", (e) => {
 		if (e.key === "w" || e.key === "W") game.player1.movingUp = true;
 		if (e.key === "s" || e.key === "S") game.player1.movingDown = true;
