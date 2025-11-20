@@ -111,7 +111,7 @@
 			</a>
 		</div>
 		<div class="mr-4">
-			<a href="/logout" data-link class="btn justify-end mb-4 w-48">Logout</a>
+			<a href="/logout" data-link class="btn justify-end w-48">Logout</a>
 		</div>
 	</header>
 	<div>
@@ -161,20 +161,32 @@
 		</a>
 	</header>
     <h1>Page game</h1>
-    <div class="game-buttons">
-      <button id="start-quickgame">Start quick game</button>
-      <button id="start-tournament">Start tournament</button>
+    <div class="game-buttons flex justify-center">
+      <button class="btn w-32" id="start-quickgame">Start quick game</button>
+      <button class="btn w-32" id="start-tournament">Start tournament</button>
     </div>
   </template>
 
   <template id="quickgamehtml">
-    <h1>Quick game</h1>
+    <header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<a href="/homelogin" data-link class="block dark:hidden ml-4">
+			<img src="src/asset/image/croissant white.png" alt="croissantw"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+		<a href="/homelogin" data-link class="hidden dark:block ml-4">
+			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+	</header>
+	<h1>Quick game</h1>
     <div class="game-container">
-      <div class="game-buttons">
-        <button id="start-game">Start</button>
-        <button id="stop-game">Stop</button>
+      <div class="game-buttons flex justify-center">
+        <button class="btn w-32" id="start-game">Start</button>
+        <button class="btn w-32" id="stop-game">Stop</button>
       </div>
-      <canvas id="canvas" width="600" height="480"></canvas>
+	  <div class="flex justify-center mx-auto w-full">
+		  <canvas id="canvas" width="600" height="480"></canvas>
+	  </div>
     </div>
   </template>
 
