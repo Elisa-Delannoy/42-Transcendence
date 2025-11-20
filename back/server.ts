@@ -44,11 +44,12 @@ fastify.post("/api/login", async (request, reply) => {
   return { message: await manageLogin(username, password)};
 });
 
-fastify.get("/api/profil", async (request, reply) => {
-	request.body 
+fastify.post("/api/profil", async (request, reply) => {
 	try {
-    const profil = await users.getPseudoUser(login)
-    if (!profil || profil === 0)
+    const { id } = request.body as any;
+    const profil = await users.getUserbyId(id);
+
+    if (!profil)
     {
       return reply.code(404).send({message: "User not found"})
     }

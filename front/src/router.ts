@@ -4,7 +4,7 @@ import { DashboardView } from "./views/dashboard";
 import { isLoggedIn, logout } from "./auth";
 import { RegisterView, initRegister } from "./views/register";
 import { HomeLoginView} from "./views/p_homelogin";
-import { ProfilView} from "./views/p_profil";
+import { ProfilView, initProfil} from "./views/p_profil";
 import { GameView} from "./views/p_game";
 import { TournamentView} from "./views/p_tournament";
 
@@ -14,7 +14,7 @@ const routes = [
   { path: "/dashboard", view: DashboardView },
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/homelogin", view: HomeLoginView},
-  { path: "/profil", view: ProfilView},
+  { path: "/profil", view: ProfilView, init: initProfil},
   { path: "/game", view: GameView },
   { path: "/tournament", view: TournamentView}
 ];

@@ -72,6 +72,15 @@ export class Users
 		else
 			return infos[0];
 	}
+	async getUserbyId(id: string)
+	{
+		const infos: any[] = await this._db.query(`SELECT * FROM Users WHERE user_id = ?`, [id])
+		console.log(infos);
+		if (infos.length  === 0)
+			return [];
+		else
+			return infos[0];
+	}
 }
 
 enum UserStatus
