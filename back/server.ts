@@ -1,12 +1,14 @@
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
 import { join } from "path";
-import { request } from "http";
+
 import  { ManageDB } from "./DB/manageDB";
 import { Users } from './DB/users';
+import { GameInfo } from "./DB/gameinfo";
+import { initDB } from "./DB/initDB";
+
 import { manageLogin } from './routes/login/login';
 import { manageRegister } from "./routes/register/resgister";
-import { GameInfo } from "./DB/gameinfo";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -23,6 +25,7 @@ fastify.register(fastifyStatic, {
   prefix: "/",
 });
 
+// ===== Routes =====
 fastify.get("/", async (request, reply) => {
   return reply.sendFile("index.html");
 });
@@ -47,7 +50,7 @@ fastify.get("/api/profil", async (request, reply) => {
 	}
 	return profil;
 	} catch (error) {
-	fastify.log.error(error)
+	fastify.log.error(errorisLoggedIn())
 	return reply.code(500).send({message: "Internal Server Error"});
 	}
 });
@@ -59,13 +62,14 @@ fastify.post("/api/game/end", async (request, reply) => {
   return { message: "Game saved!" };
 })
 
+// ===== Server Start =====
 const start = async () => {
   try {
-	  await fastify.listen({ port: 3000 });
-	  await db.connect();
-	// await Users.deleteUserTable(db);
-	await users.createUserTable();
-	await GameInfo.createGameInfoTable(db);
+	await db.connect();
+	await initDB(db);  // create all tables first
+
+	await fastify.listen({ port: 3000 });
+
 	console.log("🚀 Serveur lancé sur http://localhost:3000");
   } catch (err) {
 	fastify.log.error(err);

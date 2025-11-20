@@ -1,4 +1,5 @@
 import { ManageDB } from "./manageDB";
+import { User } from "../models/user.model";
 
 export class Users
 {
@@ -9,43 +10,13 @@ export class Users
 		this._db = db;
 	}
 
-	async createUserTable()
-	{
-		await this._db.execute(`
-			CREATE TABLE IF NOT EXISTS Users (
-				user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                pseudo TEXT UNIQUE NOT NULL,
-                email TEXT NOT NULL,
-                password TEXT NOT NULL,
-				avatar TEXT NOT NULL,
-                status INTEGER NOT NULL,
-                creation_date TEXT NOT NULL,
-				modification_date TEXT NOT NULL,
-                money INTEGER DEFAULT 0,
-                elo INTEGER DEFAULT 0
-			)
-		`);
-	}
-
-	async addUser(pseudo:string, email: string, password: string):Promise<void>
+	async addUser(user: User):Promise<void>
 	{
 		const query = `
-			INSERT INTO Users (pseudo, email, password, avatar, status, creation_date, modification_date, money, elo)
-			VALUES (?,?,?,?,?,?,?,?,?)
+			INSERT INTO Users (pseudo, email, password)
+			VALUES (?,?,?)
 		`;
-		const parameters = [
-		pseudo,
-		email,
-		password,
-		"default path",
-		UserStatus.offline,
-		new Date(),
-		new Date(),
-		0,
-		0
-		];
-		console.log(pseudo, email, password)
-		await this._db.execute(query, parameters);
+		await this._db.execute(query, [user.pseudo, user.email, user.password]);
 	}
 
 	async deleteUserTable()
@@ -72,11 +43,4 @@ export class Users
 		else
 			return infos[0];
 	}
-}
-
-enum UserStatus
-{
-	offline, 
-	online,
-	playing
 }

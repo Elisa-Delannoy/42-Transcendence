@@ -9,22 +9,6 @@ export class GameInfo
 		this._db = db;
 	}
 
-	static async createGameInfoTable(db: ManageDB) {
-		await db.execute(`
-			CREATE TABLE IF NOT EXISTS game_info (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				status INTEGER NOT NULL,
-				winner_id INTEGER NOT NULL,
-				loser_id INTEGER NOT NULL,
-				date_game TEXT NOT NULL,
-				duration_game INTEGER DEFAULT 0,
-				adversary_name TEXT NOT NULL,
-				winner_score INTEGER,
-				loser_score INTEGER
-			)
-		`);
-	};
-
 	async addGameInfo(winner_id: number, loser_id: number, winner_score: number, loser_score: number, duration_game: number, adversary_name: string): Promise<void>
 	{
 		const query = `

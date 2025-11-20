@@ -1,5 +1,7 @@
 import { db } from "../../server";
 import { users } from '../../server';
+import { User, UserStatus } from "../../models/user.model";
+//import bcrypt from "bcrypt";
 
 export async function manageRegister(pseudo: string, email: string, password: string): Promise<string> {
 	try
@@ -7,13 +9,22 @@ export async function manageRegister(pseudo: string, email: string, password: st
 		await checkPseudo(pseudo);
 		await checkPasswordd(password);
 		await checkEmail(email);
+
+		//const hashedPassword = await bcrypt.hash(password, 12);
+		const newUser: User = {
+			pseudo,
+			email,
+			password,
+			//password: hashedPassword,
+			// id for AUTOINCREMENT
+		};
+		await users.addUser(newUser);
+		return "User have been register successfully";
 	}
 	catch (err)
 	{
 		return (err as Error).message;
 	}
-	users.addUser(pseudo, email, password);
-	return "User have been register successfully";
 }
 
 async function checkPseudo(pseudo: string)

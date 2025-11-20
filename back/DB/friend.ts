@@ -20,19 +20,6 @@ export class Friend
 		this.friendship_date = new Date();
 	}
 
-	static async createFriendTable(db: ManageDB)
-	{
-		await db.execute(`
-			CREATE TABLE IF NOT EXISTS Friendship (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id1 INTEGER NOT NULL, 
-				user_id2 INTEGER NOT NULL,
-                friendship_date TEXT NOT NULL,
-                status INTEGER NOT NULL
-			)
-		`);
-	}
-
 	async addFriendship():Promise<void>
 	{
 		const query = `
