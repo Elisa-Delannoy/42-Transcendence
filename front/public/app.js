@@ -74,49 +74,6 @@ function initRegister() {
   });
 }
 
-// front/src/views/p_homelogin.ts
-function HomeLoginView() {
-  return document.getElementById("homeloginhtml").innerHTML;
-}
-async function initHomePage() {
-  try {
-    const res = await genericFetch("/api/private/homelogin", {
-      method: "POST",
-      credentials: "include"
-    });
-    const result = await res.json();
-    document.querySelector("#pseudo").textContent = result.pseudo;
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-// front/src/views/p_profil.ts
-function ProfilView() {
-  return document.getElementById("profilhtml").innerHTML;
-}
-async function initProfil() {
-  const user_id = 1;
-  const res = await fetch("/api/profil", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: user_id })
-  });
-  if (!res.ok) {
-    console.error("Cannot load profile");
-    return;
-  }
-  const profil = await res.json();
-  document.getElementById("profil-id").textContent = profil.user_id;
-  document.getElementById("profil-pseudo").textContent = profil.pseudo;
-  document.getElementById("profil-email").textContent = profil.email;
-  document.getElementById("profil-status").textContent = profil.status;
-  document.getElementById("profil-creation").textContent = profil.creation_date;
-  document.getElementById("profil-modification").textContent = profil.modification_date;
-  document.getElementById("profil-money").textContent = profil.money;
-  document.getElementById("profil-elo").textContent = profil.elo;
-}
-
 // front/src/views/p_game.ts
 function GameView() {
   return document.getElementById("gamehtml").innerHTML;
@@ -124,7 +81,7 @@ function GameView() {
 function initGame() {
   const button = document.getElementById("start-quickgame");
   button?.addEventListener("click", async () => {
-    const res = await fetch("/api/game/create", {
+    const res = await fetch("/api/private/game/create", {
       method: "POST"
     });
     const { gameId } = await res.json();
@@ -360,7 +317,7 @@ function setupGame(gameID) {
     stop();
   });
   async function sendGameResult(winnerId2, loserId2, winnerScore, loserScore, duration, id) {
-    const res = await fetch("/api/game/end", {
+    const res = await fetch("/api/private/game/end", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -379,6 +336,49 @@ function setupGame(gameID) {
       console.error("Error parsing JSON : ", err);
     }
   }
+}
+
+// front/src/views/p_homelogin.ts
+function HomeLoginView() {
+  return document.getElementById("homeloginhtml").innerHTML;
+}
+async function initHomePage() {
+  try {
+    const res = await genericFetch("/api/private/homelogin", {
+      method: "POST",
+      credentials: "include"
+    });
+    const result = await res.json();
+    document.querySelector("#pseudo").textContent = result.pseudo;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// front/src/views/p_profil.ts
+function ProfilView() {
+  return document.getElementById("profilhtml").innerHTML;
+}
+async function initProfil() {
+  const user_id = 1;
+  const res = await fetch("/api/private/profil", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: user_id })
+  });
+  if (!res.ok) {
+    console.error("Cannot load profile");
+    return;
+  }
+  const profil = await res.json();
+  document.getElementById("profil-id").textContent = profil.user_id;
+  document.getElementById("profil-pseudo").textContent = profil.pseudo;
+  document.getElementById("profil-email").textContent = profil.email;
+  document.getElementById("profil-status").textContent = profil.status;
+  document.getElementById("profil-creation").textContent = profil.creation_date;
+  document.getElementById("profil-modification").textContent = profil.modification_date;
+  document.getElementById("profil-money").textContent = profil.money;
+  document.getElementById("profil-elo").textContent = profil.elo;
 }
 
 // front/src/views/p_tournament.ts
@@ -402,16 +402,10 @@ var routes = [
   { path: "/logout", init: initLogout },
   { path: "/dashboard", view: DashboardView },
   { path: "/register", view: RegisterView, init: initRegister },
-<<<<<<< HEAD
   { path: "/homelogin", view: HomeLoginView, init: initHomePage },
-  { path: "/profil", view: ProfilView },
   { path: "/game", view: GameView, init: initGame },
   { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame },
-=======
-  { path: "/homelogin", view: HomeLoginView },
   { path: "/profil", view: ProfilView, init: initProfil },
-  { path: "/game", view: GameView },
->>>>>>> tat-11-20
   { path: "/tournament", view: TournamentView }
 ];
 function navigateTo(url) {

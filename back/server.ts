@@ -127,7 +127,7 @@ const start = async () => {
 	try {
 		await fastify.listen({ port: 3000 });
 		await db.connect();
-		// await Users.deleteUserTable(db);
+		// await users.deleteUserTable();
 		await gameInfo.deleteGameInfoTable();
 		await users.createUserTable();
 		await gameInfo.createGameInfoTable();

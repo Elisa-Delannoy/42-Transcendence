@@ -53,8 +53,8 @@ export class Users
 		password,
 		"default path",
 		UserStatus.offline,
-		new Date(),
-		new Date(),
+		new Date().toISOString().replace("T", " ").split(".")[0],
+		new Date().toISOString().replace("T", " ").split(".")[0],
 		0,
 		0
 		];

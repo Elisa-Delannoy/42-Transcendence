@@ -6,7 +6,7 @@ export async function initProfil() {
   // const user_id = localStorage.getItem("user_id");
   const user_id = 1;
 
-  const res = await fetch("/api/profil", {
+  const res = await fetch("/api/private/profil", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id: user_id })
