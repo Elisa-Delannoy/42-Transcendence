@@ -80,6 +80,23 @@ export class ManageDB
 		});
 	}
 
+	runAndReturnId(query: string, parameters: any[] = []): Promise<number>
+	{
+		return new Promise((resolve, reject) =>
+		{
+			if (!this._db)
+				return reject(new Error("Database not connected"));
+
+			this._db.run(query, parameters, function (error)
+			{
+				if (error)
+					reject(error);
+				else
+					resolve(this.lastID);
+			});
+		});
+	}
+
 	/*TEST POUR DELETE UNE TABLE DE FACON GENERIQUE - A REVOIR ET SI OK SUPP DANS USER*/
 
 	// async deleteUserTable(table: string, db: ManageDB) {

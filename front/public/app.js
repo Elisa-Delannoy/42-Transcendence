@@ -101,9 +101,27 @@ function GameView() {
   return document.getElementById("gamehtml").innerHTML;
 }
 function initGame() {
-  setupGame();
+  const button = document.getElementById("start-quickgame");
+  button?.addEventListener("click", async () => {
+    const res = await fetch("/api/game/create", {
+      method: "POST"
+    });
+    const { gameId } = await res.json();
+    navigateTo(`/quickgame/${gameId}`);
+  });
 }
-function setupGame() {
+
+// front/src/views/p_quickgame.ts
+function QuickGameView(params) {
+  return document.getElementById("quickgamehtml").innerHTML;
+}
+function initQuickGame(params) {
+  console.log("Game ID =", params?.id);
+  const gameID = params?.id;
+  console.log("gameID quickgame : ", gameID, " type = ", typeof gameID);
+  setupGame(gameID);
+}
+function setupGame(gameID) {
   let isPlaying;
   const canvas = document.querySelector("canvas");
   const ctx = canvas.getContext("2d");
@@ -275,12 +293,12 @@ function setupGame() {
       winner = "Player 1 Wins!";
       winnerId = 1;
       loserId = 2;
-      sendGameResult(winnerId, loserId, game.player1.score, game.player2.score, elapsedTime);
+      sendGameResult(winnerId, loserId, game.player1.score, game.player2.score, elapsedTime, gameID);
     } else {
       winner = "Player 2 Wins!";
       winnerId = 2;
       loserId = 1;
-      sendGameResult(winnerId, loserId, game.player2.score, game.player1.score, elapsedTime);
+      sendGameResult(winnerId, loserId, game.player2.score, game.player1.score, elapsedTime, gameID);
     }
     ctx.fillText(winner, canvasWidth / 2, canvasHeight / 2);
   }
@@ -320,7 +338,7 @@ function setupGame() {
     isPlaying = false;
     stop();
   });
-  async function sendGameResult(winnerId2, loserId2, winnerScore, loserScore, duration) {
+  async function sendGameResult(winnerId2, loserId2, winnerScore, loserScore, duration, id) {
     const res = await fetch("/api/game/end", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -329,7 +347,8 @@ function setupGame() {
         loser_id: loserId2,
         winner_score: winnerScore,
         loser_score: loserScore,
-        duration_game: duration
+        duration_game: duration,
+        id
       })
     });
     try {
@@ -365,6 +384,7 @@ var routes = [
   { path: "/homelogin", view: HomeLoginView, init: initHomePage },
   { path: "/profil", view: ProfilView },
   { path: "/game", view: GameView, init: initGame },
+  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame },
   { path: "/tournament", view: TournamentView }
 ];
 function navigateTo(url) {
@@ -385,13 +405,33 @@ async function genericFetch(url, options = {}) {
   }
   return res;
 }
+function matchRoute(pathname) {
+  for (const r of routes) {
+    if (r.path.includes(":")) {
+      const base = r.path.split("/:")[0];
+      if (pathname.startsWith(base + "/")) {
+        const id = pathname.substring(base.length + 1);
+        return { route: r, params: { id } };
+      }
+    }
+    if (r.path === pathname) {
+      return { route: r, params: {} };
+    }
+  }
+  return null;
+}
 function router() {
+<<<<<<< HEAD
   const match = routes.find((r) => r.path === location.pathname);
   console.log(match);
+=======
+  const match = matchRoute(location.pathname);
+>>>>>>> phil
   if (!match) {
     document.querySelector("#app").innerHTML = "<h1>404 Not Found</h1>";
     return;
   }
+<<<<<<< HEAD
   if (match.view)
     document.querySelector("#app").innerHTML = match.view();
   match.init?.();
@@ -401,6 +441,12 @@ function router() {
     script.defer = true;
     document.body.appendChild(script);
   }
+=======
+  const { route, params } = match;
+  document.querySelector("#app").innerHTML = route.view(params);
+  route.init?.(params);
+  updateNav();
+>>>>>>> phil
 }
 function initRouter() {
   document.body.addEventListener("click", (e) => {

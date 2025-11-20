@@ -9,36 +9,36 @@ export class GameInfo
 		this._db = db;
 	}
 
-	static async createGameInfoTable(db: ManageDB) {
-		await db.execute(`
+	async createGameInfoTable() {
+		await this._db.execute(`
 			CREATE TABLE IF NOT EXISTS game_info (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				game_id INTEGER PRIMARY KEY AUTOINCREMENT,
 				status INTEGER NOT NULL,
-				winner_id INTEGER NOT NULL,
-				loser_id INTEGER NOT NULL,
-				date_game TEXT NOT NULL,
+				winner_id INTEGER,
+				loser_id INTEGER,
+				date_game TEXT,
 				duration_game INTEGER DEFAULT 0,
-				adversary_name TEXT NOT NULL,
 				winner_score INTEGER,
 				loser_score INTEGER
 			)
 		`);
 	};
 
-	async addGameInfo(winner_id: number, loser_id: number, winner_score: number, loser_score: number, duration_game: number, adversary_name: string): Promise<void>
+	async finishGame(winner_id: number, loser_id: number, winner_score: number,
+		loser_score: number, duration_game: number, gameDate: string): Promise<void>
 	{
 		const query = `
 			INSERT INTO game_info (status, winner_id, loser_id,
-			 date_game, duration_game, adversary_name, winner_score, loser_score)
-			VALUES (?,?,?,?,?,?,?,?)
+			 date_game, duration_game, winner_score, loser_score)
+			VALUES (?,?,?,?,?,?,?)
 			`;
+
 		const parameters = [
 			GameInfoStatus.finished,
 			winner_id,
 			loser_id,
-			new Date(),
+			gameDate,
 			duration_game,
-			adversary_name,
 			winner_score,
 			loser_score
 		];
@@ -55,7 +55,7 @@ export class GameInfo
 
 enum GameInfoStatus
 {
-	playing,
+	ongoing,
 	finished,
 	error
 }

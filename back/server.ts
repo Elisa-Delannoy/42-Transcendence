@@ -9,12 +9,13 @@ import { GameInfo } from "./DB/gameinfo";
 import fastifyCookie from "fastify-cookie";
 import { tokenOK } from "./middleware/jwt";
 import { CookieSerializeOptions } from "fastify-cookie";
-
+import * as GameModule from "./DB/game";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
-export const game = new GameInfo(db);
+export const gameInfo = new GameInfo(db);
 
+// const games = new Map<number, Game>();
 let login = ""
 
 const fastify = Fastify({
@@ -80,12 +81,36 @@ fastify.get("/api/private/profil", async (request, reply) => {
 	}
 });
 
-fastify.post("/api/private/game/end", async (request, reply) => {
-  const { winner_id, loser_id, winner_score, loser_score, duration_game } = request.body as any;
+fastify.post("/api/private/game/create", async (request, reply) => {
+	const gameId = GameModule.games.size + 1;
+	console.log("gameId : ", gameId, " type = ", typeof gameId);
 
-  await game.addGameInfo(winner_id, loser_id, winner_score, loser_score, duration_game, "Bob");
-  return { message: "Game saved!" };
-})
+	const game = new GameModule.Game(gameId);
+	GameModule.games.set(gameId, game);
+
+	reply.send({ gameId });
+});
+
+fastify.post("/api/private/game/update", async (request, reply) => {
+	const { gameId, ballPos, paddlePos } = request.body as {
+		gameId: number;
+		ballPos: { x: number, y: number };
+		paddlePos: { player1: number, player2: number };
+	};
+
+	GameModule.updateGame(gameId, { ballPos, paddlePos });
+
+	return { ok: true };
+});
+
+fastify.post("/api/private/game/end", async (request, reply) => {
+	const { winner_id, loser_id, winner_score, loser_score, duration_game, id } = request.body as any;
+
+	const gameid = Number(id);
+	const gameDate: any = GameModule.getDate(gameid);
+	await gameInfo.finishGame(winner_id, loser_id, winner_score, loser_score, duration_game, gameDate);
+	return { message: "Game saved!" };
+});
 
 fastify.get("/api/logout", async (request, reply) => {
 	const options: CookieSerializeOptions = {
@@ -99,17 +124,18 @@ fastify.get("/api/logout", async (request, reply) => {
 })
 
 const start = async () => {
-  try {
-	  await fastify.listen({ port: 3000 });
-	  await db.connect();
-	// await Users.deleteUserTable(db);
-	await users.createUserTable();
-	await GameInfo.createGameInfoTable(db);
-	console.log("🚀 Serveur lancé sur http://localhost:3000");
-  } catch (err) {
-	fastify.log.error(err);
-	process.exit(1);
-  }
+	try {
+		await fastify.listen({ port: 3000 });
+		await db.connect();
+		// await Users.deleteUserTable(db);
+		await gameInfo.deleteGameInfoTable();
+		await users.createUserTable();
+		await gameInfo.createGameInfoTable();
+		console.log("🚀 Serveur lancé sur http://localhost:3000");
+	} catch (err) {
+		fastify.log.error(err);
+		process.exit(1);
+	}
 };
 
 start();

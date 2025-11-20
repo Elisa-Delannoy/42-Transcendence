@@ -5,6 +5,7 @@ import { RegisterView, initRegister } from "./views/register";
 import { HomeLoginView, initHomePage} from "./views/p_homelogin";
 import { ProfilView} from "./views/p_profil";
 import { GameView, initGame} from "./views/p_game";
+import { QuickGameView, initQuickGame} from "./views/p_quickgame";
 import { TournamentView} from "./views/p_tournament";
 import { initLogout } from "./views/logout";
 
@@ -17,6 +18,7 @@ const routes = [
   { path: "/homelogin", view: HomeLoginView, init: initHomePage},
   { path: "/profil", view: ProfilView},
   { path: "/game", view: GameView, init: initGame},
+  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame},
   { path: "/tournament", view: TournamentView}
 ];
 
@@ -40,23 +42,33 @@ export async function genericFetch(url: string, options: RequestInit = {}) {
 	return res;
 }
 
+function matchRoute(pathname: string) {
+	for (const r of routes)
+	{
+		if (r.path.includes(":")) {
+			const base = r.path.split("/:")[0];
+			if (pathname.startsWith(base + "/")) {
+				const id = pathname.substring(base.length + 1);
+				return { route: r, params: { id } };
+			}
+		}
+		if (r.path === pathname) {
+			return { route: r, params: {} };
+		}
+	}
+	return null;
+}
+
 export function router() {
-  const match = routes.find((r) => r.path === location.pathname);
-	console.log(match);
+	const match = matchRoute(location.pathname);
   if (!match) {
 	document.querySelector("#app")!.innerHTML = "<h1>404 Not Found</h1>";
 	return;
   }
-  if (match.view)
-  	document.querySelector("#app")!.innerHTML = match.view();
-  match.init?.();
-  if (match.path == "/game")
-  {
-    const script = document.createElement("script");
-    script.src = "/src/game/game.js";
-    script.defer = true;
-    document.body.appendChild(script);
-  }
+  const { route, params } = match;
+  if (route.view)
+  	document.querySelector("#app")!.innerHTML = route.view(params);
+  route.init?.(params);
 }
 
 export function initRouter() {
