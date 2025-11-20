@@ -1,10 +1,7 @@
-import { db } from "../../server";
-import { users } from '../../server';
-import { User, UserStatus } from "../../models/user.model";
-//import bcrypt from "bcrypt";
+import { users } from "../server";
+import { User } from "../models/user.model";
+// import bcrypt from "bcrypt";
 
-
-//services/register.service.ts
 export async function manageRegister(pseudo: string, email: string, password: string): Promise<string> {
 	try
 	{
