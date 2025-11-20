@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr" class="">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Croissandance</title>
+	<link href="public/output.css" rel="stylesheet" />
+  </head>
+  <body>
+	<img src="src/asset/image/croissants-francais-dans-un-espace-de-copie-de-plaque.jpg" 
+		alt="bgcroissant"
+		class="absolute block dark:hidden -z-10 object-cover w-full h-screen">
+	<img src="src/asset/image/croissants-avec-cafe.jpg" 
+		alt="bgcroissant"
+		class="absolute -z-10 hidden dark:block object-cover w-full h-screen">
+	<main id="app"></main>
+
+    <script type="module" src="./public/app.js"></script>
+  </body>
+
+	<template id="loginhtml">
+		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+			<a href="/" data-link class="block dark:hidden ml-4">
+				<img src="src/asset/image/croissant white.png" alt="croissantw"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			<a href="/" data-link class="hidden dark:block ml-4">
+				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+		</header>
+    	<form id="login-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-64 h-80 mx-auto">
+     		<h1 class="mt-4 font-bold text-xl">Welcome Back</h1>
+			<div class="mt-6">
+				<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+					focus:ring-2 focus:ring-amber-500 px-2" 
+					id="username" placeholder="username" required />
+				<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+					focus:ring-2 focus:ring-amber-500 px-2" 
+					id="password" type="password" placeholder="password" required />
+			</div>
+      			<button class="mt-12 btn w-40">Log in</button>
+			<a class="mt-2 text-sm" href="/register" data-link>Create account ?</a>
+    	</form>
+	</template>
+
+	<template id="homehtml">
+		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+			<a href="/" data-link class="block dark:hidden ml-4">
+				<img src="src/asset/image/croissant white.png" alt="croissantw"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			<a href="/" data-link class="hidden dark:block ml-4">
+				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+		</header>
+		<main class="flex mx-auto flex-col mt-[10vh] grow">
+			<h1 class="text-4xl md:text-7xl font-bold mx-auto 
+				bg-linear-to-r from-amber-800 via-amber-600 to-orange-500 
+				bg-clip-text text-transparent drop-shadow-lg
+				hover:bg-linear-to-r hover:from-orange-500 hover:via-amber-800 hover:to-amber-600
+				animate-pulse">
+				Croiscendence</h1>
+			<div class="mt-14">
+				<nav id="public-nav">
+					<a href="/login" data-link class="btn w-48">Log in</a>
+					<a href="/register" data-link class="btn w-48">Register</a>
+				</nav>
+			</div>
+			<p class="absolute mb-4 opacity-60 bottom-0 w-full text-center">This isn't a bakery at all — it's the Pong game from 42!</p>
+		</main>
+	</template>
+	
+	<template id="registerhtml">
+		<div class="register-container">
+			<h1>Register</h1>
+			<form id="register-form">
+				<input type="text" name="username" placeholder="Username" required />
+				<input type="email" name="email" placeholder="Email" required />
+				<input type="password" name="password" placeholder="Password" required />
+				<button type="submit">Register</button>
+			</form>
+			<p id="register-message"></p>
+		</div>
+	</template>
+
+	<template id="dashboardhtml">
+    <header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<a href="/homelogin" data-link class="block dark:hidden ml-4">
+			<img src="src/asset/image/croissant white.png" alt="croissantw"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+		<a href="/homelogin" data-link class="hidden dark:block ml-4">
+			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+	</header>
+	<h1>Dashboard 🎮</h1>
+	</template>
+
+  <template id="homeloginhtml">
+    <header class="flex items-center justify-between pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<a href="/homelogin" data-link class="block dark:hidden ml-4">
+			<img src="src/asset/image/croissant white.png" alt="croissantw"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+		<a href="/homelogin" data-link class="hidden dark:block ml-4">
+			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+		<a href="/logout" data-link class="btn w-48">Logout</a>
+	</header>
+	<div>
+		<h1> Welcome <span id="pseudo"></span>👋</h1>
+		<ul>
+			<li><a href="/profil" data-link class="btn w-48">Profil</a></li>
+			<li><a href="/game" data-link class="btn w-48">Game</a></li>
+			<li><a href="/dashboard" data-link class="btn w-48">Dashboard</a></li>
+			<li><a href="/tournament" data-link class="btn w-48">Tournament</a></li>
+		</ul>
+	</div>
+  </template>
+
+  <template id="profilhtml">
+	<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<a href="/homelogin" data-link class="block dark:hidden ml-4">
+			<img src="src/asset/image/croissant white.png" alt="croissantw"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+		<a href="/homelogin" data-link class="hidden dark:block ml-4">
+			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+	</header>
+	<main>
+		<h1>Page profil</h1>
+		<p><strong>ID:</strong> <span id="profil-id"></span></p>
+        <p><strong>Pseudo:</strong> <span id="profil-pseudo"></span></p>
+        <p><strong>Email:</strong> <span id="profil-email"></span></p>
+        <p><strong>Status:</strong> <span id="profil-status"></span></p>
+        <p><strong>Creation:</strong> <span id="profil-creation"></span></p>
+        <p><strong>Modification:</strong> <span id="profil-modification"></span></p>
+        <p><strong>Money:</strong> <span id="profil-money"></span></p>
+        <p><strong>ELO:</strong> <span id="profil-elo"></span></p>
+	</main>
+  </template>
+
+  <template id="gamehtml">
+    <header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<a href="/homelogin" data-link class="block dark:hidden ml-4">
+			<img src="src/asset/image/croissant white.png" alt="croissantw"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+		<a href="/homelogin" data-link class="hidden dark:block ml-4">
+			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+	</header>
+    <h1>Page game</h1>
+    <div class="game-buttons">
+      <button id="start-quickgame">Start quick game</button>
+      <button id="start-tournament">Start tournament</button>
+    </div>
+  </template>
+
+  <template id="quickgamehtml">
+    <h1>Quick game</h1>
+    <div class="game-container">
+      <div class="game-buttons">
+        <button id="start-game">Start</button>
+        <button id="stop-game">Stop</button>
+      </div>
+      <canvas id="canvas" width="600" height="480"></canvas>
+    </div>
+  </template>
+
+  <template id="tournamenthtml">
+	<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<a href="/homelogin" data-link class="block dark:hidden ml-4">
+			<img src="src/asset/image/croissant white.png" alt="croissantw"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+		<a href="/homelogin" data-link class="hidden dark:block ml-4">
+			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+	</header>
+    <h1>Page tournament</h1>
+  </template>
+
+</html>

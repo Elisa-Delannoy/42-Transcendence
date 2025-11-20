@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>BUSY BAR - Landing page</title>
+	<link href="public/output.css" rel="stylesheet" />
+</head>
+<body>
+	<!-- VIDEO -->
+	<video src="src/asset/image/welcome.mp4" autoplay loop muted
+			class="absolute -z-10 object-cover w-full h-screen"></video>
+	<!-- MAIN -->
+	<main class="container mx-auto min-h-screen flex flex-col">
+		<!-- HEADER -->
+		<header class="flex items-center justify-between text-gray-500 pt-2">
+			<ul class="flex gap-5">
+				<li>Busy Bar</li>
+				<li><a href="#" class="underline">Boutique</a></li>
+				<li><a href="#" class="underline">Telechargement</a></li>
+				<li><a href="#" class="underline">Blog</a></li>
+			</ul>
+			<a href="#">
+				<img src="src/asset/image/badge.svg"
+				 alt="badge" 
+				 class="w-52 grayscale-100 hover:grayscale-0 duration-200 hover:-translate-y-1 hidden md:block"/>
+			 </a>
+		</header>
+		<!-- CENTRE -->
+		<section class="mt-[40vh] flex mx-auto flex-col max-w-[550px] text-xl grow">
+			<p class="font-ponnala">
+				<span class="font-bold">Busy Bar</span> est un dispositif multi-outil de productivite avec un ecran LED pixelise.
+				Minuteur de concentration avec fonction de blocage des distractions sur votre telephone et PC.
+				Entierement personnalisable, open-source et pret pour la maison connectee.
+			</p>
+			<button class="btn">Acheter</button>
+		</section>
+		<!-- FONCTIONNALITE -->
+		<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 pb-4 opacity-80 mt-20 md:mt-0">
+			<!-- 1 -->
+			<div class="flex items-start gap-3">
+				<img src="src/asset/image/feature-one.svg" 
+					alt="feature-one"
+					class="w-14">
+				<div>
+					<h3 class="text-xl mb-1.5">Outil de Productivite</h3>
+					<div class="text-sm">
+						Blocage des distractions, message BUSY
+						personnalise, minuteur de concentration,
+						synchronisation multiplateforme
+					</div>
+				</div>
+			</div>
+			<!-- 2 -->
+			<div class="flex items-start gap-3">
+				<img src="src/asset/image/feature-two.svg" 
+					alt="feature-two"
+					class="w-14">
+				<div>
+					<h3 class="text-xl mb-1.5">Application et integration</h3>
+					<div class="text-sm">
+						Blocage des distractions, message BUSY
+						personnalise, minuteur de concentration,
+						synchronisation multiplateforme
+					</div>
+				</div>
+			</div>
+			<!-- 3 -->
+			<div class="flex items-start gap-3">
+				<img src="src/asset/image/feature-three.svg"
+					alt="feature-three"
+					class="w-14">
+				<div>
+					<h3 class="text-xl mb-1.5">Support maison connectee</h3>
+					<div class="text-sm">
+						Blocage des distractions, message BUSY
+						personnalise, minuteur de concentration,
+						synchronisation multiplateforme
+					</div>
+				</div>
+			</div>
+			<!-- 4 -->
+			<div class="flex items-start gap-3">
+				<img src="src/asset/image/feature-four.svg"
+					alt="feature-four"
+					class="w-14">
+				<div>
+					<h3 class="text-xl mb-1.5">Pour les developpeurs</h3>
+					<div class="text-sm">
+						Blocage des distractions, message BUSY
+						personnalise, minuteur de concentration,
+						synchronisation multiplateforme
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+	<!-- Deuxieme page-->
+	<section class="flex h-screen">
+		
+		<div class="w-1/2 flex-centered p-10">
+			<div>
+				<h2 class="text-5xl">Montrez que vous etes occupe</h2>
+				<p class="text-xl mt-5">Empechez les autres d'interrompre votre concentration profonde. L ecran affiche que vous etes occupe et quand vous serez a nouveau dispo.</p>
+				<div class="flex items-end mt-5">
+					<img src="src/asset/image/demo-one.png" alt="demo-one" class="w-32 object-contain">
+					<div>
+						<h3 class="text-xl">Activation Instantanee</h3>
+						<p class="text-sm mt-1">Activer et desatctiver rapidement nanandufbwbfeaifw bfqwifbq fqwfqwihpqf qwifqobfq.</p>
+					</div>
+				</div>
+				<div class="flex items-end mt-5">
+					<img src="src/asset/image/demo-two.png" alt="demo-two" class="w-32 object-contain">
+					<div>
+						<h3 class="text-xl">Set Timer</h3>
+						<p class="text-sm mt-1">Activer et desatctiver rapidement nanandufbwbfeaifw bfqwifbq fqwfqwihpqf qwifqobfq.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="w-1/2 relative">
+			<video src="src/asset/image/busy.mp4" 
+				autoplay loop muted
+				class="absolute -z-10 object-cover w-full h-screen">
+			</video>
+		</div>
+	</section>
+</body>
+</html>
