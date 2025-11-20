@@ -3,29 +3,6 @@ function HomeView() {
   return document.getElementById("homehtml").innerHTML;
 }
 
-<<<<<<< HEAD
-=======
-// front/src/auth.ts
-async function login(username, password) {
-  try {
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
-    });
-    const result = await res.json();
-    if (res.ok) {
-      localStorage.setItem("token", "OK");
-      return true;
-    } else
-      return false;
-  } catch (err) {
-    console.error("Erreur serveur:", err);
-    return false;
-  }
-}
-
->>>>>>> noah
 // front/src/views/login.ts
 function LoginView() {
   return document.getElementById("loginhtml").innerHTML;
@@ -37,18 +14,10 @@ function initLogin() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
     const success = await login(username, password);
-<<<<<<< HEAD
-    if (success) {
-      navigateTo("/homelogin");
-      updateNav();
-    } else
-      alert("Invalid username or password");
-=======
     if (success)
       navigateTo("/homelogin");
     else
       alert("Identifiants incorrects");
->>>>>>> noah
   });
 }
 async function login(username, password) {
@@ -68,11 +37,6 @@ async function login(username, password) {
     console.error(err);
     return false;
   }
-}
-async function isLoggedIn() {
-  const res = await fetch("/api/isLoggedIn", { credentials: "include" });
-  const result = await res.json();
-  return result.logged;
 }
 
 // front/src/views/dashboard.ts
@@ -382,10 +346,20 @@ function TournamentView() {
   return document.getElementById("tournamenthtml").innerHTML;
 }
 
+// front/src/views/logout.ts
+var initLogout = async () => {
+  await fetch("/api/logout", {
+    method: "GET",
+    credentials: "include"
+  });
+  navigateTo("/login");
+};
+
 // front/src/router.ts
 var routes = [
   { path: "/", view: HomeView },
   { path: "/login", view: LoginView, init: initLogin },
+  { path: "/logout", init: initLogout },
   { path: "/dashboard", view: DashboardView },
   { path: "/register", view: RegisterView, init: initRegister },
   { path: "/homelogin", view: HomeLoginView, init: initHomePage },
@@ -397,7 +371,6 @@ function navigateTo(url) {
   history.pushState(null, "", url);
   router();
 }
-<<<<<<< HEAD
 async function genericFetch(url, options = {}) {
   const res = await fetch(url, {
     ...options,
@@ -405,7 +378,6 @@ async function genericFetch(url, options = {}) {
   });
   if (res.status === 401) {
     navigateTo("/login");
-    updateNav();
     throw new Error("Unauthorized");
   }
   if (!res.ok) {
@@ -413,21 +385,6 @@ async function genericFetch(url, options = {}) {
   }
   return res;
 }
-function updateNav() {
-  const publicNav = document.getElementById("public-nav");
-  const privateNav = document.getElementById("private-nav");
-  isLoggedIn().then((logged) => {
-    if (logged) {
-      publicNav.style.display = "none";
-      privateNav.style.display = "block";
-    } else {
-      publicNav.style.display = "block";
-      privateNav.style.display = "none";
-    }
-  });
-}
-=======
->>>>>>> noah
 function router() {
   const match = routes.find((r) => r.path === location.pathname);
   console.log(match);
@@ -435,18 +392,15 @@ function router() {
     document.querySelector("#app").innerHTML = "<h1>404 Not Found</h1>";
     return;
   }
-  document.querySelector("#app").innerHTML = match.view();
+  if (match.view)
+    document.querySelector("#app").innerHTML = match.view();
   match.init?.();
-<<<<<<< HEAD
-  updateNav();
-=======
   if (match.path == "/game") {
     const script = document.createElement("script");
     script.src = "/src/game/game.js";
     script.defer = true;
     document.body.appendChild(script);
   }
->>>>>>> noah
 }
 function initRouter() {
   document.body.addEventListener("click", (e) => {
@@ -462,22 +416,9 @@ function initRouter() {
   });
   window.addEventListener("popstate", router);
   router();
-  localStorage.removeItem("token");
 }
-var logout = async () => {
-  await fetch("/api/logout", {
-    method: "GET",
-    credentials: "include"
-  });
-  navigateTo("/login");
-  updateNav();
-};
 
 // front/src/main.ts
 document.addEventListener("DOMContentLoaded", () => {
   initRouter();
-  const button = document.getElementById("butlogout");
-  button.addEventListener("click", async () => {
-    await logout();
-  });
 });

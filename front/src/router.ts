@@ -6,10 +6,12 @@ import { HomeLoginView, initHomePage} from "./views/p_homelogin";
 import { ProfilView} from "./views/p_profil";
 import { GameView, initGame} from "./views/p_game";
 import { TournamentView} from "./views/p_tournament";
+import { initLogout } from "./views/logout";
 
 const routes = [
   { path: "/", view: HomeView },
   { path: "/login", view: LoginView, init:initLogin},
+  { path: "/logout", init: initLogout},
   { path: "/dashboard", view: DashboardView },
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/homelogin", view: HomeLoginView, init: initHomePage},
@@ -45,7 +47,8 @@ export function router() {
 	document.querySelector("#app")!.innerHTML = "<h1>404 Not Found</h1>";
 	return;
   }
-  document.querySelector("#app")!.innerHTML = match.view();
+  if (match.view)
+  	document.querySelector("#app")!.innerHTML = match.view();
   match.init?.();
   if (match.path == "/game")
   {
@@ -70,12 +73,4 @@ export function initRouter() {
   });
   window.addEventListener("popstate", router);
   router();
-}
-
-export const logout = async() => {
-	await fetch("/api/logout", {
-		method: "GET",
-		credentials: "include"
-		});
-	navigateTo("/login");
 }

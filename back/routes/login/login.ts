@@ -17,7 +17,7 @@ export async function manageLogin(pseudo: string, password: string, reply: Fasti
 			secure: false, /*ATTENTION METTRE TRUE QUAND ON SERA EN HTTPS*/
 			sameSite: "strict",
 			path: "/",
-			maxAge: 3600
+			maxAge: 10
 		};
 		reply.setCookie("token", jwtoken, options).status(200).send({ message: "Login successful"})
 	}
