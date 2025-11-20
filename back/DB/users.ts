@@ -1,6 +1,5 @@
 import { ManageDB } from "./manageDB";
 
-
 export interface Users {
 	user_id: number;
 	pseudo: string;
@@ -53,8 +52,8 @@ export class Users
 		password,
 		"default path",
 		UserStatus.offline,
-		new Date().toISOString().replace("T", " ").split(".")[0],
-		new Date().toISOString().replace("T", " ").split(".")[0],
+		new Date(),
+		new Date(),
 		0,
 		0
 		];
@@ -88,6 +87,7 @@ export class Users
 
 	async getIDUser(id: number): Promise<Users>
 	{
+		
 		const infos: Users[] = await this._db.query(`SELECT * FROM Users WHERE user_id = ?`, [id])
 		if (infos.length === 0)
 			throw new Error("This ID does not exist")

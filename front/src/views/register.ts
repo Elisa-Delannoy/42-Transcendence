@@ -1,5 +1,6 @@
 import { register } from "module";
 
+
 export function RegisterView(): string {
   return (document.getElementById("registerhtml") as HTMLFormElement).innerHTML;
 }

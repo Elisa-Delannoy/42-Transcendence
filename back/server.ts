@@ -4,7 +4,7 @@ import { join } from "path";
 import  { ManageDB } from "./DB/manageDB";
 import { Users } from './DB/users';
 import { manageLogin } from './routes/login/login';
-import { manageRegister } from "./routes/register/resgister";
+import { manageRegister } from "./routes/register/register";
 import { GameInfo } from "./DB/gameinfo";
 import fastifyCookie from "fastify-cookie";
 import { tokenOK } from "./middleware/jwt";
@@ -30,8 +30,6 @@ fastify.register(fastifyStatic, {
 fastify.register(fastifyCookie, {
   parseOptions: {}
 })
-
-
 
 fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
 	if (request.url.startsWith("/api/private")) {

@@ -4,6 +4,7 @@ import { users } from '../../server';
 import { createJWT} from "../../middleware/jwt";
 import { CookieSerializeOptions } from "fastify-cookie";
 import { FastifyReply } from "fastify";
+import bcrypt from "bcryptjs";
 
 export async function manageLogin(pseudo: string, password: string, reply: FastifyReply)
 {
@@ -32,6 +33,8 @@ async function checkLogin(pseudo: string, password: string)
 	const info = await users.getPseudoUser(pseudo)
 	if (!info || info.length === 0)
 		throw new Error("Invalid Username.");
-	if (info.password !== password)
-		throw new Error("Invalid Password.");
+	const isMatch = await bcrypt.compare(password, info.password);
+    if (!isMatch) {
+        throw new Error( "Invalid password");
+    }
 }

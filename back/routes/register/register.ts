@@ -1,18 +1,20 @@
 import { db } from "../../server";
 import { users } from '../../server';
+import bcrypt from "bcryptjs";
 
 export async function manageRegister(pseudo: string, email: string, password: string): Promise<string> {
 	try
 	{
 		await checkPseudo(pseudo);
-		await checkPasswordd(password);
+		await checkPassword(password);
 		await checkEmail(email);
 	}
 	catch (err)
 	{
 		return (err as Error).message;
 	}
-	users.addUser(pseudo, email, password);
+	const hashedPassword = await bcrypt.hash(password, 12);
+	users.addUser(pseudo, email, hashedPassword);
 	return "User have been register successfully";
 }
 
@@ -34,7 +36,7 @@ async function checkEmail(email: string)
 		throw new Error("Email already in use.");
 }
 
-async function checkPasswordd(password: string)
+async function checkPassword(password: string)
 {
 	const set = new Set<string>();
     
