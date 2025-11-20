@@ -95,6 +95,27 @@ async function initHomePage() {
 function ProfilView() {
   return document.getElementById("profilhtml").innerHTML;
 }
+async function initProfil() {
+  const user_id = 1;
+  const res = await fetch("/api/profil", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: user_id })
+  });
+  if (!res.ok) {
+    console.error("Cannot load profile");
+    return;
+  }
+  const profil = await res.json();
+  document.getElementById("profil-id").textContent = profil.user_id;
+  document.getElementById("profil-pseudo").textContent = profil.pseudo;
+  document.getElementById("profil-email").textContent = profil.email;
+  document.getElementById("profil-status").textContent = profil.status;
+  document.getElementById("profil-creation").textContent = profil.creation_date;
+  document.getElementById("profil-modification").textContent = profil.modification_date;
+  document.getElementById("profil-money").textContent = profil.money;
+  document.getElementById("profil-elo").textContent = profil.elo;
+}
 
 // front/src/views/p_game.ts
 function GameView() {
@@ -381,10 +402,16 @@ var routes = [
   { path: "/logout", init: initLogout },
   { path: "/dashboard", view: DashboardView },
   { path: "/register", view: RegisterView, init: initRegister },
+<<<<<<< HEAD
   { path: "/homelogin", view: HomeLoginView, init: initHomePage },
   { path: "/profil", view: ProfilView },
   { path: "/game", view: GameView, init: initGame },
   { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame },
+=======
+  { path: "/homelogin", view: HomeLoginView },
+  { path: "/profil", view: ProfilView, init: initProfil },
+  { path: "/game", view: GameView },
+>>>>>>> tat-11-20
   { path: "/tournament", view: TournamentView }
 ];
 function navigateTo(url) {

@@ -88,7 +88,6 @@ export class Users
 
 	async getIDUser(id: number): Promise<Users>
 	{
-		
 		const infos: Users[] = await this._db.query(`SELECT * FROM Users WHERE user_id = ?`, [id])
 		if (infos.length === 0)
 			throw new Error("This ID does not exist")

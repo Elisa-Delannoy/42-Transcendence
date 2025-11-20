@@ -2,10 +2,10 @@ import { HomeView } from "./views/home";
 import { LoginView, initLogin } from "./views/login";
 import { DashboardView } from "./views/dashboard";
 import { RegisterView, initRegister } from "./views/register";
-import { HomeLoginView, initHomePage} from "./views/p_homelogin";
-import { ProfilView} from "./views/p_profil";
 import { GameView, initGame} from "./views/p_game";
 import { QuickGameView, initQuickGame} from "./views/p_quickgame";
+import { HomeLoginView, initHomePage } from "./views/p_homelogin";
+import { ProfilView, initProfil} from "./views/p_profil";
 import { TournamentView} from "./views/p_tournament";
 import { initLogout } from "./views/logout";
 
@@ -16,9 +16,9 @@ const routes = [
   { path: "/dashboard", view: DashboardView },
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/homelogin", view: HomeLoginView, init: initHomePage},
-  { path: "/profil", view: ProfilView},
   { path: "/game", view: GameView, init: initGame},
   { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame},
+  { path: "/profil", view: ProfilView, init: initProfil},
   { path: "/tournament", view: TournamentView}
 ];
 

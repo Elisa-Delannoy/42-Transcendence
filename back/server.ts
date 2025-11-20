@@ -66,19 +66,19 @@ fastify.post("/api/private/homelogin", async (request: FastifyRequest, reply: Fa
 	return { pseudo: request.user?.pseudo }
 });
 
-fastify.get("/api/private/profil", async (request, reply) => {
-	request.body 
+fastify.post("/api/private/profil", async (request, reply) => {
 	try {
-	const profil = await users.getPseudoUser(login)
-	if (!profil || profil === 0)
-	{
-	  return reply.code(404).send({message: "User not found"})
-	}
-	return profil;
-	} catch (error) {
-	fastify.log.error(error)
-	return reply.code(500).send({message: "Internal Server Error"});
-	}
+    const { id } = request.body as any;
+    const profil = await users.getIDUser(id);
+    if (!profil)
+    {
+      return reply.code(404).send({message: "User not found"})
+    }
+    return profil;
+  } catch (error) {
+    fastify.log.error(error)
+    return reply.code(500).send({message: "Internal Server Error"});
+  }
 });
 
 fastify.post("/api/private/game/create", async (request, reply) => {
