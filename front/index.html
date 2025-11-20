@@ -99,16 +99,20 @@
 	</template>
 
   <template id="homeloginhtml">
-    <header class="flex items-center justify-between pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="src/asset/image/croissant white.png" alt="croissantw"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="src/asset/image/croissant dark.png" alt="croissantd"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-		<a href="/logout" data-link class="btn w-48">Logout</a>
+    <header class="flex w-full pb-2 justify-between h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<div class="flex items-center space-x-4">
+			<a href="/homelogin" data-link class="block dark:hidden ml-4">
+				<img src="src/asset/image/croissant white.png" alt="croissantw"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			<a href="/homelogin" data-link class="hidden dark:block ml-4">
+				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+		</div>
+		<div class="mr-4">
+			<a href="/logout" data-link class="btn justify-end mb-4 w-48">Logout</a>
+		</div>
 	</header>
 	<div>
 		<h1> Welcome <span id="pseudo"></span>👋</h1>
