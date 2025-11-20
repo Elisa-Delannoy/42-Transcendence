@@ -1,5 +1,5 @@
 import { HomeView } from "./views/home";
-import { LoginView, initLogin, isLoggedIn} from "./views/login";
+import { LoginView, initLogin } from "./views/login";
 import { DashboardView } from "./views/dashboard";
 import { RegisterView, initRegister } from "./views/register";
 import { HomeLoginView, initHomePage} from "./views/p_homelogin";
