@@ -10,17 +10,30 @@ import fastifyCookie from "fastify-cookie";
 import { tokenOK } from "./middleware/jwt";
 import { CookieSerializeOptions } from "fastify-cookie";
 import * as GameModule from "./DB/game";
+import fs from "fs";
+import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always"
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
 export const gameInfo = new GameInfo(db);
 
 // const games = new Map<number, Game>();
-let login = ""
 
 const fastify = Fastify({
-  logger: false,
+	logger: false,
+	https:
+	{
+		key: fs.readFileSync("server.key"),
+		cert: fs.readFileSync("server.cert"),
+	},
+	trustProxy: true
 });
+
+const httpsAlwaysOpts: HttpsAlwaysOptions = {
+  productionOnly: false,
+  redirect:       false,
+  httpsPort:      8443
+}
 
 fastify.register(fastifyStatic, {
   root: join(process.cwd(), "front"),
@@ -31,6 +44,11 @@ fastify.register(fastifyCookie, {
   parseOptions: {}
 })
 
+<<<<<<< HEAD
+=======
+fastify.register(FastifyHttpsAlwaysPlugin, httpsAlwaysOpts)
+
+>>>>>>> noah
 fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
 	if (request.url.startsWith("/api/private")) {
 		const user = await tokenOK(request, reply);
@@ -66,16 +84,16 @@ fastify.post("/api/private/homelogin", async (request: FastifyRequest, reply: Fa
 
 fastify.post("/api/private/profil", async (request, reply) => {
 	try {
-    const { id } = request.body as any;
-    const profil = await users.getIDUser(id);
-    if (!profil)
-    {
-      return reply.code(404).send({message: "User not found"})
-    }
-    return profil;
+	const { id } = request.body as any;
+	const profil = await users.getIDUser(id);
+	if (!profil)
+	{
+	  return reply.code(404).send({message: "User not found"})
+	}
+	return profil;
   } catch (error) {
-    fastify.log.error(error)
-    return reply.code(500).send({message: "Internal Server Error"});
+	fastify.log.error(error)
+	return reply.code(500).send({message: "Internal Server Error"});
   }
 });
 
@@ -123,13 +141,12 @@ fastify.get("/api/logout", async (request, reply) => {
 
 const start = async () => {
 	try {
-		await fastify.listen({ port: 3000 });
+		await fastify.listen({ port: 8443, host: "0.0.0.0" });
 		await db.connect();
 		// await users.deleteUserTable();
 		await gameInfo.deleteGameInfoTable();
 		await users.createUserTable();
 		await gameInfo.createGameInfoTable();
-		console.log("🚀 Serveur lancé sur http://localhost:3000");
 	} catch (err) {
 		fastify.log.error(err);
 		process.exit(1);
