@@ -16,13 +16,11 @@ function initLogin() {
     const success = await login(username, password);
     if (success)
       navigateTo("/homelogin");
-    else
-      alert("Identifiants incorrects");
   });
 }
 async function login(username, password) {
   try {
-    const res = await genericFetch("/api/login", {
+    const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -31,8 +29,10 @@ async function login(username, password) {
     const result = await res.json();
     if (res.ok)
       return true;
-    else
+    else {
+      alert(result.error);
       return false;
+    }
   } catch (err) {
     console.error(err);
     return false;
@@ -344,14 +344,12 @@ function HomeLoginView() {
 }
 async function initHomePage() {
   try {
-    const res = await genericFetch("/api/private/homelogin", {
+    const result = await genericFetch2("/api/private/homelogin", {
       method: "POST",
       credentials: "include"
     });
-    const result = await res.json();
     document.querySelector("#pseudo").textContent = result.pseudo;
   } catch (err) {
-    console.error(err);
   }
 }
 
@@ -361,16 +359,11 @@ function ProfilView() {
 }
 async function initProfil() {
   const user_id = 1;
-  const res = await fetch("/api/private/profil", {
+  const profil = await genericFetch2("/api/private/profil", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id: user_id })
   });
-  if (!res.ok) {
-    console.error("Cannot load profile");
-    return;
-  }
-  const profil = await res.json();
   document.getElementById("profil-id").textContent = profil.user_id;
   document.getElementById("profil-pseudo").textContent = profil.pseudo;
   document.getElementById("profil-email").textContent = profil.email;
@@ -412,19 +405,22 @@ function navigateTo(url) {
   history.pushState(null, "", url);
   router();
 }
-async function genericFetch(url, options = {}) {
+async function genericFetch2(url, options = {}) {
   const res = await fetch(url, {
     ...options,
     credentials: "include"
   });
+  const result = await res.json();
   if (res.status === 401) {
-    navigateTo("/login");
-    throw new Error("Unauthorized");
+    if (result.error === "TokenExpiredError")
+      alert("Session expired, please login");
+    navigateTo("/logout");
+    throw new Error(result.error);
   }
   if (!res.ok) {
-    throw new Error(`Error: ${res.status}`);
+    throw new Error(result.error);
   }
-  return res;
+  return result;
 }
 function matchRoute(pathname) {
   for (const r of routes) {

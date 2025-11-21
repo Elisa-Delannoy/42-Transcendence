@@ -29,17 +29,20 @@ export function navigateTo(url: string) {
 
 export async function genericFetch(url: string, options: RequestInit = {}) {
 	const res = await fetch(url, {
-		...options,
-		credentials: "include"
-	});
+	...options,
+	credentials: "include"
+})
+	const result = await res.json();
 	if (res.status === 401) {
-		navigateTo("/login");
-		throw new Error("Unauthorized");
-	}
+		if (result.error === "TokenExpiredError")
+			alert("Session expired, please login")
+		navigateTo("/logout");
+		throw new Error(result.error);
+}
 	if (!res.ok){
-		throw new Error(`Error: ${res.status}`);
-	}
-	return res;
+		throw new Error(result.error);
+}
+	return result;
 }
 
 function matchRoute(pathname: string) {

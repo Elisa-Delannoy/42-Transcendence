@@ -39,12 +39,12 @@ fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply)
 	}
 })
 
-fastify.get("/api/isLoggedIn", async (request: FastifyRequest, reply: FastifyReply) => {
-	const user = tokenOK(request, reply);
-	if (user !== null)
-		return { logged: true };
-	return { logged: false };
-})
+// fastify.get("/api/isLoggedIn", async (request: FastifyRequest, reply: FastifyReply) => {
+// 	const user = await tokenOK(request, reply);
+// 	if (user !== null)
+// 		return { logged: true };
+// 	return { logged: false };
+// })
 
 fastify.get("/", async (request, reply) => {
   return reply.sendFile("index.html");
