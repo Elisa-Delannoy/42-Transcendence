@@ -44,11 +44,8 @@ fastify.register(fastifyCookie, {
   parseOptions: {}
 })
 
-<<<<<<< HEAD
-=======
 fastify.register(FastifyHttpsAlwaysPlugin, httpsAlwaysOpts)
 
->>>>>>> noah
 fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
 	if (request.url.startsWith("/api/private")) {
 		const user = await tokenOK(request, reply);
