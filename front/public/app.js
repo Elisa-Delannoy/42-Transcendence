@@ -89,260 +89,329 @@ function initGame() {
   });
 }
 
+// front/src/views/gameInstance.ts
+var GameInstance = class {
+  constructor(gameID) {
+    this.isPlaying = false;
+    this.anim = 0;
+    this.maxScore = 4;
+    this.increaseSpeed = -1.1;
+    this.maxAngle = Math.PI / 4;
+    this.startTime = 0;
+    this.elapsedTime = 0;
+    // Game state
+    this.game = {
+      player1: {
+        y: 0,
+        movingUp: false,
+        movingDown: false,
+        speed: 5,
+        score: 0,
+        attraction: -2
+      },
+      player2: {
+        y: 0,
+        movingUp: false,
+        movingDown: false,
+        speed: 5,
+        score: 0,
+        attraction: 2
+      },
+      ball: {
+        x: 0,
+        y: 0,
+        r: 5,
+        speed: {
+          maxX: 25,
+          maxY: 1.6,
+          minY: -1.6,
+          x: 2,
+          y: 2
+        }
+      }
+    };
+    // Listeners pour nettoyage
+    this.keydownHandler = (e) => this.onKeyDown(e);
+    this.keyupHandler = (e) => this.onKeyUp(e);
+    /** ============================================================
+     ** GAME LOOP
+     *============================================================ */
+    this.play = () => {
+      if (!this.isPlaying) {
+        this.stopTimer();
+        this.displayWinner();
+        return;
+      }
+      this.moveAll();
+      this.draw();
+      this.anim = requestAnimationFrame(this.play);
+    };
+    this.gameID = gameID;
+    this.canvas = document.querySelector("canvas");
+    this.ctx = this.canvas.getContext("2d");
+    this.startBtn = document.querySelector("#start-game");
+    this.stopBtn = document.querySelector("#stop-game");
+    this.initPositions();
+    this.draw();
+    this.attachEvents();
+  }
+  /** ============================================================
+   ** INIT
+   *============================================================ */
+  initPositions() {
+    this.game.player1.y = this.canvas.height / 2 - 30;
+    this.game.player2.y = this.canvas.height / 2 - 30;
+    this.game.ball.x = this.canvas.width / 2;
+    this.game.ball.y = this.canvas.height / 2;
+  }
+  attachEvents() {
+    document.addEventListener("keydown", this.keydownHandler);
+    document.addEventListener("keyup", this.keyupHandler);
+    this.startBtn.addEventListener("click", () => this.start());
+    this.stopBtn.addEventListener("click", () => this.stop());
+  }
+  /** ============================================================
+   ** START / STOP
+   *============================================================ */
+  start() {
+    if (this.isPlaying) return;
+    this.isPlaying = true;
+    this.startBtn.disabled = true;
+    this.stopBtn.disabled = false;
+    this.audioCtx = new AudioContext();
+    this.randomizeBall();
+    this.resetGame();
+    this.startTimer();
+    this.play();
+  }
+  stop() {
+    this.isPlaying = false;
+    cancelAnimationFrame(this.anim);
+    this.startBtn.disabled = false;
+    this.stopBtn.disabled = true;
+    this.resetGame();
+  }
+  /** ============================================================
+   ** DESTROY → appelé par window.stopGame()
+   *============================================================ */
+  destroy() {
+    this.stop();
+    cancelAnimationFrame(this.anim);
+    document.removeEventListener("keydown", this.keydownHandler);
+    document.removeEventListener("keyup", this.keyupHandler);
+    console.log("Game destroyed and listeners removed");
+  }
+  /** ============================================================
+   ** TIMER
+   *============================================================ */
+  startTimer() {
+    this.startTime = Date.now();
+  }
+  stopTimer() {
+    this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1e3);
+  }
+  /** ============================================================
+   ** CONTROL
+   *============================================================ */
+  onKeyDown(e) {
+    if (e.key === "w" || e.key === "W") this.game.player1.movingUp = true;
+    if (e.key === "s" || e.key === "S") this.game.player1.movingDown = true;
+    if (e.key === "o" || e.key === "O") this.game.player2.movingUp = true;
+    if (e.key === "l" || e.key === "L") this.game.player2.movingDown = true;
+  }
+  onKeyUp(e) {
+    if (e.key === "w" || e.key === "W") this.game.player1.movingUp = false;
+    if (e.key === "s" || e.key === "S") this.game.player1.movingDown = false;
+    if (e.key === "o" || e.key === "O") this.game.player2.movingUp = false;
+    if (e.key === "l" || e.key === "L") this.game.player2.movingDown = false;
+  }
+  /** ============================================================
+   ** GAME LOGIC
+   *============================================================ */
+  moveAll() {
+    this.movePlayer(this.game.player1);
+    this.movePlayer(this.game.player2);
+    this.moveBall();
+  }
+  movePlayer(player) {
+    if (player.movingUp && player.y > 0) player.y -= player.speed;
+    if (player.movingDown && player.y + 60 < this.canvas.height) player.y += player.speed;
+  }
+  moveBall() {
+    const ball = this.game.ball;
+    if (ball.y > this.canvas.height || ball.y < 0) {
+      this.playSound(500, 60);
+      ball.speed.y *= -1;
+    }
+    if (ball.x > this.canvas.width - 5)
+      this.collide(this.game.player2, this.game.player1);
+    else if (ball.x < 5)
+      this.collide(this.game.player1, this.game.player2);
+    ball.x += ball.speed.x;
+    ball.y += ball.speed.y;
+  }
+  collide(player, otherPlayer) {
+    const ball = this.game.ball;
+    if (ball.y < player.y || ball.y > player.y + 60) {
+      this.playSound(300, 300);
+      this.resetPos();
+      otherPlayer.score++;
+      ball.speed.x = player.attraction;
+      if (otherPlayer.score === this.maxScore) this.isPlaying = false;
+    } else {
+      this.playSound(700, 80);
+      this.modifyBallAngle(player);
+      this.increaseBallSpeed();
+    }
+  }
+  /** ============================================================
+   ** UTILITAIRES
+   *============================================================ */
+  randomizeBall() {
+    this.game.ball.speed.x = Math.random() < 0.5 ? -2 : 2;
+  }
+  resetPos() {
+    this.game.player1.y = this.canvas.height / 2 - 30;
+    this.game.player2.y = this.canvas.height / 2 - 30;
+    this.game.ball.x = this.canvas.width / 2;
+    this.game.ball.y = this.canvas.height / 2;
+    const b = this.game.ball;
+    b.speed.y = Math.random() * (b.speed.maxY - b.speed.minY) + b.speed.minY;
+  }
+  resetGame() {
+    this.resetPos();
+    this.game.player1.score = 0;
+    this.game.player2.score = 0;
+    this.draw();
+  }
+  increaseBallSpeed() {
+    const b = this.game.ball;
+    const sign = b.speed.x * this.increaseSpeed < 0 ? -1 : 1;
+    if (Math.abs(b.speed.x * this.increaseSpeed) > b.speed.maxX)
+      b.speed.x = b.speed.maxX * sign;
+    else
+      b.speed.x *= this.increaseSpeed;
+  }
+  modifyBallAngle(player) {
+    const paddleCenter = player.y + 30;
+    let hitPos = this.game.ball.y - paddleCenter;
+    const normalized = hitPos / 30;
+    const bounceAngle = normalized * this.maxAngle;
+    const speed = Math.sqrt(
+      this.game.ball.speed.x ** 2 + this.game.ball.speed.y ** 2
+    );
+    this.game.ball.speed.y = speed * Math.sin(bounceAngle);
+  }
+  playSound(freq, duration) {
+    const o = this.audioCtx.createOscillator();
+    const g = this.audioCtx.createGain();
+    o.connect(g);
+    g.connect(this.audioCtx.destination);
+    o.type = "square";
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
+    o.start();
+    o.stop(this.audioCtx.currentTime + duration / 1e3);
+  }
+  /** ============================================================
+   ** DRAW
+   *============================================================ */
+  draw() {
+    const ctx = this.ctx;
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    ctx.strokeStyle = "white";
+    ctx.beginPath();
+    ctx.moveTo(this.canvas.width / 2, 0);
+    ctx.lineTo(this.canvas.width / 2, this.canvas.height);
+    ctx.stroke();
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, this.game.player1.y, 10, 60);
+    ctx.fillRect(
+      this.canvas.width - 10,
+      this.game.player2.y,
+      10,
+      60
+    );
+    ctx.beginPath();
+    ctx.arc(this.game.ball.x, this.game.ball.y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = "40px Verdana";
+    ctx.textAlign = "center";
+    ctx.fillText(`${this.game.player1.score}`, this.canvas.width * 0.43, 50);
+    ctx.fillText(`${this.game.player2.score}`, this.canvas.width * 0.57, 50);
+  }
+  /** ============================================================
+   ** FIN DE PARTIE
+   *============================================================ */
+  displayWinner() {
+    const ctx = this.ctx;
+    ctx.fillStyle = "white";
+    ctx.font = "40px Arial";
+    ctx.textAlign = "center";
+    let winnerId, loserId, winnerText;
+    if (this.game.player1.score > this.game.player2.score) {
+      winnerText = "Player 1 Wins!";
+      winnerId = 1;
+      loserId = 2;
+    } else {
+      winnerText = "Player 2 Wins!";
+      winnerId = 2;
+      loserId = 1;
+    }
+    ctx.fillText(winnerText, this.canvas.width / 2, this.canvas.height / 2);
+    this.sendGameResult(
+      winnerId,
+      loserId,
+      this.game.player1.score,
+      this.game.player2.score,
+      this.elapsedTime,
+      this.gameID
+    );
+  }
+  /** ============================================================
+   ** API
+   *============================================================ */
+  async sendGameResult(winnerId, loserId, winnerScore, loserScore, duration, id) {
+    try {
+      const res = await fetch("/api/private/game/end", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          winner_id: winnerId,
+          loser_id: loserId,
+          winner_score: winnerScore,
+          loser_score: loserScore,
+          duration_game: duration,
+          id
+        })
+      });
+      console.log("Saved data:", await res.json());
+    } catch (err) {
+      console.error("Error saving game:", err);
+    }
+  }
+};
+
 // front/src/views/p_quickgame.ts
 function QuickGameView(params) {
   return document.getElementById("quickgamehtml").innerHTML;
 }
 function initQuickGame(params) {
-  console.log("Game ID =", params?.id);
   const gameID = params?.id;
-  console.log("gameID quickgame : ", gameID, " type = ", typeof gameID);
-  setupGame(gameID);
+  if (currentGame) {
+    currentGame.destroy();
+    currentGame = null;
+  }
+  currentGame = new GameInstance(gameID);
 }
-function setupGame(gameID) {
-  let isPlaying;
-  const canvas = document.querySelector("canvas");
-  const ctx = canvas.getContext("2d");
-  const canvasHeight = canvas.height;
-  const canvasWidth = canvas.width;
-  let audioCtx;
-  const paddleHeight = 60;
-  const paddleWidth = 10;
-  let paddleCenter;
-  const game = {
-    player1: {
-      y: canvasHeight / 2 - paddleHeight / 2,
-      movingUp: false,
-      movingDown: false,
-      speed: 5,
-      score: 0,
-      attraction: -2
-    },
-    player2: {
-      y: canvasHeight / 2 - paddleHeight / 2,
-      movingUp: false,
-      movingDown: false,
-      speed: 5,
-      score: 0,
-      attraction: 2
-    },
-    ball: {
-      x: canvas.width / 2,
-      y: canvas.height / 2,
-      r: 5,
-      speed: {
-        maxX: 25,
-        maxY: 1.6,
-        minY: -1.6,
-        x: 2,
-        y: 2
-      }
-    }
-  };
-  let scoreMax = 4;
-  let winner;
-  let winnerId;
-  let loserId;
-  let anim;
-  let randomValue;
-  let increaseSpeed = -1.1;
-  const maxAngle = Math.PI / 4;
-  let startTime;
-  let elapsedTime;
-  const startBtn = document.querySelector("#start-game");
-  const stopBtn = document.querySelector("#stop-game");
-  function startTimer() {
-    startTime = Date.now();
+var currentGame = null;
+window.stopGame = function() {
+  if (currentGame) {
+    currentGame.destroy();
+    currentGame = null;
   }
-  function stopTimer() {
-    elapsedTime = Math.floor((Date.now() - startTime) / 1e3);
-    console.log("Duration of the game : ", elapsedTime, "s.");
-  }
-  function playSound(frequency, duration) {
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    oscillator.type = "square";
-    oscillator.frequency.value = frequency;
-    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    oscillator.start();
-    oscillator.stop(audioCtx.currentTime + duration / 1e3);
-  }
-  function draw() {
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    ctx.strokeStyle = "white";
-    ctx.beginPath();
-    ctx.moveTo(canvas.width / 2, 0);
-    ctx.lineTo(canvas.width / 2, canvas.height);
-    ctx.stroke();
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, game.player1.y, paddleWidth, paddleHeight);
-    ctx.fillRect(canvas.width - paddleWidth, game.player2.y, paddleWidth, paddleHeight);
-    ctx.beginPath();
-    ctx.fillStyle = "white";
-    ctx.arc(game.ball.x, game.ball.y, game.ball.r, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.fillStyle = "white";
-    ctx.font = "40px Verdana";
-    ctx.textAlign = "center";
-    ctx.fillText(`${game.player1.score}`, canvasWidth / 4 * 1.75, 50);
-    ctx.fillText(`${game.player2.score}`, canvasWidth / 4 * 2.25, 50);
-  }
-  function movePlayer(player) {
-    if (player.movingUp && player.y > 0)
-      player.y -= player.speed;
-    if (player.movingDown && player.y + paddleHeight < canvasHeight)
-      player.y += player.speed;
-  }
-  function moveBall() {
-    if (game.ball.y > canvas.height || game.ball.y < 0) {
-      playSound(500, 60);
-      game.ball.speed.y *= -1;
-    }
-    if (game.ball.x > canvas.width - paddleWidth / 2)
-      collide(game.player2, game.player1);
-    else if (game.ball.x < paddleWidth / 2)
-      collide(game.player1, game.player2);
-    game.ball.x += game.ball.speed.x;
-    game.ball.y += game.ball.speed.y;
-  }
-  function resetPos() {
-    game.player1.y = canvas.height / 2 - paddleHeight / 2;
-    game.player2.y = canvas.height / 2 - paddleHeight / 2;
-    game.ball.x = canvas.width / 2;
-    game.ball.y = canvas.height / 2;
-    randomValue = Math.random() * (game.ball.speed.maxY - game.ball.speed.minY) + game.ball.speed.minY;
-    game.ball.speed.y = randomValue;
-  }
-  function resetGame() {
-    resetPos();
-    game.player1.score = 0;
-    game.player2.score = 0;
-    draw();
-  }
-  function increaseBallSpeed() {
-    let sign;
-    if (game.ball.speed.x * increaseSpeed < 0)
-      sign = -1;
-    else
-      sign = 1;
-    if (Math.abs(game.ball.speed.x * increaseSpeed) > game.ball.speed.maxX)
-      game.ball.speed.x = game.ball.speed.maxX * sign;
-    else
-      game.ball.speed.x *= increaseSpeed;
-    console.log(game.ball.speed.x);
-  }
-  function modifyBallAngle(player) {
-    paddleCenter = player.y + paddleHeight / 2;
-    let hitPos = game.ball.y - paddleCenter;
-    let normalized = hitPos / (paddleHeight / 2);
-    let bounceAngle = normalized * maxAngle;
-    let speed = Math.sqrt(game.ball.speed.x ** 2 + game.ball.speed.y ** 2);
-    game.ball.speed.y = speed * Math.sin(bounceAngle);
-  }
-  function collide(player, otherPlayer) {
-    if (game.ball.y < player.y || game.ball.y > player.y + paddleHeight) {
-      playSound(300, 300);
-      resetPos();
-      otherPlayer.score++;
-      game.ball.speed.x = player.attraction;
-      if (otherPlayer.score == scoreMax)
-        isPlaying = false;
-    } else {
-      playSound(700, 80);
-      modifyBallAngle(player);
-      increaseBallSpeed();
-    }
-  }
-  function moveAll() {
-    movePlayer(game.player1);
-    movePlayer(game.player2);
-    moveBall();
-  }
-  function stop() {
-    cancelAnimationFrame(anim);
-    resetGame();
-  }
-  function displayWinner() {
-    ctx.fillStyle = "white";
-    ctx.font = "40px Arial";
-    ctx.textAlign = "center";
-    if (game.player1.score > game.player2.score) {
-      winner = "Player 1 Wins!";
-      winnerId = 1;
-      loserId = 2;
-      sendGameResult(winnerId, loserId, game.player1.score, game.player2.score, elapsedTime, gameID);
-    } else {
-      winner = "Player 2 Wins!";
-      winnerId = 2;
-      loserId = 1;
-      sendGameResult(winnerId, loserId, game.player2.score, game.player1.score, elapsedTime, gameID);
-    }
-    ctx.fillText(winner, canvasWidth / 2, canvasHeight / 2);
-  }
-  function play() {
-    if (!isPlaying) {
-      startBtn.disabled = true;
-      stopBtn.disabled = true;
-      stopTimer();
-      displayWinner();
-      return;
-    }
-    moveAll();
-    draw();
-    anim = requestAnimationFrame(play);
-  }
-  draw();
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "w" || e.key === "W") game.player1.movingUp = true;
-    if (e.key === "s" || e.key === "S") game.player1.movingDown = true;
-    if (e.key === "o" || e.key === "O") game.player2.movingUp = true;
-    if (e.key === "l" || e.key === "L") game.player2.movingDown = true;
-  });
-  document.addEventListener("keyup", (e) => {
-    if (e.key === "w" || e.key === "W") game.player1.movingUp = false;
-    if (e.key === "s" || e.key === "S") game.player1.movingDown = false;
-    if (e.key === "o" || e.key === "O") game.player2.movingUp = false;
-    if (e.key === "l" || e.key === "L") game.player2.movingDown = false;
-  });
-  startBtn?.addEventListener("click", () => {
-    startBtn.disabled = true;
-    audioCtx = new window.AudioContext();
-    randomValue = Math.random() < 0.5 ? -2 : 2;
-    game.ball.speed.x = randomValue;
-    resetGame();
-    isPlaying = true;
-    startTimer();
-    play();
-  });
-  stopBtn?.addEventListener("click", () => {
-    isPlaying = false;
-    startBtn.disabled = false;
-    stop();
-  });
-  async function sendGameResult(winnerId2, loserId2, winnerScore, loserScore, duration, id) {
-    const res = await fetch("/api/private/game/end", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        winner_id: winnerId2,
-        loser_id: loserId2,
-        winner_score: winnerScore,
-        loser_score: loserScore,
-        duration_game: duration,
-        id
-      })
-    });
-    try {
-      const data = await res.json();
-      console.log("Saved data : ", data);
-    } catch (err) {
-      console.error("Error parsing JSON : ", err);
-    }
-  }
-}
+};
 
 // front/src/views/p_homelogin.ts
 function HomeLoginView() {
@@ -410,10 +479,11 @@ var routes = [
   { path: "/register", view: RegisterView, init: initRegister },
   { path: "/homelogin", view: HomeLoginView, init: initHomePage },
   { path: "/game", view: GameView, init: initGame },
-  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame },
+  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: () => window.stopGame() },
   { path: "/profil", view: ProfilView, init: initProfil },
   { path: "/tournament", view: TournamentView }
 ];
+var currentRoute = null;
 function navigateTo(url) {
   history.pushState(null, "", url);
   router();
@@ -448,6 +518,10 @@ function matchRoute(pathname) {
   return null;
 }
 function router() {
+  if (currentRoute?.cleanup) {
+    if (typeof currentRoute.cleanup === "function")
+      currentRoute.cleanup();
+  }
   const match = matchRoute(location.pathname);
   if (!match) {
     document.querySelector("#app").innerHTML = "<h1>404 Not Found</h1>";
@@ -457,6 +531,11 @@ function router() {
   if (route.view)
     document.querySelector("#app").innerHTML = route.view(params);
   route.init?.(params);
+  currentRoute = route;
+  if (!currentRoute.cleanup) {
+    currentRoute.cleanup = () => {
+    };
+  }
 }
 function initRouter() {
   document.body.addEventListener("click", (e) => {

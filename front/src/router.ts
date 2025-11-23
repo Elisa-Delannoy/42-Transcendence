@@ -17,10 +17,12 @@ const routes = [
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/homelogin", view: HomeLoginView, init: initHomePage},
   { path: "/game", view: GameView, init: initGame},
-  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame},
+  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: () => window.stopGame() },
   { path: "/profil", view: ProfilView, init: initProfil},
   { path: "/tournament", view: TournamentView}
 ];
+
+let currentRoute: any = null;
 
 export function navigateTo(url: string) {
   history.pushState(null, "", url);
@@ -60,15 +62,34 @@ function matchRoute(pathname: string) {
 }
 
 export function router() {
+	//clean route who got cleanup
+	if (currentRoute?.cleanup)
+	{
+		if (typeof currentRoute.cleanup === "function")
+			currentRoute.cleanup();
+	}
 	const match = matchRoute(location.pathname);
-  if (!match) {
-	document.querySelector("#app")!.innerHTML = "<h1>404 Not Found</h1>";
-	return;
-  }
-  const { route, params } = match;
-  if (route.view)
-  	document.querySelector("#app")!.innerHTML = route.view(params);
-  route.init?.(params);
+
+	if (!match) {
+		document.querySelector("#app")!.innerHTML = "<h1>404 Not Found</h1>";
+		return;
+	}
+
+	// if (currentRoute?.cleanup)
+	// {
+	// 	QuickGameView.
+	// }
+
+	const { route, params } = match;
+
+	if (route.view)
+		document.querySelector("#app")!.innerHTML = route.view(params);
+
+	route.init?.(params);
+	currentRoute = route;
+	if (!currentRoute.cleanup) {
+		currentRoute.cleanup = () => {};
+}
 }
 
 export function initRouter() {
