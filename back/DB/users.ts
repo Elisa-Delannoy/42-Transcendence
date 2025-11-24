@@ -107,7 +107,6 @@ export class Users
 		console.log('updated username:', updatedUser.pseudo)
 		return updatedUser;
 	}
-
 }
 
 enum UserStatus
