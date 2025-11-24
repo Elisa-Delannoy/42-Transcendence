@@ -201,7 +201,24 @@
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 	</header>
-    <h1>Page tournament</h1>
+    <h1 class="text-3xl font-bold text-center mt-6">Tournament Overview</h1>
+	<div class="grid grid-cols-2 gap-4 mt-8 px-6">
+	  <div>
+		<h2 class="text-xl font-semibold mb-2 text-amber-700">📁 Database State</h2>
+		<div id="db-panel" class="p-4 bg-amber-200/30 rounded shadow"></div>
+	  </div>
+	  <div>
+		<h2 class="text-xl font-semibold mb-2 text-green-700">⛓ Blockchain State</h2>
+		<div id="chain-panel" class="p-4 bg-green-200/30 rounded shadow"></div>
+	  </div>
+  
+	</div>
+  
+	<div class="flex flex-col items-center mt-6 gap-3">
+	  <button id="create-test" class="btn w-48">Create Test Tournament</button>
+	  <button id="show-onchain" class="btn w-48">Show DB vs Blockchain</button>
+	  <button id="back-to-home" class="btn w-48" data-link href="/homelogin">Back to Home</button>
+	</div>  
   </template>
 
 </html>
