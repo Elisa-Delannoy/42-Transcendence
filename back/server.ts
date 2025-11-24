@@ -69,8 +69,8 @@ fastify.get("/", async (request, reply) => {
 });
 
 fastify.post("/api/register", async (request, reply) => {
-  const { username, email, password } = request.body as any;
-  return { message: await manageRegister(username, email, password) };
+  const { username, email, password } = request.body as { username: string, password: string, email: string};
+  await manageRegister(username, email, password, reply);
 });
 
 fastify.post("/api/login", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -167,7 +167,7 @@ const start = async () => {
 	try {
 		await fastify.listen({ port: 8443, host: "0.0.0.0" });
 		await db.connect();
-		// await users.deleteUserTable();
+		await users.deleteUserTable();
 		await gameInfo.deleteGameInfoTable();
 		await users.createUserTable();
 		await gameInfo.createGameInfoTable();

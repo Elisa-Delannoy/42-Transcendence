@@ -9,6 +9,7 @@ function LoginView() {
 }
 function initLogin() {
   const form = document.getElementById("login-form");
+  const message = document.getElementById("login-message");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const username = document.getElementById("username").value;
@@ -16,6 +17,14 @@ function initLogin() {
     const success = await login(username, password);
     if (success)
       navigateTo("/homelogin");
+<<<<<<< HEAD
+=======
+    else {
+      form.classList.add("border-red-500");
+      message.textContent = "Identifiants incorrects";
+      message.classList.add("text-red-600", "font-bold");
+    }
+>>>>>>> noah
   });
 }
 async function login(username, password) {
@@ -67,11 +76,15 @@ function initRegister() {
       });
       const result = await res.json();
       message.textContent = result.message;
+      navigateTo("/registerok");
     } catch (err) {
       message.textContent = "Erreur serveur...";
       console.error(err);
     }
   });
+}
+function RegisterValidView() {
+  return document.getElementById("registerok").innerHTML;
 }
 
 // front/src/views/p_game.ts
@@ -501,6 +514,7 @@ var routes = [
   { path: "/logout", init: initLogout },
   { path: "/dashboard", view: DashboardView },
   { path: "/register", view: RegisterView, init: initRegister },
+  { path: "/registerok", view: RegisterValidView },
   { path: "/homelogin", view: HomeLoginView, init: initHomePage },
   { path: "/game", view: GameView, init: initGame },
   { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },

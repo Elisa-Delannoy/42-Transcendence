@@ -1,7 +1,7 @@
 import { HomeView } from "./views/home";
 import { LoginView, initLogin } from "./views/login";
 import { DashboardView } from "./views/dashboard";
-import { RegisterView, initRegister } from "./views/register";
+import { RegisterValidView, RegisterView, initRegister } from "./views/register";
 import { GameView, initGame} from "./views/p_game";
 import { QuickGameView, initQuickGame, stopGame} from "./views/p_quickgame";
 import { HomeLoginView, initHomePage } from "./views/p_homelogin";
@@ -16,6 +16,7 @@ const routes = [
   { path: "/logout", init: initLogout},
   { path: "/dashboard", view: DashboardView },
   { path: "/register", view: RegisterView, init: initRegister},
+  { path: "/registerok", view: RegisterValidView},
   { path: "/homelogin", view: HomeLoginView, init: initHomePage},
   { path: "/game", view: GameView, init: initGame},
   { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
