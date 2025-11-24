@@ -1,7 +1,20 @@
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __esm = (fn, res) => function __init() {
+  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+};
+var __commonJS = (cb, mod) => function __require() {
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
+
 // front/src/views/home.ts
 function HomeView() {
   return document.getElementById("homehtml").innerHTML;
 }
+var init_home = __esm({
+  "front/src/views/home.ts"() {
+    "use strict";
+  }
+});
 
 // front/src/views/login.ts
 function LoginView() {
@@ -38,11 +51,22 @@ async function login(username, password) {
     return false;
   }
 }
+var init_login = __esm({
+  "front/src/views/login.ts"() {
+    "use strict";
+    init_router();
+  }
+});
 
 // front/src/views/dashboard.ts
 function DashboardView() {
   return document.getElementById("dashboardhtml").innerHTML;
 }
+var init_dashboard = __esm({
+  "front/src/views/dashboard.ts"() {
+    "use strict";
+  }
+});
 
 // front/src/views/register.ts
 function RegisterView() {
@@ -73,6 +97,11 @@ function initRegister() {
     }
   });
 }
+var init_register = __esm({
+  "front/src/views/register.ts"() {
+    "use strict";
+  }
+});
 
 // front/src/views/p_game.ts
 function GameView() {
@@ -88,6 +117,12 @@ function initGame() {
     navigateTo(`/quickgame/${gameId}`);
   });
 }
+var init_p_game = __esm({
+  "front/src/views/p_game.ts"() {
+    "use strict";
+    init_router();
+  }
+});
 
 // front/src/views/p_quickgame.ts
 function QuickGameView(params) {
@@ -337,6 +372,11 @@ function setupGame(gameID) {
     }
   }
 }
+var init_p_quickgame = __esm({
+  "front/src/views/p_quickgame.ts"() {
+    "use strict";
+  }
+});
 
 // front/src/views/p_homelogin.ts
 function HomeLoginView() {
@@ -352,6 +392,12 @@ async function initHomePage() {
   } catch (err) {
   }
 }
+var init_p_homelogin = __esm({
+  "front/src/views/p_homelogin.ts"() {
+    "use strict";
+    init_router();
+  }
+});
 
 // front/src/views/p_profil.ts
 function ProfilView() {
@@ -377,35 +423,52 @@ async function initProfil() {
   document.getElementById("profil-modification").textContent = profil.modification_date;
   document.getElementById("profil-money").textContent = profil.money;
   document.getElementById("profil-elo").textContent = profil.elo;
+  async function uploadAvatar(avatar) {
+    const form = new FormData();
+    form.append("avatar", avatar);
+    const result = await genericFetch2("/api/private/uploads", {
+      method: "POST",
+      body: form,
+      credentials: "include"
+    });
+    console.log("uplaod success ok : ", result);
+    navigateTo("/profil");
+  }
 }
+var init_p_profil = __esm({
+  "front/src/views/p_profil.ts"() {
+    "use strict";
+    init_router();
+  }
+});
 
 // front/src/views/p_tournament.ts
 function TournamentView() {
   return document.getElementById("tournamenthtml").innerHTML;
 }
+var init_p_tournament = __esm({
+  "front/src/views/p_tournament.ts"() {
+    "use strict";
+  }
+});
 
 // front/src/views/logout.ts
-var initLogout = async () => {
-  await fetch("/api/logout", {
-    method: "GET",
-    credentials: "include"
-  });
-  navigateTo("/login");
-};
+var initLogout;
+var init_logout = __esm({
+  "front/src/views/logout.ts"() {
+    "use strict";
+    init_router();
+    initLogout = async () => {
+      await fetch("/api/logout", {
+        method: "GET",
+        credentials: "include"
+      });
+      navigateTo("/login");
+    };
+  }
+});
 
 // front/src/router.ts
-var routes = [
-  { path: "/", view: HomeView },
-  { path: "/login", view: LoginView, init: initLogin },
-  { path: "/logout", init: initLogout },
-  { path: "/dashboard", view: DashboardView },
-  { path: "/register", view: RegisterView, init: initRegister },
-  { path: "/homelogin", view: HomeLoginView, init: initHomePage },
-  { path: "/game", view: GameView, init: initGame },
-  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame },
-  { path: "/profil", view: ProfilView, init: initProfil },
-  { path: "/tournament", view: TournamentView }
-];
 function navigateTo(url) {
   const state = { previous: window.location.pathname };
   history.pushState(state, "", url);
@@ -477,8 +540,42 @@ function initRouter() {
   });
   router();
 }
+var routes;
+var init_router = __esm({
+  "front/src/router.ts"() {
+    "use strict";
+    init_home();
+    init_login();
+    init_dashboard();
+    init_register();
+    init_p_game();
+    init_p_quickgame();
+    init_p_homelogin();
+    init_p_profil();
+    init_p_tournament();
+    init_logout();
+    routes = [
+      { path: "/", view: HomeView },
+      { path: "/login", view: LoginView, init: initLogin },
+      { path: "/logout", init: initLogout },
+      { path: "/dashboard", view: DashboardView },
+      { path: "/register", view: RegisterView, init: initRegister },
+      { path: "/homelogin", view: HomeLoginView, init: initHomePage },
+      { path: "/game", view: GameView, init: initGame },
+      { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame },
+      { path: "/profil", view: ProfilView, init: initProfil },
+      { path: "/tournament", view: TournamentView }
+    ];
+  }
+});
 
 // front/src/main.ts
-document.addEventListener("DOMContentLoaded", () => {
-  initRouter();
+var require_main = __commonJS({
+  "front/src/main.ts"() {
+    init_router();
+    document.addEventListener("DOMContentLoaded", () => {
+      initRouter();
+    });
+  }
 });
+export default require_main();

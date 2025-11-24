@@ -6,12 +6,18 @@ import { Users } from './DB/users';
 import { manageLogin } from './routes/login/login';
 import { manageRegister } from "./routes/register/register";
 import { GameInfo } from "./DB/gameinfo";
-import fastifyCookie from "fastify-cookie";
+import fastifyCookie from "@fastify/cookie";
 import { tokenOK } from "./middleware/jwt";
-import { CookieSerializeOptions } from "fastify-cookie";
+import { CookieSerializeOptions } from "@fastify/cookie";
 import * as GameModule from "./DB/game";
 import fs from "fs";
 import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always"
+import multipart from "@fastify/multipart"
+import path from "path"
+import { pipeline } from "stream/promises"
+import { request } from "http";
+import { fileURLToPath } from "url";
+import { navigateTo } from "../front/src/router";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -45,6 +51,13 @@ fastify.register(fastifyCookie, {
 })
 
 fastify.register(FastifyHttpsAlwaysPlugin, httpsAlwaysOpts)
+
+fastify.register(multipart, {
+	limits:{
+		fileSize: 2 * 1024 * 1024,
+		files: 1,
+	}
+})
 
 fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
 	if (request.url.startsWith("/api/private")) {
@@ -94,6 +107,20 @@ fastify.post("/api/private/profil", async (request, reply) => {
   }
 });
 
+fastify.post("/api/private/uploads", async (request, reply) => {
+	const avatar = await request.file();
+	// console.log("avatar = ", avatar);
+	if (!avatar?.filename) {
+		return reply.status(400).send({ error:  "Nothing uploaded"});
+	}
+	const avatar_name = request.user?.user_id + "_" + avatar.filename;
+	const avatar_path = path.join(__dirname, "uploads", avatar_name);
+	await pipeline(avatar.file, fs.createWriteStream(avatar_path));
+	// navigateTo("/profil");
+	return reply.send({ message: "Upload succes", filename: avatar_name})
+
+});
+
 fastify.post("/api/private/game/create", async (request, reply) => {
 	const gameId = GameModule.games.size + 1;
 	console.log("gameId : ", gameId, " type = ", typeof gameId);
@@ -136,9 +163,11 @@ fastify.get("/api/logout", async (request, reply) => {
 	return { message: "is logged out" };
 })
 
+
+
 const start = async () => {
 	try {
-		await fastify.listen({ port: 8443, host: "0.0.0.0" });
+		await fastify.listen({ port: 3000, host: "0.0.0.0" });
 		await db.connect();
 		// await users.deleteUserTable();
 		await gameInfo.deleteGameInfoTable();

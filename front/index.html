@@ -146,6 +146,10 @@
         <p><strong>Modification:</strong> <span id="profil-modification"></span></p>
         <p><strong>Money:</strong> <span id="profil-money"></span></p>
         <p><strong>ELO:</strong> <span id="profil-elo"></span></p>
+		<form id="upload_avatar" action ="/api/private/uploads" method="post" enctype="multipart/form-data">
+			<input type="file" name="avatar" accept="image/png, image/jpeg" />
+			<button type="submit">Upload</button>
+		</form>
 	</main>
   </template>
 
