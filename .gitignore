@@ -3,3 +3,6 @@
 back/DB/database.db
 back/node_modules
 .env
+package-lock.json
+front/public/output.css
+front/public/app.js

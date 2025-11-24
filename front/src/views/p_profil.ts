@@ -6,17 +6,9 @@ export function ProfilView(): string {
 
 export async function initProfil() {
 
-  const res = await genericFetch("/api/private/profil", {
+  const profil = await genericFetch("/api/private/profil", {
     method: "POST",
-    credentials: "include"
   });
-
-  if (!res.ok) {
-    console.error("Cannot load profile");
-    return;
-  }
-
-  const profil = await res.json();
 
   (document.getElementById("profil-id") as HTMLElement).textContent = profil.user_id;
   (document.getElementById("profil-pseudo") as HTMLElement).textContent = profil.pseudo;

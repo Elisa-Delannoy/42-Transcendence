@@ -85,6 +85,7 @@ fastify.post("/api/private/homelogin", async (request: FastifyRequest, reply: Fa
 fastify.post("/api/private/profil", async (request: FastifyRequest, reply: FastifyReply) => {
   try {
     const id = request.user?.user_id as any;
+	console.log('id', id)
     const profil = await users.getIDUser(id);
     if (!profil)
     {
