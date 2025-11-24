@@ -370,7 +370,7 @@ var GameInstance = class {
    *============================================================ */
   async sendGameResult(winnerId, loserId, winnerScore, loserScore, duration, id) {
     try {
-      const res = await genericFetch("/api/private/game/end", {
+      const res = await genericFetch2("/api/private/game/end", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
