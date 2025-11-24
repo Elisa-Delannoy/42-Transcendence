@@ -5,15 +5,24 @@ export function GameView(): string {
 }
 
 export function initGame() {
-	const button = document.getElementById("start-quickgame");
-	button?.addEventListener("click", async () => {
+	const quickGameButton = document.getElementById("start-quickgame");
+	quickGameButton?.addEventListener("click", async () => {
 		const res = await fetch("/api/private/game/create", {
 			method: "POST"
 		});
 		const { gameId } = await res.json();
 
-		// Redirige vers /game/<id>
 		navigateTo(`/quickgame/${gameId}`);
+	});
+
+	const tournamentButton = document.getElementById("start-tournament");
+	tournamentButton?.addEventListener("click", async () => {
+		const res = await fetch("/api/private/tournament/create", {
+			method: "POST"
+		});
+		const { gameId } = await res.json();
+
+		navigateTo(`/tournament`);
 	});
 }
 
