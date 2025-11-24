@@ -495,7 +495,85 @@ async function initUpdateInfo() {
 
 // front/src/views/p_tournament.ts
 function TournamentView() {
-  return document.getElementById("tournamenthtml").innerHTML;
+  const html = document.getElementById("tournamenthtml").innerHTML;
+  setTimeout(() => initTournamentPage(), 0);
+  return html;
+}
+function generateRandomRanking() {
+  const ranking = [];
+  while (ranking.length < 8) {
+    const randomId = Math.floor(Math.random() * 16) + 1;
+    if (!ranking.includes(randomId)) {
+      ranking.push(randomId);
+    }
+  }
+  return ranking;
+}
+function initTournamentPage() {
+  const createBtn = document.getElementById("create-test");
+  const showBtn = document.getElementById("show-onchain");
+  const backBtn = document.getElementById("back-to-home");
+  createBtn?.addEventListener("click", async () => {
+    await testTournamentDB();
+  });
+  showBtn?.addEventListener("click", async () => {
+    await showDBOnChain();
+  });
+  backBtn?.addEventListener("click", () => {
+    navigateTo("/homelogin");
+  });
+}
+async function testTournamentDB() {
+  const testRanking = generateRandomRanking();
+  try {
+    const res = await fetch("/api/private/tournament/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ranking: testRanking })
+    });
+    const data = await res.json();
+    const dbPanel = document.getElementById("db-panel");
+    if (dbPanel) {
+      dbPanel.innerHTML = `
+        <div class="p-2 border-b">
+          <p class="text-green-700 font-bold">\u2705 Tournament Created!</p>
+          <p><strong>Ranking:</strong> ${testRanking.join(", ")}</p>
+          <p class="text-gray-600 text-sm">(Now stored in database)</p>
+        </div>
+      `;
+    }
+    console.log("Tournament response:", data);
+  } catch (err) {
+    console.error("Error creating tournament:", err);
+  }
+}
+async function showDBOnChain() {
+  try {
+    const res = await fetch("/api/private/tournament/all");
+    const data = await res.json();
+    const dbPanel = document.getElementById("db-panel");
+    const chainPanel = document.getElementById("chain-panel");
+    if (!dbPanel || !chainPanel) return;
+    dbPanel.innerHTML = data.map((t) => `
+      <div class="p-2 border-b">
+        <p><strong>ID:</strong> ${t.tournamentId}</p>
+        <p><strong>Ranking:</strong> ${t.ranking.join(", ")}</p>
+        <p><strong>On Chain:</strong>
+          <span class="${t.onChain ? "text-green-600" : "text-red-600"}">
+            ${t.onChain ? "\u2705 YES" : "\u274C NO"}
+          </span>
+        </p>
+      </div>
+    `).join("");
+    chainPanel.innerHTML = data.map((t) => `
+      <div class="p-2 border-b">
+        <p><strong>ID:</strong> ${t.tournamentId}</p>
+        ${t.onChain ? `<p><strong>Blockchain Ranking:</strong> ${t.blockchainRanking.join(", ")}</p>` : `<p class="text-red-600"><strong>Not On Chain \u274C</strong></p>`}
+      </div>
+    `).join("");
+  } catch (err) {
+    console.error("Error loading DB/Blockchain comparison:", err);
+  }
 }
 
 // front/src/views/logout.ts
