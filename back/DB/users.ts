@@ -94,6 +94,19 @@ export class Users
 		else
 			return infos[0];
 	}
+
+	async updateUsername(id: number, newUsername: string): Promise<Users>
+	{
+		console.log("db: id, newUname", id, newUsername);
+		if (!newUsername || newUsername.trim() === '') {
+			throw new Error("New username cannot be empty.");
+		}
+		const updateResult = await this._db.query(`UPDATE Users SET pseudo = ? WHERE user_id = ?`, [newUsername, id]);
+
+		const updatedUser = await this.getIDUser(id);
+		console.log('updated username:', updatedUser.pseudo)
+		return updatedUser;
+	}
 }
 
 enum UserStatus

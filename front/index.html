@@ -138,14 +138,51 @@
 	</header>
 	<main>
 		<h1>Page profil</h1>
+		<a href="/updateinfo" data-link class="btn w-48">Update Profile</a>
 		<p><strong>ID:</strong> <span id="profil-id"></span></p>
-        <p><strong>Pseudo:</strong> <span id="profil-pseudo"></span></p>
+        <p><strong>Username:</strong> <span id="profil-pseudo"></span></p>
         <p><strong>Email:</strong> <span id="profil-email"></span></p>
         <p><strong>Status:</strong> <span id="profil-status"></span></p>
         <p><strong>Creation:</strong> <span id="profil-creation"></span></p>
         <p><strong>Modification:</strong> <span id="profil-modification"></span></p>
         <p><strong>Money:</strong> <span id="profil-money"></span></p>
         <p><strong>ELO:</strong> <span id="profil-elo"></span></p>
+	</main>
+  </template>
+
+  <template id="updateinfohtml">
+	<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<a href="/homelogin" data-link class="block dark:hidden ml-4">
+			<img src="src/asset/image/croissant white.png" alt="croissantw"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+		<a href="/homelogin" data-link class="hidden dark:block ml-4">
+			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+	</header>
+	<main>
+		<h1>Update profile</h1>
+		<p><strong>Update information for user:</strong> <span id="profil-username"></span></p>
+		<h2><strong>Change Username</strong></h2>
+		<form id="change-username-form">
+            <input type="text" name="new-username" placeholder="New Username" required />
+			<input type="password" name="password" placeholder="Confirm Password" required />
+            <button type="submit">Update Username</button>
+		</form>
+		<h2><strong>Change Email</strong></h2>
+		<form id="change-email-form">
+            <input type="text" name="new-email" placeholder="New Email" required />
+			<input type="password" name="password" placeholder="Confirm Password" required />
+            <button type="submit">Update Email</button>
+        </form>
+		<h2><strong>Change Password</strong></h2>
+        <form id="change-password-form">
+            <input type="password" name="old-password" placeholder="Old Password" required />
+			<input type="password" name="new-password" placeholder="New Password" required />
+			<input type="password" name="confirm-new-password" placeholder="Confirm New Password" required />
+            <button type="submit">Update Email</button>
+        </form>
 	</main>
   </template>
 

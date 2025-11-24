@@ -6,6 +6,7 @@ import { GameView, initGame} from "./views/p_game";
 import { QuickGameView, initQuickGame, stopGame} from "./views/p_quickgame";
 import { HomeLoginView, initHomePage } from "./views/p_homelogin";
 import { ProfilView, initProfil} from "./views/p_profil";
+import { UpdateInfoView, initUpdateInfo } from "./views/p_updateinfo";
 import { TournamentView} from "./views/p_tournament";
 import { initLogout } from "./views/logout";
 
@@ -19,7 +20,9 @@ const routes = [
   { path: "/game", view: GameView, init: initGame},
   { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
   { path: "/profil", view: ProfilView, init: initProfil},
-  { path: "/tournament", view: TournamentView}
+  { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo},
+  { path: "/tournament", view: TournamentView},
+  { path: "/changeusername" }
 ];
 
 let currentRoute: any = null;
