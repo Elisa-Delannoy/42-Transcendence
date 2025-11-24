@@ -2,7 +2,7 @@
 <html lang="fr" class="">
 	<head>
 		<meta charset="UTF-8" />
-		<title>Croissandance</title>
+		<title>Croiscendence</title>
 		<link href="public/output.css" rel="stylesheet" />
 	</head>
 	<body>
@@ -59,12 +59,18 @@
 		<form id="login-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-64 h-80 mx-auto">
 	 		<h1 class="mt-4 font-bold text-xl">Welcome Back</h1>
 			<div class="mt-6">
-				<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-					focus:ring-2 focus:ring-amber-500 px-2" 
-					id="username" placeholder="username" required />
-				<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-					focus:ring-2 focus:ring-amber-500 px-2" 
-					id="password" type="password" placeholder="password" required />
+				<div>
+					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+						focus:ring-2 focus:ring-amber-500 px-2" 
+						id="username" placeholder="username" required />
+					<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="username-loginmsg"></p>
+				</div>
+				<div>
+					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+						focus:ring-2 focus:ring-amber-500 px-2" 
+						id="password" type="password" placeholder="password" required />
+					<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="password-loginmsg"></p>
+				</div>
 			</div>
 			<button class="mt-12 btn w-40">Log in</button>
 			<a class="mt-2 text-sm" href="/register" data-link>Create account ?</a>
@@ -84,19 +90,27 @@
 			</a>
 		</header>
 		<div class="register-container flex flex-col">
-			<form id="register-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-64 h-80 mx-auto">
+			<form id="register-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-72 h-90 mx-auto">
 				<h1 class="mt-4 font-bold text-xl">Register</h1>
 				<div>
-					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-						focus:ring-2 focus:ring-amber-500 px-2" type="text" name="username" placeholder="Username" required />
-					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-						focus:ring-2 focus:ring-amber-500 px-2" type="email" name="email" placeholder="Email" required />
-					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-						focus:ring-2 focus:ring-amber-500 px-2" type="password" name="password" placeholder="Password" required />
+					<div>
+						<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+							px-2" type="text" name="username" placeholder="Username" required />
+						<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="username-message"></p>
+					</div>
+					<div>
+						<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+							px-2" type="email" name="email" placeholder="Email" required />
+						<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="email-message"></p>
+					</div>
+					<div>
+						<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+							px-2" type="password" name="password" placeholder="Password" required />
+						<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="password-message"></p>
+					</div>
 				</div>
-				<button class="btn w-40" type="submit">Register</button>
+				<button class="btn w-40 justify-end" type="submit">Register</button>
 			</form>
-			<p class="text-amber-600 mt-2 text-center mx-auto block w-48" id="register-message"></p>
 		</div>
 	</template>
 
