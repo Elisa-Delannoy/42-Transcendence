@@ -23,6 +23,7 @@
     "dotenv": "^17.2.3",
     "fastify": "^5.6.2",
     "fastify-cookie": "^5.6.1",
+    "fastify-https-always": "^2.0.0",
     "jsonwebtoken": "^9.0.2",
     "sqlite3": "^5.1.7",
     "ts-node": "^10.9.2",

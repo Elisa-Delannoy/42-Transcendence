@@ -3,7 +3,7 @@ import { LoginView, initLogin } from "./views/login";
 import { DashboardView } from "./views/dashboard";
 import { RegisterView, initRegister } from "./views/register";
 import { GameView, initGame} from "./views/p_game";
-import { QuickGameView, initQuickGame} from "./views/p_quickgame";
+import { QuickGameView, initQuickGame, stopGame} from "./views/p_quickgame";
 import { HomeLoginView, initHomePage } from "./views/p_homelogin";
 import { ProfilView, initProfil} from "./views/p_profil";
 import { UpdateInfoView, initUpdateInfo } from "./views/p_updateinfo";
@@ -18,31 +18,37 @@ const routes = [
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/homelogin", view: HomeLoginView, init: initHomePage},
   { path: "/game", view: GameView, init: initGame},
-  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame},
+  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
   { path: "/profil", view: ProfilView, init: initProfil},
   { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo},
   { path: "/tournament", view: TournamentView},
   { path: "/changeusername" }
 ];
 
+let currentRoute: any = null;
+
 export function navigateTo(url: string) {
-  history.pushState(null, "", url);
+	const state = { previous: window.location.pathname};
+	history.pushState(state, "", url);
   router();
 }
 
 export async function genericFetch(url: string, options: RequestInit = {}) {
 	const res = await fetch(url, {
-		...options,
-		credentials: "include"
-	});
+	...options,
+	credentials: "include"
+})
+	const result = await res.json();
 	if (res.status === 401) {
-		navigateTo("/login");
-		throw new Error("Unauthorized");
-	}
+		if (result.error === "TokenExpiredError")
+			alert("Session expired, please login")
+		navigateTo("/logout");
+		throw new Error(result.error);
+}
 	if (!res.ok){
-		throw new Error(`Error: ${res.status}`);
-	}
-	return res;
+		throw new Error(result.error);
+}
+	return result;
 }
 
 function matchRoute(pathname: string) {
@@ -63,15 +69,28 @@ function matchRoute(pathname: string) {
 }
 
 export function router() {
+	//clean route who got cleanup function (game)
+	if (currentRoute?.cleanup)
+	{
+		if (typeof currentRoute.cleanup === "function")
+			currentRoute.cleanup();
+	}
 	const match = matchRoute(location.pathname);
-  if (!match) {
-	document.querySelector("#app")!.innerHTML = "<h1>404 Not Found</h1>";
-	return;
-  }
-  const { route, params } = match;
-  if (route.view)
-  	document.querySelector("#app")!.innerHTML = route.view(params);
-  route.init?.(params);
+
+	if (!match) {
+		document.querySelector("#app")!.innerHTML = "<h1>404 Not Found</h1>";
+		return;
+	}
+
+	const { route, params } = match;
+
+	if (route.view)
+		document.querySelector("#app")!.innerHTML = route.view(params);
+
+	route.init?.(params);
+	currentRoute = route;
+	// if (!currentRoute.cleanup) {
+	// 	currentRoute.cleanup = () => {};}
 }
 
 export function initRouter() {
@@ -86,6 +105,14 @@ export function initRouter() {
       }
     }
   });
-  window.addEventListener("popstate", router);
+  window.addEventListener("popstate", (event) => {
+	const path = window.location.pathname;
+	const previous = event.state?.previous;
+	const public_path = ["/", "/login", "/register"];
+	const is_private = !public_path.includes(path)
+	if (is_private && previous && public_path.includes(previous))
+		history.replaceState( { previous: "/homelogin" }, "", "/homelogin");
+	router();
+	});
   router();
 }

@@ -12,6 +12,9 @@ import { CookieSerializeOptions } from "fastify-cookie";
 import * as GameModule from "./DB/game";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import bcrypt from "bcryptjs";
+import { createGame, endGame, updateGame } from "./routes/game/game";
+import fs from "fs";
+import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always"
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -19,10 +22,21 @@ export const gameInfo = new GameInfo(db);
 
 // const games = new Map<number, Game>();
 
-
 const fastify = Fastify({
-  logger: false,
+	logger: false,
+	https:
+	{
+		key: fs.readFileSync("server.key"),
+		cert: fs.readFileSync("server.cert"),
+	},
+	trustProxy: true
 });
+
+const httpsAlwaysOpts: HttpsAlwaysOptions = {
+  productionOnly: false,
+  redirect:       false,
+  httpsPort:      8443
+}
 
 fastify.register(fastifyStatic, {
   root: join(process.cwd(), "front"),
@@ -33,6 +47,8 @@ fastify.register(fastifyCookie, {
   parseOptions: {}
 })
 
+fastify.register(FastifyHttpsAlwaysPlugin, httpsAlwaysOpts)
+
 fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
 	if (request.url.startsWith("/api/private")) {
 		const user = await tokenOK(request, reply);
@@ -41,12 +57,12 @@ fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply)
 	}
 })
 
-fastify.get("/api/isLoggedIn", async (request: FastifyRequest, reply: FastifyReply) => {
-	const user = tokenOK(request, reply);
-	if (user !== null)
-		return { logged: true };
-	return { logged: false };
-})
+// fastify.get("/api/isLoggedIn", async (request: FastifyRequest, reply: FastifyReply) => {
+// 	const user = await tokenOK(request, reply);
+// 	if (user !== null)
+// 		return { logged: true };
+// 	return { logged: false };
+// })
 
 fastify.get("/", async (request, reply) => {
   return reply.sendFile("index.html");
@@ -76,8 +92,8 @@ fastify.post("/api/private/profil", async (request: FastifyRequest, reply: Fasti
     }
     return profil;
   } catch (error) {
-    fastify.log.error(error)
-    return reply.code(500).send({message: "Internal Server Error"});
+	fastify.log.error(error)
+	return reply.code(500).send({message: "Internal Server Error"});
   }
 });
 
@@ -118,33 +134,21 @@ fastify.post("/api/private/changeusername", async (request, reply) => {
 })
 
 fastify.post("/api/private/game/create", async (request, reply) => {
-	const gameId = GameModule.games.size + 1;
-	console.log("gameId : ", gameId, " type = ", typeof gameId);
-
-	const game = new GameModule.Game(gameId);
-	GameModule.games.set(gameId, game);
+	const gameId = createGame();
 
 	reply.send({ gameId });
 });
 
 fastify.post("/api/private/game/update", async (request, reply) => {
-	const { gameId, ballPos, paddlePos } = request.body as {
-		gameId: number;
-		ballPos: { x: number, y: number };
-		paddlePos: { player1: number, player2: number };
-	};
-
-	GameModule.updateGame(gameId, { ballPos, paddlePos });
-
+	const { gameId, ballPos, paddlePos } = request.body as any;
+	updateGame(gameId, ballPos, paddlePos );
 	return { ok: true };
 });
 
 fastify.post("/api/private/game/end", async (request, reply) => {
 	const { winner_id, loser_id, winner_score, loser_score, duration_game, id } = request.body as any;
 
-	const gameid = Number(id);
-	const gameDate: any = GameModule.getDate(gameid);
-	await gameInfo.finishGame(winner_id, loser_id, winner_score, loser_score, duration_game, gameDate);
+	await endGame(winner_id, loser_id, winner_score, loser_score, duration_game, id, gameInfo);
 	return { message: "Game saved!" };
 });
 
@@ -161,13 +165,12 @@ fastify.get("/api/logout", async (request, reply) => {
 
 const start = async () => {
 	try {
-		await fastify.listen({ port: 3000 });
+		await fastify.listen({ port: 8443, host: "0.0.0.0" });
 		await db.connect();
 		// await users.deleteUserTable();
 		await gameInfo.deleteGameInfoTable();
 		await users.createUserTable();
 		await gameInfo.createGameInfoTable();
-		console.log("🚀 Serveur lancé sur http://localhost:3000");
 	} catch (err) {
 		fastify.log.error(err);
 		process.exit(1);
