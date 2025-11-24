@@ -88,8 +88,6 @@ function initGame() {
     navigateTo(`/quickgame/${gameId}`);
   });
 }
-
-// front/src/views/gameInstance.ts
 var GameInstance = class {
   constructor(gameID) {
     this.isPlaying = false;
@@ -372,7 +370,7 @@ var GameInstance = class {
    *============================================================ */
   async sendGameResult(winnerId, loserId, winnerScore, loserScore, duration, id) {
     try {
-      const res = await fetch("/api/private/game/end", {
+      const res = await genericFetch("/api/private/game/end", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

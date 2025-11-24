@@ -1,4 +1,4 @@
-import { GameInstance } from "./gameInstance";
+import { GameInstance } from "./p_game";
 
 let currentGame: GameInstance | null = null;
 
@@ -19,7 +19,8 @@ export function initQuickGame(params?: any) {
 
 //global function to stop game correctly
 export function stopGame () {
-	if (currentGame) {
+	if (currentGame)
+	{
 		currentGame.destroy();
 		currentGame = null;
 	}
