@@ -3,7 +3,7 @@ import { LoginView, initLogin } from "./views/login";
 import { DashboardView } from "./views/dashboard";
 import { RegisterView, initRegister } from "./views/register";
 import { GameView, initGame} from "./views/p_game";
-import { QuickGameView, initQuickGame} from "./views/p_quickgame";
+import { QuickGameView, initQuickGame, stopGame} from "./views/p_quickgame";
 import { HomeLoginView, initHomePage } from "./views/p_homelogin";
 import { ProfilView, initProfil} from "./views/p_profil";
 import { TournamentView} from "./views/p_tournament";
@@ -17,7 +17,7 @@ const routes = [
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/homelogin", view: HomeLoginView, init: initHomePage},
   { path: "/game", view: GameView, init: initGame},
-  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: () => window.stopGame() },
+  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
   { path: "/profil", view: ProfilView, init: initProfil},
   { path: "/tournament", view: TournamentView}
 ];
@@ -62,7 +62,7 @@ function matchRoute(pathname: string) {
 }
 
 export function router() {
-	//clean route who got cleanup
+	//clean route who got cleanup function (game)
 	if (currentRoute?.cleanup)
 	{
 		if (typeof currentRoute.cleanup === "function")
@@ -75,11 +75,6 @@ export function router() {
 		return;
 	}
 
-	// if (currentRoute?.cleanup)
-	// {
-	// 	QuickGameView.
-	// }
-
 	const { route, params } = match;
 
 	if (route.view)
@@ -87,9 +82,8 @@ export function router() {
 
 	route.init?.(params);
 	currentRoute = route;
-	if (!currentRoute.cleanup) {
-		currentRoute.cleanup = () => {};
-}
+	// if (!currentRoute.cleanup) {
+	// 	currentRoute.cleanup = () => {};}
 }
 
 export function initRouter() {

@@ -50,7 +50,6 @@ export class GameInstance {
 		}
 	};
 
-	// Listeners pour nettoyage
 	private keydownHandler = (e: KeyboardEvent) => this.onKeyDown(e);
 	private keyupHandler = (e: KeyboardEvent) => this.onKeyUp(e);
 
@@ -90,7 +89,7 @@ export class GameInstance {
 	/** ============================================================
 	 ** START / STOP
 	 *============================================================ */
-	public start() {
+	private start() {
 		if (this.isPlaying) return;
 
 		this.isPlaying = true;
@@ -106,7 +105,7 @@ export class GameInstance {
 		this.play();
 	}
 
-	public stop() {
+	private stop() {
 		this.isPlaying = false;
 		cancelAnimationFrame(this.anim);
 
@@ -116,9 +115,6 @@ export class GameInstance {
 		this.resetGame();
 	}
 
-	/** ============================================================
-	 ** DESTROY → appelé par window.stopGame()
-	 *============================================================ */
 	public destroy() {
 		this.stop();
 		cancelAnimationFrame(this.anim);
@@ -145,6 +141,8 @@ export class GameInstance {
 	 *============================================================ */
 	private play = () => {
 		if (!this.isPlaying) {
+			this.stopBtn.disabled = true;
+			this.startBtn.disabled = true;
 			this.stopTimer();
 			this.displayWinner();
 			return;
@@ -156,7 +154,7 @@ export class GameInstance {
 	};
 
 	/** ============================================================
-	 ** CONTROL
+	 ** CONTROLS
 	 *============================================================ */
 	private onKeyDown(e: KeyboardEvent) {
 		if (e.key === "w" || e.key === "W") this.game.player1.movingUp = true;
@@ -223,7 +221,7 @@ export class GameInstance {
 	}
 
 	/** ============================================================
-	 ** UTILITAIRES
+	 ** UTILS FUNCTIONS
 	 *============================================================ */
 	private randomizeBall() {
 		this.game.ball.speed.x = Math.random() < 0.5 ? -2 : 2;
@@ -325,7 +323,7 @@ export class GameInstance {
 	}
 
 	/** ============================================================
-	 ** FIN DE PARTIE
+	 ** ENDGAME
 	 *============================================================ */
 	private displayWinner() {
 		const ctx = this.ctx;

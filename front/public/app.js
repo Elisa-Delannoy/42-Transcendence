@@ -130,7 +130,6 @@ var GameInstance = class {
         }
       }
     };
-    // Listeners pour nettoyage
     this.keydownHandler = (e) => this.onKeyDown(e);
     this.keyupHandler = (e) => this.onKeyUp(e);
     /** ============================================================
@@ -138,6 +137,8 @@ var GameInstance = class {
      *============================================================ */
     this.play = () => {
       if (!this.isPlaying) {
+        this.stopBtn.disabled = true;
+        this.startBtn.disabled = true;
         this.stopTimer();
         this.displayWinner();
         return;
@@ -191,9 +192,6 @@ var GameInstance = class {
     this.stopBtn.disabled = true;
     this.resetGame();
   }
-  /** ============================================================
-   ** DESTROY → appelé par window.stopGame()
-   *============================================================ */
   destroy() {
     this.stop();
     cancelAnimationFrame(this.anim);
@@ -211,7 +209,7 @@ var GameInstance = class {
     this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1e3);
   }
   /** ============================================================
-   ** CONTROL
+   ** CONTROLS
    *============================================================ */
   onKeyDown(e) {
     if (e.key === "w" || e.key === "W") this.game.player1.movingUp = true;
@@ -265,7 +263,7 @@ var GameInstance = class {
     }
   }
   /** ============================================================
-   ** UTILITAIRES
+   ** UTILS FUNCTIONS
    *============================================================ */
   randomizeBall() {
     this.game.ball.speed.x = Math.random() < 0.5 ? -2 : 2;
@@ -342,7 +340,7 @@ var GameInstance = class {
     ctx.fillText(`${this.game.player2.score}`, this.canvas.width * 0.57, 50);
   }
   /** ============================================================
-   ** FIN DE PARTIE
+   ** ENDGAME
    *============================================================ */
   displayWinner() {
     const ctx = this.ctx;
@@ -394,6 +392,7 @@ var GameInstance = class {
 };
 
 // front/src/views/p_quickgame.ts
+var currentGame = null;
 function QuickGameView(params) {
   return document.getElementById("quickgamehtml").innerHTML;
 }
@@ -405,13 +404,12 @@ function initQuickGame(params) {
   }
   currentGame = new GameInstance(gameID);
 }
-var currentGame = null;
-window.stopGame = function() {
+function stopGame() {
   if (currentGame) {
     currentGame.destroy();
     currentGame = null;
   }
-};
+}
 
 // front/src/views/p_homelogin.ts
 function HomeLoginView() {
@@ -479,7 +477,7 @@ var routes = [
   { path: "/register", view: RegisterView, init: initRegister },
   { path: "/homelogin", view: HomeLoginView, init: initHomePage },
   { path: "/game", view: GameView, init: initGame },
-  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: () => window.stopGame() },
+  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
   { path: "/profil", view: ProfilView, init: initProfil },
   { path: "/tournament", view: TournamentView }
 ];
@@ -532,10 +530,6 @@ function router() {
     document.querySelector("#app").innerHTML = route.view(params);
   route.init?.(params);
   currentRoute = route;
-  if (!currentRoute.cleanup) {
-    currentRoute.cleanup = () => {
-    };
-  }
 }
 function initRouter() {
   document.body.addEventListener("click", (e) => {
