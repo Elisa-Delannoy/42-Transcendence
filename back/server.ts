@@ -10,13 +10,15 @@ import fastifyCookie from "fastify-cookie";
 import { tokenOK } from "./middleware/jwt";
 import { CookieSerializeOptions } from "fastify-cookie";
 import * as GameModule from "./DB/game";
+import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
+import bcrypt from "bcryptjs";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
 export const gameInfo = new GameInfo(db);
 
 // const games = new Map<number, Game>();
-let login = ""
+
 
 const fastify = Fastify({
   logger: false,
@@ -64,9 +66,9 @@ fastify.post("/api/private/homelogin", async (request: FastifyRequest, reply: Fa
 	return { pseudo: request.user?.pseudo }
 });
 
-fastify.post("/api/private/profil", async (request, reply) => {
-	try {
-    const { id } = request.body as any;
+fastify.post("/api/private/profil", async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const id = request.user?.user_id as any;
     const profil = await users.getIDUser(id);
     if (!profil)
     {
@@ -78,6 +80,42 @@ fastify.post("/api/private/profil", async (request, reply) => {
     return reply.code(500).send({message: "Internal Server Error"});
   }
 });
+
+fastify.post("/api/private/updateinfo", async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const id = request.user?.user_id as any;
+    const profil = await users.getIDUser(id);
+    if (!profil)
+    {
+      return reply.code(404).send({message: "User not found"})
+    }
+    return profil;
+  } catch (error) {
+    fastify.log.error(error)
+    return reply.code(500).send({message: "Internal Server Error"});
+  }
+});
+
+fastify.post("/api/private/changeusername", async (request, reply) => {
+	try {
+		const { newUsername, password } = request.body as any;
+		const id = request.user?.user_id as any;
+
+		const user = await users.getIDUser(id);
+		if (!user)
+			return reply.code(404).send({message: "User not found"});
+		const isMatch = await bcrypt.compare(password, user.password);
+		if (!isMatch) {
+			return reply.code(401).send({ message: "Wrong password" });
+		}
+		const updatedUser = await users.updateUsername(id, newUsername);
+		return reply.code(200).send({ message: "Username updated", pseudo: updatedUser.pseudo });
+
+	} catch (error) {
+		fastify.log.error(error);
+		return reply.code(500).send({ message: "Internal Server Error" });
+	}
+})
 
 fastify.post("/api/private/game/create", async (request, reply) => {
 	const gameId = GameModule.games.size + 1;

@@ -360,11 +360,9 @@ function ProfilView() {
   return document.getElementById("profilhtml").innerHTML;
 }
 async function initProfil() {
-  const user_id = 1;
-  const res = await fetch("/api/private/profil", {
+  const res = await genericFetch("/api/private/profil", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: user_id })
+    credentials: "include"
   });
   if (!res.ok) {
     console.error("Cannot load profile");
@@ -379,6 +377,38 @@ async function initProfil() {
   document.getElementById("profil-modification").textContent = profil.modification_date;
   document.getElementById("profil-money").textContent = profil.money;
   document.getElementById("profil-elo").textContent = profil.elo;
+}
+
+// front/src/views/p_updateinfo.ts
+function UpdateInfoView() {
+  return document.getElementById("updateinfohtml").innerHTML;
+}
+async function initUpdateInfo() {
+  const res = await genericFetch("/api/private/updateinfo", {
+    method: "POST"
+  });
+  if (!res.ok) {
+    console.error("Cannot load profile");
+    return;
+  }
+  const profil = await res.json();
+  document.getElementById("profil-username").textContent = profil.pseudo;
+  const formUsername = document.getElementById("change-username-form");
+  formUsername.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const newUsername = formUsername["new-username"].value;
+    const password = formUsername["password"].value;
+    const response = await genericFetch("/api/private/changeusername", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ newUsername, password })
+    });
+    console.log("client initupdate: body", response.body);
+    if (!response.ok)
+      return alert("Error changing usename");
+    alert("Username is updated successfully!");
+    navigateTo("/homelogin");
+  });
 }
 
 // front/src/views/p_tournament.ts
@@ -406,7 +436,9 @@ var routes = [
   { path: "/game", view: GameView, init: initGame },
   { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame },
   { path: "/profil", view: ProfilView, init: initProfil },
-  { path: "/tournament", view: TournamentView }
+  { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },
+  { path: "/tournament", view: TournamentView },
+  { path: "/changeusername" }
 ];
 function navigateTo(url) {
   history.pushState(null, "", url);

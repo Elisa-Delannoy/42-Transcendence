@@ -1,15 +1,14 @@
+import { genericFetch } from "../router";
+
 export function ProfilView(): string {
   return (document.getElementById("profilhtml") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initProfil() {
-  // const user_id = localStorage.getItem("user_id");
-  const user_id = 1;
 
-  const res = await fetch("/api/private/profil", {
+  const res = await genericFetch("/api/private/profil", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: user_id })
+    credentials: "include"
   });
 
   if (!res.ok) {
