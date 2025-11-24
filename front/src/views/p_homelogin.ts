@@ -1,3 +1,4 @@
+import { resourceLimits } from "worker_threads";
 import { genericFetch} from "../router";
 
 export function HomeLoginView(): string {
@@ -5,15 +6,12 @@ export function HomeLoginView(): string {
 }
 export async function initHomePage() {
   try {
-	const res = await genericFetch("/api/private/homelogin", {
+	const result = await genericFetch("/api/private/homelogin", {
 		method: "POST",
 		credentials: "include"
 	});
-	// if (!res.ok)
-	// 	throw new Error("Unauthorized");
-	const result = await res.json();
 	document.querySelector("#pseudo")!.textContent = result.pseudo;
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 	}
 }

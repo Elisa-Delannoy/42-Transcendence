@@ -25,23 +25,27 @@ const routes = [
 let currentRoute: any = null;
 
 export function navigateTo(url: string) {
-  history.pushState(null, "", url);
+	const state = { previous: window.location.pathname};
+	history.pushState(state, "", url);
   router();
 }
 
 export async function genericFetch(url: string, options: RequestInit = {}) {
 	const res = await fetch(url, {
-		...options,
-		credentials: "include"
-	});
+	...options,
+	credentials: "include"
+})
+	const result = await res.json();
 	if (res.status === 401) {
-		navigateTo("/login");
-		throw new Error("Unauthorized");
-	}
+		if (result.error === "TokenExpiredError")
+			alert("Session expired, please login")
+		navigateTo("/logout");
+		throw new Error(result.error);
+}
 	if (!res.ok){
-		throw new Error(`Error: ${res.status}`);
-	}
-	return res;
+		throw new Error(result.error);
+}
+	return result;
 }
 
 function matchRoute(pathname: string) {
@@ -98,6 +102,14 @@ export function initRouter() {
       }
     }
   });
-  window.addEventListener("popstate", router);
+  window.addEventListener("popstate", (event) => {
+	const path = window.location.pathname;
+	const previous = event.state?.previous;
+	const public_path = ["/", "/login", "/register"];
+	const is_private = !public_path.includes(path)
+	if (is_private && previous && public_path.includes(previous))
+		history.replaceState( { previous: "/homelogin" }, "", "/homelogin");
+	router();
+	});
   router();
 }

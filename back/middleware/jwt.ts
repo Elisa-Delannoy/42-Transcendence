@@ -13,14 +13,14 @@ export const createJWT = (id: number): string => {
 	return jwt.sign({ id }, secretkey, { expiresIn: "1h", algorithm: "HS256" });
 }
 
-export const checkAuth = async (token: string): Promise< Users | null> => {
+export const checkAuth = async (token: string, reply: FastifyReply): Promise< Users | Error> => {
 	try {
 		const infoJWT = jwt.verify(token, secretkey) as { id : number };
 		const user = await users.getIDUser(infoJWT.id);
 		return user;
 	} catch  (error) {
-		console.error(error);
-		return null;
+		const err = error as Error;
+		return err;
 	}
 }
 
@@ -30,10 +30,11 @@ export const tokenOK = async (request: FastifyRequest, reply: FastifyReply): Pro
 		reply.code(401).send({ error: "Unauthorized: token is missing"});
 		return null
 	}
-	const user_loged = await checkAuth(token);
-	if (!user_loged) {
-		reply.code(401).send({ error: "Unauthorized: invalid token or user"});
+	const user_loged = await checkAuth(token, reply);
+	if (user_loged instanceof Error) {
+		reply.code(401).send({ error: user_loged.name });
 		return null
 	}
+	reply.code(200);
 	return user_loged;
 }

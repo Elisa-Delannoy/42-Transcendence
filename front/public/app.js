@@ -16,13 +16,11 @@ function initLogin() {
     const success = await login(username, password);
     if (success)
       navigateTo("/homelogin");
-    else
-      alert("Identifiants incorrects");
   });
 }
 async function login(username, password) {
   try {
-    const res = await genericFetch("/api/login", {
+    const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -31,8 +29,10 @@ async function login(username, password) {
     const result = await res.json();
     if (res.ok)
       return true;
-    else
+    else {
+      alert(result.error);
       return false;
+    }
   } catch (err) {
     console.error(err);
     return false;
@@ -415,14 +415,12 @@ function HomeLoginView() {
 }
 async function initHomePage() {
   try {
-    const res = await genericFetch("/api/private/homelogin", {
+    const result = await genericFetch2("/api/private/homelogin", {
       method: "POST",
       credentials: "include"
     });
-    const result = await res.json();
     document.querySelector("#pseudo").textContent = result.pseudo;
   } catch (err) {
-    console.error(err);
   }
 }
 
@@ -481,22 +479,26 @@ var routes = [
 ];
 var currentRoute = null;
 function navigateTo(url) {
-  history.pushState(null, "", url);
+  const state = { previous: window.location.pathname };
+  history.pushState(state, "", url);
   router();
 }
-async function genericFetch(url, options = {}) {
+async function genericFetch2(url, options = {}) {
   const res = await fetch(url, {
     ...options,
     credentials: "include"
   });
+  const result = await res.json();
   if (res.status === 401) {
-    navigateTo("/login");
-    throw new Error("Unauthorized");
+    if (result.error === "TokenExpiredError")
+      alert("Session expired, please login");
+    navigateTo("/logout");
+    throw new Error(result.error);
   }
   if (!res.ok) {
-    throw new Error(`Error: ${res.status}`);
+    throw new Error(result.error);
   }
-  return res;
+  return result;
 }
 function matchRoute(pathname) {
   for (const r of routes) {
@@ -541,7 +543,15 @@ function initRouter() {
       }
     }
   });
-  window.addEventListener("popstate", router);
+  window.addEventListener("popstate", (event) => {
+    const path = window.location.pathname;
+    const previous = event.state?.previous;
+    const public_path = ["/", "/login", "/register"];
+    const is_private = !public_path.includes(path);
+    if (is_private && previous && public_path.includes(previous))
+      history.replaceState({ previous: "/homelogin" }, "", "/homelogin");
+    router();
+  });
   router();
 }
 
