@@ -5,6 +5,7 @@ import { FastifyReply } from "fastify";
 
 export async function manageRegister(pseudo: string, email: string, password: string, reply: FastifyReply)
 {
+	email = email.toLowerCase();
 	try
 	{
 		await checkPseudo(pseudo);
@@ -23,10 +24,13 @@ export async function manageRegister(pseudo: string, email: string, password: st
 async function checkPseudo(pseudo: string)
 {
 	const info = await users.getPseudoUser(pseudo);
-	if (pseudo.length > 16)
-		throw { field: "username", message: "Pseudo too long! 16 character maximum." };
+	if (pseudo.length > 16 || pseudo.length < 1)
+		throw { field: "username", message: "Pseudo invalid! 1 character minimum and 16 character maximum." };
 	if (info?.pseudo === pseudo)
 		throw { field: "username", message: "Pseudo already exists." };
+	const valid = /^[a-zA-Z0-9_]+$/.test(pseudo);
+	if (!valid)
+		throw { field: "username", message: "Pseudo can only contain letters, numbers and underscores." };
 }
 
 async function checkEmail(email: string)

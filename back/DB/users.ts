@@ -105,6 +105,17 @@ export class Users
 		const updatedUser = await this.getIDUser(id);
 		return updatedUser;
 	}
+
+	async updateEmail(id: number, newEmail: string): Promise<Users>
+	{
+		if (!newEmail || newEmail.trim() === '') {
+			throw new Error("New username cannot be empty.");
+		}
+		const updateResult = await this._db.query(`UPDATE Users SET email = ? WHERE user_id = ?`, [newEmail, id]);
+
+		const updatedUser = await this.getIDUser(id);
+		return updatedUser;
+	}
 }
 
 enum UserStatus

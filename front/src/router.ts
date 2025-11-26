@@ -23,7 +23,6 @@ const routes = [
   { path: "/profile", view: ProfileView, init: initProfile},
   { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo},
   { path: "/tournament", view: TournamentView},
-  { path: "/changeusername" }
 ];
 
 let currentRoute: any = null;
@@ -44,10 +43,10 @@ export async function genericFetch(url: string, options: RequestInit = {}) {
 		if (result.error === "TokenExpiredError")
 			alert("Session expired, please login")
 		navigateTo("/logout");
-		throw new Error(result.error);
+		throw new Error(result.error || result.message || "Unknown error");
 }
 	if (!res.ok){
-		throw new Error(result.error);
+		throw new Error(result.error || result.message || "Unknown error");
 }
 	return result;
 }

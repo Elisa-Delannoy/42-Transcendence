@@ -18,7 +18,7 @@ import { Tournament } from './DB/tournament';
 import { uploadPendingTournaments } from "./routes/tournament/tournament.service";
 import * as avalancheService from "./blockchain/avalanche.service";
 import { getProfile } from "./routes/profile/profile";
-import { getUpdateInfo, getUpdateUsername } from "./routes/profile/getUpdate";
+import { getUpdateEmail, getUpdateInfo, getUpdateUsername } from "./routes/profile/getUpdate";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -95,6 +95,10 @@ fastify.post("/api/private/updateinfo", async (request: FastifyRequest, reply: F
 
 fastify.post("/api/private/updateinfo/username", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await getUpdateUsername(fastify, request, reply);
+})
+
+fastify.post("/api/private/updateinfo/email", async (request: FastifyRequest, reply: FastifyReply) => {
+	return await getUpdateEmail(fastify, request, reply);
 })
 
 fastify.post("/api/private/game/create", async (request, reply) => {

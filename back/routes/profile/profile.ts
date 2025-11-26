@@ -6,9 +6,7 @@ export async function getProfile(fastify: FastifyInstance, request: FastifyReque
 		const id = request.user?.user_id as any;
 		const profile = await users.getIDUser(id);
 		if (!profile)
-		{
-		return reply.code(404).send({message: "User not found"})
-		}
+			return reply.code(404).send({message: "User not found"})
     	return profile;
   
 	} catch (error) {
