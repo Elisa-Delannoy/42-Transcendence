@@ -66,12 +66,39 @@ function initRegister() {
         body: JSON.stringify(data)
       });
       const result = await res.json();
-      message.textContent = result.message;
+      if (result.ok == true)
+        navigateTo("/registerok");
+      else {
+        const usernameInput = form.querySelector("input[name='username']");
+        const passwordInput = form.querySelector("input[name='password']");
+        const emailInput = form.querySelector("input[name='email']");
+        const usernameMsg = document.getElementById("username-message");
+        const emailMsg = document.getElementById("email-message");
+        const passwordMsg = document.getElementById("password-message");
+        [usernameMsg, emailMsg, passwordMsg].forEach((p) => p.textContent = "");
+        [usernameInput, emailInput, passwordInput].forEach((p) => p.classList.remove("error"));
+        if (result.field === "password") {
+          passwordInput.classList.add("error");
+          passwordMsg.textContent = result.message;
+        }
+        if (result.field === "username") {
+          usernameInput.classList.add("error");
+          usernameMsg.textContent = result.message;
+        }
+        if (result.field === "email") {
+          emailInput.classList.add("error");
+          emailMsg.textContent = result.message;
+        }
+        message.textContent = "";
+        message.append(result.message);
+      }
     } catch (err) {
-      message.textContent = "Erreur serveur...";
       console.error(err);
     }
   });
+}
+function RegisterValidView() {
+  return document.getElementById("registerok").innerHTML;
 }
 
 // front/src/views/p_game.ts
@@ -92,6 +119,42 @@ function initGame() {
       method: "POST"
     });
     navigateTo(`/tournament/${tournamentId}`);
+  });
+  const createGameButton = document.getElementById("create-game");
+  createGameButton?.addEventListener("click", async () => {
+    await genericFetch2("/api/private/game/create", {
+      method: "POST"
+    });
+  });
+  const gameListButton = document.getElementById("display-game-list");
+  gameListButton?.addEventListener("click", async () => {
+    loadGames();
+  });
+}
+async function loadGames() {
+  const { games } = await genericFetch2("/api/private/game/list");
+  renderGameList(games);
+}
+function renderGameList(games) {
+  const container = document.getElementById("game-list");
+  if (!container) return;
+  if (games.length === 0) {
+    container.innerHTML = "<p>Aucune partie disponible.</p>";
+    return;
+  }
+  container.innerHTML = games.map((game) => `
+	<div class="game-item">
+		<p>Game #${game.id}</p>
+		<p>Player1 : ${game.playerId1}</p>
+		<p>Player2 : ${game.playerId2}</p>
+		<button data-game-id="${game.id}" class="join-game-btn">Rejoindre</button>
+	</div>
+	`).join("");
+  document.querySelectorAll(".join-game-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.gameId;
+      navigateTo(`/quickgame/${id}`);
+    });
   });
 }
 var GameInstance = class {
@@ -444,6 +507,7 @@ async function initHomePage() {
     });
     document.querySelector("#pseudo").textContent = result.pseudo;
   } catch (err) {
+    console.error(err);
   }
 }
 
@@ -452,15 +516,9 @@ function ProfilView() {
   return document.getElementById("profilhtml").innerHTML;
 }
 async function initProfil() {
-  const res = await genericFetch2("/api/private/profil", {
-    method: "POST",
-    credentials: "include"
+  const profil = await genericFetch2("/api/private/profil", {
+    method: "POST"
   });
-  if (!res.ok) {
-    console.error("Cannot load profile");
-    return;
-  }
-  const profil = await res.json();
   document.getElementById("profil-id").textContent = profil.user_id;
   document.getElementById("profil-pseudo").textContent = profil.pseudo;
   document.getElementById("profil-email").textContent = profil.email;
@@ -476,14 +534,9 @@ function UpdateInfoView() {
   return document.getElementById("updateinfohtml").innerHTML;
 }
 async function initUpdateInfo() {
-  const res = await genericFetch2("/api/private/updateinfo", {
+  const profil = await genericFetch2("/api/private/updateinfo", {
     method: "POST"
   });
-  if (!res.ok) {
-    console.error("Cannot load profile");
-    return;
-  }
-  const profil = await res.json();
   document.getElementById("profil-username").textContent = profil.pseudo;
   const formUsername = document.getElementById("change-username-form");
   formUsername.addEventListener("submit", async (e) => {
@@ -495,9 +548,6 @@ async function initUpdateInfo() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ newUsername, password })
     });
-    console.log("client initupdate: body", response.body);
-    if (!response.ok)
-      return alert("Error changing usename");
     alert("Username is updated successfully!");
     navigateTo("/homelogin");
   });
@@ -602,6 +652,7 @@ var routes = [
   { path: "/logout", init: initLogout },
   { path: "/dashboard", view: DashboardView },
   { path: "/register", view: RegisterView, init: initRegister },
+  { path: "/registerok", view: RegisterValidView },
   { path: "/homelogin", view: HomeLoginView, init: initHomePage },
   { path: "/game", view: GameView, init: initGame },
   { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },

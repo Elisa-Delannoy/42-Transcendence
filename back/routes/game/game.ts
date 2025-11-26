@@ -18,7 +18,7 @@ export class Game {
 		this.idPlayer2 = playerId2;
 		this.ballPos = { x: 0, y: 0};
 		this.paddlePos = { player1: 0, player2: 0};
-		this.status = GameStatus.ongoing;
+		this.status = GameStatus.waiting;
 		this.gameDate = new Date().toISOString().replace("T", " ").split(".")[0];
 	}
 
@@ -32,7 +32,8 @@ enum GameStatus
 {
 	ongoing,
 	finished,
-	error
+	error,
+	waiting
 }
 
 function getDate(id: number)
@@ -72,6 +73,26 @@ export function updateGameStatus(gameId: number, status: number)
 	const game = games.get(gameId);
 	if (game)
 		game.status = status;
+}
+
+export function displayGameList()
+{
+	const list: any = [];
+
+	for (const game of games.values()) {
+		if (game.status === GameStatus.waiting)
+		{
+			list.push({
+				id: game.id,
+				player1: game.idPlayer1,
+				player2: game.idPlayer2,
+				state: game.status,
+				createdAt: game.gameDate
+			});
+		}
+	}
+
+	return list;
 }
 
 export async function endGame(winner_id: number, loser_id: number, winner_score: number,

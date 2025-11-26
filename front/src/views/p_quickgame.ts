@@ -23,7 +23,6 @@ export async function stopGame () {
 	if (currentGame)
 	{
 		const id = currentGame.getId();
-		console.log("id qg : ", id);
 		currentGame.destroy();
 		currentGame = null;
 		try

@@ -11,7 +11,7 @@ import { tokenOK } from "./middleware/jwt";
 import { CookieSerializeOptions } from "fastify-cookie";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import bcrypt from "bcryptjs";
-import { createGame, endGame, updateGame, updateGameStatus } from "./routes/game/game";
+import { createGame, endGame, updateGame, updateGameStatus, displayGameList } from "./routes/game/game";
 import fs from "fs";
 import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always"
 import { Tournament } from './DB/tournament';
@@ -22,8 +22,6 @@ export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
 export const gameInfo = new GameInfo(db);
 export const tournament = new Tournament(db);
-
-// const games = new Map<number, Game>();
 
 const fastify = Fastify({
 	logger: false,
@@ -143,6 +141,11 @@ fastify.post("/api/private/game/create", async (request, reply) => {
 	reply.send({ gameId });
 });
 
+fastify.get("/api/private/game/list", async (request, reply) => {
+	const list = displayGameList();
+	return { games: list };
+})
+
 fastify.post("/api/private/game/update", async (request, reply) => {
 	const { gameId, ballPos, paddlePos } = request.body as any;
 	updateGame(gameId, ballPos, paddlePos );
@@ -226,7 +229,7 @@ const start = async () => {
 	try {
 		await fastify.listen({ port: 8443, host: "0.0.0.0" });
 		await db.connect();
-		await users.deleteUserTable();
+		// await users.deleteUserTable();
 		await gameInfo.deleteGameInfoTable();
 		await users.createUserTable();
 		await gameInfo.createGameInfoTable();
