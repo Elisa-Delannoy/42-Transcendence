@@ -19,11 +19,11 @@ export async function manageLogin(pseudo: string, password: string, reply: Fasti
 			sameSite: "strict",
 			path: "/",
 		};
-		reply.setCookie("token", jwtoken, options).status(200).send({ message: "Login successful"})
+		reply.setCookie("token", jwtoken, options).status(200).send({ ok:true, message: "Login successful"})
 	}
 	catch (err)
 	{
-		reply.status(401).send({ error: (err as Error).message });
+		reply.status(401).send({ field: (err as any).field ?? null, ok:false, error: (err as Error).message });
 	}
 }
 
@@ -31,9 +31,9 @@ async function checkLogin(pseudo: string, password: string)
 {
 	const info = await users.getPseudoUser(pseudo)
 	if (!info || info.length === 0)
-		throw new Error("Invalid username");
+		throw { field: "username", message: "Invalid username." };
 	const isMatch = await bcrypt.compare(password, info.password);
     if (!isMatch) {
-        throw new Error( "Invalid password");
+        throw { field: "password", message: "Invalid password." };
     }
 }

@@ -9,7 +9,6 @@ import { GameInfo } from "./DB/gameinfo";
 import fastifyCookie from "fastify-cookie";
 import { tokenOK } from "./middleware/jwt";
 import { CookieSerializeOptions } from "fastify-cookie";
-import * as GameModule from "./DB/game";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import bcrypt from "bcryptjs";
 import { createGame, endGame, updateGame } from "./routes/game/game";
@@ -219,7 +218,7 @@ const start = async () => {
 	try {
 		await fastify.listen({ port: 8443, host: "0.0.0.0" });
 		await db.connect();
-		await users.deleteUserTable();
+		// await users.deleteUserTable();
 		await gameInfo.deleteGameInfoTable();
 		await users.createUserTable();
 		await gameInfo.createGameInfoTable();
