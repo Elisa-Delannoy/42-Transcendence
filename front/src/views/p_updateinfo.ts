@@ -5,17 +5,11 @@ export function UpdateInfoView(): string {
 }
 
 export async function initUpdateInfo() {
-	const res = await genericFetch("/api/private/updateinfo", {
+	const profil = await genericFetch("/api/private/updateinfo", {
     method: "POST"
   });
 
-  if (!res.ok) {
-    console.error("Cannot load profile");
-    return;
-  }
-
-  const profil = await res.json();
-  (document.getElementById("profil-username") as HTMLElement).textContent = profil.pseudo;
+  (document.getElementById("profile-username") as HTMLElement).textContent = profil.pseudo;
 
   // HANDLE CHANGE USERNAME
   const formUsername = document.getElementById("change-username-form") as HTMLFormElement;
@@ -25,15 +19,12 @@ export async function initUpdateInfo() {
     const newUsername = formUsername["new-username"].value;
     const password = formUsername["password"].value;
 
-    const response = await genericFetch("/api/private/changeusername", {
+    const response = await genericFetch("/api/private/updateinfo/username", {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: JSON.stringify({ newUsername, password })
     });
-    console.log('client initupdate: body', response.body);
 
-    if (!response.ok)
-      return alert("Error changing usename");
     alert("Username is updated successfully!");
     navigateTo("/homelogin");
   });

@@ -11,12 +11,14 @@ import { tokenOK } from "./middleware/jwt";
 import { CookieSerializeOptions } from "fastify-cookie";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import bcrypt from "bcryptjs";
-import { createGame, endGame, updateGame } from "./routes/game/game";
+import { createGame, endGame, updateGame, updateGameStatus } from "./routes/game/game";
 import fs from "fs";
 import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always"
 import { Tournament } from './DB/tournament';
 import { uploadPendingTournaments } from "./routes/tournament/tournament.service";
 import * as avalancheService from "./blockchain/avalanche.service";
+import { getProfile } from "./routes/profile/profile";
+import { getUpdateInfo, getUpdateUsername } from "./routes/profile/getUpdate";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -25,7 +27,7 @@ export const tournament = new Tournament(db);
 
 // const games = new Map<number, Game>();
 
-const fastify = Fastify({
+export const fastify = Fastify({
 	logger: false,
 	https:
 	{
@@ -85,60 +87,21 @@ fastify.post("/api/private/homelogin", async (request: FastifyRequest, reply: Fa
 	return { pseudo: request.user?.pseudo }
 });
 
-fastify.post("/api/private/profil", async (request: FastifyRequest, reply: FastifyReply) => {
-  try {
-    const id = request.user?.user_id as any;
-    const profil = await users.getIDUser(id);
-    if (!profil)
-    {
-      return reply.code(404).send({message: "User not found"})
-    }
-    return profil;
-  } catch (error) {
-	fastify.log.error(error)
-	return reply.code(500).send({message: "Internal Server Error"});
-  }
+fastify.post("/api/private/profile", async (request: FastifyRequest, reply: FastifyReply) => {
+	return await getProfile(fastify, request, reply);
 });
 
 fastify.post("/api/private/updateinfo", async (request: FastifyRequest, reply: FastifyReply) => {
-  try {
-    const id = request.user?.user_id as any;
-    const profil = await users.getIDUser(id);
-    if (!profil)
-    {
-      return reply.code(404).send({message: "User not found"})
-    }
-    return profil;
-  } catch (error) {
-    fastify.log.error(error)
-    return reply.code(500).send({message: "Internal Server Error"});
-  }
+	return await getUpdateInfo(fastify, request, reply);
 });
 
-fastify.post("/api/private/changeusername", async (request, reply) => {
-	try {
-		const { newUsername, password } = request.body as any;
-		const id = request.user?.user_id as any;
-
-		const user = await users.getIDUser(id);
-		if (!user)
-			return reply.code(404).send({message: "User not found"});
-		const isMatch = await bcrypt.compare(password, user.password);
-		if (!isMatch) {
-			return reply.code(401).send({ message: "Wrong password" });
-		}
-		const updatedUser = await users.updateUsername(id, newUsername);
-		return reply.code(200).send({ message: "Username updated", pseudo: updatedUser.pseudo });
-
-	} catch (error) {
-		fastify.log.error(error);
-		return reply.code(500).send({ message: "Internal Server Error" });
-	}
+fastify.post("/api/private/updateinfo/username", async (request: FastifyRequest, reply: FastifyReply) => {
+	return await getUpdateUsername(fastify, request, reply);
 })
 
 fastify.post("/api/private/game/create", async (request, reply) => {
-	const gameId = createGame();
-
+	const playerId = request.user?.user_id as any;
+	const gameId = createGame(playerId);
 	reply.send({ gameId });
 });
 
@@ -146,6 +109,13 @@ fastify.post("/api/private/game/update", async (request, reply) => {
 	const { gameId, ballPos, paddlePos } = request.body as any;
 	updateGame(gameId, ballPos, paddlePos );
 	return { ok: true };
+});
+
+fastify.post("/api/private/game/error", async (request, reply) => {
+	const { id } = request.body as any;
+	const gameid = Number(id);
+	updateGameStatus(gameid, 2);
+	return { message: "Game updated!" };
 });
 
 fastify.post("/api/private/game/end", async (request, reply) => {
