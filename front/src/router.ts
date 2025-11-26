@@ -5,7 +5,7 @@ import { RegisterValidView, RegisterView, initRegister } from "./views/register"
 import { GameView, initGame} from "./views/p_game";
 import { QuickGameView, initQuickGame, stopGame} from "./views/p_quickgame";
 import { HomeLoginView, initHomePage } from "./views/p_homelogin";
-import { ProfilView, initProfil} from "./views/p_profil";
+import { ProfileView, initProfile} from "./views/p_profile";
 import { UpdateInfoView, initUpdateInfo } from "./views/p_updateinfo";
 import { TournamentView} from "./views/p_tournament";
 import { initLogout } from "./views/logout";
@@ -20,7 +20,7 @@ const routes = [
   { path: "/homelogin", view: HomeLoginView, init: initHomePage},
   { path: "/game", view: GameView, init: initGame},
   { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
-  { path: "/profil", view: ProfilView, init: initProfil},
+  { path: "/profile", view: ProfileView, init: initProfile},
   { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo},
   { path: "/tournament", view: TournamentView},
   { path: "/changeusername" }

@@ -9,7 +9,7 @@ export async function initUpdateInfo() {
     method: "POST"
   });
 
-  (document.getElementById("profil-username") as HTMLElement).textContent = profil.pseudo;
+  (document.getElementById("profile-username") as HTMLElement).textContent = profil.pseudo;
 
   // HANDLE CHANGE USERNAME
   const formUsername = document.getElementById("change-username-form") as HTMLFormElement;
@@ -19,7 +19,7 @@ export async function initUpdateInfo() {
     const newUsername = formUsername["new-username"].value;
     const password = formUsername["password"].value;
 
-    const response = await genericFetch("/api/private/changeusername", {
+    const response = await genericFetch("/api/private/updateinfo/username", {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: JSON.stringify({ newUsername, password })
