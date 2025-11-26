@@ -42,22 +42,22 @@ async function checkPassword(password: string)
 {
 	const set = new Set<string>();
     
-	for (let i = 0; i < password.length; i++)
-		set.add(password[i]);
-	if (password.length < 6)
-		throw { field: "password", message: "Password must be at least 6 characters long." };
-	if (password.length > 32)
-		throw { field: "password", message: "Password too long." };
-	if (!/[a-zA-Z]/.test(password))
-		throw { field: "password", message: "Password must contain at least one letter." };
-	if (!/\d/.test(password))
-		throw { field: "password", message: "Password must contain at least one number." };
-	if (!/[!@#$%^&*()_\-+=.?]/.test(password))
-    	throw { field: "password", message: "Password must contain a special character." };
-	if (/\s/.test(password))
-    	throw { field: "password", message: "Password cannot contain spaces." };
-    if (set.size <= 3)
-        throw { field: "password", message: "Password must contain at least 4 different characters." };
-    if (password.toLowerCase().includes("password"))
-        throw { field: "password", message: "Password cannot contain 'password'." };
+	let check: number = 0;
+
+	if (password.length > 6 )
+		check++;
+	if (password.length < 32)
+		check++;
+	if (/[a-z]/.test(password))
+		check++;
+	if (/[A-Z]/.test(password))
+		check++;
+	if (/\d/.test(password))
+		check++;
+	if (/[!@#$%^&*()_\-+=.?]/.test(password))
+    	check++;
+	if (check !== 6)
+		throw { field: "password" };
+	// if (/\s/.test(password))
+    // 	throw { field: "password", message: "Password cannot contain spaces." };
 }
