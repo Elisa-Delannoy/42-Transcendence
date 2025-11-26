@@ -9,10 +9,9 @@ import { GameInfo } from "./DB/gameinfo";
 import fastifyCookie from "fastify-cookie";
 import { tokenOK } from "./middleware/jwt";
 import { CookieSerializeOptions } from "fastify-cookie";
-import * as GameModule from "./DB/game";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import bcrypt from "bcryptjs";
-import { createGame, endGame, updateGame } from "./routes/game/game";
+import { createGame, endGame, updateGame, updateGameStatus } from "./routes/game/game";
 import fs from "fs";
 import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always"
 import { Tournament } from './DB/tournament';
@@ -139,8 +138,8 @@ fastify.post("/api/private/changeusername", async (request, reply) => {
 })
 
 fastify.post("/api/private/game/create", async (request, reply) => {
-	const gameId = createGame();
-
+	const playerId = request.user?.user_id as any;
+	const gameId = createGame(playerId);
 	reply.send({ gameId });
 });
 
@@ -148,6 +147,13 @@ fastify.post("/api/private/game/update", async (request, reply) => {
 	const { gameId, ballPos, paddlePos } = request.body as any;
 	updateGame(gameId, ballPos, paddlePos );
 	return { ok: true };
+});
+
+fastify.post("/api/private/game/error", async (request, reply) => {
+	const { id } = request.body as any;
+	const gameid = Number(id);
+	updateGameStatus(gameid, 2);
+	return { message: "Game updated!" };
 });
 
 fastify.post("/api/private/game/end", async (request, reply) => {
