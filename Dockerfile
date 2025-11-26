@@ -1,13 +1,15 @@
 FROM node:20
 
-WORKDIR /docker
+RUN apt-get update && apt-get install -y sqlite3 && apt-get clean
 
-COPY package.json ./
+WORKDIR /app
 
-RUN npm install -g ts-node typescript 
-RUN npm install 
-RUN npm init
+COPY package.json package-lock.json ./
+ 
+RUN npm ci
 
 COPY . .
 
-CMD ["npm", "run front"]
+EXPOSE 8443
+
+CMD ["npm", "run", "back"]

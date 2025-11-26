@@ -11,7 +11,7 @@ import { tokenOK } from "./middleware/jwt";
 import { CookieSerializeOptions } from "fastify-cookie";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import bcrypt from "bcryptjs";
-import { createGame, endGame, updateGame, updateGameStatus } from "./routes/game/game";
+import { createGame, joinGame, endGame, updateGamePos, updateGameStatus, displayGameList } from "./routes/game/game";
 import fs from "fs";
 import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always"
 import { Tournament } from './DB/tournament';
@@ -25,9 +25,7 @@ export const users = new Users(db);
 export const gameInfo = new GameInfo(db);
 export const tournament = new Tournament(db);
 
-// const games = new Map<number, Game>();
-
-export const fastify = Fastify({
+const fastify = Fastify({
 	logger: false,
 	https:
 	{
@@ -109,17 +107,30 @@ fastify.post("/api/private/game/create", async (request, reply) => {
 	reply.send({ gameId });
 });
 
-fastify.post("/api/private/game/update", async (request, reply) => {
+fastify.post("/api/private/game/join", async (request, reply) => {
+	const { gameId } = request.body as any;
+	const playerId = request.user?.user_id as any;
+	const id = Number(gameId);
+	joinGame(playerId, id);
+	reply.send({ message: "Player joined game" });
+});
+
+fastify.get("/api/private/game/list", async (request, reply) => {
+	const list = displayGameList();
+	return { games: list };
+})
+
+fastify.post("/api/private/game/update/pos", async (request, reply) => {
 	const { gameId, ballPos, paddlePos } = request.body as any;
-	updateGame(gameId, ballPos, paddlePos );
+	updateGamePos(gameId, ballPos, paddlePos );
 	return { ok: true };
 });
 
-fastify.post("/api/private/game/error", async (request, reply) => {
-	const { id } = request.body as any;
+fastify.post("/api/private/game/update/status", async (request, reply) => {
+	const { id, status } = request.body as any;
 	const gameid = Number(id);
-	updateGameStatus(gameid, 2);
-	return { message: "Game updated!" };
+	updateGameStatus(gameid, status);
+	return { message: "Game status updated!" };
 });
 
 fastify.post("/api/private/game/end", async (request, reply) => {

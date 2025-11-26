@@ -8,7 +8,7 @@ export class Game {
 	idPlayer2: number;
 	ballPos: { x: number, y: number};
 	paddlePos: { player1: number, player2: number};
-	status: GameStatus;
+	status: string;
 	gameDate: string;
 
 	constructor(id: number, playerId1: number, playerId2: number)
@@ -18,7 +18,7 @@ export class Game {
 		this.idPlayer2 = playerId2;
 		this.ballPos = { x: 0, y: 0};
 		this.paddlePos = { player1: 0, player2: 0};
-		this.status = GameStatus.ongoing;
+		this.status = "waiting";
 		this.gameDate = new Date().toISOString().replace("T", " ").split(".")[0];
 	}
 
@@ -28,12 +28,13 @@ export class Game {
 	}
 }
 
-enum GameStatus
-{
-	ongoing,
-	finished,
-	error
-}
+// enum GameStatus
+// {
+// 	ongoing,
+// 	finished,
+// 	error,
+// 	waiting
+// }
 
 function getDate(id: number)
 {
@@ -62,16 +63,40 @@ export function createGame(playerId: number)
 	return gameId;
 }
 
-export function updateGame(gameId: number, ballPos: { x: number, y: number }, paddlePos: { player1: number, player2: number })
+export function updateGamePos(gameId: number, ballPos: { x: number, y: number }, paddlePos: { player1: number, player2: number })
 {
 	games.get(gameId)?.update({ ballPos, paddlePos });
 }
 
-export function updateGameStatus(gameId: number, status: number)
+export function updateGameStatus(gameId: number, status: string)
 {
 	const game = games.get(gameId);
 	if (game)
 		game.status = status;
+}
+
+export function displayGameList()
+{
+	const list: any = [];
+
+	for (const game of games.values()) {
+		list.push({
+			id: game.id,
+			player1: game.idPlayer1,
+			player2: game.idPlayer2,
+			state: game.status,
+			createdAt: game.gameDate
+		});
+	}
+
+	return list;
+}
+
+export function joinGame(playerId: number, gameId: number)
+{
+	const game = games.get(gameId);
+	if (game)
+		game.idPlayer1 = playerId;
 }
 
 export async function endGame(winner_id: number, loser_id: number, winner_score: number,
@@ -93,7 +118,7 @@ export async function endGame(winner_id: number, loser_id: number, winner_score:
 	}
 	const game = games.get(gameid);
 	if (game)
-		updateGameStatus(gameid, 1);
+		updateGameStatus(gameid, "finished");
 	await gameInfo.finishGame(winner, loser, winner_score, loser_score, duration_game, gameDate);
 	games.delete(gameid);
 }

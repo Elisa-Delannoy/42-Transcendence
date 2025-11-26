@@ -6,10 +6,10 @@
 		<link href="public/output.css" rel="stylesheet" />
 	</head>
 	<body>
-	<img src="src/asset/image/croissants-francais-dans-un-espace-de-copie-de-plaque.jpg" 
+	<img src="/src/image/bg-croissant-white.jpg" 
 		alt="bgcroissant"
 		class="absolute block dark:hidden -z-10 object-cover w-full h-screen">
-	<img src="src/asset/image/croissants-avec-cafe.jpg" 
+	<img src="/src/image/bg-croissant-black.jpg" 
 		alt="bgcroissant"
 		class="absolute -z-10 hidden dark:block object-cover w-full h-screen">
 	<main id="app"></main>
@@ -18,13 +18,13 @@
 	</body>
 
 	<template id="homehtml">
-		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="src/asset/image/croissant white.png" alt="croissantw"
+		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+			<a href="/" data-link class="block dark:/hidden ml-4">
+				<img src="src/image/croissant-white.png" alt="croissantw"
 					 class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				<img src="/src/image/croissant-black.png" alt="croissantd"
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 		</header>
@@ -46,29 +46,29 @@
 	</template>
 
 	<template id="loginhtml">
-		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="src/asset/image/croissant white.png" alt="croissantw"
+				<img src="/src/image/croissant-white.png" alt="croissantw"
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				<img src="/src/image/croissant-black.png" alt="croissantd"
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 		</header>
-		<form id="login-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-64 h-80 mx-auto">
+		<form id="login-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-72 h-90 mx-auto">
 	 		<h1 class="mt-4 font-bold text-xl">Welcome Back</h1>
 			<div class="mt-6">
 				<div>
 					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
 						focus:ring-2 focus:ring-amber-500 px-2" 
-						id="username" placeholder="username" required />
+						id="username" name="username" placeholder="username" required />
 					<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="username-loginmsg"></p>
 				</div>
 				<div>
 					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
 						focus:ring-2 focus:ring-amber-500 px-2" 
-						id="password" type="password" placeholder="password" required />
+						id="password" type="password" name="password" placeholder="password" required />
 					<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="password-loginmsg"></p>
 				</div>
 			</div>
@@ -79,13 +79,13 @@
 
 	
 	<template id="registerhtml">
-		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="src/asset/image/croissant white.png" alt="croissantw"
+				<img src="/src/image/croissant-white.png" alt="croissantw"
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				<img src="/src/image/croissant-black.png" alt="croissantd"
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 		</header>
@@ -115,13 +115,13 @@
 	</template>
 
 	<template id="registerok">
-		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="src/asset/image/croissant white.png" alt="croissantw"
+				<img src="/src/image/croissant-white.png" alt="croissantw"
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				<img src="/src/image/croissant-black.png" alt="croissantd"
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 		</header>
@@ -132,13 +132,13 @@
 	</template>
 
 	<template id="dashboardhtml">
-	<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+	<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="src/asset/image/croissant white.png" alt="croissantw"
+			<img src="/src/image/croissant-white.png" alt="croissantw"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+			<img src="/src/image/croissant-black.png" alt="croissantd"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 	</header>
@@ -149,11 +149,11 @@
 	<header class="flex w-full pb-2 justify-between h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 		<div class="flex items-center space-x-4">
 			<a href="/homelogin" data-link class="block dark:hidden ml-4">
-				<img src="src/asset/image/croissant white.png" alt="croissantw"
+				<img src="/src/image/croissant-white.png" alt="croissantw"
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 			<a href="/homelogin" data-link class="hidden dark:block ml-4">
-				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				<img src="/src/image/croissant-black.png" alt="croissantd"
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 		</div>
@@ -173,13 +173,13 @@
 	</template>
 
 	<template id="profilehtml">
-	<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+	<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="src/asset/image/croissant white.png" alt="croissantw"
+			<img src="/src/image/croissant-white.png" alt="croissantw"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+			<img src="/src/image/croissant-black.png" alt="croissantd"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 	</header>
@@ -198,13 +198,13 @@
 	</template>
 
   <template id="updateinfohtml">
-	<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+	<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="src/asset/image/croissant white.png" alt="croissantw"
+			<img src="/src/image/croissant-white.png" alt="croissantw"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+			<img src="/src/image/croissant-black.png" alt="croissantd"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 	</header>
@@ -234,31 +234,33 @@
   </template>
 
   <template id="gamehtml">
-    <header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+    <header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="src/asset/image/croissant white.png" alt="croissantw"
+			<img src="/src/image/croissant-white.png" alt="croissantw"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+			<img src="/src/image/croissant-black.png" alt="croissantd"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 	</header>
     <h1>Page game</h1>
     <div class="game-buttons flex justify-center">
-      <button class="btn w-32" id="start-quickgame">Start quick game</button>
-      <button class="btn w-32" id="start-tournament">Start tournament</button>
+		<button class="btn w-32" id="create-game">Create game</button>
+		<button class="btn w-32" id="display-game-list">Display game list</button>
+		<button class="btn w-32" id="start-tournament">Start tournament</button>
     </div>
+	<div id="game-list"></div>
   </template>
 
   <template id="quickgamehtml">
-    <header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+    <header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="src/asset/image/croissant white.png" alt="croissantw"
+			<img src="/src/image/croissant-white.png" alt="croissantw"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+			<img src="/src/image/croissant-black.png" alt="croissantd"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 	</header>
@@ -275,13 +277,13 @@
   </template>
 
 	<template id="tournamenthtml">
-	<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+	<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="src/asset/image/croissant white.png" alt="croissantw"
+			<img src="/src/image/croissant-white.png" alt="croissantw"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+			<img src="/src/image/croissant-black.png" alt="croissantd"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 	</header>
