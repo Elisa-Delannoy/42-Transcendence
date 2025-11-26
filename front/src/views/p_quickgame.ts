@@ -27,11 +27,12 @@ export async function stopGame () {
 		currentGame = null;
 		try
 		{
-			const res = await genericFetch("/api/private/game/error", {
+			const res = await genericFetch("/api/private/game/update/status", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					id: id
+					id: id,
+					status: "error"
 				})
 			});
 			console.log("Saved data:", res);

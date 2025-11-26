@@ -106,20 +106,6 @@ function GameView() {
   return document.getElementById("gamehtml").innerHTML;
 }
 function initGame() {
-  const quickGameButton = document.getElementById("start-quickgame");
-  quickGameButton?.addEventListener("click", async () => {
-    const { gameId } = await genericFetch2("/api/private/game/create", {
-      method: "POST"
-    });
-    navigateTo(`/quickgame/${gameId}`);
-  });
-  const tournamentButton = document.getElementById("start-tournament");
-  tournamentButton?.addEventListener("click", async () => {
-    const { tournamentId } = await genericFetch2("/api/private/tournament/create", {
-      method: "POST"
-    });
-    navigateTo(`/tournament/${tournamentId}`);
-  });
   const createGameButton = document.getElementById("create-game");
   createGameButton?.addEventListener("click", async () => {
     await genericFetch2("/api/private/game/create", {
@@ -129,6 +115,13 @@ function initGame() {
   const gameListButton = document.getElementById("display-game-list");
   gameListButton?.addEventListener("click", async () => {
     loadGames();
+  });
+  const tournamentButton = document.getElementById("start-tournament");
+  tournamentButton?.addEventListener("click", async () => {
+    const { tournamentId } = await genericFetch2("/api/private/tournament/create", {
+      method: "POST"
+    });
+    navigateTo(`/tournament/${tournamentId}`);
   });
 }
 async function loadGames() {
@@ -147,12 +140,25 @@ function renderGameList(games) {
 		<p>Game #${game.id}</p>
 		<p>Player1 : ${game.playerId1}</p>
 		<p>Player2 : ${game.playerId2}</p>
+		<p>Status : ${game.state}</p>
 		<button data-game-id="${game.id}" class="join-game-btn">Rejoindre</button>
 	</div>
 	`).join("");
   document.querySelectorAll(".join-game-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const id = btn.dataset.gameId;
+      try {
+        const res = await genericFetch2("/api/private/game/join", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id
+          })
+        });
+        console.log("Saved data:", res);
+      } catch (err) {
+        console.error("Error saving game:", err);
+      }
       navigateTo(`/quickgame/${id}`);
     });
   });
@@ -244,9 +250,22 @@ var GameInstance = class {
   /** ============================================================
    ** START / STOP
    *============================================================ */
-  start() {
+  async start() {
     if (this.isPlaying) return;
     this.isPlaying = true;
+    try {
+      const res = await genericFetch2("/api/private/game/update/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: this.gameID,
+          status: "playing"
+        })
+      });
+      console.log("Saved data:", res);
+    } catch (err) {
+      console.error("Error saving game:", err);
+    }
     this.startBtn.disabled = true;
     this.stopBtn.disabled = false;
     this.audioCtx = new AudioContext();
@@ -477,15 +496,15 @@ function initQuickGame(params) {
 async function stopGame() {
   if (currentGame) {
     const id = currentGame.getId();
-    console.log("id qg : ", id);
     currentGame.destroy();
     currentGame = null;
     try {
-      const res = await genericFetch2("/api/private/game/error", {
+      const res = await genericFetch2("/api/private/game/update/status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          id
+          id,
+          status: "error"
         })
       });
       console.log("Saved data:", res);
