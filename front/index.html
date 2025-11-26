@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr" class="">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Croissandance</title>
-	<link href="public/output.css" rel="stylesheet" />
-  </head>
-  <body>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Croiscendence</title>
+		<link href="public/output.css" rel="stylesheet" />
+	</head>
+	<body>
 	<img src="src/asset/image/croissants-francais-dans-un-espace-de-copie-de-plaque.jpg" 
 		alt="bgcroissant"
 		class="absolute block dark:hidden -z-10 object-cover w-full h-screen">
@@ -14,40 +14,14 @@
 		class="absolute -z-10 hidden dark:block object-cover w-full h-screen">
 	<main id="app"></main>
 
-    <script type="module" src="./public/app.js"></script>
-  </body>
-
-	<template id="loginhtml">
-		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="src/asset/image/croissant white.png" alt="croissantw"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="src/asset/image/croissant dark.png" alt="croissantd"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-		</header>
-    	<form id="login-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-64 h-80 mx-auto">
-     		<h1 class="mt-4 font-bold text-xl">Welcome Back</h1>
-			<div class="mt-6">
-				<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-					focus:ring-2 focus:ring-amber-500 px-2" 
-					id="username" placeholder="username" required />
-				<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-					focus:ring-2 focus:ring-amber-500 px-2" 
-					id="password" type="password" placeholder="password" required />
-			</div>
-      			<button class="mt-12 btn w-40">Log in</button>
-			<a class="mt-2 text-sm" href="/register" data-link>Create account ?</a>
-    	</form>
-	</template>
+	<script type="module" src="./public/app.js"></script>
+	</body>
 
 	<template id="homehtml">
 		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 			<a href="/" data-link class="block dark:hidden ml-4">
 				<img src="src/asset/image/croissant white.png" alt="croissantw"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+					 class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 			<a href="/" data-link class="hidden dark:block ml-4">
 				<img src="src/asset/image/croissant dark.png" alt="croissantd"
@@ -67,25 +41,98 @@
 					<a href="/register" data-link class="btn w-48">Register</a>
 				</nav>
 			</div>
-			<p class="absolute mb-4 opacity-60 bottom-0 w-full text-center">This isn't a bakery at all — it's the Pong game from 42!</p>
+				<p class="absolute mb-4 opacity-60 bottom-0 w-full text-center">This isn't a bakery at all — it's the Pong game from 42!</p>
 		</main>
 	</template>
+
+	<template id="loginhtml">
+		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+			<a href="/" data-link class="block dark:hidden ml-4">
+				<img src="src/asset/image/croissant white.png" alt="croissantw"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			<a href="/" data-link class="hidden dark:block ml-4">
+				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+		</header>
+		<form id="login-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-64 h-80 mx-auto">
+	 		<h1 class="mt-4 font-bold text-xl">Welcome Back</h1>
+			<div class="mt-6">
+				<div>
+					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+						focus:ring-2 focus:ring-amber-500 px-2" 
+						id="username" placeholder="username" required />
+					<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="username-loginmsg"></p>
+				</div>
+				<div>
+					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+						focus:ring-2 focus:ring-amber-500 px-2" 
+						id="password" type="password" placeholder="password" required />
+					<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="password-loginmsg"></p>
+				</div>
+			</div>
+			<button class="mt-12 btn w-40">Log in</button>
+			<a class="mt-2 text-sm" href="/register" data-link>Create account ?</a>
+		</form>
+	</template>
+
 	
 	<template id="registerhtml">
-		<div class="register-container">
-			<h1>Register</h1>
-			<form id="register-form">
-				<input type="text" name="username" placeholder="Username" required />
-				<input type="email" name="email" placeholder="Email" required />
-				<input type="password" name="password" placeholder="Password" required />
-				<button type="submit">Register</button>
+		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+			<a href="/" data-link class="block dark:hidden ml-4">
+				<img src="src/asset/image/croissant white.png" alt="croissantw"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			<a href="/" data-link class="hidden dark:block ml-4">
+				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+		</header>
+		<div class="register-container flex flex-col">
+			<form id="register-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-72 h-90 mx-auto">
+				<h1 class="mt-4 font-bold text-xl">Register</h1>
+				<div>
+					<div>
+						<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+							px-2" type="text" name="username" placeholder="Username" required />
+						<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="username-message"></p>
+					</div>
+					<div>
+						<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+							px-2" type="email" name="email" placeholder="Email" required />
+						<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="email-message"></p>
+					</div>
+					<div>
+						<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
+							px-2" type="password" name="password" placeholder="Password" required />
+						<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="password-message"></p>
+					</div>
+				</div>
+				<button class="btn w-40 justify-end" type="submit">Register</button>
 			</form>
-			<p id="register-message"></p>
+		</div>
+	</template>
+
+	<template id="registerok">
+		<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+			<a href="/" data-link class="block dark:hidden ml-4">
+				<img src="src/asset/image/croissant white.png" alt="croissantw"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			<a href="/" data-link class="hidden dark:block ml-4">
+				<img src="src/asset/image/croissant dark.png" alt="croissantd"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+		</header>
+		<div class="flex flex-col justify-center">
+			<h1 class="text-amber-600 mt-40 text-2xl text-center mx-auto block">You have been register Successfully !</h1>
+			<a href="/login" data-link class="btn mt-20 w-48">Login</a>
 		</div>
 	</template>
 
 	<template id="dashboardhtml">
-    <header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+	<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 		<a href="/homelogin" data-link class="block dark:hidden ml-4">
 			<img src="src/asset/image/croissant white.png" alt="croissantw"
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
@@ -98,8 +145,8 @@
 	<h1>Dashboard 🎮</h1>
 	</template>
 
-  <template id="homeloginhtml">
-    <header class="flex w-full pb-2 justify-between h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+	<template id="homeloginhtml">
+	<header class="flex w-full pb-2 justify-between h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 		<div class="flex items-center space-x-4">
 			<a href="/homelogin" data-link class="block dark:hidden ml-4">
 				<img src="src/asset/image/croissant white.png" alt="croissantw"
@@ -123,9 +170,9 @@
 			<li><a href="/tournament" data-link class="btn w-48">Tournament</a></li>
 		</ul>
 	</div>
-  </template>
+	</template>
 
-  <template id="profilhtml">
+	<template id="profilhtml">
 	<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 		<a href="/homelogin" data-link class="block dark:hidden ml-4">
 			<img src="src/asset/image/croissant white.png" alt="croissantw"
@@ -138,8 +185,9 @@
 	</header>
 	<main>
 		<h1>Page profil</h1>
+		<a href="/updateinfo" data-link class="btn w-48">Update Profile</a>
 		<p><strong>ID:</strong> <span id="profil-id"></span></p>
-        <p><strong>Pseudo:</strong> <span id="profil-pseudo"></span></p>
+        <p><strong>Username:</strong> <span id="profil-pseudo"></span></p>
         <p><strong>Email:</strong> <span id="profil-email"></span></p>
         <p><strong>Status:</strong> <span id="profil-status"></span></p>
         <p><strong>Creation:</strong> <span id="profil-creation"></span></p>
@@ -150,6 +198,42 @@
 			<input type="file" name="avatar" accept="image/png, image/jpeg" />
 			<button type="submit">Upload</button>
 		</form>
+	</main>
+	</template>
+
+  <template id="updateinfohtml">
+	<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<a href="/homelogin" data-link class="block dark:hidden ml-4">
+			<img src="src/asset/image/croissant white.png" alt="croissantw"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+		<a href="/homelogin" data-link class="hidden dark:block ml-4">
+			<img src="src/asset/image/croissant dark.png" alt="croissantd"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+	</header>
+	<main>
+		<h1>Update profile</h1>
+		<p><strong>Update information for user:</strong> <span id="profil-username"></span></p>
+		<h2><strong>Change Username</strong></h2>
+		<form id="change-username-form">
+            <input type="text" name="new-username" placeholder="New Username" required />
+			<input type="password" name="password" placeholder="Confirm Password" required />
+            <button type="submit">Update Username</button>
+		</form>
+		<h2><strong>Change Email</strong></h2>
+		<form id="change-email-form">
+            <input type="text" name="new-email" placeholder="New Email" required />
+			<input type="password" name="password" placeholder="Confirm Password" required />
+            <button type="submit">Update Email</button>
+        </form>
+		<h2><strong>Change Password</strong></h2>
+        <form id="change-password-form">
+            <input type="password" name="old-password" placeholder="Old Password" required />
+			<input type="password" name="new-password" placeholder="New Password" required />
+			<input type="password" name="confirm-new-password" placeholder="Confirm New Password" required />
+            <button type="submit">Update Email</button>
+        </form>
 	</main>
   </template>
 
@@ -194,7 +278,7 @@
     </div>
   </template>
 
-  <template id="tournamenthtml">
+	<template id="tournamenthtml">
 	<header class="flex items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 		<a href="/homelogin" data-link class="block dark:hidden ml-4">
 			<img src="src/asset/image/croissant white.png" alt="croissantw"
@@ -205,7 +289,24 @@
 				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 		</a>
 	</header>
-    <h1>Page tournament</h1>
+    <h1 class="text-3xl font-bold text-center mt-6">Tournament Overview</h1>
+	<div class="grid grid-cols-2 gap-4 mt-8 px-6">
+	  <div>
+		<h2 class="text-xl font-semibold mb-2 text-amber-700">📁 Database State</h2>
+		<div id="db-panel" class="p-4 bg-amber-200/30 rounded shadow"></div>
+	  </div>
+	  <div>
+		<h2 class="text-xl font-semibold mb-2 text-green-700">⛓ Blockchain State</h2>
+		<div id="chain-panel" class="p-4 bg-green-200/30 rounded shadow"></div>
+	  </div>
+  
+	</div>
+  
+	<div class="flex flex-col items-center mt-6 gap-3">
+	  <button id="create-test" class="btn w-48">Create Test Tournament</button>
+	  <button id="show-onchain" class="btn w-48">Show DB vs Blockchain</button>
+	  <button id="back-to-home" class="btn w-48" data-link href="/homelogin">Back to Home</button>
+	</div>  
   </template>
 
 </html>

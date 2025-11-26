@@ -1,4 +1,3 @@
-import { resourceLimits } from "worker_threads";
 import { genericFetch} from "../router";
 
 export function HomeLoginView(): string {
@@ -10,8 +9,9 @@ export async function initHomePage() {
 		method: "POST",
 		credentials: "include"
 	});
+
 	document.querySelector("#pseudo")!.textContent = result.pseudo;
 	} catch (err) {
-		// console.error(err);
+		console.error(err);
 	}
 }

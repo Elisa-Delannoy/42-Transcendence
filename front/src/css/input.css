@@ -15,6 +15,12 @@
 	}
 }
 
+@layer components {
+	.error {
+		@apply ring-red-500 ring-2;
+	}
+}
+
 @utility flex-centered {
 	@apply flex justify-center items-center;
 }

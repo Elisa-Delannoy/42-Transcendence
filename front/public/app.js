@@ -108,267 +108,364 @@ function GameView() {
   return document.getElementById("gamehtml").innerHTML;
 }
 function initGame() {
-  const button = document.getElementById("start-quickgame");
-  button?.addEventListener("click", async () => {
-    const res = await fetch("/api/private/game/create", {
+  const quickGameButton = document.getElementById("start-quickgame");
+  quickGameButton?.addEventListener("click", async () => {
+    const { gameId } = await genericFetch2("/api/private/game/create", {
       method: "POST"
     });
-    const { gameId } = await res.json();
     navigateTo(`/quickgame/${gameId}`);
   });
+  const tournamentButton = document.getElementById("start-tournament");
+  tournamentButton?.addEventListener("click", async () => {
+    const { tournamentId } = await genericFetch2("/api/private/tournament/create", {
+      method: "POST"
+    });
+    navigateTo(`/tournament/${tournamentId}`);
+  });
 }
+<<<<<<< HEAD
 var init_p_game = __esm({
   "front/src/views/p_game.ts"() {
     "use strict";
     init_router();
   }
 });
+=======
+var GameInstance = class {
+  constructor(gameID) {
+    this.isPlaying = false;
+    this.anim = 0;
+    this.maxScore = 4;
+    this.increaseSpeed = -1.1;
+    this.maxAngle = Math.PI / 4;
+    this.startTime = 0;
+    this.elapsedTime = 0;
+    // Game state
+    this.game = {
+      player1: {
+        y: 0,
+        movingUp: false,
+        movingDown: false,
+        speed: 5,
+        score: 0,
+        attraction: -2
+      },
+      player2: {
+        y: 0,
+        movingUp: false,
+        movingDown: false,
+        speed: 5,
+        score: 0,
+        attraction: 2
+      },
+      ball: {
+        x: 0,
+        y: 0,
+        r: 5,
+        speed: {
+          maxX: 25,
+          maxY: 1.6,
+          minY: -1.6,
+          x: 2,
+          y: 2
+        }
+      }
+    };
+    this.keydownHandler = (e) => this.onKeyDown(e);
+    this.keyupHandler = (e) => this.onKeyUp(e);
+    /** ============================================================
+     ** GAME LOOP
+     *============================================================ */
+    this.play = () => {
+      if (!this.isPlaying) {
+        this.stopBtn.disabled = true;
+        this.startBtn.disabled = true;
+        this.stopTimer();
+        this.displayWinner();
+        return;
+      }
+      this.moveAll();
+      this.draw();
+      this.anim = requestAnimationFrame(this.play);
+    };
+    this.gameID = gameID;
+    this.canvas = document.querySelector("canvas");
+    this.ctx = this.canvas.getContext("2d");
+    this.startBtn = document.querySelector("#start-game");
+    this.stopBtn = document.querySelector("#stop-game");
+    this.initPositions();
+    this.draw();
+    this.attachEvents();
+  }
+  getId() {
+    return this.gameID;
+  }
+  /** ============================================================
+   ** INIT
+   *============================================================ */
+  initPositions() {
+    this.game.player1.y = this.canvas.height / 2 - 30;
+    this.game.player2.y = this.canvas.height / 2 - 30;
+    this.game.ball.x = this.canvas.width / 2;
+    this.game.ball.y = this.canvas.height / 2;
+  }
+  attachEvents() {
+    document.addEventListener("keydown", this.keydownHandler);
+    document.addEventListener("keyup", this.keyupHandler);
+    this.startBtn.addEventListener("click", () => this.start());
+    this.stopBtn.addEventListener("click", () => this.stop());
+  }
+  /** ============================================================
+   ** START / STOP
+   *============================================================ */
+  start() {
+    if (this.isPlaying) return;
+    this.isPlaying = true;
+    this.startBtn.disabled = true;
+    this.stopBtn.disabled = false;
+    this.audioCtx = new AudioContext();
+    this.randomizeBall();
+    this.resetGame();
+    this.startTimer();
+    this.play();
+  }
+  stop() {
+    this.isPlaying = false;
+    cancelAnimationFrame(this.anim);
+    this.startBtn.disabled = false;
+    this.stopBtn.disabled = true;
+    this.resetGame();
+  }
+  destroy() {
+    this.stop();
+    cancelAnimationFrame(this.anim);
+    document.removeEventListener("keydown", this.keydownHandler);
+    document.removeEventListener("keyup", this.keyupHandler);
+    console.log("Game destroyed and listeners removed");
+  }
+  /** ============================================================
+   ** TIMER
+   *============================================================ */
+  startTimer() {
+    this.startTime = Date.now();
+  }
+  stopTimer() {
+    this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1e3);
+  }
+  /** ============================================================
+   ** CONTROLS
+   *============================================================ */
+  onKeyDown(e) {
+    if (e.key === "w" || e.key === "W") this.game.player1.movingUp = true;
+    if (e.key === "s" || e.key === "S") this.game.player1.movingDown = true;
+    if (e.key === "o" || e.key === "O") this.game.player2.movingUp = true;
+    if (e.key === "l" || e.key === "L") this.game.player2.movingDown = true;
+  }
+  onKeyUp(e) {
+    if (e.key === "w" || e.key === "W") this.game.player1.movingUp = false;
+    if (e.key === "s" || e.key === "S") this.game.player1.movingDown = false;
+    if (e.key === "o" || e.key === "O") this.game.player2.movingUp = false;
+    if (e.key === "l" || e.key === "L") this.game.player2.movingDown = false;
+  }
+  /** ============================================================
+   ** GAME LOGIC
+   *============================================================ */
+  moveAll() {
+    this.movePlayer(this.game.player1);
+    this.movePlayer(this.game.player2);
+    this.moveBall();
+  }
+  movePlayer(player) {
+    if (player.movingUp && player.y > 0) player.y -= player.speed;
+    if (player.movingDown && player.y + 60 < this.canvas.height) player.y += player.speed;
+  }
+  moveBall() {
+    const ball = this.game.ball;
+    if (ball.y > this.canvas.height || ball.y < 0) {
+      this.playSound(500, 60);
+      ball.speed.y *= -1;
+    }
+    if (ball.x > this.canvas.width - 5)
+      this.collide(this.game.player2, this.game.player1);
+    else if (ball.x < 5)
+      this.collide(this.game.player1, this.game.player2);
+    ball.x += ball.speed.x;
+    ball.y += ball.speed.y;
+  }
+  collide(player, otherPlayer) {
+    const ball = this.game.ball;
+    if (ball.y < player.y || ball.y > player.y + 60) {
+      this.playSound(300, 300);
+      this.resetPos();
+      otherPlayer.score++;
+      ball.speed.x = player.attraction;
+      if (otherPlayer.score === this.maxScore) this.isPlaying = false;
+    } else {
+      this.playSound(700, 80);
+      this.modifyBallAngle(player);
+      this.increaseBallSpeed();
+    }
+  }
+  /** ============================================================
+   ** UTILS FUNCTIONS
+   *============================================================ */
+  randomizeBall() {
+    this.game.ball.speed.x = Math.random() < 0.5 ? -2 : 2;
+  }
+  resetPos() {
+    this.game.player1.y = this.canvas.height / 2 - 30;
+    this.game.player2.y = this.canvas.height / 2 - 30;
+    this.game.ball.x = this.canvas.width / 2;
+    this.game.ball.y = this.canvas.height / 2;
+    const b = this.game.ball;
+    b.speed.y = Math.random() * (b.speed.maxY - b.speed.minY) + b.speed.minY;
+  }
+  resetGame() {
+    this.resetPos();
+    this.game.player1.score = 0;
+    this.game.player2.score = 0;
+    this.draw();
+  }
+  increaseBallSpeed() {
+    const b = this.game.ball;
+    const sign = b.speed.x * this.increaseSpeed < 0 ? -1 : 1;
+    if (Math.abs(b.speed.x * this.increaseSpeed) > b.speed.maxX)
+      b.speed.x = b.speed.maxX * sign;
+    else
+      b.speed.x *= this.increaseSpeed;
+  }
+  modifyBallAngle(player) {
+    const paddleCenter = player.y + 30;
+    let hitPos = this.game.ball.y - paddleCenter;
+    const normalized = hitPos / 30;
+    const bounceAngle = normalized * this.maxAngle;
+    const speed = Math.sqrt(
+      this.game.ball.speed.x ** 2 + this.game.ball.speed.y ** 2
+    );
+    this.game.ball.speed.y = speed * Math.sin(bounceAngle);
+  }
+  playSound(freq, duration) {
+    const o = this.audioCtx.createOscillator();
+    const g = this.audioCtx.createGain();
+    o.connect(g);
+    g.connect(this.audioCtx.destination);
+    o.type = "square";
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
+    o.start();
+    o.stop(this.audioCtx.currentTime + duration / 1e3);
+  }
+  /** ============================================================
+   ** DRAW
+   *============================================================ */
+  draw() {
+    const ctx = this.ctx;
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    ctx.strokeStyle = "white";
+    ctx.beginPath();
+    ctx.moveTo(this.canvas.width / 2, 0);
+    ctx.lineTo(this.canvas.width / 2, this.canvas.height);
+    ctx.stroke();
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, this.game.player1.y, 10, 60);
+    ctx.fillRect(
+      this.canvas.width - 10,
+      this.game.player2.y,
+      10,
+      60
+    );
+    ctx.beginPath();
+    ctx.arc(this.game.ball.x, this.game.ball.y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = "40px Verdana";
+    ctx.textAlign = "center";
+    ctx.fillText(`${this.game.player1.score}`, this.canvas.width * 0.43, 50);
+    ctx.fillText(`${this.game.player2.score}`, this.canvas.width * 0.57, 50);
+  }
+  /** ============================================================
+   ** ENDGAME
+   *============================================================ */
+  displayWinner() {
+    const ctx = this.ctx;
+    ctx.fillStyle = "white";
+    ctx.font = "40px Arial";
+    ctx.textAlign = "center";
+    let winnerId, loserId, winnerText;
+    if (this.game.player1.score > this.game.player2.score) {
+      winnerText = "Player 1 Wins!";
+      winnerId = 1;
+      loserId = 2;
+    } else {
+      winnerText = "Player 2 Wins!";
+      winnerId = 2;
+      loserId = 1;
+    }
+    ctx.fillText(winnerText, this.canvas.width / 2, this.canvas.height / 2);
+    this.sendGameResult(
+      winnerId,
+      loserId,
+      this.game.player1.score,
+      this.game.player2.score,
+      this.elapsedTime,
+      this.gameID
+    );
+  }
+  /** ============================================================
+   ** API
+   *============================================================ */
+  async sendGameResult(winnerId, loserId, winnerScore, loserScore, duration, id) {
+    try {
+      const res = await genericFetch2("/api/private/game/end", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          winner_id: winnerId,
+          loser_id: loserId,
+          winner_score: winnerScore,
+          loser_score: loserScore,
+          duration_game: duration,
+          id
+        })
+      });
+      console.log("Saved data:", res);
+    } catch (err) {
+      console.error("Error saving game:", err);
+    }
+  }
+};
+>>>>>>> main
 
 // front/src/views/p_quickgame.ts
+var currentGame = null;
 function QuickGameView(params) {
   return document.getElementById("quickgamehtml").innerHTML;
 }
 function initQuickGame(params) {
-  console.log("Game ID =", params?.id);
   const gameID = params?.id;
-  console.log("gameID quickgame : ", gameID, " type = ", typeof gameID);
-  setupGame(gameID);
+  if (currentGame) {
+    currentGame.destroy();
+    currentGame = null;
+  }
+  currentGame = new GameInstance(gameID);
 }
-function setupGame(gameID) {
-  let isPlaying;
-  const canvas = document.querySelector("canvas");
-  const ctx = canvas.getContext("2d");
-  const canvasHeight = canvas.height;
-  const canvasWidth = canvas.width;
-  let audioCtx;
-  const paddleHeight = 60;
-  const paddleWidth = 10;
-  let paddleCenter;
-  const game = {
-    player1: {
-      y: canvasHeight / 2 - paddleHeight / 2,
-      movingUp: false,
-      movingDown: false,
-      speed: 5,
-      score: 0,
-      attraction: -2
-    },
-    player2: {
-      y: canvasHeight / 2 - paddleHeight / 2,
-      movingUp: false,
-      movingDown: false,
-      speed: 5,
-      score: 0,
-      attraction: 2
-    },
-    ball: {
-      x: canvas.width / 2,
-      y: canvas.height / 2,
-      r: 5,
-      speed: {
-        maxX: 25,
-        maxY: 1.6,
-        minY: -1.6,
-        x: 2,
-        y: 2
-      }
-    }
-  };
-  let scoreMax = 4;
-  let winner;
-  let winnerId;
-  let loserId;
-  let anim;
-  let randomValue;
-  let increaseSpeed = -1.1;
-  const maxAngle = Math.PI / 4;
-  let startTime;
-  let elapsedTime;
-  function startTimer() {
-    startTime = Date.now();
-  }
-  function stopTimer() {
-    elapsedTime = Math.floor((Date.now() - startTime) / 1e3);
-    console.log("Duration of the game : ", elapsedTime, "s.");
-  }
-  function playSound(frequency, duration) {
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    oscillator.type = "square";
-    oscillator.frequency.value = frequency;
-    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    oscillator.start();
-    oscillator.stop(audioCtx.currentTime + duration / 1e3);
-  }
-  function draw() {
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    ctx.strokeStyle = "white";
-    ctx.beginPath();
-    ctx.moveTo(canvas.width / 2, 0);
-    ctx.lineTo(canvas.width / 2, canvas.height);
-    ctx.stroke();
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, game.player1.y, paddleWidth, paddleHeight);
-    ctx.fillRect(canvas.width - paddleWidth, game.player2.y, paddleWidth, paddleHeight);
-    ctx.beginPath();
-    ctx.fillStyle = "white";
-    ctx.arc(game.ball.x, game.ball.y, game.ball.r, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.fillStyle = "white";
-    ctx.font = "40px Verdana";
-    ctx.textAlign = "center";
-    ctx.fillText(`${game.player1.score}`, canvasWidth / 4 * 1.75, 50);
-    ctx.fillText(`${game.player2.score}`, canvasWidth / 4 * 2.25, 50);
-  }
-  function movePlayer(player) {
-    if (player.movingUp && player.y > 0)
-      player.y -= player.speed;
-    if (player.movingDown && player.y + paddleHeight < canvasHeight)
-      player.y += player.speed;
-  }
-  function moveBall() {
-    if (game.ball.y > canvas.height || game.ball.y < 0) {
-      playSound(500, 60);
-      game.ball.speed.y *= -1;
-    }
-    if (game.ball.x > canvas.width - paddleWidth / 2)
-      collide(game.player2, game.player1);
-    else if (game.ball.x < paddleWidth / 2)
-      collide(game.player1, game.player2);
-    game.ball.x += game.ball.speed.x;
-    game.ball.y += game.ball.speed.y;
-  }
-  function resetPos() {
-    game.player1.y = canvas.height / 2 - paddleHeight / 2;
-    game.player2.y = canvas.height / 2 - paddleHeight / 2;
-    game.ball.x = canvas.width / 2;
-    game.ball.y = canvas.height / 2;
-    randomValue = Math.random() * (game.ball.speed.maxY - game.ball.speed.minY) + game.ball.speed.minY;
-    game.ball.speed.y = randomValue;
-  }
-  function resetGame() {
-    resetPos();
-    game.player1.score = 0;
-    game.player2.score = 0;
-    draw();
-  }
-  function increaseBallSpeed() {
-    let sign;
-    if (game.ball.speed.x * increaseSpeed < 0)
-      sign = -1;
-    else
-      sign = 1;
-    if (Math.abs(game.ball.speed.x * increaseSpeed) > game.ball.speed.maxX)
-      game.ball.speed.x = game.ball.speed.maxX * sign;
-    else
-      game.ball.speed.x *= increaseSpeed;
-    console.log(game.ball.speed.x);
-  }
-  function modifyBallAngle(player) {
-    paddleCenter = player.y + paddleHeight / 2;
-    let hitPos = game.ball.y - paddleCenter;
-    let normalized = hitPos / (paddleHeight / 2);
-    let bounceAngle = normalized * maxAngle;
-    let speed = Math.sqrt(game.ball.speed.x ** 2 + game.ball.speed.y ** 2);
-    game.ball.speed.y = speed * Math.sin(bounceAngle);
-  }
-  function collide(player, otherPlayer) {
-    if (game.ball.y < player.y || game.ball.y > player.y + paddleHeight) {
-      playSound(300, 300);
-      resetPos();
-      otherPlayer.score++;
-      game.ball.speed.x = player.attraction;
-      if (otherPlayer.score == scoreMax)
-        isPlaying = false;
-    } else {
-      playSound(700, 80);
-      modifyBallAngle(player);
-      increaseBallSpeed();
-    }
-  }
-  function moveAll() {
-    movePlayer(game.player1);
-    movePlayer(game.player2);
-    moveBall();
-  }
-  function stop() {
-    cancelAnimationFrame(anim);
-    resetGame();
-  }
-  function displayWinner() {
-    ctx.fillStyle = "white";
-    ctx.font = "40px Arial";
-    ctx.textAlign = "center";
-    if (game.player1.score > game.player2.score) {
-      winner = "Player 1 Wins!";
-      winnerId = 1;
-      loserId = 2;
-      sendGameResult(winnerId, loserId, game.player1.score, game.player2.score, elapsedTime, gameID);
-    } else {
-      winner = "Player 2 Wins!";
-      winnerId = 2;
-      loserId = 1;
-      sendGameResult(winnerId, loserId, game.player2.score, game.player1.score, elapsedTime, gameID);
-    }
-    ctx.fillText(winner, canvasWidth / 2, canvasHeight / 2);
-  }
-  function play() {
-    if (!isPlaying) {
-      stopTimer();
-      displayWinner();
-      return;
-    }
-    moveAll();
-    draw();
-    anim = requestAnimationFrame(play);
-  }
-  draw();
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "w" || e.key === "W") game.player1.movingUp = true;
-    if (e.key === "s" || e.key === "S") game.player1.movingDown = true;
-    if (e.key === "o" || e.key === "O") game.player2.movingUp = true;
-    if (e.key === "l" || e.key === "L") game.player2.movingDown = true;
-  });
-  document.addEventListener("keyup", (e) => {
-    if (e.key === "w" || e.key === "W") game.player1.movingUp = false;
-    if (e.key === "s" || e.key === "S") game.player1.movingDown = false;
-    if (e.key === "o" || e.key === "O") game.player2.movingUp = false;
-    if (e.key === "l" || e.key === "L") game.player2.movingDown = false;
-  });
-  document.querySelector("#start-game")?.addEventListener("click", () => {
-    audioCtx = new window.AudioContext();
-    randomValue = Math.random() < 0.5 ? -2 : 2;
-    game.ball.speed.x = randomValue;
-    resetGame();
-    isPlaying = true;
-    startTimer();
-    play();
-  });
-  document.querySelector("#stop-game")?.addEventListener("click", () => {
-    isPlaying = false;
-    stop();
-  });
-  async function sendGameResult(winnerId2, loserId2, winnerScore, loserScore, duration, id) {
-    const res = await fetch("/api/private/game/end", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        winner_id: winnerId2,
-        loser_id: loserId2,
-        winner_score: winnerScore,
-        loser_score: loserScore,
-        duration_game: duration,
-        id
-      })
-    });
+async function stopGame() {
+  if (currentGame) {
+    const id = currentGame.getId();
+    console.log("id qg : ", id);
+    currentGame.destroy();
+    currentGame = null;
     try {
-      const data = await res.json();
-      console.log("Saved data : ", data);
+      const res = await genericFetch2("/api/private/game/error", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id
+        })
+      });
+      console.log("Saved data:", res);
     } catch (err) {
-      console.error("Error parsing JSON : ", err);
+      console.error("Error saving game:", err);
     }
   }
 }
@@ -404,11 +501,9 @@ function ProfilView() {
   return document.getElementById("profilhtml").innerHTML;
 }
 async function initProfil() {
-  const user_id = 1;
-  const res = await fetch("/api/private/profil", {
+  const res = await genericFetch2("/api/private/profil", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: user_id })
+    credentials: "include"
   });
   if (!res.ok) {
     console.error("Cannot load profile");
@@ -442,9 +537,119 @@ var init_p_profil = __esm({
   }
 });
 
+// front/src/views/p_updateinfo.ts
+function UpdateInfoView() {
+  return document.getElementById("updateinfohtml").innerHTML;
+}
+async function initUpdateInfo() {
+  const res = await genericFetch2("/api/private/updateinfo", {
+    method: "POST"
+  });
+  if (!res.ok) {
+    console.error("Cannot load profile");
+    return;
+  }
+  const profil = await res.json();
+  document.getElementById("profil-username").textContent = profil.pseudo;
+  const formUsername = document.getElementById("change-username-form");
+  formUsername.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const newUsername = formUsername["new-username"].value;
+    const password = formUsername["password"].value;
+    const response = await genericFetch2("/api/private/changeusername", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ newUsername, password })
+    });
+    console.log("client initupdate: body", response.body);
+    if (!response.ok)
+      return alert("Error changing usename");
+    alert("Username is updated successfully!");
+    navigateTo("/homelogin");
+  });
+}
+
 // front/src/views/p_tournament.ts
 function TournamentView() {
-  return document.getElementById("tournamenthtml").innerHTML;
+  const html = document.getElementById("tournamenthtml").innerHTML;
+  setTimeout(() => initTournamentPage(), 0);
+  return html;
+}
+function generateRandomRanking() {
+  const ranking = [];
+  while (ranking.length < 8) {
+    const randomId = Math.floor(Math.random() * 16) + 1;
+    if (!ranking.includes(randomId)) {
+      ranking.push(randomId);
+    }
+  }
+  return ranking;
+}
+function initTournamentPage() {
+  const createBtn = document.getElementById("create-test");
+  const showBtn = document.getElementById("show-onchain");
+  const backBtn = document.getElementById("back-to-home");
+  createBtn?.addEventListener("click", async () => {
+    await testTournamentDB();
+  });
+  showBtn?.addEventListener("click", async () => {
+    await showDBOnChain();
+  });
+  backBtn?.addEventListener("click", () => {
+    navigateTo("/homelogin");
+  });
+}
+async function testTournamentDB() {
+  const testRanking = generateRandomRanking();
+  try {
+    const res = await fetch("/api/private/tournament/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ranking: testRanking })
+    });
+    const data = await res.json();
+    const dbPanel = document.getElementById("db-panel");
+    if (dbPanel) {
+      dbPanel.innerHTML = `
+        <div class="p-2 border-b">
+          <p class="text-green-700 font-bold">\u2705 Tournament Created!</p>
+          <p><strong>Ranking:</strong> ${testRanking.join(", ")}</p>
+          <p class="text-gray-600 text-sm">(Now stored in database)</p>
+        </div>
+      `;
+    }
+    console.log("Tournament response:", data);
+  } catch (err) {
+    console.error("Error creating tournament:", err);
+  }
+}
+async function showDBOnChain() {
+  try {
+    const res = await fetch("/api/private/tournament/all");
+    const data = await res.json();
+    const dbPanel = document.getElementById("db-panel");
+    const chainPanel = document.getElementById("chain-panel");
+    if (!dbPanel || !chainPanel) return;
+    dbPanel.innerHTML = data.map((t) => `
+      <div class="p-2 border-b">
+        <p><strong>ID:</strong> ${t.tournamentId}</p>
+        <p><strong>Ranking:</strong> ${t.ranking.join(", ")}</p>
+        <p><strong>On Chain:</strong>
+          <span class="${t.onChain ? "text-green-600" : "text-red-600"}">
+            ${t.onChain ? "\u2705 YES" : "\u274C NO"}
+          </span>
+        </p>
+      </div>
+    `).join("");
+    chainPanel.innerHTML = data.map((t) => `
+      <div class="p-2 border-b">
+        <p><strong>ID:</strong> ${t.tournamentId}</p>
+        ${t.onChain ? `<p><strong>Blockchain Ranking:</strong> ${t.blockchainRanking.join(", ")}</p>` : `<p class="text-red-600"><strong>Not On Chain \u274C</strong></p>`}
+      </div>
+    `).join("");
+  } catch (err) {
+    console.error("Error loading DB/Blockchain comparison:", err);
+  }
 }
 var init_p_tournament = __esm({
   "front/src/views/p_tournament.ts"() {
@@ -469,6 +674,24 @@ var init_logout = __esm({
 });
 
 // front/src/router.ts
+<<<<<<< HEAD
+=======
+var routes = [
+  { path: "/", view: HomeView },
+  { path: "/login", view: LoginView, init: initLogin },
+  { path: "/logout", init: initLogout },
+  { path: "/dashboard", view: DashboardView },
+  { path: "/register", view: RegisterView, init: initRegister },
+  { path: "/homelogin", view: HomeLoginView, init: initHomePage },
+  { path: "/game", view: GameView, init: initGame },
+  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
+  { path: "/profil", view: ProfilView, init: initProfil },
+  { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },
+  { path: "/tournament", view: TournamentView },
+  { path: "/changeusername" }
+];
+var currentRoute = null;
+>>>>>>> main
 function navigateTo(url) {
   const state = { previous: window.location.pathname };
   history.pushState(state, "", url);
@@ -507,6 +730,10 @@ function matchRoute(pathname) {
   return null;
 }
 function router() {
+  if (currentRoute?.cleanup) {
+    if (typeof currentRoute.cleanup === "function")
+      currentRoute.cleanup();
+  }
   const match = matchRoute(location.pathname);
   if (!match) {
     document.querySelector("#app").innerHTML = "<h1>404 Not Found</h1>";
@@ -516,6 +743,7 @@ function router() {
   if (route.view)
     document.querySelector("#app").innerHTML = route.view(params);
   route.init?.(params);
+  currentRoute = route;
 }
 function initRouter() {
   document.body.addEventListener("click", (e) => {
