@@ -11,8 +11,6 @@ export function initLogin()
 		e.preventDefault();
 		const username = (document.getElementById("username") as HTMLInputElement).value;
 		const password = (document.getElementById("password") as HTMLInputElement).value;
-
-	console.log("test2");
 	
 	const success = await login(username, password, form)
    	if (success)
