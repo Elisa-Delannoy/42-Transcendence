@@ -71,6 +71,10 @@ fastify.get("/", async (request, reply) => {
   return reply.sendFile("index.html");
 });
 
+fastify.get("/api/checkLogin", async (request, reply) => {
+	return tokenOK(request, reply);
+});
+
 fastify.post("/api/register", async (request, reply) => {
   const { username, email, password, confirm } = request.body as { username: string, password: string, email: string, confirm: string};
   await manageRegister(username, email, password, confirm, reply);
@@ -204,6 +208,8 @@ const start = async () => {
 		await users.createUserTable();
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();
+		// const hashedPassword = await bcrypt.hash("42", 12);
+		// users.addUser("42", "42", hashedPassword);
 	} catch (err) {
 		fastify.log.error(err);
 		process.exit(1);

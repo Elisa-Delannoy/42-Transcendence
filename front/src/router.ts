@@ -1,4 +1,4 @@
-import { HomeView } from "./views/home";
+import { HomeView, initHome } from "./views/home";
 import { LoginView, initLogin } from "./views/login";
 import { DashboardView } from "./views/dashboard";
 import { RegisterValidView, RegisterView, initRegister } from "./views/register";
@@ -11,7 +11,7 @@ import { TournamentView} from "./views/p_tournament";
 import { initLogout } from "./views/logout";
 
 const routes = [
-  { path: "/", view: HomeView },
+  { path: "/", view: HomeView, init: initHome},
   { path: "/login", view: LoginView, init:initLogin},
   { path: "/logout", init: initLogout},
   { path: "/dashboard", view: DashboardView },

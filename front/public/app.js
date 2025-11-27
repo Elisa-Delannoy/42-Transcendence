@@ -10,9 +10,17 @@ var __commonJS = (cb, mod) => function __require() {
 function HomeView() {
   return document.getElementById("homehtml").innerHTML;
 }
+async function initHome() {
+  const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
+  console.log(res.ok);
+  if (res.ok) {
+    navigateTo("/homelogin");
+  }
+}
 var init_home = __esm({
   "front/src/views/home.ts"() {
     "use strict";
+    init_router();
   }
 });
 
@@ -854,7 +862,7 @@ var init_router = __esm({
     init_p_tournament();
     init_logout();
     routes = [
-      { path: "/", view: HomeView },
+      { path: "/", view: HomeView, init: initHome },
       { path: "/login", view: LoginView, init: initLogin },
       { path: "/logout", init: initLogout },
       { path: "/dashboard", view: DashboardView },
