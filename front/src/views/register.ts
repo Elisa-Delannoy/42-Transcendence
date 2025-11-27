@@ -8,7 +8,6 @@ export function RegisterView(): string {
 
 export function initRegister() {
 	const form = document.getElementById("register-form") as HTMLFormElement;
-	const message = document.getElementById("register-message") as HTMLParagraphElement;
 
 	form.addEventListener("submit", async (e) => 
 	{
@@ -58,8 +57,6 @@ export function initRegister() {
 					emailInput.classList.add("error");
 					emailMsg.textContent = result.message;
 				}
-				message.textContent = "";
-				message.append(result.message);
 			}
 		} 
 		catch (err) 

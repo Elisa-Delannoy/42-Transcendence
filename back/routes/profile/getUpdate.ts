@@ -1,6 +1,9 @@
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import { users } from '../../server';
 import bcrypt from "bcryptjs";
+import path from "path"
+import { pipeline } from "stream/promises"
+import fs from "fs";
 
 export async function getUpdateInfo(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
 	try {
@@ -112,3 +115,14 @@ export async function getUpdateEmail(fastify: FastifyInstance, request: FastifyR
 	// 	return reply.code(500).send({ message: "Internal Server Error" });
 	// }
 // }
+export async function getUploadAvatar(request: FastifyRequest, reply: FastifyReply) {
+	const avatar = await request.file();
+		console.log("avatar = ", avatar);
+		if (!avatar?.filename) {
+			return reply.status(400).send({ error: "Nothing uploaded"});
+		}
+		const avatar_name = request.user?.user_id + ".png";
+		const avatar_path = path.join(__dirname, "../../uploads", avatar_name);
+		await pipeline(avatar.file, fs.createWriteStream(avatar_path));
+		return reply.status(200).send({ message: "Upload succes", filename: avatar_name})
+}

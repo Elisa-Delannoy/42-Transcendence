@@ -1,4 +1,4 @@
-import { genericFetch } from "../router";
+import { genericFetch, navigateTo } from "../router";
 
 export function ProfileView(): string {
   return (document.getElementById("profilehtml") as HTMLTemplateElement).innerHTML;
@@ -22,3 +22,4 @@ export async function initProfile() {
   (document.getElementById("profile-money") as HTMLElement).textContent = profile.money;
   (document.getElementById("profile-elo") as HTMLElement).textContent = profile.elo;
 }
+

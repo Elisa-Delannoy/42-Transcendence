@@ -6,9 +6,12 @@ import { Users } from './DB/users';
 import { manageLogin } from './routes/login/login';
 import { manageRegister } from "./routes/register/register";
 import { GameInfo } from "./DB/gameinfo";
-import fastifyCookie from "fastify-cookie";
+import fastifyCookie from "@fastify/cookie";
 import { tokenOK } from "./middleware/jwt";
-import { CookieSerializeOptions } from "fastify-cookie";
+import { CookieSerializeOptions } from "@fastify/cookie";
+import multipart from "@fastify/multipart"
+
+import { navigateTo } from "../front/src/router";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import bcrypt from "bcryptjs";
 import { createGame, joinGame, endGame, updateGamePos, updateGameStatus, displayGameList } from "./routes/game/game";
@@ -17,8 +20,9 @@ import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-alwa
 import { Tournament } from './DB/tournament';
 import { uploadPendingTournaments } from "./routes/tournament/tournament.service";
 import * as avalancheService from "./blockchain/avalanche.service";
-import { getProfile } from "./routes/profile/profile";
-import { getUpdateEmail, getUpdateInfo, getUpdateUsername } from "./routes/profile/getUpdate";
+import { getProfile, displayAvatar } from "./routes/profile/profile";
+import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar } from "./routes/profile/getUpdate";
+
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -52,11 +56,18 @@ fastify.register(fastifyCookie, {
 
 fastify.register(FastifyHttpsAlwaysPlugin, httpsAlwaysOpts)
 
+fastify.register(multipart, {
+	limits:{
+		fileSize: 2 * 1024 * 1024,
+		files: 1,
+	}
+})
+
 fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
 	if (request.url.startsWith("/api/private")) {
 		const user = await tokenOK(request, reply);
 		if (user !== null)
-			request.user = user;
+			request.user = user
 	}
 })
 
@@ -89,6 +100,7 @@ fastify.post("/api/private/profile", async (request: FastifyRequest, reply: Fast
 	return await getProfile(fastify, request, reply);
 });
 
+
 fastify.post("/api/private/updateinfo", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await getUpdateInfo(fastify, request, reply);
 });
@@ -100,6 +112,13 @@ fastify.post("/api/private/updateinfo/username", async (request: FastifyRequest,
 fastify.post("/api/private/updateinfo/email", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await getUpdateEmail(fastify, request, reply);
 })
+fastify.post("/api/private/updateinfo/uploads", async (request, reply) => {
+	return await getUploadAvatar(request, reply);
+});
+
+fastify.get("/api/private/avatar", async (request: FastifyRequest, reply: FastifyReply) => {
+	return await displayAvatar(request, reply);
+});
 
 fastify.post("/api/private/game/create", async (request, reply) => {
 	const playerId = request.user?.user_id as any;
@@ -198,6 +217,8 @@ fastify.get("/api/logout", async (request, reply) => {
 	reply.clearCookie("token", options);
 	return { message: "is logged out" };
 })
+
+
 
 const start = async () => {
 	try {
