@@ -19,7 +19,9 @@ export async function getProfile(fastify: FastifyInstance, request: FastifyReque
 }
 
 export async function displayAvatar( request: FastifyRequest, reply: FastifyReply) {
-	const avatar = request.user.avatar;
+	const avatar = request.user?.avatar;
+	if (!avatar)
+		return;
 	const avatarPath = path.join(__dirname, "../../uploads", avatar);
 	const type = mime.lookup(avatarPath);
 	if (type !== "image/png" && type !== "image/jpeg")

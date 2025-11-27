@@ -105,7 +105,7 @@ export class Users
 		return updatedUser;
 	}
 
-	async updateEmail(id: number, newEmail: string): Promise<Users>
+	async updateEmail(id: number, newEmail: string): Promise<IUsers>
 	{
 		if (!newEmail || newEmail.trim() === '') {
 			throw new Error("New username cannot be empty.");

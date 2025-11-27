@@ -26,12 +26,12 @@ function initLogin() {
     e.preventDefault();
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
-    const success = await login(username, password);
+    const success = await login(username, password, form);
     if (success)
       navigateTo("/homelogin");
   });
 }
-async function login(username, password) {
+async function login(username, password, form) {
   try {
     const res = await fetch("/api/login", {
       method: "POST",
@@ -40,10 +40,24 @@ async function login(username, password) {
       credentials: "include"
     });
     const result = await res.json();
-    if (res.ok)
+    const usernameInput = form.querySelector("input[name='username']");
+    const passwordInput = form.querySelector("input[name='password']");
+    const usernameMsg = document.getElementById("username-loginmsg");
+    const passwordMsg = document.getElementById("password-loginmsg");
+    [usernameMsg, passwordMsg].forEach((p) => p.textContent = "");
+    [usernameInput, passwordInput].forEach((p) => p.classList.remove("error"));
+    if (res.ok == true)
       return true;
     else {
-      alert(result.error);
+      if (result.field === "password") {
+        console.log("test1");
+        passwordInput.classList.add("error");
+        passwordMsg.textContent = result.error;
+      }
+      if (result.field === "username") {
+        usernameInput.classList.add("error");
+        usernameMsg.textContent = result.error;
+      }
       return false;
     }
   } catch (err) {
@@ -133,12 +147,15 @@ function GameView() {
   return document.getElementById("gamehtml").innerHTML;
 }
 function initGame() {
-  const quickGameButton = document.getElementById("start-quickgame");
-  quickGameButton?.addEventListener("click", async () => {
-    const { gameId } = await genericFetch2("/api/private/game/create", {
+  const createGameButton = document.getElementById("create-game");
+  createGameButton?.addEventListener("click", async () => {
+    await genericFetch2("/api/private/game/create", {
       method: "POST"
     });
-    navigateTo(`/quickgame/${gameId}`);
+  });
+  const gameListButton = document.getElementById("display-game-list");
+  gameListButton?.addEventListener("click", async () => {
+    loadGames();
   });
   const tournamentButton = document.getElementById("start-tournament");
   tournamentButton?.addEventListener("click", async () => {
@@ -146,6 +163,45 @@ function initGame() {
       method: "POST"
     });
     navigateTo(`/tournament/${tournamentId}`);
+  });
+}
+async function loadGames() {
+  const { games } = await genericFetch2("/api/private/game/list");
+  renderGameList(games);
+}
+function renderGameList(games) {
+  const container = document.getElementById("game-list");
+  if (!container) return;
+  if (games.length === 0) {
+    container.innerHTML = "<p>Aucune partie disponible.</p>";
+    return;
+  }
+  container.innerHTML = games.map((game) => `
+	<div class="game-item">
+		<p>Game #${game.id}</p>
+		<p>Player1 : ${game.playerId1}</p>
+		<p>Player2 : ${game.playerId2}</p>
+		<p>Status : ${game.state}</p>
+		<button data-game-id="${game.id}" class="join-game-btn">Rejoindre</button>
+	</div>
+	`).join("");
+  document.querySelectorAll(".join-game-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.gameId;
+      try {
+        const res = await genericFetch2("/api/private/game/join", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id
+          })
+        });
+        console.log("Saved data:", res);
+      } catch (err) {
+        console.error("Error saving game:", err);
+      }
+      navigateTo(`/quickgame/${id}`);
+    });
   });
 }
 var GameInstance;
@@ -240,9 +296,22 @@ var init_p_game = __esm({
       /** ============================================================
        ** START / STOP
        *============================================================ */
-      start() {
+      async start() {
         if (this.isPlaying) return;
         this.isPlaying = true;
+        try {
+          const res = await genericFetch2("/api/private/game/update/status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: this.gameID,
+              status: "playing"
+            })
+          });
+          console.log("Saved data:", res);
+        } catch (err) {
+          console.error("Error saving game:", err);
+        }
         this.startBtn.disabled = true;
         this.stopBtn.disabled = false;
         this.audioCtx = new AudioContext();
@@ -474,15 +543,15 @@ function initQuickGame(params) {
 async function stopGame() {
   if (currentGame) {
     const id = currentGame.getId();
-    console.log("id qg : ", id);
     currentGame.destroy();
     currentGame = null;
     try {
-      const res = await genericFetch2("/api/private/game/error", {
+      const res = await genericFetch2("/api/private/game/update/status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          id
+          id,
+          status: "error"
         })
       });
       console.log("Saved data:", res);
@@ -531,10 +600,13 @@ async function initProfile() {
   const profile = await genericFetch2("/api/private/profile", {
     method: "POST"
   });
+  let status = "online";
+  if (profile.status === 0)
+    status = "offline";
   document.getElementById("profile-id").textContent = profile.user_id;
   document.getElementById("profile-pseudo").textContent = profile.pseudo;
   document.getElementById("profile-email").textContent = profile.email;
-  document.getElementById("profile-status").textContent = profile.status;
+  document.getElementById("profile-status").textContent = status;
   document.getElementById("profile-creation").textContent = profile.creation_date;
   document.getElementById("profile-modification").textContent = profile.modification_date;
   document.getElementById("profile-money").textContent = profile.money;
@@ -561,13 +633,34 @@ async function initUpdateInfo() {
     e.preventDefault();
     const newUsername = formUsername["new-username"].value;
     const password = formUsername["password"].value;
-    const response = await genericFetch2("/api/private/updateinfo/username", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ newUsername, password })
-    });
-    alert("Username is updated successfully!");
-    navigateTo("/homelogin");
+    try {
+      const response = await genericFetch2("/api/private/updateinfo/username", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newUsername, password })
+      });
+      alert("Username updated successfully to <<  " + response.pseudo + "  >>");
+      navigateTo("/homelogin");
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+  const formEmail = document.getElementById("change-email-form");
+  formEmail.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const newEmail = formEmail["new-email"].value;
+    const password = formEmail["password"].value;
+    try {
+      const response = await genericFetch2("/api/private/updateinfo/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newEmail, password })
+      });
+      alert("Username updated successfully to <<  " + response.email + "  >>");
+      navigateTo("/homelogin");
+    } catch (err) {
+      alert(err.message);
+    }
   });
   await initAvatar();
 }
@@ -729,10 +822,10 @@ async function genericFetch2(url, options = {}) {
     if (result.error === "TokenExpiredError")
       alert("Session expired, please login");
     navigateTo("/logout");
-    throw new Error(result.error);
+    throw new Error(result.error || result.message || "Unknown error");
   }
   if (!res.ok) {
-    throw new Error(result.error);
+    throw new Error(result.error || result.message || "Unknown error");
   }
   return result;
 }
@@ -817,8 +910,7 @@ var init_router = __esm({
       { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
       { path: "/profile", view: ProfileView, init: initProfile },
       { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },
-      { path: "/tournament", view: TournamentView },
-      { path: "/changeusername" }
+      { path: "/tournament", view: TournamentView }
     ];
     currentRoute = null;
   }

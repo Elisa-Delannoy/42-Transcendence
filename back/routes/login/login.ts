@@ -1,5 +1,4 @@
 import  { ManageDB } from "../../DB/manageDB";
-import { Users } from '../../DB/users';
 import { users } from '../../server';
 import { createJWT} from "../../middleware/jwt";
 import { CookieSerializeOptions } from "@fastify/cookie";

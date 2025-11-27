@@ -117,7 +117,7 @@ export async function getUpdateEmail(fastify: FastifyInstance, request: FastifyR
 // }
 export async function getUploadAvatar(request: FastifyRequest, reply: FastifyReply) {
 	const avatar = await request.file();
-		console.log("avatar = ", avatar);
+		// console.log("avatar = ", avatar);
 		if (!avatar?.filename) {
 			return reply.status(400).send({ error: "Nothing uploaded"});
 		}
