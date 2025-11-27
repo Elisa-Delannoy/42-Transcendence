@@ -72,8 +72,8 @@ fastify.get("/", async (request, reply) => {
 });
 
 fastify.post("/api/register", async (request, reply) => {
-  const { username, email, password } = request.body as { username: string, password: string, email: string};
-  await manageRegister(username, email, password, reply);
+  const { username, email, password, confirm } = request.body as { username: string, password: string, email: string, confirm: string};
+  await manageRegister(username, email, password, confirm, reply);
 });
 
 fastify.post("/api/login", async (request: FastifyRequest, reply: FastifyReply) => {

@@ -9,7 +9,7 @@
 
 @layer components {
 	.btn {
-		@apply bg-amber-700 text-white text-center py-4 
+		@apply bg-amber-700 dark:bg-amber-950 text-white text-center py-4 
 			rounded-lg hover:bg-gray-700 duration-300 cursor-pointer
 			block mx-auto mt-10;
 	}
@@ -18,6 +18,14 @@
 @layer components {
 	.error {
 		@apply ring-red-500 ring-2;
+	}
+}
+
+@layer components {
+	.input {
+		@apply bg-amber-600/30 dark:bg-amber-950/30 rounded-md w-80 duration-300
+				focus:ring-amber-500 focus:ring-2 focus:outline-none
+				px-2 py-1 text-sm dark:text-white shadow-xs;
 	}
 }
 

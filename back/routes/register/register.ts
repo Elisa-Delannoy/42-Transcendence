@@ -3,13 +3,13 @@ import { users } from '../../server';
 import bcrypt from "bcryptjs";
 import { FastifyReply } from "fastify";
 
-export async function manageRegister(pseudo: string, email: string, password: string, reply: FastifyReply)
+export async function manageRegister(pseudo: string, email: string, password: string, confirm: string, reply: FastifyReply)
 {
 	try
 	{
 		await checkPseudo(pseudo);
-		await checkPassword(password);
 		await checkEmail(email);
+		await checkPassword(password, confirm);
 		const hashedPassword = await bcrypt.hash(password, 12);
 		users.addUser(pseudo, email, hashedPassword);
 		reply.status(200).send({ ok:true, message: "You have been register successfully."})
@@ -43,7 +43,7 @@ export const ALLOWED_SPECIALS = new Set([
   '=', '?', '@', '\\', '^', '_',
 ]);
 
-async function checkPassword(password: string)
+async function checkPassword(password: string, confirm: string)
 {
 	const set = new Set<string>();
     
@@ -62,9 +62,11 @@ async function checkPassword(password: string)
 	if (/[!@#$%^&*()_\-+=.?]/.test(password))
     	check++;
 	if (check !== 6)
-		throw { field: "password", message: "error password"};
+		throw { field: "password", message: "The password does not meet the security requirements."};
     const forbiddenChars = [...password].filter(c => !ALLOWED_SPECIALS.has(c) && !/[a-zA-Z0-9]/.test(c));
 	if (forbiddenChars.length > 0)
-		throw { field: "password", message: "error password"};
+		throw { field: "password", message: "Your password contains invalid characters."};
+	if (password !== confirm)
+		throw { field: "confirm", message: "Password confirmation doesn't match."}
 }
 

@@ -19,8 +19,8 @@
 
 	<template id="homehtml">
 		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-			<a href="/" data-link class="block dark:/hidden ml-4">
-				<img src="src/image/croissant-white.png" alt="croissantw"
+			<a href="/" data-link class="block dark:hidden ml-4">
+				<img src="/src/image/croissant-white.png" alt="croissantw"
 					 class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 			<a href="/" data-link class="hidden dark:block ml-4">
@@ -56,28 +56,27 @@
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 		</header>
-		<form id="login-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-72 h-90 mx-auto">
-	 		<h1 class="mt-4 font-bold text-xl">Welcome Back</h1>
-			<div class="mt-6">
-				<div>
-					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-						focus:ring-2 focus:ring-amber-500 px-2" 
-						id="username" name="username" placeholder="username" required />
-					<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="username-loginmsg"></p>
+		<form id="login-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 h-80 mx-auto">
+	 		<h1 class="mt-4 dark:text-white font-bold text-xl">Welcome Back</h1>
+			<div class="flex flex-col mx-10">
+				<div class="items-start text-start">
+					<h2 class="text-sm dark:text-white mt-3 mb-0.5">Username</h2>
+					<input class="input" 
+						id="username" name="username" placeholder="Enter your username" required />
+					<p class="text-red-600 text-xs mt-1 text-left block" id="username-loginmsg"></p>
 				</div>
-				<div>
-					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-						focus:ring-2 focus:ring-amber-500 px-2" 
-						id="password" type="password" name="password" placeholder="password" required />
-					<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="password-loginmsg"></p>
+				<div class="items-start text-start">
+					<h2 class="text-sm dark:text-white mt-3 mb-0.5">Password</h2>
+					<input class="input" 
+						id="password" type="password" name="password" placeholder="••••••••" required />
+					<p class="text-red-600 text-xs mt-1 text-left block" id="password-loginmsg"></p>
 				</div>
 			</div>
-			<button class="mt-12 btn w-40">Log in</button>
-			<a class="mt-2 text-sm" href="/register" data-link>Create account ?</a>
+			<button class="btn w-40 justify-end">Log in</button>
+			<a class="mt-1 dark:text-white hover:underline text-sm" href="/register" data-link>Create account ?</a>
 		</form>
 	</template>
 
-	
 	<template id="registerhtml">
 		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 			<a href="/" data-link class="block dark:hidden ml-4">
@@ -90,41 +89,38 @@
 			</a>
 		</header>
 		<div class="register-container flex flex-col">
-			<form id="register-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-20 w-100 h-120 mx-auto">
-				<h1 class="mt-4 font-bold text-xl">Registration<br> <span class="opacity-50 text-lg font-normal">Create your account to get started</span></h1>
+			<form id="register-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-20 w-100 h-120 mx-auto">
+				<h1 class="mt-4 dark:text-white font-bold text-xl">Registration<br> <span class="opacity-50 text-lg font-normal">Create your account to get started</span></h1>
 				<div class="flex flex-col mx-10">
 					<div class="items-start text-start">
-						<h2 class="text-sm mt-3 mb-0.5">Username</h2>
-						<input class="bg-amber-600/30 rounded-md w-80 duration-300
-								focus:ring-amber-500 focus:ring-2 focus:outline-none
-								px-2 py-1 text-sm" type="text" name="username" placeholder="Select a username" required />
-						<p class="text-red-600 text-xs mt-2 text-center block w-60" id="username-message"></p>
+						<h2 class="text-sm dark:text-white mt-3 mb-0.5">Username</h2>
+						<input class="input"
+							type="text" name="username" placeholder="Select a username" required />
+						<p class="text-red-600 text-xs mt-1 text-left block" id="username-message"></p>
 					</div>
 					<div class="items-start text-start">
-						<h2 class="text-sm mt-3 mb-0.5">Email</h2>
-						<input class="bg-amber-600/30 rounded-md w-80 duration-300
-							focus:ring-amber-500 focus:ring-2 focus:outline-none
-							px-2 py-1 text-sm" type="email" name="email" placeholder="your.email@example.com" required />
-						<p class="text-red-600 text-xs mt-2 text-center block w-60" id="email-message"></p>
+						<h2 class="text-sm dark:text-white mt-3 mb-0.5">Email</h2>
+						<input class="input"
+							type="email" name="email" placeholder="your.email@example.com" required />
+						<p class="text-red-600 text-xs mt-1 text-left block" id="email-message"></p>
 					</div>
 					<div class="items-start text-start">
-						<h2 class="text-sm mt-3 mb-0.5">Password</h2>
-						<input class="bg-amber-600/30 rounded-md w-80 duration-300
-							focus:ring-amber-500 focus:ring-2 focus:outline-none
-							px-2 py-1 text-sm" type="password" name="password" placeholder="••••••••" required />
-							<p class="text-red-600 text-sx mt-2 text-left mx-4 block" id="confirm-password-message"> </p>
+						<h2 class="text-sm dark:text-white mt-3 mb-0.5">Password</h2>
+						<input class="input" 
+							type="password" name="password" placeholder="••••••••" required />
+							<p class="text-red-600 text-xs mt-1 text-left block" id="password-message"> </p>
 					</div>
 					<div class="items-start text-start">
-						<h2 class="text-sm mt-3 mb-0.5">Confirm Password</h2>
-						<input class="bg-amber-600/30 rounded-md w-80 duration-300
-							focus:ring-amber-500 focus:ring-2 focus:outline-none
-							px-2 py-1 text-sm" type="password" name="password" placeholder="••••••••" required />
-						<p class="text-red-600 text-sx mt-2 text-left mx-4 block" id="confirm-password-message"> </p>
+						<h2 class="text-sm dark:text-white mt-3 mb-0.5">Confirm Password</h2>
+						<input class="input"
+							type="password" name="confirm-password" placeholder="••••••••" required />
+						<p class="text-red-600 text-xs mt-1 text-left block" id="confirm-password-message"> </p>
 					</div>
 				</div>
 				<button class="btn w-40 justify-end" type="submit">Register</button>
+				<a class="mt-1 dark:text-white hover:underline text-sm" href="/login" data-link>Already register ?</a>
 			</form>
-			<p class="text-xs opacity-50 mt-2 text-center block" id="password-message">
+			<p class="text-xs dark:text-white opacity-50 mt-2 text-center block">
 				Password rules :<br>
 				- The password must contain at least 12 characters.<br>
 				- It must include at least one uppercase letter (A-Z), one lowercase letter (a-z) and one digit (0-9).<br>

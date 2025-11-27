@@ -95,7 +95,8 @@ function initRegister() {
     const data = {
       username: formData.get("username"),
       email: formData.get("email"),
-      password: formData.get("password")
+      password: formData.get("password"),
+      confirm: formData.get("confirm-password")
     };
     try {
       const res = await fetch("/api/register", {
@@ -110,11 +111,17 @@ function initRegister() {
         const usernameInput = form.querySelector("input[name='username']");
         const passwordInput = form.querySelector("input[name='password']");
         const emailInput = form.querySelector("input[name='email']");
+        const confirmInput = form.querySelector("input[name='confirm-password']");
         const usernameMsg = document.getElementById("username-message");
         const emailMsg = document.getElementById("email-message");
         const passwordMsg = document.getElementById("password-message");
-        [usernameMsg, emailMsg, passwordMsg].forEach((p) => p.textContent = "");
-        [usernameInput, emailInput, passwordInput].forEach((p) => p.classList.remove("error"));
+        const confirmMsg = document.getElementById("confirm-password-message");
+        [usernameMsg, emailMsg, passwordMsg, confirmMsg].forEach((p) => p.textContent = "");
+        [usernameInput, emailInput, passwordInput, confirmInput].forEach((p) => p.classList.remove("error"));
+        if (result.field === "confirm") {
+          confirmInput.classList.add("error");
+          confirmMsg.textContent = result.message;
+        }
         if (result.field === "password") {
           passwordInput.classList.add("error");
           passwordMsg.textContent = result.message;
