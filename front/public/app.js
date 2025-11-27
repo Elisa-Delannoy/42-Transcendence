@@ -539,7 +539,6 @@ async function initProfile() {
   document.getElementById("profile-modification").textContent = profile.modification_date;
   document.getElementById("profile-money").textContent = profile.money;
   document.getElementById("profile-elo").textContent = profile.elo;
-  document.getElementById("profile-avatar").src = profile.avatar;
 }
 var init_p_profile = __esm({
   "front/src/views/p_profile.ts"() {

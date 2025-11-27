@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import { users } from '../../server';
 import path from "path";
 import fs from "fs";
-import { REPL_MODE_SLOPPY } from "repl";
+import mime from "mime-types";
 
 export async function getProfile(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
 	try {
@@ -22,6 +22,9 @@ export async function getProfile(fastify: FastifyInstance, request: FastifyReque
 export async function displayAvatar( request: FastifyRequest, reply: FastifyReply) {
 	const avatar = request.user.avatar;
 	const avatarPath = path.join(__dirname, "../../uploads", avatar);
-	if (fs.existsSync(avatarPath))
-		return reply.sendFile(path.resolve(__dirname, "../../uploads", "0.png"));
+	const type = mime.lookup(avatarPath);
+	if (type !== "image/png" && type !== "image/jpeg")
+		return;
+	const stream = fs.createReadStream(avatarPath);
+	return reply.type(type).send(stream);
 }
