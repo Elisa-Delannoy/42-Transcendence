@@ -18,7 +18,7 @@ import { createGame, joinGame, endGame, updateGamePos, updateGameStatus, display
 import fs from "fs";
 import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always"
 import { Tournament } from './DB/tournament';
-import { uploadPendingTournaments } from "./routes/tournament/tournament.service";
+import * as tournamentService from "./routes/tournament/tournament.service";
 import * as avalancheService from "./blockchain/avalanche.service";
 import { getProfile, displayAvatar } from "./routes/profile/profile";
 import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar } from "./routes/profile/getUpdate";
@@ -159,52 +159,13 @@ fastify.post("/api/private/game/end", async (request, reply) => {
 	return { message: "Game saved!" };
 });
 
-fastify.post("/api/private/tournament/add", async (request, reply) => {
-	try {
-	  const { ranking } = request.body as any;
-	  if (!Array.isArray(ranking) || ranking.length !== 8) {
-		return reply.status(400).send({ error: "Ranking must be an array of 8 numbers" });
-	  }
-	  const id = await tournament.insertTournament(ranking);
-	  try {
-		await uploadPendingTournaments();
-	  } catch (err) {
-		console.error("Failed to upload tournaments on-chain:", err);
-	  } 
-	  return reply.send({
-		message: "Tournament saved!",
-		tournamentId: id
-	  });
-	} catch (err) {
-	  console.error("Error saving tournament:", err);
-	  return reply.status(500).send({ error: "Internal server error" });
-	}
-});
 
-fastify.get("/api/private/tournament/all", async (_, reply) => {
-	try {
-	  const all = await tournament.getAllTournaments();  
-	  const result = [];
-  
-	  for (const t of all) {
-		const ranking = [
-		  t.winner_id, t.second_place_id, t.third_place_id, t.fourth_place_id,
-		  t.fifth_place_id, t.sixth_place_id, t.seventh_place_id, t.eighth_place_id
-		];
-		const onChain = t.onchain === 1;
-		const blockchainRanking = onChain ? await avalancheService.getTournament(t.id) : null;
-		result.push({
-		  tournamentId: t.id,
-		  ranking,
-		  onChain,
-		  blockchainRanking
-		});
-	  }
-	  return reply.send(result);
-	} catch (err) {
-	  console.error("Error fetching tournaments:", err);
-	  return reply.status(500).send({ error: "Internal server error" });
-	}
+fastify.post("/api/private/tournament/add", (req, reply) => {
+	return tournamentService.updateTournament(req, reply);
+	});
+	  
+fastify.get("/api/private/tournament/all", (req, reply) => {
+	return tournamentService.getAllTournamentsDetailed(req, reply);
 });
 
 fastify.get("/api/logout", async (request, reply) => {
