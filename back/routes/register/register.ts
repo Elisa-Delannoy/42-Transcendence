@@ -47,7 +47,7 @@ export const ALLOWED_SPECIALS = new Set([
   '=', '?', '@', '\\', '^', '_',
 ]);
 
-async function checkPassword(password: string, confirm: string)
+export async function checkPassword(password: string, confirm: string)
 {
 	const set = new Set<string>();
     

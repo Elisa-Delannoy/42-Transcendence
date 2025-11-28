@@ -21,7 +21,7 @@ import { Tournament } from './DB/tournament';
 import * as tournamentService from "./routes/tournament/tournament.service";
 import * as avalancheService from "./blockchain/avalanche.service";
 import { getProfile, displayAvatar } from "./routes/profile/profile";
-import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar } from "./routes/profile/getUpdate";
+import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword } from "./routes/profile/getUpdate";
 
 
 export const db = new ManageDB("./back/DB/database.db");
@@ -116,6 +116,11 @@ fastify.post("/api/private/updateinfo/username", async (request: FastifyRequest,
 fastify.post("/api/private/updateinfo/email", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await getUpdateEmail(fastify, request, reply);
 })
+
+fastify.post("/api/private/updateinfo/password", async (request: FastifyRequest, reply: FastifyReply) => {
+	return await getUpdatePassword(fastify, request, reply);
+})
+
 fastify.post("/api/private/updateinfo/uploads", async (request, reply) => {
 	return await getUploadAvatar(request, reply);
 });
@@ -186,8 +191,10 @@ fastify.get("/api/logout", async (request, reply) => {
 
 
 const start = async () => {
+	const PORT = 3000
 	try {
-		await fastify.listen({ port: 3000, host: "0.0.0.0" });
+		await fastify.listen({ port: PORT, host: "0.0.0.0" });
+		console.log(`Server running on port ${PORT}`);
 		await db.connect();
 		// await users.deleteUserTable();
 		await gameInfo.deleteGameInfoTable();

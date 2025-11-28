@@ -96,7 +96,6 @@ function RegisterView() {
 }
 function initRegister() {
   const form = document.getElementById("register-form");
-  const message = document.getElementById("register-message");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(form);
@@ -142,8 +141,6 @@ function initRegister() {
           emailInput.classList.add("error");
           emailMsg.textContent = result.message;
         }
-        message.textContent = "";
-        message.append(result.message);
       }
     } catch (err) {
       console.error(err);
@@ -618,10 +615,13 @@ async function initProfile() {
   const profile = await genericFetch2("/api/private/profile", {
     method: "POST"
   });
+  let status = "online";
+  if (profile.status === 0)
+    status = "offline";
   document.getElementById("profile-id").textContent = profile.user_id;
   document.getElementById("profile-pseudo").textContent = profile.pseudo;
   document.getElementById("profile-email").textContent = profile.email;
-  document.getElementById("profile-status").textContent = profile.status;
+  document.getElementById("profile-status").textContent = status;
   document.getElementById("profile-creation").textContent = profile.creation_date;
   document.getElementById("profile-modification").textContent = profile.modification_date;
   document.getElementById("profile-money").textContent = profile.money;
@@ -643,19 +643,98 @@ async function initUpdateInfo() {
     method: "POST"
   });
   document.getElementById("profile-username").textContent = profil.pseudo;
+  await initUpdateUsername();
+  await initUpdateEmail();
+  await initUpdatePassword();
+  await initAvatar();
+}
+async function initUpdateUsername() {
   const formUsername = document.getElementById("change-username-form");
   formUsername.addEventListener("submit", async (e) => {
     e.preventDefault();
     const newUsername = formUsername["new-username"].value;
     const password = formUsername["password"].value;
-    const response = await genericFetch2("/api/private/updateinfo/username", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ newUsername, password })
-    });
-    alert("Username is updated successfully!");
-    navigateTo("/homelogin");
+    try {
+      const response = await genericFetch2("/api/private/updateinfo/username", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newUsername, password })
+      });
+      alert("Username updated successfully to <<  " + response.pseudo + "  >>");
+      navigateTo("/homelogin");
+    } catch (err) {
+      alert(err.message);
+    }
   });
+}
+async function initUpdateEmail() {
+  const formEmail = document.getElementById("change-email-form");
+  formEmail.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const newEmail = formEmail["new-email"].value;
+    const password = formEmail["password"].value;
+    try {
+      const response = await genericFetch2("/api/private/updateinfo/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newEmail, password })
+      });
+      alert("Username updated successfully to <<  " + response.email + "  >>");
+      navigateTo("/homelogin");
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+}
+async function initUpdatePassword() {
+  const formPassword = document.getElementById("change-password-form");
+  formPassword.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const oldPw = formPassword["old-password"].value;
+    const newPw = formPassword["new-password"].value;
+    const confirm = formPassword["confirm-new-password"].value;
+    try {
+      const response = await genericFetch2("/api/private/updateinfo/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ oldPw, newPw, confirm })
+      });
+      alert("Password is updated successfully! Please re-log in!");
+      navigateTo("/logout");
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+}
+async function initAvatar() {
+  const formAvatar = document.getElementById("upload_avatar");
+  if (formAvatar instanceof HTMLFormElement) {
+    formAvatar.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const avatarInput = formAvatar.querySelector('input[name="avatar"]');
+      const avatarFile = avatarInput?.files?.[0];
+      if (!avatarFile || avatarFile.size === 0 || !avatarFile.name) {
+        alert("Please upload an avatar");
+        return;
+      }
+      await uploadAvatar(avatarFile);
+    });
+  }
+}
+async function uploadAvatar(avatar) {
+  const form = new FormData();
+  form.append("avatar", avatar);
+  try {
+    const result = await genericFetch2("/api/private/updateinfo/uploads", {
+      method: "POST",
+      body: form,
+      credentials: "include"
+    });
+    console.log("uplaod success ok : ", result);
+    navigateTo("/profile");
+  } catch (err) {
+    console.error(err);
+  }
 }
 var init_p_updateinfo = __esm({
   "front/src/views/p_updateinfo.ts"() {
@@ -697,12 +776,11 @@ function initTournamentPage() {
 async function testTournamentDB() {
   const testRanking = generateRandomRanking();
   try {
-    const res = await fetch("/api/private/tournament/add", {
+    const data = await genericFetch2("/api/private/tournament/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ranking: testRanking })
     });
-    const data = await res.json();
     const dbPanel = document.getElementById("db-panel");
     if (dbPanel) {
       dbPanel.innerHTML = `
@@ -720,8 +798,7 @@ async function testTournamentDB() {
 }
 async function showDBOnChain() {
   try {
-    const res = await fetch("/api/private/tournament/all");
-    const data = await res.json();
+    const data = await genericFetch2("/api/private/tournament/all");
     const dbPanel = document.getElementById("db-panel");
     const chainPanel = document.getElementById("chain-panel");
     if (!dbPanel || !chainPanel) return;
@@ -788,10 +865,10 @@ async function genericFetch2(url, options = {}) {
     if (result.error === "TokenExpiredError")
       alert("Session expired, please login");
     navigateTo("/logout");
-    throw new Error(result.error);
+    throw new Error(result.error || result.message || "Unknown error");
   }
   if (!res.ok) {
-    throw new Error(result.error);
+    throw new Error(result.error || result.message || "Unknown error");
   }
   return result;
 }
@@ -876,8 +953,7 @@ var init_router = __esm({
       { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
       { path: "/profile", view: ProfileView, init: initProfile },
       { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },
-      { path: "/tournament", view: TournamentView },
-      { path: "/changeusername" }
+      { path: "/tournament", view: TournamentView }
     ];
     currentRoute = null;
   }

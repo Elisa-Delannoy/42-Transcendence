@@ -5,6 +5,7 @@ import path from "path"
 import { pipeline } from "stream/promises"
 import fs from "fs";
 import mime from "mime-types";
+import { checkPassword } from "../register/register";
 
 export async function getUpdateInfo(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
 	try {
@@ -86,36 +87,34 @@ export async function getUpdateEmail(fastify: FastifyInstance, request: FastifyR
 	}
 }
 
-// export async function getUpdatePassword(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
-	// try {
-	// 	const { newEmail, password } = request.body as any;
-	// 	const id = request.user?.user_id as any;
+export async function getUpdatePassword(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
+	try {
+		const { oldPw, newPw, confirm } = request.body as any;
+		const id = request.user?.user_id as any;
 
-	// 	const user = await users.getIDUser(id);
-	// 	if (!user)
-	// 		return reply.code(404).send({message: "User not found!"});
+		const user = await users.getIDUser(id);
+		if (!user)
+			return reply.code(404).send({message: "User not found!"});
 
-	// 	const duplicate = await users.getEmailUser(newE);
-	// 	if (duplicate?.email === newE) {
-	// 		return reply.code(409).send({message: "Email already in use."});
-	// 	}
+		// verify old password
+		const isMatch = await bcrypt.compare(oldPw, user.password);
+		if (!isMatch) {
+			return reply.code(400).send({ message: "Wrong password. Please try again!" });
+		}
 
-	// 	if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newE))
-	// 		return reply.code(400).send({message: "Invalid email format." });;
+		// verify new password
+		await checkPassword(newPw, confirm);
 
-	// 	const isMatch = await bcrypt.compare(password, user.password);
-	// 	if (!isMatch) {
-	// 		return reply.code(401).send({ message: "Wrong password. Please try again!" });
-	// 	}
+		// everything's ok
+		const hashedPassword = await bcrypt.hash(newPw, 12);
+		const updatedUser = await users.updatePassword(id, hashedPassword);
+		return reply.code(200).send({ message: "Password updated successfully", pseudo: updatedUser.pseudo });
 
-	// 	const updatedUser = await users.updateEmail(id, newE);
-	// 	return reply.code(200).send({ message: "Email updated successfully", email: updatedUser.email });
+	} catch (err: any) {
+		return reply.status(400).send({ field: (err as any).field ?? null, ok:false, message: (err as Error).message });
+	}
+}
 
-	// } catch (error) {
-	// 	fastify.log.error(error);
-	// 	return reply.code(500).send({ message: "Internal Server Error" });
-	// }
-// }
 export async function getUploadAvatar(request: FastifyRequest, reply: FastifyReply) {
 	const avatar = await request.file();
 		// console.log("avatar = ", avatar);

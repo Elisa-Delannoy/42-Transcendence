@@ -99,7 +99,10 @@ export class Users
 		if (!newUsername || newUsername.trim() === '') {
 			throw new Error("New username cannot be empty.");
 		}
-		const updateResult = await this._db.query(`UPDATE Users SET pseudo = ? WHERE user_id = ?`, [newUsername, id]);
+	
+		await this._db.query(`UPDATE Users SET pseudo = ? WHERE user_id = ?`, [newUsername, id]);
+		const updatedTime = new Date().toISOString().replace("T", " ").split(".")[0];
+		await this._db.query(`UPDATE Users SET modification_date = ? WHERE user_id = ?`, [updatedTime, id]);
 
 		const updatedUser = await this.getIDUser(id);
 		return updatedUser;
@@ -110,7 +113,19 @@ export class Users
 		if (!newEmail || newEmail.trim() === '') {
 			throw new Error("New username cannot be empty.");
 		}
-		const updateResult = await this._db.query(`UPDATE Users SET email = ? WHERE user_id = ?`, [newEmail, id]);
+		await this._db.query(`UPDATE Users SET email = ? WHERE user_id = ?`, [newEmail, id]);
+		const updatedTime = new Date().toISOString().replace("T", " ").split(".")[0];
+		await this._db.query(`UPDATE Users SET modification_date = ? WHERE user_id = ?`, [updatedTime, id]);
+
+		const updatedUser = await this.getIDUser(id);
+		return updatedUser;
+	}
+
+	async updatePassword(id: number, newPw: string): Promise<IUsers>
+	{
+		await this._db.query(`UPDATE Users SET password = ? WHERE user_id = ?`, [newPw, id]);
+		const updatedTime = new Date().toISOString().replace("T", " ").split(".")[0];
+		await this._db.query(`UPDATE Users SET modification_date = ? WHERE user_id = ?`, [updatedTime, id]);
 
 		const updatedUser = await this.getIDUser(id);
 		return updatedUser;
@@ -118,6 +133,8 @@ export class Users
 
 	async updateAvatar(id: number, newAvatar: string) {
 		await this._db.execute(`UPDATE Users SET avatar = ? WHERE user_id = ?`, [newAvatar, id])
+		const updatedTime = new Date().toISOString().replace("T", " ").split(".")[0];
+		await this._db.query(`UPDATE Users SET modification_date = ? WHERE user_id = ?`, [updatedTime, id]);
 	}
 }
 

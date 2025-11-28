@@ -13,52 +13,56 @@ export async function initUpdateInfo() {
   (document.getElementById("profile-username") as HTMLElement).textContent = profil.pseudo;
 
   // HANDLE CHANGE USERNAME
-  const formUsername = document.getElementById("change-username-form") as HTMLFormElement;
-  formUsername.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  await initUpdateUsername();
 
-    const newUsername = formUsername["new-username"].value;
-    const password = formUsername["password"].value;
+  // const formUsername = document.getElementById("change-username-form") as HTMLFormElement;
+  // formUsername.addEventListener("submit", async (e) => {
+  //   e.preventDefault();
 
-    try {
-      const response = await genericFetch("/api/private/updateinfo/username", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ newUsername, password })
-      });
+  //   const newUsername = formUsername["new-username"].value;
+  //   const password = formUsername["password"].value;
 
-      alert("Username updated successfully to <<  " + response.pseudo + "  >>");
-      navigateTo("/homelogin");
+  //   try {
+  //     const response = await genericFetch("/api/private/updateinfo/username", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json", },
+  //       body: JSON.stringify({ newUsername, password })
+  //     });
 
-    } catch (err: any) {
-      alert(err.message);
-    }
-  });
+  //     alert("Username updated successfully to <<  " + response.pseudo + "  >>");
+  //     navigateTo("/homelogin");
+
+  //   } catch (err: any) {
+  //     alert(err.message);
+  //   }
+  // });
 
     // HANDLE CHANGE EMAIL
-  const formEmail = document.getElementById("change-email-form") as HTMLFormElement;
-  formEmail.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  await initUpdateEmail();
+  // const formEmail = document.getElementById("change-email-form") as HTMLFormElement;
+  // formEmail.addEventListener("submit", async (e) => {
+  //   e.preventDefault();
 
-    const newEmail = formEmail["new-email"].value;
-    const password = formEmail["password"].value;
+  //   const newEmail = formEmail["new-email"].value;
+  //   const password = formEmail["password"].value;
 
-    try {
-      const response = await genericFetch("/api/private/updateinfo/email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ newEmail, password })
-      });
+  //   try {
+  //     const response = await genericFetch("/api/private/updateinfo/email", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json", },
+  //       body: JSON.stringify({ newEmail, password })
+  //     });
 
-      alert("Username updated successfully to <<  " + response.email + "  >>");
-      navigateTo("/homelogin");
+  //     alert("Username updated successfully to <<  " + response.email + "  >>");
+  //     navigateTo("/homelogin");
 
-    } catch (err: any) {
-      alert(err.message);
-    }
-  });
+  //   } catch (err: any) {
+  //     alert(err.message);
+  //   }
+  // });
 
-         // // HANDLE CHANGE PASSWORD
+  // // HANDLE CHANGE PASSWORD
+  await initUpdatePassword();
   // const formPassword = document.getElementById("change-password-form") as HTMLFormElement;
   // formPassword.addEventListener("submit", async (e) => {
   //   e.preventDefault();
@@ -90,6 +94,84 @@ export async function initUpdateInfo() {
 
 
   await initAvatar();
+}
+
+async function initUpdateUsername() {
+  const formUsername = document.getElementById("change-username-form") as HTMLFormElement;
+  formUsername.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const newUsername = formUsername["new-username"].value;
+    const password = formUsername["password"].value;
+
+    try {
+      const response = await genericFetch("/api/private/updateinfo/username", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ newUsername, password })
+      });
+
+      alert("Username updated successfully to <<  " + response.pseudo + "  >>");
+      navigateTo("/homelogin");
+
+    } catch (err: any) {
+      alert(err.message);
+    }
+  });
+}
+
+async function initUpdateEmail() {
+  const formEmail = document.getElementById("change-email-form") as HTMLFormElement;
+  formEmail.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const newEmail = formEmail["new-email"].value;
+    const password = formEmail["password"].value;
+
+    try {
+      const response = await genericFetch("/api/private/updateinfo/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ newEmail, password })
+      });
+
+      alert("Username updated successfully to <<  " + response.email + "  >>");
+      navigateTo("/homelogin");
+
+    } catch (err: any) {
+      alert(err.message);
+    }
+  });
+}
+
+async function initUpdatePassword() {
+  const formPassword = document.getElementById("change-password-form") as HTMLFormElement;
+  formPassword.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const oldPw = formPassword["old-password"].value;
+    const newPw = formPassword["new-password"].value;
+    const confirm = formPassword["confirm-new-password"].value;
+
+    // if (newPw !== confirm) {
+    //   alert("New password and confirmation do not match!");
+    //   return ;
+    // }
+
+    try {
+      const response = await genericFetch("/api/private/updateinfo/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ oldPw, newPw, confirm })
+      });
+
+      alert("Password is updated successfully! Please re-log in!");
+      navigateTo("/logout");
+
+    } catch (err: any) {
+      alert(err.message);
+    }
+  });
 }
 
   async function initAvatar() {
