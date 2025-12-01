@@ -17,6 +17,7 @@ import { Tournament } from './DB/tournament';
 import * as tournamentService from "./routes/tournament/tournament.service";
 import { getProfile, displayAvatar } from "./routes/profile/profile";
 import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword } from "./routes/profile/getUpdate";
+import bcrypt from "bcryptjs";
 
 
 export const db = new ManageDB("./back/DB/database.db");
@@ -91,7 +92,7 @@ fastify.post("/api/login", async (request: FastifyRequest, reply: FastifyReply) 
   await manageLogin(username, password, reply);
 });
 
-fastify.post("/api/private/homelogin", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.post("/api/private/getpseudo", async (request: FastifyRequest, reply: FastifyReply) => {
 	return { pseudo: request.user?.pseudo }
 });
 
@@ -182,8 +183,6 @@ fastify.get("/api/logout", async (request, reply) => {
 	reply.clearCookie("token", options);
 	return { message: "is logged out" };
 })
-
-
 
 const start = async () => {
 	const PORT = 3000

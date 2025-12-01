@@ -3,7 +3,7 @@ import { navigateTo } from "../router";
 
 
 export function RegisterView(): string {
-	return (document.getElementById("registerhtml") as HTMLFormElement).innerHTML;
+	return (document.getElementById("registerhtml") as HTMLTemplateElement).innerHTML;
 }
 
 export function initRegister() {

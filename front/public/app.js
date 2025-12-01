@@ -80,13 +80,15 @@ var init_login = __esm({
   }
 });
 
-// front/src/views/dashboard.ts
+// front/src/views/p_dashboard.ts
 function DashboardView() {
+  loadHeader();
   return document.getElementById("dashboardhtml").innerHTML;
 }
-var init_dashboard = __esm({
-  "front/src/views/dashboard.ts"() {
+var init_p_dashboard = __esm({
+  "front/src/views/p_dashboard.ts"() {
     "use strict";
+    init_router();
   }
 });
 
@@ -159,6 +161,7 @@ var init_register = __esm({
 
 // front/src/views/p_game.ts
 function GameView() {
+  loadHeader();
   return document.getElementById("gamehtml").innerHTML;
 }
 function initGame() {
@@ -545,6 +548,7 @@ var init_p_game = __esm({
 
 // front/src/views/p_quickgame.ts
 function QuickGameView(params) {
+  loadHeader();
   return document.getElementById("quickgamehtml").innerHTML;
 }
 function initQuickGame(params) {
@@ -587,18 +591,10 @@ var init_p_quickgame = __esm({
 
 // front/src/views/p_homelogin.ts
 function HomeLoginView() {
+  loadHeader();
   return document.getElementById("homeloginhtml").innerHTML;
 }
 async function initHomePage() {
-  try {
-    const result = await genericFetch2("/api/private/homelogin", {
-      method: "POST",
-      credentials: "include"
-    });
-    document.querySelector("#pseudo").textContent = result.pseudo;
-  } catch (err) {
-    console.error(err);
-  }
 }
 var init_p_homelogin = __esm({
   "front/src/views/p_homelogin.ts"() {
@@ -609,6 +605,7 @@ var init_p_homelogin = __esm({
 
 // front/src/views/p_profile.ts
 function ProfileView() {
+  loadHeader();
   return document.getElementById("profilehtml").innerHTML;
 }
 async function initProfile() {
@@ -636,6 +633,7 @@ var init_p_profile = __esm({
 
 // front/src/views/p_updateinfo.ts
 function UpdateInfoView() {
+  loadHeader();
   return document.getElementById("updateinfohtml").innerHTML;
 }
 async function initUpdateInfo() {
@@ -745,6 +743,7 @@ var init_p_updateinfo = __esm({
 
 // front/src/views/p_tournament.ts
 function TournamentView() {
+  loadHeader();
   const html = document.getElementById("tournamenthtml").innerHTML;
   setTimeout(() => initTournamentPage(), 0);
   return html;
@@ -887,6 +886,24 @@ function matchRoute(pathname) {
   }
   return null;
 }
+async function loadHeader() {
+  const response = await fetch("/header.html");
+  const html = await response.text();
+  const container = document.getElementById("header-container");
+  if (container) container.innerHTML = html;
+  getPseudoHeader3();
+}
+async function getPseudoHeader3() {
+  try {
+    const result = await genericFetch2("/api/private/getpseudo", {
+      method: "POST",
+      credentials: "include"
+    });
+    document.getElementById("pseudo-header").textContent = result.pseudo;
+  } catch (err) {
+    console.error(err);
+  }
+}
 function router() {
   if (currentRoute?.cleanup) {
     if (typeof currentRoute.cleanup === "function")
@@ -932,7 +949,7 @@ var init_router = __esm({
     "use strict";
     init_home();
     init_login();
-    init_dashboard();
+    init_p_dashboard();
     init_register();
     init_p_game();
     init_p_quickgame();

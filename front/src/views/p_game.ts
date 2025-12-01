@@ -1,7 +1,8 @@
-import { navigateTo, genericFetch } from "../router";
+import { navigateTo, genericFetch, loadHeader } from "../router";
 
 export function GameView(): string {
-  return (document.getElementById("gamehtml") as HTMLTemplateElement).innerHTML;
+	loadHeader();
+  	return (document.getElementById("gamehtml") as HTMLTemplateElement).innerHTML;
 }
 
 export function initGame() {

@@ -1,0 +1,36 @@
+<header id="header" class="flex w-full pb-2 justify-between h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+		<div class="flex items-center space-x-4">
+		<a href="/homelogin" data-link class="block dark:hidden ml-4">
+			<img src="/src/image/croissant-white.png" alt="croissantw"
+			class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+		<a href="/homelogin" data-link class="hidden dark:block ml-4">
+			<img src="/src/image/croissant-black.png" alt="croissantd"
+			class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+		</a>
+		</div>
+		<!-- Menu Deroulent -->
+		<div class="mr-10 flex items-center">
+			<input type="checkbox" id="burger" class="peer hidden">
+			<label for="burger" class="cursor-pointer select-none">
+			<div class="flex flex-row">
+				<h1 class="mr-6 text-2xl my-auto" id="pseudo-header"></h1>
+				<img class="rounded-full" id="profile-avatar" src="/api/private/avatar" alt="Your avatar" width="70">
+			</div>
+			</label>
+			<nav class="hidden space-x-6 text-lg font-medium">
+				<a href="/profile" data-link class="hover:text-blue-600">Profile</a>
+				<a href="/dashboard" data-link class="hover:text-blue-600">Dashboard</a>
+				<a href="#" data-link class="hover:text-blue-600">Contact</a>
+				<a href="/logout" data-link class="hover:text-blue-600">Logout</a>
+			</nav>
+			<nav class="absolute top-28 right-0 bg-white dark:bg-gray-800 shadow-lg w-48 rounded-lg p-4 
+					hidden flex-col space-y-3 text-lg font-medium
+					peer-checked:flex md:hidden">
+				<a href="/profile" data-link class="hover:text-blue-600">Profile</a>
+				<a href="/dashboard" data-link class="hover:text-blue-600">Dashboard</a>
+				<a href="#" data-link class="hover:text-blue-600">Contact</a>
+				<a href="/logout" data-link class="hover:text-blue-600">Logout</a>
+			</nav>
+		</div>
+	</header>

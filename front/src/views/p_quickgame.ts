@@ -1,10 +1,11 @@
 import { GameInstance } from "./p_game";
-import { genericFetch } from "../router";
+import { genericFetch, loadHeader } from "../router";
 
 let currentGame: GameInstance | null = null;
 
 export function QuickGameView(params?: any): string {
-  return (document.getElementById("quickgamehtml") as HTMLTemplateElement).innerHTML;
+	loadHeader();
+	return (document.getElementById("quickgamehtml") as HTMLTemplateElement).innerHTML;
 }
 
 export function initQuickGame(params?: any) {
