@@ -1,6 +1,6 @@
 import { HomeView, initHome } from "./views/home";
 import { LoginView, initLogin } from "./views/login";
-import { DashboardView } from "./views/dashboard";
+import { DashboardView } from "./views/p_dashboard";
 import { RegisterValidView, RegisterView, initRegister } from "./views/register";
 import { GameView, initGame} from "./views/p_game";
 import { QuickGameView, initQuickGame, stopGame} from "./views/p_quickgame";
@@ -75,6 +75,28 @@ function matchRoute(pathname: string) {
 	return null;
 }
 
+export async function loadHeader() {
+    const response = await fetch('/header.html');
+    const html = await response.text();
+    const container = document.getElementById('header-container');
+    if (container) container.innerHTML = html;
+	getPseudoHeader()
+}
+
+export async function getPseudoHeader()
+{
+  try {
+	const result = await genericFetch("/api/private/getpseudo", {
+		method: "POST",
+		credentials: "include"
+	});
+	
+	document.getElementById("pseudo-header")!.textContent = result.pseudo;
+	} catch (err) {
+		console.error(err);
+	}
+}
+
 export function router() {
 	//clean route who got cleanup function (game)
 	if (currentRoute?.cleanup)
@@ -90,10 +112,8 @@ export function router() {
 	}
 
 	const { route, params } = match;
-
 	if (route.view)
 		document.querySelector("#app")!.innerHTML = route.view(params);
-
 	route.init?.(params);
 	currentRoute = route;
 	// if (!currentRoute.cleanup) {

@@ -1,9 +1,10 @@
-import { navigateTo, genericFetch } from "../router";
+import { navigateTo, genericFetch, loadHeader } from "../router";
 
 export function TournamentView(): string {
-  const html = (document.getElementById("tournamenthtml") as HTMLTemplateElement).innerHTML;
-  setTimeout(() => initTournamentPage(), 0);
-  return html;
+	loadHeader();
+	const html = (document.getElementById("tournamenthtml") as HTMLTemplateElement).innerHTML;
+	setTimeout(() => initTournamentPage(), 0);
+	return html;
 }
 
 function generateRandomRanking(): number[] {

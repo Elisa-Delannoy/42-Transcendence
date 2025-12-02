@@ -1,11 +1,11 @@
-import { genericFetch, navigateTo } from "../router";
+import { genericFetch, getPseudoHeader, loadHeader, navigateTo } from "../router";
 
 export function ProfileView(): string {
-  return (document.getElementById("profilehtml") as HTMLTemplateElement).innerHTML;
+	loadHeader();
+	return (document.getElementById("profilehtml") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initProfile() {
-
   const profile = await genericFetch("/api/private/profile", {
 	method: "POST",
 	});
@@ -18,7 +18,6 @@ export async function initProfile() {
 		select.value = profile.status;
 		select.addEventListener("change", async (e) => {
 			const status = (e.target as HTMLSelectElement).value;
-			console.log("DANS EVENT");
 			await genericFetch('/api/private/updateinfo/status', {
 	 			method: 'POST',
 	  			headers: { 'Content-Type': 'application/json' },

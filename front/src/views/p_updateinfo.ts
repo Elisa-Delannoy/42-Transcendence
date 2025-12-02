@@ -1,8 +1,9 @@
 import { format } from "path";
-import { navigateTo, genericFetch } from "../router";
+import { navigateTo, genericFetch, loadHeader } from "../router";
 
 export function UpdateInfoView(): string {
-  return (document.getElementById("updateinfohtml") as HTMLTemplateElement).innerHTML;
+	loadHeader();
+	return (document.getElementById("updateinfohtml") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initUpdateInfo() {

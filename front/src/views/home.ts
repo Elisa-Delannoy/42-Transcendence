@@ -7,7 +7,6 @@ export function HomeView(): string {
 export async function initHome()
 {
 	const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
-	console.log(res.ok);
 	if (res.ok)
 	{
 		navigateTo("/homelogin");

@@ -15,6 +15,7 @@ import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-alwa
 import { Tournament } from './DB/tournament';
 import * as tournamentService from "./routes/tournament/tournament.service";
 import { getProfile, displayAvatar } from "./routes/profile/profile";
+import bcrypt from "bcryptjs";
 import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus } from "./routes/profile/getUpdate";
 import { logout } from "./routes/logout/logout";
 import { request } from "http";
@@ -92,7 +93,7 @@ fastify.post("/api/login", async (request: FastifyRequest, reply: FastifyReply) 
   await manageLogin(username, password, reply);
 });
 
-fastify.post("/api/private/homelogin", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.post("/api/private/getpseudo", async (request: FastifyRequest, reply: FastifyReply) => {
 	return { pseudo: request.user?.pseudo }
 });
 
