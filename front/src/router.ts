@@ -90,8 +90,6 @@ export function router() {
 
 	route.init?.(params);
 	currentRoute = route;
-	// if (!currentRoute.cleanup) {
-	// 	currentRoute.cleanup = () => {};}
 }
 
 export function initRouter() {

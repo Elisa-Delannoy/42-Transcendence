@@ -1,6 +1,7 @@
-export const games = new Map<number, Game>();
+export const games_map = new Map<number, Game>();
 import { GameInfo } from "./../../DB/gameinfo";
 import { users } from '../../server';
+import { Socket } from "socket.io";
 
 export class Game {
 
@@ -11,6 +12,7 @@ export class Game {
 	paddlePos: { player1: number, player2: number};
 	status: string;
 	gameDate: string;
+	sockets: { player1: string | null, player2: string | null };
 
 	constructor(id: number, playerId1: number, playerId2: number)
 	{
@@ -21,6 +23,7 @@ export class Game {
 		this.paddlePos = { player1: 0, player2: 0};
 		this.status = "waiting";
 		this.gameDate = new Date().toISOString().replace("T", " ").split(".")[0];
+		this.sockets = { player1: null, player2: null };
 	}
 
 	update(data: any) {
@@ -29,7 +32,7 @@ export class Game {
 	}
 }
 
-// enum GameStatus
+// enum GameS_maptatus
 // {
 // 	ongoing,
 // 	finished,
@@ -39,39 +42,47 @@ export class Game {
 
 function getDate(id: number)
 {
-	return games.get(id)?.gameDate;
+	return games_map.get(id)?.gameDate;
 }
 
 function getIdPlayer1(id: number)
 {
-	return games.get(id)?.idPlayer1;
+	return games_map.get(id)?.idPlayer1;
 }
 
 function getIdPlayer2(id: number)
 {
-	return games.get(id)?.idPlayer2;
+	return games_map.get(id)?.idPlayer2;
+}
+
+export function getPlayersId(id: number)
+{
+	const ids: any = [];
+	ids.push(getIdPlayer1(id));
+	ids.push(getIdPlayer2(id));
+	return ids;
 }
 
 export function createGame(playerId: number)
 {
 	let id: number = 1;
-	while (games.has(id))
+	while (games_map.has(id))
 		id++;
 	const gameId = id;
 	const game = new Game(gameId, playerId, NaN);
-	games.set(gameId, game);
-	console.log([...games]);
+	games_map.set(gameId, game);
+	console.log([...games_map]);
 	return gameId;
 }
 
 export function updateGamePos(gameId: number, ballPos: { x: number, y: number }, paddlePos: { player1: number, player2: number })
 {
-	games.get(gameId)?.update({ ballPos, paddlePos });
+	games_map.get(gameId)?.update({ ballPos, paddlePos });
 }
 
 export function updateGameStatus(gameId: number, status: string)
 {
-	const game = games.get(gameId);
+	const game = games_map.get(gameId);
 	if (game)
 		game.status = status;
 }
@@ -80,7 +91,7 @@ export async function displayGameList()
 {
 	const list: any = [];
 
-	for (const game of games.values()) {
+	for (const game of games_map.values()) {
 		list.push({
 			id: game.id,
 			player1: await users.getPseudoFromId(game.idPlayer1),
@@ -95,7 +106,7 @@ export async function displayGameList()
 
 export function joinGame(playerId: number, gameId: number)
 {
-	const game = games.get(gameId);
+	const game = games_map.get(gameId);
 	if (game)
 		{
 			if (isNaN(game.idPlayer2))
@@ -123,9 +134,9 @@ export async function endGame(winner_id: number, loser_id: number, winner_score:
 		loser = getIdPlayer1(gameid);
 		winner = getIdPlayer2(gameid);
 	}
-	const game = games.get(gameid);
+	const game = games_map.get(gameid);
 	if (game)
 		updateGameStatus(gameid, "finished");
 	await gameInfo.finishGame(winner, loser, winner_score, loser_score, duration_game, gameDate);
-	games.delete(gameid);
+	games_map.delete(gameid);
 }
