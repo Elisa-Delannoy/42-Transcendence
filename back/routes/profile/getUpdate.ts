@@ -117,14 +117,14 @@ export async function getUpdatePassword(fastify: FastifyInstance, request: Fasti
 
 export async function getUploadAvatar(request: FastifyRequest, reply: FastifyReply) {
 	const MAX_SIZE = 2 * 1024 * 1024;
-    const ALLOWED_MIME = ["image/png", "image/jpeg", "image/webp"];
+    const ALLOWED_MIME = ["image/png", "image/jpeg"];
 	
 	const avatar = await request.file();
 	if (!avatar?.filename) {
 		return reply.status(400).send({ error: "Nothing uploaded"});
 	}
 	if (!ALLOWED_MIME.includes(avatar.mimetype)) {
-        return reply.status(400).send({ error: "Bad file type" });
+        return reply.status(400).send({ error: "Bad file type, png/jpeg only" });
     }
 	const image = mime.lookup(avatar.filename);
 	if (!image)
