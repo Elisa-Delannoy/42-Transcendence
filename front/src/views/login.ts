@@ -4,8 +4,13 @@ export function LoginView(): string {
 	return (document.getElementById("loginhtml") as HTMLFormElement).innerHTML;
 }
 
-export function initLogin()
+export async function initLogin()
 {
+	const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
+	if (res.ok)
+	{
+		navigateTo("/home");
+	}
 	const form = document.getElementById("login-form") as HTMLFormElement;
 	form.addEventListener("submit", async (e) => {
 		e.preventDefault();

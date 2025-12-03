@@ -11,20 +11,25 @@ import { TournamentView} from "./views/p_tournament";
 import { initLogout } from "./views/logout";
 import { fromTwos } from "ethers";
 import { Statement } from "sqlite3";
+import { FriendsView, initFriends } from "./views/p_friends";
+import { ErrorView, initError } from "./views/error";
 
 const routes = [
   { path: "/", view: View, init: init},
   { path: "/login", view: LoginView, init:initLogin},
   { path: "/logout", init: initLogout},
-  { path: "/dashboard", view: DashboardView },
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/registerok", view: RegisterValidView},
   { path: "/home", view: homeView, init: initHomePage},
-  { path: "/game", view: GameView, init: initGame},
-  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
+  { path: "/dashboard", view: DashboardView },
+  { path: "/friends", view: FriendsView, init: initFriends },
   { path: "/profile", view: ProfileView, init: initProfile},
   { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo},
+  { path: "/game", view: GameView, init: initGame},
+  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
   { path: "/tournament", view: TournamentView},
+  { path: "/error", view: ErrorView, init:initError},
+
 ];
 
 let currentRoute: any = null;
@@ -100,6 +105,16 @@ export async function getPseudoHeader()
 	}
 }
 
+export function isError(url: string): number {
+	for (let i: number = 0; i < routes.length; i++) {
+		let newUrl = new RegExp("^" + routes[i].path.replace(/:\w+/g, "([^/]+)") + "$");
+		if (newUrl.test(url))
+			return 0;
+	}
+	return 1;
+}
+
+
 export function router() {
 	//clean route who got cleanup function (game)
 	if (currentRoute?.cleanup)
@@ -107,12 +122,18 @@ export function router() {
 		if (typeof currentRoute.cleanup === "function")
 			currentRoute.cleanup();
 	}
+	console.log("pathname= ", location.pathname);
 	const match = matchRoute(location.pathname);
+	console.log("match= ", match?.route.path);
+	// if (isError(currentRoute))
+	// 	navigateTo("/error");
 
-	if (!match) {
-		const error = document.getElementById("error") as HTMLTemplateElement;
-		document.querySelector("#app")!.innerHTML = error.innerHTML;
-		return;
+	// if (!match) 
+	// 	return errorPage();
+
+		if (!match) {
+			navigateTo("/error");
+			return;
 	}
 
 	const { route, params } = match;

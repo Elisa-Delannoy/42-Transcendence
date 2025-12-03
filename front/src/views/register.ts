@@ -6,7 +6,12 @@ export function RegisterView(): string {
 	return (document.getElementById("registerhtml") as HTMLTemplateElement).innerHTML;
 }
 
-export function initRegister() {
+export async function initRegister() {
+	const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
+	if (res.ok)
+	{
+		navigateTo("/home");
+	}
 	const form = document.getElementById("register-form") as HTMLFormElement;
 
 	form.addEventListener("submit", async (e) => 

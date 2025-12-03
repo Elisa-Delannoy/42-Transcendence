@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<title>Croiscendence</title>
-		<link href="public/output.css" rel="stylesheet" />
+		<link href="/public/output.css" rel="stylesheet" />
 	</head>
 	<body>
 	<img src="/src/image/bg-croissant-white.jpg" 
@@ -14,7 +14,7 @@
 		class="absolute -z-10 hidden dark:block object-cover w-full h-screen">
 	<main id="app"></main>
 
-	<script type="module" src="./public/app.js"></script>
+	<script type="module" src="/public/app.js"></script>
 	</body>
 
 	<template id="html">
@@ -168,6 +168,18 @@
 		<h1>Dashboard 🎮</h1>
 	</template>
 
+	<template id="friendshtml">
+		<div id="header-container"></div>
+		<h1>Page friends</h1>
+		<div id="no-friend" class="hidden">
+			<h1>Clic here to add friends</h1>
+		</div>
+		<div id="friends" class="hidden">
+			<h1>Your friends :</h1>
+			<ul class="list-disc pl-5"></ul>
+		</div>
+	</template>
+
 	<template id="profilehtml">
 		<div id="header-container"></div>
 		<main>
@@ -273,7 +285,7 @@
 		</div>  
 	</template>
 
-	<template id="error">
+	<template id="errorhtml">
 	<div class="flex flex-col items-center justify-center h-screen">
 		<h1 class="text-4xl font-bold text-red-600">404 - Invalid page</h1>
 		<p class="mt-4">This page does not exist.</p>

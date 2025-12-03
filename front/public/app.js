@@ -32,7 +32,11 @@ var init_home = __esm({
 function LoginView() {
   return document.getElementById("loginhtml").innerHTML;
 }
-function initLogin() {
+async function initLogin() {
+  const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
+  if (res.ok) {
+    navigateTo("/home");
+  }
   const form = document.getElementById("login-form");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -100,7 +104,11 @@ var init_p_dashboard = __esm({
 function RegisterView() {
   return document.getElementById("registerhtml").innerHTML;
 }
-function initRegister() {
+async function initRegister() {
+  const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
+  if (res.ok) {
+    navigateTo("/home");
+  }
   const form = document.getElementById("register-form");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -112,12 +120,12 @@ function initRegister() {
       confirm: formData.get("confirm-password")
     };
     try {
-      const res = await fetch("/api/register", {
+      const res2 = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       });
-      const result = await res.json();
+      const result = await res2.json();
       if (result.ok == true)
         navigateTo("/registerok");
       else {
@@ -4582,6 +4590,55 @@ var init_logout = __esm({
   }
 });
 
+// front/src/views/p_friends.ts
+function FriendsView() {
+  loadHeader();
+  return document.getElementById("friendshtml").innerHTML;
+}
+async function initFriends() {
+  try {
+    const myfriends = await genericFetch2("/api/private/friend", {
+      method: "POST"
+    });
+    const divNoFriend = document.getElementById("no-friend");
+    const divFriend = document.getElementById("friends");
+    if (myfriends.length === 0) {
+      divNoFriend.textContent = "No friends yet";
+      divFriend.classList.add("hidden");
+      divNoFriend.classList.remove("hidden");
+    } else {
+      divFriend.classList.remove("hidden");
+      divNoFriend.classList.add("hidden");
+      const ul = divFriend.querySelector("ul");
+      myfriends.forEach((friend) => {
+        const li = document.createElement("li");
+        li.textContent = friend.toString();
+        ul?.appendChild(li);
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+var init_p_friends = __esm({
+  "front/src/views/p_friends.ts"() {
+    "use strict";
+    init_router();
+  }
+});
+
+// front/src/views/error.ts
+function ErrorView() {
+  return document.getElementById("errorhtml").innerHTML;
+}
+function initError() {
+}
+var init_error = __esm({
+  "front/src/views/error.ts"() {
+    "use strict";
+  }
+});
+
 // front/src/router.ts
 function navigateTo(url2) {
   const state = { from: window.location.pathname };
@@ -4650,10 +4707,11 @@ function router() {
     if (typeof currentRoute.cleanup === "function")
       currentRoute.cleanup();
   }
+  console.log("pathname= ", location.pathname);
   const match = matchRoute(location.pathname);
+  console.log("match= ", match?.route.path);
   if (!match) {
-    const error = document.getElementById("error");
-    document.querySelector("#app").innerHTML = error.innerHTML;
+    navigateTo("/error");
     return;
   }
   const { route, params } = match;
@@ -4714,19 +4772,23 @@ var init_router = __esm({
     init_p_updateinfo();
     init_p_tournament();
     init_logout();
+    init_p_friends();
+    init_error();
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
       { path: "/logout", init: initLogout },
-      { path: "/dashboard", view: DashboardView },
       { path: "/register", view: RegisterView, init: initRegister },
       { path: "/registerok", view: RegisterValidView },
       { path: "/home", view: homeView, init: initHomePage },
-      { path: "/game", view: GameView, init: initGame },
-      { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
+      { path: "/dashboard", view: DashboardView },
+      { path: "/friends", view: FriendsView, init: initFriends },
       { path: "/profile", view: ProfileView, init: initProfile },
       { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },
-      { path: "/tournament", view: TournamentView }
+      { path: "/game", view: GameView, init: initGame },
+      { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
+      { path: "/tournament", view: TournamentView },
+      { path: "/error", view: ErrorView, init: initError }
     ];
     currentRoute = null;
   }
