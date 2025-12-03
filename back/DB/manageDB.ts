@@ -1,5 +1,6 @@
 import { error } from 'console';
 import sqlite3 from 'sqlite3';
+import { IUsers } from './users';
 
 export class ManageDB
 {
@@ -70,7 +71,7 @@ export class ManageDB
 		{
 			if (!this._db)
 				return reject(new Error("Database not connected"));
-			this._db.all(query, parameters,(error, rows: any[]) =>
+			this._db.all(query, parameters,(error, rows: IUsers[]) =>
 			{
 				if (error)
 					reject(error);

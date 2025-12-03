@@ -15,9 +15,16 @@ var __export = (target, all) => {
 function HomeView() {
   return document.getElementById("homehtml").innerHTML;
 }
+async function initHome() {
+  const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
+  if (res.ok) {
+    navigateTo("/homelogin");
+  }
+}
 var init_home = __esm({
   "front/src/views/home.ts"() {
     "use strict";
+    init_router();
   }
 });
 
@@ -77,13 +84,15 @@ var init_login = __esm({
   }
 });
 
-// front/src/views/dashboard.ts
+// front/src/views/p_dashboard.ts
 function DashboardView() {
+  loadHeader();
   return document.getElementById("dashboardhtml").innerHTML;
 }
-var init_dashboard = __esm({
-  "front/src/views/dashboard.ts"() {
+var init_p_dashboard = __esm({
+  "front/src/views/p_dashboard.ts"() {
     "use strict";
+    init_router();
   }
 });
 
@@ -93,14 +102,14 @@ function RegisterView() {
 }
 function initRegister() {
   const form = document.getElementById("register-form");
-  const message = document.getElementById("register-message");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(form);
     const data = {
       username: formData.get("username"),
       email: formData.get("email"),
-      password: formData.get("password")
+      password: formData.get("password"),
+      confirm: formData.get("confirm-password")
     };
     try {
       const res = await fetch("/api/register", {
@@ -115,11 +124,17 @@ function initRegister() {
         const usernameInput = form.querySelector("input[name='username']");
         const passwordInput = form.querySelector("input[name='password']");
         const emailInput = form.querySelector("input[name='email']");
+        const confirmInput = form.querySelector("input[name='confirm-password']");
         const usernameMsg = document.getElementById("username-message");
         const emailMsg = document.getElementById("email-message");
         const passwordMsg = document.getElementById("password-message");
-        [usernameMsg, emailMsg, passwordMsg].forEach((p) => p.textContent = "");
-        [usernameInput, emailInput, passwordInput].forEach((p) => p.classList.remove("error"));
+        const confirmMsg = document.getElementById("confirm-password-message");
+        [usernameMsg, emailMsg, passwordMsg, confirmMsg].forEach((p) => p.textContent = "");
+        [usernameInput, emailInput, passwordInput, confirmInput].forEach((p) => p.classList.remove("error"));
+        if (result.field === "confirm") {
+          confirmInput.classList.add("error");
+          confirmMsg.textContent = result.message;
+        }
         if (result.field === "password") {
           passwordInput.classList.add("error");
           passwordMsg.textContent = result.message;
@@ -132,8 +147,6 @@ function initRegister() {
           emailInput.classList.add("error");
           emailMsg.textContent = result.message;
         }
-        message.textContent = "";
-        message.append(result.message);
       }
     } catch (err) {
       console.error(err);
@@ -152,6 +165,7 @@ var init_register = __esm({
 
 // front/src/views/p_game.ts
 function GameView() {
+  loadHeader();
   return document.getElementById("gamehtml").innerHTML;
 }
 function initGame() {
@@ -214,6 +228,10 @@ function renderGameList(games) {
     });
   });
 }
+<<<<<<< HEAD
+=======
+var GameInstance;
+>>>>>>> main
 var init_p_game = __esm({
   "front/src/views/p_game.ts"() {
     "use strict";
@@ -360,6 +378,11 @@ var init_gameInstance = __esm({
         } catch (err) {
           console.error("Error saving game:", err);
         }
+<<<<<<< HEAD
+=======
+        this.startBtn.disabled = true;
+        this.stopBtn.disabled = false;
+>>>>>>> main
         this.audioCtx = new AudioContext();
         this.randomizeBall();
         if (this.role === "player1") {
@@ -577,6 +600,7 @@ var init_gameInstance = __esm({
     };
   }
 });
+<<<<<<< HEAD
 
 // node_modules/engine.io-parser/build/esm/commons.js
 var PACKET_TYPES, PACKET_TYPES_REVERSE, ERROR_PACKET;
@@ -4217,9 +4241,12 @@ var init_gameNetwork = __esm({
     };
   }
 });
+=======
+>>>>>>> main
 
 // front/src/views/p_quickgame.ts
 function QuickGameView(params) {
+  loadHeader();
   return document.getElementById("quickgamehtml").innerHTML;
 }
 function initQuickGame(params) {
@@ -4280,18 +4307,10 @@ var init_p_quickgame = __esm({
 
 // front/src/views/p_homelogin.ts
 function HomeLoginView() {
+  loadHeader();
   return document.getElementById("homeloginhtml").innerHTML;
 }
 async function initHomePage() {
-  try {
-    const result = await genericFetch2("/api/private/homelogin", {
-      method: "POST",
-      credentials: "include"
-    });
-    document.querySelector("#pseudo").textContent = result.pseudo;
-  } catch (err) {
-    console.error(err);
-  }
 }
 var init_p_homelogin = __esm({
   "front/src/views/p_homelogin.ts"() {
@@ -4302,6 +4321,7 @@ var init_p_homelogin = __esm({
 
 // front/src/views/p_profile.ts
 function ProfileView() {
+  loadHeader();
   return document.getElementById("profilehtml").innerHTML;
 }
 async function initProfile() {
@@ -4311,7 +4331,19 @@ async function initProfile() {
   document.getElementById("profile-id").textContent = profile.user_id;
   document.getElementById("profile-pseudo").textContent = profile.pseudo;
   document.getElementById("profile-email").textContent = profile.email;
-  document.getElementById("profile-status").textContent = profile.status;
+  const select = document.getElementById("profile-status");
+  if (select) {
+    select.value = profile.status;
+    select.addEventListener("change", async (e) => {
+      const status = e.target.value;
+      await genericFetch2("/api/private/updateinfo/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status })
+      });
+      console.log("Status changed :", status);
+    });
+  }
   document.getElementById("profile-creation").textContent = profile.creation_date;
   document.getElementById("profile-modification").textContent = profile.modification_date;
   document.getElementById("profile-money").textContent = profile.money;
@@ -4326,6 +4358,7 @@ var init_p_profile = __esm({
 
 // front/src/views/p_updateinfo.ts
 function UpdateInfoView() {
+  loadHeader();
   return document.getElementById("updateinfohtml").innerHTML;
 }
 async function initUpdateInfo() {
@@ -4333,19 +4366,101 @@ async function initUpdateInfo() {
     method: "POST"
   });
   document.getElementById("profile-username").textContent = profil.pseudo;
+<<<<<<< HEAD
+=======
+  await initUpdateUsername();
+  await initUpdateEmail();
+  await initUpdatePassword();
+  await initAvatar();
+}
+async function initUpdateUsername() {
+>>>>>>> main
   const formUsername = document.getElementById("change-username-form");
   formUsername.addEventListener("submit", async (e) => {
     e.preventDefault();
     const newUsername = formUsername["new-username"].value;
     const password = formUsername["password"].value;
-    const response = await genericFetch2("/api/private/updateinfo/username", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ newUsername, password })
-    });
-    alert("Username is updated successfully!");
-    navigateTo("/homelogin");
+    try {
+      const response = await genericFetch2("/api/private/updateinfo/username", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newUsername, password })
+      });
+      alert("Username updated successfully to <<  " + response.pseudo + "  >>");
+      navigateTo("/homelogin");
+    } catch (err) {
+      alert(err.message);
+    }
   });
+}
+async function initUpdateEmail() {
+  const formEmail = document.getElementById("change-email-form");
+  formEmail.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const newEmail = formEmail["new-email"].value;
+    const password = formEmail["password"].value;
+    try {
+      const response = await genericFetch2("/api/private/updateinfo/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newEmail, password })
+      });
+      alert("Username updated successfully to <<  " + response.email + "  >>");
+      navigateTo("/homelogin");
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+}
+async function initUpdatePassword() {
+  const formPassword = document.getElementById("change-password-form");
+  formPassword.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const oldPw = formPassword["old-password"].value;
+    const newPw = formPassword["new-password"].value;
+    const confirm = formPassword["confirm-new-password"].value;
+    try {
+      const response = await genericFetch2("/api/private/updateinfo/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ oldPw, newPw, confirm })
+      });
+      alert("Password is updated successfully! Please re-log in!");
+      navigateTo("/logout");
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+}
+async function initAvatar() {
+  const formAvatar = document.getElementById("upload_avatar");
+  if (formAvatar instanceof HTMLFormElement) {
+    formAvatar.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const avatarInput = formAvatar.querySelector('input[name="avatar"]');
+      const avatarFile = avatarInput?.files?.[0];
+      if (!avatarFile || avatarFile.size === 0 || !avatarFile.name) {
+        alert("Please upload an avatar");
+        return;
+      }
+      await uploadAvatar(avatarFile);
+    });
+  }
+}
+async function uploadAvatar(avatar) {
+  const form = new FormData();
+  form.append("avatar", avatar);
+  try {
+    const result = await genericFetch2("/api/private/updateinfo/uploads", {
+      method: "POST",
+      body: form,
+      credentials: "include"
+    });
+    console.log("uplaod success ok : ", result);
+    navigateTo("/profile");
+  } catch (err) {
+    console.error(err);
+  }
 }
 var init_p_updateinfo = __esm({
   "front/src/views/p_updateinfo.ts"() {
@@ -4356,6 +4471,7 @@ var init_p_updateinfo = __esm({
 
 // front/src/views/p_tournament.ts
 function TournamentView() {
+  loadHeader();
   const html = document.getElementById("tournamenthtml").innerHTML;
   setTimeout(() => initTournamentPage(), 0);
   return html;
@@ -4387,12 +4503,11 @@ function initTournamentPage() {
 async function testTournamentDB() {
   const testRanking = generateRandomRanking();
   try {
-    const res = await fetch("/api/private/tournament/add", {
+    const data = await genericFetch2("/api/private/tournament/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ranking: testRanking })
     });
-    const data = await res.json();
     const dbPanel = document.getElementById("db-panel");
     if (dbPanel) {
       dbPanel.innerHTML = `
@@ -4410,8 +4525,7 @@ async function testTournamentDB() {
 }
 async function showDBOnChain() {
   try {
-    const res = await fetch("/api/private/tournament/all");
-    const data = await res.json();
+    const data = await genericFetch2("/api/private/tournament/all");
     const dbPanel = document.getElementById("db-panel");
     const chainPanel = document.getElementById("chain-panel");
     if (!dbPanel || !chainPanel) return;
@@ -4460,10 +4574,20 @@ var init_logout = __esm({
 });
 
 // front/src/router.ts
+<<<<<<< HEAD
 function navigateTo(url2) {
   const state = { previous: window.location.pathname };
   history.pushState(state, "", url2);
+=======
+function navigateTo(url) {
+  const state = { from: window.location.pathname };
+  history.pushState(state, "", url);
+  currentPath = url;
+>>>>>>> main
   router();
+  const avatar = document.getElementById("profile-avatar");
+  if (avatar)
+    avatar.src = "/api/private/avatar?ts=" + Date.now();
 }
 async function genericFetch2(url2, options = {}) {
   const res = await fetch(url2, {
@@ -4475,10 +4599,10 @@ async function genericFetch2(url2, options = {}) {
     if (result.error === "TokenExpiredError")
       alert("Session expired, please login");
     navigateTo("/logout");
-    throw new Error(result.error);
+    throw new Error(result.error || result.message || "Unknown error");
   }
   if (!res.ok) {
-    throw new Error(result.error);
+    throw new Error(result.error || result.message || "Unknown error");
   }
   return result;
 }
@@ -4497,6 +4621,27 @@ function matchRoute(pathname) {
   }
   return null;
 }
+async function loadHeader() {
+  const response = await fetch("/header.html");
+  const html = await response.text();
+  const container = document.getElementById("header-container");
+  if (container) container.innerHTML = html;
+  getPseudoHeader3();
+  const avatar = document.getElementById("profile-avatar");
+  if (avatar)
+    avatar.src = "/api/private/avatar?ts=" + Date.now();
+}
+async function getPseudoHeader3() {
+  try {
+    const result = await genericFetch2("/api/private/getpseudo", {
+      method: "POST",
+      credentials: "include"
+    });
+    document.getElementById("pseudo-header").textContent = result.pseudo;
+  } catch (err) {
+    console.error(err);
+  }
+}
 function router() {
   if (currentRoute?.cleanup) {
     if (typeof currentRoute.cleanup === "function")
@@ -4504,7 +4649,8 @@ function router() {
   }
   const match = matchRoute(location.pathname);
   if (!match) {
-    document.querySelector("#app").innerHTML = "<h1>404 Not Found</h1>";
+    const error = document.getElementById("error");
+    document.querySelector("#app").innerHTML = error.innerHTML;
     return;
   }
   const { route, params } = match;
@@ -4525,24 +4671,38 @@ function initRouter() {
       }
     }
   });
+  currentPath = window.location.pathname;
   window.addEventListener("popstate", (event) => {
-    const path = window.location.pathname;
-    const previous = event.state?.previous;
-    const public_path = ["/", "/login", "/register"];
-    const is_private = !public_path.includes(path);
-    if (is_private && previous && public_path.includes(previous))
-      history.replaceState({ previous: "/homelogin" }, "", "/homelogin");
-    router();
+    popState();
   });
   router();
 }
-var routes, currentRoute;
+function popState() {
+  const path = window.location.pathname;
+  const publicPath = ["/", "/login", "/register", "/logout"];
+  const toIsPrivate = !publicPath.includes(path);
+  const fromIsPrivate = !publicPath.includes(currentPath);
+  if (!history.state.from && fromIsPrivate) {
+    history.replaceState({ from: "/homelogin" }, "", "/homelogin");
+    currentPath = "/homelogin";
+    navigateTo("/logout");
+  } else if (!history.state.from && !fromIsPrivate) {
+    history.replaceState({ from: "/" }, "", "/");
+    currentPath = "/";
+  } else if (!toIsPrivate && fromIsPrivate) {
+    history.replaceState({ from: "/homelogin" }, "", "/homelogin");
+    currentPath = "/homelogin";
+  } else
+    currentPath = path;
+  router();
+}
+var routes, currentRoute, currentPath;
 var init_router = __esm({
   "front/src/router.ts"() {
     "use strict";
     init_home();
     init_login();
-    init_dashboard();
+    init_p_dashboard();
     init_register();
     init_p_game();
     init_p_quickgame();
@@ -4552,7 +4712,7 @@ var init_router = __esm({
     init_p_tournament();
     init_logout();
     routes = [
-      { path: "/", view: HomeView },
+      { path: "/", view: HomeView, init: initHome },
       { path: "/login", view: LoginView, init: initLogin },
       { path: "/logout", init: initLogout },
       { path: "/dashboard", view: DashboardView },
@@ -4563,8 +4723,7 @@ var init_router = __esm({
       { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
       { path: "/profile", view: ProfileView, init: initProfile },
       { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },
-      { path: "/tournament", view: TournamentView },
-      { path: "/changeusername" }
+      { path: "/tournament", view: TournamentView }
     ];
     currentRoute = null;
   }

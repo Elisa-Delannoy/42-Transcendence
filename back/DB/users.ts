@@ -1,12 +1,12 @@
 import { ManageDB } from "./manageDB";
 
-export interface Users {
+export interface IUsers {
 	user_id: number;
 	pseudo: string;
 	email: string;
 	password: string;
 	avatar: string;
-	status: UserStatus;
+	status: string;
 	creation_date: Date;
 	modification_date: Date;
 	money: number;
@@ -31,7 +31,7 @@ export class Users
                 email TEXT NOT NULL,
                 password TEXT NOT NULL,
 				avatar TEXT NOT NULL,
-                status INTEGER NOT NULL,
+                status TEXT NOT NULL,
                 creation_date TEXT NOT NULL,
 				modification_date TEXT NOT NULL,
                 money INTEGER DEFAULT 0,
@@ -50,10 +50,10 @@ export class Users
 		pseudo,
 		email,
 		password,
-		"default path",
-		UserStatus.offline,
-		new Date(),
-		new Date(),
+		"0.png",
+		"online",
+		new Date().toISOString().replace("T", " ").split(".")[0],
+		new Date().toISOString().replace("T", " ").split(".")[0],
 		0,
 		0
 		];
@@ -85,22 +85,24 @@ export class Users
 			return infos[0];
 	}
 
-	async getIDUser(id: number): Promise<Users>
-	{
-		
-		const infos: Users[] = await this._db.query(`SELECT * FROM Users WHERE user_id = ?`, [id])
+	async getIDUser(id: number): Promise<IUsers>
+	{	
+		const infos: IUsers[] = await this._db.query(`SELECT * FROM Users WHERE user_id = ?`, [id])
 		if (infos.length === 0)
 			throw new Error("This ID does not exist")
 		else
 			return infos[0];
 	}
 
-	async updateUsername(id: number, newUsername: string): Promise<Users>
+	async updateUsername(id: number, newUsername: string): Promise<IUsers>
 	{
 		if (!newUsername || newUsername.trim() === '') {
 			throw new Error("New username cannot be empty.");
 		}
-		const updateResult = await this._db.query(`UPDATE Users SET pseudo = ? WHERE user_id = ?`, [newUsername, id]);
+	
+		await this._db.query(`UPDATE Users SET pseudo = ? WHERE user_id = ?`, [newUsername, id]);
+		const updatedTime = new Date().toISOString().replace("T", " ").split(".")[0];
+		await this._db.query(`UPDATE Users SET modification_date = ? WHERE user_id = ?`, [updatedTime, id]);
 
 		const updatedUser = await this.getIDUser(id);
 		return updatedUser;
@@ -114,11 +116,40 @@ export class Users
 		else
 			return infos[0];
 	}
-}
 
-enum UserStatus
-{
-	offline, 
-	online,
-	playing
+	async updateEmail(id: number, newEmail: string): Promise<IUsers>
+	{
+		if (!newEmail || newEmail.trim() === '') {
+			throw new Error("New username cannot be empty.");
+		}
+		await this._db.query(`UPDATE Users SET email = ? WHERE user_id = ?`, [newEmail, id]);
+		const updatedTime = new Date().toISOString().replace("T", " ").split(".")[0];
+		await this._db.query(`UPDATE Users SET modification_date = ? WHERE user_id = ?`, [updatedTime, id]);
+
+		const updatedUser = await this.getIDUser(id);
+		return updatedUser;
+	}
+
+	async updatePassword(id: number, newPw: string): Promise<IUsers>
+	{
+		await this._db.query(`UPDATE Users SET password = ? WHERE user_id = ?`, [newPw, id]);
+		const updatedTime = new Date().toISOString().replace("T", " ").split(".")[0];
+		await this._db.query(`UPDATE Users SET modification_date = ? WHERE user_id = ?`, [updatedTime, id]);
+
+		const updatedUser = await this.getIDUser(id);
+		return updatedUser;
+	}
+
+	async updateAvatar(id: number, newAvatar: string) {
+		await this._db.execute(`UPDATE Users SET avatar = ? WHERE user_id = ?`, [newAvatar, id]);
+		const updatedTime = new Date().toISOString().replace("T", " ").split(".")[0];
+		await this._db.query(`UPDATE Users SET modification_date = ? WHERE user_id = ?`, [updatedTime, id]);
+	}
+
+
+	async updateStatus(id: number, status: string): Promise < IUsers> {
+		await this._db.execute(`UPDATE Users SET status = ? WHERE user_id = ?`, [status, id]);
+		const updatedUser = await this.getIDUser(id);
+		return updatedUser;
+	}
 }

@@ -1,13 +1,14 @@
-import { genericFetch } from "../router";
 import { GameInstance } from "../game/gameInstance";
 import { GameNetwork } from "../game/gameNetwork";
 import { io } from "socket.io-client";
+import { genericFetch, loadHeader } from "../router";
 
 let currentGame: GameInstance | null = null;
 let net: GameNetwork | null = null;
 
 export function QuickGameView(params?: any): string {
-  return (document.getElementById("quickgamehtml") as HTMLTemplateElement).innerHTML;
+	loadHeader();
+	return (document.getElementById("quickgamehtml") as HTMLTemplateElement).innerHTML;
 }
 
 export function initQuickGame(params?: any) {

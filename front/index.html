@@ -19,8 +19,8 @@
 
 	<template id="homehtml">
 		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-			<a href="/" data-link class="block dark:/hidden ml-4">
-				<img src="src/image/croissant-white.png" alt="croissantw"
+			<a href="/" data-link class="block dark:hidden ml-4">
+				<img src="/src/image/croissant-white.png" alt="croissantw"
 					 class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 			<a href="/" data-link class="hidden dark:block ml-4">
@@ -56,28 +56,27 @@
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 		</header>
-		<form id="login-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-72 h-90 mx-auto">
-	 		<h1 class="mt-4 font-bold text-xl">Welcome Back</h1>
-			<div class="mt-6">
-				<div>
-					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-						focus:ring-2 focus:ring-amber-500 px-2" 
-						id="username" name="username" placeholder="username" required />
-					<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="username-loginmsg"></p>
+		<form id="login-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 h-80 mx-auto">
+	 		<h1 class="mt-4 dark:text-white font-bold text-xl">Welcome Back</h1>
+			<div class="flex flex-col mx-10">
+				<div class="items-start text-start">
+					<h2 class="text-sm dark:text-white mt-3 mb-0.5">Username</h2>
+					<input class="input" 
+						id="username" name="username" placeholder="Enter your username" required />
+					<p class="text-red-600 text-xs mt-1 text-left block" id="username-loginmsg"></p>
 				</div>
-				<div>
-					<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-						focus:ring-2 focus:ring-amber-500 px-2" 
-						id="password" type="password" name="password" placeholder="password" required />
-					<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="password-loginmsg"></p>
+				<div class="items-start text-start">
+					<h2 class="text-sm dark:text-white mt-3 mb-0.5">Password</h2>
+					<input class="input" 
+						id="password" type="password" name="password" placeholder="••••••••" required />
+					<p class="text-red-600 text-xs mt-1 text-left block" id="password-loginmsg"></p>
 				</div>
 			</div>
-			<button class="mt-12 btn w-40">Log in</button>
-			<a class="mt-2 text-sm" href="/register" data-link>Create account ?</a>
+			<button class="btn w-40 justify-end">Log in</button>
+			<a class="mt-1 dark:text-white hover:underline text-sm" href="/register" data-link>Create account ?</a>
 		</form>
 	</template>
 
-	
 	<template id="registerhtml">
 		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 			<a href="/" data-link class="block dark:hidden ml-4">
@@ -90,27 +89,43 @@
 			</a>
 		</header>
 		<div class="register-container flex flex-col">
-			<form id="register-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 backdrop-blur-sm shadow-md mt-[20vh] w-72 h-90 mx-auto">
-				<h1 class="mt-4 font-bold text-xl">Register</h1>
-				<div>
-					<div>
-						<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-							px-2" type="text" name="username" placeholder="Username" required />
-						<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="username-message"></p>
+			<form id="register-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-20 w-100 h-120 mx-auto">
+				<h1 class="mt-4 dark:text-white font-bold text-xl">Registration<br> <span class="opacity-50 text-lg font-normal">Create your account to get started</span></h1>
+				<div class="flex flex-col mx-10">
+					<div class="items-start text-start">
+						<h2 class="text-sm dark:text-white mt-3 mb-0.5">Username</h2>
+						<input class="input"
+							type="text" name="username" placeholder="Select a username" required />
+						<p class="text-red-600 text-xs mt-1 text-left block" id="username-message"></p>
 					</div>
-					<div>
-						<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-							px-2" type="email" name="email" placeholder="Email" required />
-						<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="email-message"></p>
+					<div class="items-start text-start">
+						<h2 class="text-sm dark:text-white mt-3 mb-0.5">Email</h2>
+						<input class="input"
+							type="email" name="email" placeholder="your.email@example.com" required />
+						<p class="text-red-600 text-xs mt-1 text-left block" id="email-message"></p>
 					</div>
-					<div>
-						<input class="bg-amber-600/30 mt-6 rounded-md focus:outline-none
-							px-2" type="password" name="password" placeholder="Password" required />
-						<p class="text-red-600 text-xs mt-2 text-center mx-auto block w-60" id="password-message"></p>
+					<div class="items-start text-start">
+						<h2 class="text-sm dark:text-white mt-3 mb-0.5">Password</h2>
+						<input class="input" 
+							type="password" name="password" placeholder="••••••••" required />
+							<p class="text-red-600 text-xs mt-1 text-left block" id="password-message"> </p>
+					</div>
+					<div class="items-start text-start">
+						<h2 class="text-sm dark:text-white mt-3 mb-0.5">Confirm Password</h2>
+						<input class="input"
+							type="password" name="confirm-password" placeholder="••••••••" required />
+						<p class="text-red-600 text-xs mt-1 text-left block" id="confirm-password-message"> </p>
 					</div>
 				</div>
 				<button class="btn w-40 justify-end" type="submit">Register</button>
+				<a class="mt-1 dark:text-white hover:underline text-sm" href="/login" data-link>Already register ?</a>
 			</form>
+			<p id="rules-password" class="text-xs dark:text-white opacity-50 mt-2 text-center block">
+				Password rules :<br>
+				- The password must contain at least 12 characters.<br>
+				- It must include at least one uppercase letter (A-Z), one lowercase letter (a-z) and one digit (0-9).<br>
+				- It must include at least one special character : !@#$%^&*()_\-+=.?.<br>
+			</p>
 		</div>
 	</template>
 
@@ -131,180 +146,131 @@
 		</div>
 	</template>
 
-	<template id="dashboardhtml">
-	<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="/src/image/croissant-white.png" alt="croissantw"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="/src/image/croissant-black.png" alt="croissantd"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-	</header>
-	<h1>Dashboard 🎮</h1>
-	</template>
-
 	<template id="homeloginhtml">
-	<header class="flex w-full pb-2 justify-between h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-		<div class="flex items-center space-x-4">
-			<a href="/homelogin" data-link class="block dark:hidden ml-4">
-				<img src="/src/image/croissant-white.png" alt="croissantw"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-			<a href="/homelogin" data-link class="hidden dark:block ml-4">
-				<img src="/src/image/croissant-black.png" alt="croissantd"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
+		<div id="header-container"></div>
+		<div>
+			<ul>
+				<li><a href="/game" data-link class="btn w-48">Game</a></li>
+				<li><a href="/tournament" data-link class="btn w-48">Tournament</a></li>
+			</ul>
 		</div>
-		<div class="mr-4">
-			<a href="/logout" data-link class="btn justify-end w-48">Logout</a>
-		</div>
-	</header>
-	<div>
-		<h1> Welcome <span id="pseudo"></span>👋</h1>
-		<ul>
-			<li><a href="/profile" data-link class="btn w-48">Profile</a></li>
-			<li><a href="/game" data-link class="btn w-48">Game</a></li>
-			<li><a href="/dashboard" data-link class="btn w-48">Dashboard</a></li>
-			<li><a href="/tournament" data-link class="btn w-48">Tournament</a></li>
-		</ul>
-	</div>
+	</template>
+	
+	<template id="dashboardhtml">
+		<div id="header-container"></div>
+		<h1>Dashboard 🎮</h1>
 	</template>
 
 	<template id="profilehtml">
-	<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="/src/image/croissant-white.png" alt="croissantw"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="/src/image/croissant-black.png" alt="croissantd"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-	</header>
-	<main>
-		<h1>Page profile</h1>
-		<a href="/updateinfo" data-link class="btn w-48">Update Profile</a>
-		<p><strong>ID:</strong> <span id="profile-id"></span></p>
-        <p><strong>Username:</strong> <span id="profile-pseudo"></span></p>
-        <p><strong>Email:</strong> <span id="profile-email"></span></p>
-        <p><strong>Status:</strong> <span id="profile-status"></span></p>
-        <p><strong>Creation:</strong> <span id="profile-creation"></span></p>
-        <p><strong>Modification:</strong> <span id="profile-modification"></span></p>
-        <p><strong>Money:</strong> <span id="profile-money"></span></p>
-        <p><strong>ELO:</strong> <span id="profile-elo"></span></p>
-	</main>
+		<div id="header-container"></div>
+		<main>
+			<h1>Page profile</h1>
+			<a href="/updateinfo" data-link class="btn w-48">Update Profile</a>
+			<p><img id="profile-avatar" src="" alt="Your avatar" width="150"></span></p>
+			<p><strong>ID:</strong> <span id="profile-id"></span></p>
+			<p><strong>Username:</strong> <span id="profile-pseudo"></span></p>
+			<p><strong>Email:</strong> <span id="profile-email"></span></p>
+			<p><strong>Creation:</strong> <span id="profile-creation"></span></p>
+			<p><strong>Modification:</strong> <span id="profile-modification"></span></p>
+			<p><strong>Money:</strong> <span id="profile-money"></span></p>
+			<p><strong>ELO:</strong> <span id="profile-elo"></span></p>
+			<div class="relative inline-block text-left">
+			<div class="w-64">
+			<label for="statusSelect" class="inline-block text-sm font-medium text-gray-700 mb-2">
+				Status: 
+			</label>
+			<select id="profile-status"
+					class="inline-block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+				<option value="online">🟢 Online </option>
+				<option value="offline">⚪ Offline </option>
+				<option value="busy">🔴 Busy </option>
+			</select>
+			</div>
+		</main>
 	</template>
 
-  <template id="updateinfohtml">
-	<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="/src/image/croissant-white.png" alt="croissantw"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="/src/image/croissant-black.png" alt="croissantd"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-	</header>
-	<main>
-		<h1>Update profile</h1>
-		<p><strong>Update information for user:</strong> <span id="profile-username"></span></p>
-		<h2><strong>Change Username</strong></h2>
-		<form id="change-username-form">
-            <input type="text" name="new-username" placeholder="New Username" required />
-			<input type="password" name="password" placeholder="Confirm Password" required />
-            <button type="submit">Update Username</button>
-		</form>
-		<h2><strong>Change Email</strong></h2>
-		<form id="change-email-form">
-            <input type="text" name="new-email" placeholder="New Email" required />
-			<input type="password" name="password" placeholder="Confirm Password" required />
-            <button type="submit">Update Email</button>
-        </form>
-		<h2><strong>Change Password</strong></h2>
-        <form id="change-password-form">
-            <input type="password" name="old-password" placeholder="Old Password" required />
-			<input type="password" name="new-password" placeholder="New Password" required />
-			<input type="password" name="confirm-new-password" placeholder="Confirm New Password" required />
-            <button type="submit">Update Email</button>
-        </form>
-	</main>
-  </template>
+	<template id="updateinfohtml">
+		<div id="header-container"></div>
+		<main>
+			<h1>Update profile</h1>
+			<p><strong>Update information for user:</strong> <span id="profile-username"></span></p>
+			<h2><strong>Change Username</strong></h2>
+			<form id="change-username-form">
+				<input type="text" name="new-username" placeholder="New Username" required />
+				<input type="password" name="password" placeholder="Confirm Password" required />
+				<button type="submit">Update Username</button>
+			</form>
+			<h2><strong>Change Email</strong></h2>
+			<form id="change-email-form">
+				<input type="text" name="new-email" placeholder="New Email" required />
+				<input type="password" name="password" placeholder="Confirm Password" required />
+				<button type="submit">Update Email</button>
+			</form>
+			<h2><strong>Change Password</strong></h2>
+			<form id="change-password-form">
+				<input type="password" name="old-password" placeholder="Old Password" required />
+				<input type="password" name="new-password" placeholder="New Password" required />
+				<input type="password" name="confirm-new-password" placeholder="Confirm New Password" required />
+				<button type="submit">Update Password</button>
+			</form>
+			<h2><strong>Upload avatar</strong></h2>
+			<form id="upload_avatar" method="POST" enctype="multipart/form-data">
+				<input type="file" name="avatar" accept="image/png, image/jpeg"/>
+				<button type="submit">Upload</button>
+			</form>
+		</main>
+	</template>
 
-  <template id="gamehtml">
-    <header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="/src/image/croissant-white.png" alt="croissantw"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="/src/image/croissant-black.png" alt="croissantd"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-	</header>
-    <h1>Page game</h1>
-    <div class="game-buttons flex justify-center">
-		<button class="btn w-32" id="create-game">Create game</button>
-		<button class="btn w-32" id="display-game-list">Display game list</button>
-		<button class="btn w-32" id="start-tournament">Start tournament</button>
-    </div>
-	<div id="game-list"></div>
-  </template>
+	<template id="gamehtml">
+		<div id="header-container"></div>
+		<h1>Page game</h1>
+		<div class="game-buttons flex justify-center">
+			<button class="btn w-32" id="create-game">Create game</button>
+			<button class="btn w-32" id="display-game-list">Display game list</button>
+			<button class="btn w-32" id="start-tournament">Start tournament</button>
+		</div>
+		<div id="game-list"></div>
+	</template>
 
-  <template id="quickgamehtml">
-    <header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="/src/image/croissant-white.png" alt="croissantw"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="/src/image/croissant-black.png" alt="croissantd"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-	</header>
-	<h1>Quick game</h1>
-    <div class="game-container">
-      <div class="game-buttons flex justify-center">
-        <button class="btn w-32" id="start-game">Start</button>
-        <button class="btn w-32" id="stop-game">Stop</button>
-      </div>
-	  <div class="flex justify-center mx-auto w-full">
-		  <canvas id="canvas" width="600" height="480"></canvas>
-	  </div>
-    </div>
-  </template>
+  	<template id="quickgamehtml">
+		<div id="header-container"></div>
+		<h1>Quick game</h1>
+		<div class="game-container">
+			<div class="game-buttons flex justify-center">
+				<button class="btn w-32" id="start-game">Start</button>
+				<button class="btn w-32" id="stop-game">Stop</button>
+			</div>
+			<div class="flex justify-center mx-auto w-full">
+				<canvas id="canvas" width="600" height="480"></canvas>
+			</div>
+		</div>
+  	</template>
 
 	<template id="tournamenthtml">
-	<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-		<a href="/homelogin" data-link class="block dark:hidden ml-4">
-			<img src="/src/image/croissant-white.png" alt="croissantw"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-		<a href="/homelogin" data-link class="hidden dark:block ml-4">
-			<img src="/src/image/croissant-black.png" alt="croissantd"
-				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-		</a>
-	</header>
-    <h1 class="text-3xl font-bold text-center mt-6">Tournament Overview</h1>
-	<div class="grid grid-cols-2 gap-4 mt-8 px-6">
-	  <div>
-		<h2 class="text-xl font-semibold mb-2 text-amber-700">📁 Database State</h2>
-		<div id="db-panel" class="p-4 bg-amber-200/30 rounded shadow"></div>
-	  </div>
-	  <div>
-		<h2 class="text-xl font-semibold mb-2 text-green-700">⛓ Blockchain State</h2>
-		<div id="chain-panel" class="p-4 bg-green-200/30 rounded shadow"></div>
-	  </div>
-  
-	</div>
-  
-	<div class="flex flex-col items-center mt-6 gap-3">
-	  <button id="create-test" class="btn w-48">Create Test Tournament</button>
-	  <button id="show-onchain" class="btn w-48">Show DB vs Blockchain</button>
-	  <button id="back-to-home" class="btn w-48" data-link href="/homelogin">Back to Home</button>
-	</div>  
-  </template>
+		<div id="header-container"></div>
+		<h1 class="text-3xl font-bold text-center mt-6">Tournament Overview</h1>
+		<div class="grid grid-cols-2 gap-4 mt-8 px-6">
+			<div>
+				<h2 class="text-xl font-semibold mb-2 text-amber-700">📁 Database State</h2>
+				<div id="db-panel" class="p-4 bg-amber-200/30 rounded shadow"></div>
+			</div>
+			<div>
+				<h2 class="text-xl font-semibold mb-2 text-green-700">⛓ Blockchain State</h2>
+				<div id="chain-panel" class="p-4 bg-green-200/30 rounded shadow"></div>
+			</div>
+		</div>
+		<div class="flex flex-col items-center mt-6 gap-3">
+			<button id="create-test" class="btn w-48">Create Test Tournament</button>
+			<button id="show-onchain" class="btn w-48">Show DB vs Blockchain</button>
+			<button id="back-to-home" class="btn w-48" data-link href="/homelogin">Back to Home</button>
+		</div>  
+	</template>
 
+	<template id="error">
+	<div class="flex flex-col items-center justify-center h-screen">
+		<h1 class="text-4xl font-bold text-red-600">404 - Invalid page</h1>
+		<p class="mt-4">This page does not exist.</p>
+		<a href="/" data-link class="mt-6 text-blue-500 underline">Go back</a>
+	</div>
+	</template>
 </html>

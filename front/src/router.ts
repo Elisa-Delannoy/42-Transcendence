@@ -1,6 +1,6 @@
-import { HomeView } from "./views/home";
+import { HomeView, initHome } from "./views/home";
 import { LoginView, initLogin } from "./views/login";
-import { DashboardView } from "./views/dashboard";
+import { DashboardView } from "./views/p_dashboard";
 import { RegisterValidView, RegisterView, initRegister } from "./views/register";
 import { GameView, initGame} from "./views/p_game";
 import { QuickGameView, initQuickGame, stopGame} from "./views/p_quickgame";
@@ -9,9 +9,11 @@ import { ProfileView, initProfile} from "./views/p_profile";
 import { UpdateInfoView, initUpdateInfo } from "./views/p_updateinfo";
 import { TournamentView} from "./views/p_tournament";
 import { initLogout } from "./views/logout";
+import { fromTwos } from "ethers";
+import { Statement } from "sqlite3";
 
 const routes = [
-  { path: "/", view: HomeView },
+  { path: "/", view: HomeView, init: initHome},
   { path: "/login", view: LoginView, init:initLogin},
   { path: "/logout", init: initLogout},
   { path: "/dashboard", view: DashboardView },
@@ -23,15 +25,19 @@ const routes = [
   { path: "/profile", view: ProfileView, init: initProfile},
   { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo},
   { path: "/tournament", view: TournamentView},
-  { path: "/changeusername" }
 ];
 
 let currentRoute: any = null;
+let currentPath: string
 
 export function navigateTo(url: string) {
-	const state = { previous: window.location.pathname};
+	const state = { from: window.location.pathname };
 	history.pushState(state, "", url);
-  router();
+	currentPath = url;
+	router();
+	const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
+	if (avatar) 
+		avatar.src = "/api/private/avatar?ts=" + Date.now();
 }
 
 export async function genericFetch(url: string, options: RequestInit = {}) {
@@ -44,10 +50,10 @@ export async function genericFetch(url: string, options: RequestInit = {}) {
 		if (result.error === "TokenExpiredError")
 			alert("Session expired, please login")
 		navigateTo("/logout");
-		throw new Error(result.error);
+		throw new Error(result.error || result.message || "Unknown error");
 }
 	if (!res.ok){
-		throw new Error(result.error);
+		throw new Error(result.error || result.message || "Unknown error");
 }
 	return result;
 }
@@ -69,6 +75,31 @@ function matchRoute(pathname: string) {
 	return null;
 }
 
+export async function loadHeader() {
+	const response = await fetch('/header.html');
+	const html = await response.text();
+	const container = document.getElementById('header-container');
+	if (container) container.innerHTML = html;
+	getPseudoHeader()
+	const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
+	if (avatar) 
+		avatar.src = "/api/private/avatar?ts=" + Date.now();
+}
+
+export async function getPseudoHeader()
+{
+  try {
+	const result = await genericFetch("/api/private/getpseudo", {
+		method: "POST",
+		credentials: "include"
+	});
+	
+	document.getElementById("pseudo-header")!.textContent = result.pseudo;
+	} catch (err) {
+		console.error(err);
+	}
+}
+
 export function router() {
 	//clean route who got cleanup function (game)
 	if (currentRoute?.cleanup)
@@ -79,39 +110,60 @@ export function router() {
 	const match = matchRoute(location.pathname);
 
 	if (!match) {
-		document.querySelector("#app")!.innerHTML = "<h1>404 Not Found</h1>";
+		const error = document.getElementById("error") as HTMLTemplateElement;
+		document.querySelector("#app")!.innerHTML = error.innerHTML;
 		return;
 	}
 
 	const { route, params } = match;
-
 	if (route.view)
 		document.querySelector("#app")!.innerHTML = route.view(params);
-
 	route.init?.(params);
 	currentRoute = route;
 }
 
 export function initRouter() {
-  document.body.addEventListener("click", (e) => {
-    const target = e.target as HTMLElement;
-    const link = target.closest("[data-link]") as HTMLElement | null;
-    if (link) {
-      e.preventDefault();
-      const url = (link as HTMLAnchorElement).getAttribute("href");
-      if (url) {
-        navigateTo(url);
-      }
-    }
+	document.body.addEventListener("click", (e) => {
+    	const target = e.target as HTMLElement;
+    	const link = target.closest("[data-link]") as HTMLElement | null;
+    	if (link) {
+    		e.preventDefault();
+    		const url = (link as HTMLAnchorElement).getAttribute("href");
+    		if (url) {
+    			navigateTo(url);
+    		}
+    	}
   });
-  window.addEventListener("popstate", (event) => {
-	const path = window.location.pathname;
-	const previous = event.state?.previous;
-	const public_path = ["/", "/login", "/register"];
-	const is_private = !public_path.includes(path)
-	if (is_private && previous && public_path.includes(previous))
-		history.replaceState( { previous: "/homelogin" }, "", "/homelogin");
-	router();
+  	// history.replaceState({ from: "/" }, "", "/");
+	currentPath = window.location.pathname;
+  	window.addEventListener("popstate", (event) => {	
+		popState();
 	});
   router();
+}
+
+function popState() {
+	const path = window.location.pathname;
+	const publicPath = ["/", "/login", "/register", "/logout"];
+	const toIsPrivate = !publicPath.includes(path);
+	const fromIsPrivate = !publicPath.includes(currentPath);
+	if (!history.state.from && fromIsPrivate)
+	{
+		history.replaceState({ from: "/homelogin" }, "", "/homelogin");
+		currentPath = "/homelogin";
+		navigateTo("/logout");
+	}
+	else if (!history.state.from && !fromIsPrivate)
+    {
+		history.replaceState({ from: "/" }, "", "/");
+		currentPath = "/";
+	}
+	else if (!toIsPrivate && fromIsPrivate)
+	{
+		history.replaceState( { from: "/homelogin" }, "", "/homelogin");
+		currentPath = "/homelogin";
+	}
+	else
+		currentPath = path;
+	router();
 }
