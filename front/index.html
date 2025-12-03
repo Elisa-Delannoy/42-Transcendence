@@ -17,7 +17,7 @@
 	<script type="module" src="./public/app.js"></script>
 	</body>
 
-	<template id="homehtml">
+	<template id="html">
 		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 			<a href="/" data-link class="block dark:hidden ml-4">
 				<img src="/src/image/croissant-white.png" alt="croissantw"
@@ -37,8 +37,8 @@
 				Croiscendence</h1>
 			<div class="mt-14">
 				<nav id="public-nav">
-					<a href="/login" data-link class="btn w-48">Log in</a>
-					<a href="/register" data-link class="btn w-48">Register</a>
+					<a href="/login" data-link class="btn mx-auto w-48">Log in</a>
+					<a href="/register" data-link class="btn mx-auto w-48">Register</a>
 				</nav>
 			</div>
 				<p class="absolute mb-4 opacity-60 bottom-0 w-full text-center">This isn't a bakery at all — it's the Pong game from 42!</p>
@@ -72,7 +72,7 @@
 					<p class="text-red-600 text-xs mt-1 text-left block" id="password-loginmsg"></p>
 				</div>
 			</div>
-			<button class="btn w-40 justify-end">Log in</button>
+			<button class="btn mx-auto w-40 justify-end">Log in</button>
 			<a class="mt-1 dark:text-white hover:underline text-sm" href="/register" data-link>Create account ?</a>
 		</form>
 	</template>
@@ -117,7 +117,7 @@
 						<p class="text-red-600 text-xs mt-1 text-left block" id="confirm-password-message"> </p>
 					</div>
 				</div>
-				<button class="btn w-40 justify-end" type="submit">Register</button>
+				<button class="btn mx-auto w-40 justify-end" type="submit">Register</button>
 				<a class="mt-1 dark:text-white hover:underline text-sm" href="/login" data-link>Already register ?</a>
 			</form>
 			<p id="rules-password" class="text-xs dark:text-white opacity-50 mt-2 text-center block">
@@ -142,17 +142,24 @@
 		</header>
 		<div class="flex flex-col justify-center">
 			<h1 class="text-amber-600 mt-40 text-2xl text-center mx-auto block">You have been register Successfully !</h1>
-			<a href="/login" data-link class="btn mt-20 w-48">Login</a>
+			<a href="/login" data-link class="btn mx-auto mt-20 w-48">Login</a>
 		</div>
 	</template>
 
-	<template id="homeloginhtml">
-		<div id="header-container"></div>
+	<template id="homehtml">
+		<div class="w-full h-screen">
+		<header id="header-container"></header>
+		</div>
 		<div>
-			<ul>
-				<li><a href="/game" data-link class="btn w-48">Game</a></li>
-				<li><a href="/tournament" data-link class="btn w-48">Tournament</a></li>
-			</ul>
+			<img src="/src/image/gamepage.jpg"
+				alt="gamepage"
+				class="absolute block dark:hidden -z-10 object-cover w-full h-screen">
+			<section class="flex flex-col items-end mr-12">
+				<ul>
+					<li><a href="/game" data-link class="btn w-48">Game</a></li>
+					<li><a href="/tournament" data-link class="btn w-48">Tournament</a></li>
+				</ul>
+			</section>
 		</div>
 	</template>
 	
@@ -165,7 +172,7 @@
 		<div id="header-container"></div>
 		<main>
 			<h1>Page profile</h1>
-			<a href="/updateinfo" data-link class="btn w-48">Update Profile</a>
+			<a href="/updateinfo" data-link class="btn mx-auto w-48">Update Profile</a>
 			<p><img id="profile-avatar" src="" alt="Your avatar" width="150"></span></p>
 			<p><strong>ID:</strong> <span id="profile-id"></span></p>
 			<p><strong>Username:</strong> <span id="profile-pseudo"></span></p>
@@ -225,9 +232,9 @@
 		<div id="header-container"></div>
 		<h1>Page game</h1>
 		<div class="game-buttons flex justify-center">
-			<button class="btn w-32" id="create-game">Create game</button>
-			<button class="btn w-32" id="display-game-list">Display game list</button>
-			<button class="btn w-32" id="start-tournament">Start tournament</button>
+			<button class="btn mx-auto w-32" id="create-game">Create game</button>
+			<button class="btn mx-auto w-32" id="display-game-list">Display game list</button>
+			<button class="btn mx-auto w-32" id="start-tournament">Start tournament</button>
 		</div>
 		<div id="game-list"></div>
 	</template>
@@ -237,8 +244,8 @@
 		<h1>Quick game</h1>
 		<div class="game-container">
 			<div class="game-buttons flex justify-center">
-				<button class="btn w-32" id="start-game">Start</button>
-				<button class="btn w-32" id="stop-game">Stop</button>
+				<button class="btn mx-auto w-32" id="start-game">Start</button>
+				<button class="btn mx-auto w-32" id="stop-game">Stop</button>
 			</div>
 			<div class="flex justify-center mx-auto w-full">
 				<canvas id="canvas" width="600" height="480"></canvas>
@@ -260,9 +267,9 @@
 			</div>
 		</div>
 		<div class="flex flex-col items-center mt-6 gap-3">
-			<button id="create-test" class="btn w-48">Create Test Tournament</button>
-			<button id="show-onchain" class="btn w-48">Show DB vs Blockchain</button>
-			<button id="back-to-home" class="btn w-48" data-link href="/homelogin">Back to Home</button>
+			<button id="create-test" class="btn mx-auto w-48">Create Test Tournament</button>
+			<button id="show-onchain" class="btn mx-auto w-48">Show DB vs Blockchain</button>
+			<button id="back-to-home" class="btn mx-auto w-48" data-link href="/home">Back to Home</button>
 		</div>  
 	</template>
 

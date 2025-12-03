@@ -11,7 +11,7 @@
 	.btn {
 		@apply bg-amber-700 dark:bg-amber-950 text-white text-center py-4 
 			rounded-lg hover:bg-gray-700 duration-300 cursor-pointer
-			block mx-auto mt-10;
+			block mt-10;
 	}
 }
 

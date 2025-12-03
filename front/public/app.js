@@ -12,13 +12,13 @@ var __export = (target, all) => {
 };
 
 // front/src/views/home.ts
-function HomeView() {
-  return document.getElementById("homehtml").innerHTML;
+function View() {
+  return document.getElementById("html").innerHTML;
 }
-async function initHome() {
+async function init() {
   const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
   if (res.ok) {
-    navigateTo("/homelogin");
+    navigateTo("/home");
   }
 }
 var init_home = __esm({
@@ -40,7 +40,7 @@ function initLogin() {
     const password = document.getElementById("password").value;
     const success = await login(username, password, form);
     if (success)
-      navigateTo("/homelogin");
+      navigateTo("/home");
   });
 }
 async function login(username, password, form) {
@@ -4294,9 +4294,9 @@ var init_p_quickgame = __esm({
 });
 
 // front/src/views/p_homelogin.ts
-function HomeLoginView() {
+function homeView() {
   loadHeader();
-  return document.getElementById("homeloginhtml").innerHTML;
+  return document.getElementById("homehtml").innerHTML;
 }
 async function initHomePage() {
 }
@@ -4372,7 +4372,7 @@ async function initUpdateUsername() {
         body: JSON.stringify({ newUsername, password })
       });
       alert("Username updated successfully to <<  " + response.pseudo + "  >>");
-      navigateTo("/homelogin");
+      navigateTo("/home");
     } catch (err) {
       alert(err.message);
     }
@@ -4391,7 +4391,7 @@ async function initUpdateEmail() {
         body: JSON.stringify({ newEmail, password })
       });
       alert("Username updated successfully to <<  " + response.email + "  >>");
-      navigateTo("/homelogin");
+      navigateTo("/home");
     } catch (err) {
       alert(err.message);
     }
@@ -4482,7 +4482,7 @@ function initTournamentPage() {
     await showDBOnChain();
   });
   backBtn?.addEventListener("click", () => {
-    navigateTo("/homelogin");
+    navigateTo("/home");
   });
 }
 async function testTournamentDB() {
@@ -4652,7 +4652,17 @@ function initRouter() {
   });
   currentPath = window.location.pathname;
   window.addEventListener("popstate", (event) => {
+<<<<<<< HEAD
+    const path = window.location.pathname;
+    const previous = event.state?.previous;
+    const public_path = ["/", "/login", "/register"];
+    const is_private = !public_path.includes(path);
+    if (is_private && previous && public_path.includes(previous))
+      history.replaceState({ previous: "/home" }, "", "/home");
+    router();
+=======
     popState();
+>>>>>>> cd128435084d6eba185a4b199cf32dc30c1e5cbf
   });
   router();
 }
@@ -4691,13 +4701,13 @@ var init_router = __esm({
     init_p_tournament();
     init_logout();
     routes = [
-      { path: "/", view: HomeView, init: initHome },
+      { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
       { path: "/logout", init: initLogout },
       { path: "/dashboard", view: DashboardView },
       { path: "/register", view: RegisterView, init: initRegister },
       { path: "/registerok", view: RegisterValidView },
-      { path: "/homelogin", view: HomeLoginView, init: initHomePage },
+      { path: "/home", view: homeView, init: initHomePage },
       { path: "/game", view: GameView, init: initGame },
       { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
       { path: "/profile", view: ProfileView, init: initProfile },

@@ -14,7 +14,7 @@ export function initLogin()
 	
 	const success = await login(username, password, form)
    	if (success)
-		navigateTo("/homelogin");
+		navigateTo("/home");
     });
 }
 

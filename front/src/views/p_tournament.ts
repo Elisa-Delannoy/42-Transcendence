@@ -33,7 +33,7 @@ function initTournamentPage() {
   });
 
   backBtn?.addEventListener("click", () => {
-    navigateTo("/homelogin");
+    navigateTo("/home");
   });
 }
 

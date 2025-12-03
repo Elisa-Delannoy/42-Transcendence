@@ -25,7 +25,6 @@ import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getU
 import { logout } from "./routes/logout/logout";
 import { request } from "http";
 
-
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
 export const gameInfo = new GameInfo(db);
@@ -361,6 +360,7 @@ const start = async () => {
 		await users.createUserTable();
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();
+		await users.CreateUserIA();
 		// const hashedPassword = await bcrypt.hash("42", 12);
 		// users.addUser("42", "42", hashedPassword);
 	} catch (err) {

@@ -1,10 +1,10 @@
-import { HomeView, initHome } from "./views/home";
+import { View, init } from "./views/home";
 import { LoginView, initLogin } from "./views/login";
 import { DashboardView } from "./views/p_dashboard";
 import { RegisterValidView, RegisterView, initRegister } from "./views/register";
 import { GameView, initGame} from "./views/p_game";
 import { QuickGameView, initQuickGame, stopGame} from "./views/p_quickgame";
-import { HomeLoginView, initHomePage } from "./views/p_homelogin";
+import { homeView, initHomePage } from "./views/p_homelogin";
 import { ProfileView, initProfile} from "./views/p_profile";
 import { UpdateInfoView, initUpdateInfo } from "./views/p_updateinfo";
 import { TournamentView} from "./views/p_tournament";
@@ -13,13 +13,13 @@ import { fromTwos } from "ethers";
 import { Statement } from "sqlite3";
 
 const routes = [
-  { path: "/", view: HomeView, init: initHome},
+  { path: "/", view: View, init: init},
   { path: "/login", view: LoginView, init:initLogin},
   { path: "/logout", init: initLogout},
   { path: "/dashboard", view: DashboardView },
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/registerok", view: RegisterValidView},
-  { path: "/homelogin", view: HomeLoginView, init: initHomePage},
+  { path: "/home", view: homeView, init: initHomePage},
   { path: "/game", view: GameView, init: initGame},
   { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
   { path: "/profile", view: ProfileView, init: initProfile},

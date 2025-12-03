@@ -1,14 +1,14 @@
 import { navigateTo } from "../router";
 
-export function HomeView(): string {
-  return (document.getElementById("homehtml") as HTMLTemplateElement).innerHTML;
+export function View(): string {
+  return (document.getElementById("html") as HTMLTemplateElement).innerHTML;
 }
 
-export async function initHome()
+export async function init()
 {
 	const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
 	if (res.ok)
 	{
-		navigateTo("/homelogin");
+		navigateTo("/home");
 	}
 }

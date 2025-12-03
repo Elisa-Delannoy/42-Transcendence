@@ -40,6 +40,34 @@ export class Users
 		`);
 	}
 
+	async CreateUserIA()
+	{
+		try
+		{
+			const result = await this.getIDUser(0);
+			return;
+		}
+		catch
+		{
+			const insertQuery = `
+    			INSERT INTO Users (user_id, pseudo, email, password, avatar, status, creation_date, modification_date, money, elo)
+        		VALUES (?,?,?,?,?,?,?,?,?,?)`;
+			const parameters = [
+			0,
+			"IA_Player",
+			"ia@system.local",
+			"AI_PASSWORD",  
+			"ai.png",
+			"online",
+			new Date().toISOString().replace("T", " ").split(".")[0],
+			new Date().toISOString().replace("T", " ").split(".")[0],
+			0,
+			1000
+			];
+			await this._db.execute(insertQuery, parameters);
+		}
+	}
+
 	async addUser(pseudo:string, email: string, password: string):Promise<void>
 	{
 		const query = `

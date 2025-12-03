@@ -37,7 +37,7 @@ async function initUpdateUsername() {
       });
 
       alert("Username updated successfully to <<  " + response.pseudo + "  >>");
-      navigateTo("/homelogin");
+      navigateTo("/home");
 
     } catch (err: any) {
       alert(err.message);
@@ -61,7 +61,7 @@ async function initUpdateEmail() {
       });
 
       alert("Username updated successfully to <<  " + response.email + "  >>");
-      navigateTo("/homelogin");
+      navigateTo("/home");
 
     } catch (err: any) {
       alert(err.message);
