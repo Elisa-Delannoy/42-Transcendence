@@ -47,7 +47,13 @@ COPY --from=build /app/dist ./
 COPY --from=build /app/front/public ./front/public
 
 # Copy all key, images, db, etc
-COPY . /app/
+# COPY . /app/
+COPY ./server.key ./server.key
+COPY ./server.cert ./server.cert
+COPY back/.env ./back/.env
+COPY back/uploads ./back/uploads
+COPY front/src/image ./front/src/image
+COPY front/*html ./front/
 
 # Expose backend port
 EXPOSE 3000
