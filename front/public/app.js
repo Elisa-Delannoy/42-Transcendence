@@ -228,10 +228,6 @@ function renderGameList(games) {
     });
   });
 }
-<<<<<<< HEAD
-=======
-var GameInstance;
->>>>>>> main
 var init_p_game = __esm({
   "front/src/views/p_game.ts"() {
     "use strict";
@@ -378,11 +374,6 @@ var init_gameInstance = __esm({
         } catch (err) {
           console.error("Error saving game:", err);
         }
-<<<<<<< HEAD
-=======
-        this.startBtn.disabled = true;
-        this.stopBtn.disabled = false;
->>>>>>> main
         this.audioCtx = new AudioContext();
         this.randomizeBall();
         if (this.role === "player1") {
@@ -600,7 +591,6 @@ var init_gameInstance = __esm({
     };
   }
 });
-<<<<<<< HEAD
 
 // node_modules/engine.io-parser/build/esm/commons.js
 var PACKET_TYPES, PACKET_TYPES_REVERSE, ERROR_PACKET;
@@ -4241,8 +4231,6 @@ var init_gameNetwork = __esm({
     };
   }
 });
-=======
->>>>>>> main
 
 // front/src/views/p_quickgame.ts
 function QuickGameView(params) {
@@ -4297,9 +4285,9 @@ var currentGame, net;
 var init_p_quickgame = __esm({
   "front/src/views/p_quickgame.ts"() {
     "use strict";
-    init_router();
     init_gameInstance();
     init_gameNetwork();
+    init_router();
     currentGame = null;
     net = null;
   }
@@ -4366,15 +4354,12 @@ async function initUpdateInfo() {
     method: "POST"
   });
   document.getElementById("profile-username").textContent = profil.pseudo;
-<<<<<<< HEAD
-=======
   await initUpdateUsername();
   await initUpdateEmail();
   await initUpdatePassword();
   await initAvatar();
 }
 async function initUpdateUsername() {
->>>>>>> main
   const formUsername = document.getElementById("change-username-form");
   formUsername.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -4574,16 +4559,10 @@ var init_logout = __esm({
 });
 
 // front/src/router.ts
-<<<<<<< HEAD
 function navigateTo(url2) {
-  const state = { previous: window.location.pathname };
-  history.pushState(state, "", url2);
-=======
-function navigateTo(url) {
   const state = { from: window.location.pathname };
-  history.pushState(state, "", url);
-  currentPath = url;
->>>>>>> main
+  history.pushState(state, "", url2);
+  currentPath = url2;
   router();
   const avatar = document.getElementById("profile-avatar");
   if (avatar)
