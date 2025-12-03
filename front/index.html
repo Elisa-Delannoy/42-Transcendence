@@ -148,16 +148,34 @@
 
 	<template id="homehtml">
 		<div class="w-full h-screen">
-		<header id="header-container"></header>
+			<header id="header-container"></header>
+			<main>
+				<h1 class="ml-40 text-6xl mt-20 font-bold mx-auto 
+				bg-linear-to-r from-amber-800 via-amber-600 to-orange-500 
+				bg-clip-text text-transparent drop-shadow-lg
+				hover:bg-linear-to-r hover:from-orange-500 hover:via-amber-800 hover:to-amber-600
+				animate-pulse">Welcome in Croiscendence</h1>
+				<p class="w-80 mt-12 ml-88 opacity-50">
+					You can start playing by clicking the button below, 
+					and view your profile information by clicking 
+					your avatar in the top-right corner.</p>
+				<button class="btn ml-104 mt-20 w-40" id="scroll-button">Start playing !</button>
+			</main>
 		</div>
-		<div>
+		<div id="gamepage">
 			<img src="/src/image/gamepage.jpg"
 				alt="gamepage"
 				class="absolute block dark:hidden -z-10 object-cover w-full h-screen">
-			<section class="flex flex-col items-end mr-12">
+			<section class="flex flex-col items-end mr-60 text-center">
 				<ul>
-					<li><a href="/game" data-link class="btn w-48">Game</a></li>
-					<li><a href="/tournament" data-link class="btn w-48">Tournament</a></li>
+					<li class="mt-20">
+						<h1 class="text-2xl">Local</h1>
+						<a href="/game" data-link class="btn w-48">Game</a>
+					</li>
+					<li class="mt-20">
+						<h1 class="text-2xl">Tournament</h1>
+						<a href="/tournament" data-link class="btn w-48">Tournament</a>
+					</li>
 				</ul>
 			</section>
 		</div>
@@ -171,28 +189,22 @@
 	<template id="profilehtml">
 		<div id="header-container"></div>
 		<main>
-			<h1>Page profile</h1>
-			<a href="/updateinfo" data-link class="btn mx-auto w-48">Update Profile</a>
-			<p><img id="profile-avatar" src="" alt="Your avatar" width="150"></span></p>
-			<p><strong>ID:</strong> <span id="profile-id"></span></p>
-			<p><strong>Username:</strong> <span id="profile-pseudo"></span></p>
-			<p><strong>Email:</strong> <span id="profile-email"></span></p>
-			<p><strong>Creation:</strong> <span id="profile-creation"></span></p>
-			<p><strong>Modification:</strong> <span id="profile-modification"></span></p>
-			<p><strong>Money:</strong> <span id="profile-money"></span></p>
-			<p><strong>ELO:</strong> <span id="profile-elo"></span></p>
-			<div class="relative inline-block text-left">
-			<div class="w-64">
-			<label for="statusSelect" class="inline-block text-sm font-medium text-gray-700 mb-2">
-				Status: 
-			</label>
-			<select id="profile-status"
-					class="inline-block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-				<option value="online">🟢 Online </option>
-				<option value="offline">⚪ Offline </option>
-				<option value="busy">🔴 Busy </option>
-			</select>
+			<div class="bg-amber-500/40 flex flex-col w-80 rounded-lg mt-2 mx-auto items-center">
+				<img class="rounded-full" id="profile-avatar" src="" alt="Your avatar" width="150">
+				<label for="statusSelect" class="inline-block text-sm font-medium text-gray-700 mb-2"></label>
+				<select id="profile-status"
+					class="inline-block rounded-md shadow-sm ring-2 ring-gray-700 focus:ring-amber-500 sm:text-sm">
+					<option value="online">🟢 Online </option>
+					<option value="offline">⚪ Offline </option>
+					<option value="busy">🔴 Busy </option>
+				</select>
+				<p class="font-bold mt-4">Username: <span class="font-normal" id="profile-pseudo"></span></p>
+				<p class="font-bold mt-4">Email: <span class="font-normal" id="profile-email"></span></p>
+				<p class="font-bold mt-4">Money: <span class="font-normal" id="profile-money"></span></p>
+				<p class="font-bold mt-4">ELO: <span class="font-normal" id="profile-elo"></span></p>
 			</div>
+			<div class="relative inline-block text-left">
+			<a href="/updateinfo" data-link class="btn mx-auto w-48">Update Profile</a>
 		</main>
 	</template>
 

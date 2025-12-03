@@ -38,7 +38,7 @@ const fastify = Fastify({
 const httpsAlwaysOpts: HttpsAlwaysOptions = {
   productionOnly: false,
   redirect:       false,
-  httpsPort:      8443
+  httpsPort:      3000
 }
 
 fastify.register(fastifyStatic, {

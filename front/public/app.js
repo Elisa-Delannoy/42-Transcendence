@@ -593,7 +593,28 @@ function homeView() {
   loadHeader();
   return document.getElementById("homehtml").innerHTML;
 }
+function smoothScrollTo(targetY, duration) {
+  const startY = window.scrollY;
+  const distance = targetY - startY;
+  const startTime = performance.now();
+  function animation(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+    window.scrollTo(0, startY + distance * ease);
+    if (progress < 1) {
+      requestAnimationFrame(animation);
+    }
+  }
+  requestAnimationFrame(animation);
+}
 async function initHomePage() {
+  const btn = document.getElementById("scroll-button");
+  const target = document.getElementById("gamepage");
+  btn.addEventListener("click", () => {
+    const targetY = target.getBoundingClientRect().top + window.scrollY;
+    smoothScrollTo(targetY, 1e3);
+  });
 }
 var init_p_homelogin = __esm({
   "front/src/views/p_homelogin.ts"() {
@@ -611,7 +632,6 @@ async function initProfile() {
   const profile = await genericFetch2("/api/private/profile", {
     method: "POST"
   });
-  document.getElementById("profile-id").textContent = profile.user_id;
   document.getElementById("profile-pseudo").textContent = profile.pseudo;
   document.getElementById("profile-email").textContent = profile.email;
   const select = document.getElementById("profile-status");
@@ -627,8 +647,6 @@ async function initProfile() {
       console.log("Status changed :", status);
     });
   }
-  document.getElementById("profile-creation").textContent = profile.creation_date;
-  document.getElementById("profile-modification").textContent = profile.modification_date;
   document.getElementById("profile-money").textContent = profile.money;
   document.getElementById("profile-elo").textContent = profile.elo;
 }
@@ -947,17 +965,7 @@ function initRouter() {
   });
   currentPath = window.location.pathname;
   window.addEventListener("popstate", (event) => {
-<<<<<<< HEAD
-    const path = window.location.pathname;
-    const previous = event.state?.previous;
-    const public_path = ["/", "/login", "/register"];
-    const is_private = !public_path.includes(path);
-    if (is_private && previous && public_path.includes(previous))
-      history.replaceState({ previous: "/home" }, "", "/home");
-    router();
-=======
     popState();
->>>>>>> cd128435084d6eba185a4b199cf32dc30c1e5cbf
   });
   router();
 }
