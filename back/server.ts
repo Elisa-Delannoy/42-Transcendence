@@ -18,11 +18,13 @@ import { getProfile, displayAvatar } from "./routes/profile/profile";
 import bcrypt from "bcryptjs";
 import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus } from "./routes/profile/getUpdate";
 import { logout } from "./routes/logout/logout";
-import { request } from "http";
+import { Friends } from "./DB/friend";
+import { displayFriendPage } from "./routes/friends/friends";
 
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
+export const friends = new Friends(db);
 export const gameInfo = new GameInfo(db);
 export const tournament = new Tournament(db);
 
@@ -75,10 +77,6 @@ fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply)
 // 	return { logged: false };
 // })
 
-// fastify.get("/", async (request, reply) => {
-//   return reply.sendFile("index.html");
-// });
-
 fastify.get("/api/checkLogin", async (request, reply) => {
 	return tokenOK(request, reply);
 });
@@ -128,6 +126,10 @@ fastify.post("/api/private/updateinfo/uploads", async (request, reply) => {
 fastify.get("/api/private/avatar", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await displayAvatar(request, reply);
 });
+
+fastify.post("/api/private/friend", async (request: FastifyRequest, reply: FastifyReply) => {
+	return await displayFriendPage(request.user!.user_id);
+})
 
 fastify.post("/api/private/game/create", async (request, reply) => {
 	const playerId = request.user?.user_id as any;
@@ -181,9 +183,8 @@ fastify.get("/api/logout", async (request, reply) => {
 	return await logout(request, reply);
 })
 
+
 fastify.setNotFoundHandler((request: FastifyRequest, reply: FastifyReply) => {
-	if (request.url.startsWith("/api"))
-		return reply.code(404).send({ error: "Not found" });
 	return reply.sendFile("index.html");
 })
 
@@ -197,10 +198,12 @@ const start = async () => {
 		// await users.deleteUserTable();
 		await gameInfo.deleteGameInfoTable();
 		await users.createUserTable();
+		await friends.createFriendsTable();
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();
 		// const hashedPassword = await bcrypt.hash("42", 12);
 		// users.addUser("42", "42", hashedPassword);
+		// friends.addFriendship(7, 11);
 	} catch (err) {
 		console.log(err);
 		fastify.log.error(err);

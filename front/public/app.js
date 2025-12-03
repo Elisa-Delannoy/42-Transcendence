@@ -853,6 +853,56 @@ var init_logout = __esm({
   }
 });
 
+// front/src/views/p_friends.ts
+function FriendsView() {
+  loadHeader();
+  return document.getElementById("friendshtml").innerHTML;
+}
+async function initFriends() {
+  try {
+    const myfriends = await genericFetch2("/api/private/friend", {
+      method: "POST"
+    });
+    const divNoFriend = document.getElementById("no-friend");
+    const divFriend = document.getElementById("friends");
+    if (myfriends.length === 0) {
+      divNoFriend.textContent = "No friends yet";
+      divFriend.classList.add("hidden");
+      divNoFriend.classList.remove("hidden");
+    } else {
+      divFriend.classList.remove("hidden");
+      divNoFriend.classList.add("hidden");
+      const ul = divFriend.querySelector("ul");
+      myfriends.forEach((friend) => {
+        const li = document.createElement("li");
+        li.textContent = friend.toString();
+        ul?.appendChild(li);
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+var init_p_friends = __esm({
+  "front/src/views/p_friends.ts"() {
+    "use strict";
+    init_router();
+  }
+});
+
+// front/src/views/error.ts
+function ErrorView() {
+  return document.getElementById("errorhtml").innerHTML;
+}
+function initError() {
+  console.log("dans errro page");
+}
+var init_error = __esm({
+  "front/src/views/error.ts"() {
+    "use strict";
+  }
+});
+
 // front/src/router.ts
 function navigateTo(url) {
   const state = { from: window.location.pathname };
@@ -921,10 +971,11 @@ function router() {
     if (typeof currentRoute.cleanup === "function")
       currentRoute.cleanup();
   }
+  console.log("pathname= ", location.pathname);
   const match = matchRoute(location.pathname);
+  console.log("match= ", match?.route.path);
   if (!match) {
-    const error = document.getElementById("error");
-    document.querySelector("#app").innerHTML = error.innerHTML;
+    navigateTo("/error");
     return;
   }
   const { route, params } = match;
@@ -985,19 +1036,23 @@ var init_router = __esm({
     init_p_updateinfo();
     init_p_tournament();
     init_logout();
+    init_p_friends();
+    init_error();
     routes = [
       { path: "/", view: HomeView, init: initHome },
       { path: "/login", view: LoginView, init: initLogin },
       { path: "/logout", init: initLogout },
-      { path: "/dashboard", view: DashboardView },
       { path: "/register", view: RegisterView, init: initRegister },
       { path: "/registerok", view: RegisterValidView },
       { path: "/homelogin", view: HomeLoginView, init: initHomePage },
-      { path: "/game", view: GameView, init: initGame },
-      { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
+      { path: "/dashboard", view: DashboardView },
+      { path: "/friends", view: FriendsView, init: initFriends },
       { path: "/profile", view: ProfileView, init: initProfile },
       { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },
-      { path: "/tournament", view: TournamentView }
+      { path: "/game", view: GameView, init: initGame },
+      { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
+      { path: "/tournament", view: TournamentView },
+      { path: "/error", view: ErrorView, init: initError }
     ];
     currentRoute = null;
   }
