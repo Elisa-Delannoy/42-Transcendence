@@ -4,7 +4,7 @@
   "type": "commonjs",
   "scripts": {
     "front": "npx esbuild front/src/main.ts --bundle --outfile=front/public/app.js --format=esm",
-    "css": "npx @tailwindcss/cli -i front/src/css/input.css -o front/public/output.css --watch",
+    "css": "npx @tailwindcss/cli -i front/src/css/input.css -o front/public/output.css",
     "back": "tsx back/server.ts"
   },
   "devDependencies": {
