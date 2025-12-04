@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
-export interface ServerGameState {
+export interface GameState {
 	ball: { x: number; y: number };
 	paddles: { player1: number; player2: number };
 	score: { player1: number; player2: number };
@@ -8,7 +8,7 @@ export interface ServerGameState {
 
 export class GameNetwork {
 	private socket: Socket;
-	private onStateCallback?: (state: ServerGameState) => void;
+	private onStateCallback?: (state: GameState) => void;
 
 /*
 onStateCallback est une fonction que le front va définir pour savoir
@@ -21,6 +21,7 @@ appelle-la avec state comme argument”.
 En gros, c’est un relais propre entre le socket et le front,
 pour que le front n’ait jamais à manipuler le socket directement.
 */
+	private onRoleCallback?: (role: "player1" | "player2") => void;
 
 	constructor(serverUrl: string, gameId: number) {
 		this.socket = io(serverUrl, { transports: ["websocket"] });
@@ -29,12 +30,20 @@ pour que le front n’ait jamais à manipuler le socket directement.
 			this.socket.emit("joinGame", gameId);
 		});
 
-		this.socket.on("state", (state: ServerGameState) => {
+		this.socket.on("assignRole", (role: "player1" | "player2") => {
+			this.onRoleCallback?.(role);
+		})
+
+		this.socket.on("state", (state: GameState) => {
 			this.onStateCallback?.(state);
 		});
 	}
 
-	onState(cb: (state: ServerGameState) => void) {
+	onRole(cb: (role: "player1" | "player2") => void) {
+		this.onRoleCallback = cb;
+	}
+
+	onState(cb: (state: GameState) => void) {
 		this.onStateCallback = cb;
 	}
 

@@ -1,4 +1,4 @@
-import { ServerGameState } from "./gameNetwork";
+import { GameState } from "./gameNetwork";
 
 export class GameRenderer {
 	private canvas: HTMLCanvasElement;
@@ -9,7 +9,7 @@ export class GameRenderer {
 		this.ctx = this.canvas.getContext("2d")!;
 	}
 
-	public draw(state: ServerGameState) {
+	public draw(state: GameState) {
 		this.clear();
 
 		if (state.paddles)

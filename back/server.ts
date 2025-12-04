@@ -10,7 +10,7 @@ import fastifyCookie from "@fastify/cookie";
 import { tokenOK } from "./middleware/jwt";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import bcrypt from "bcryptjs";
-import { games_map, createGame, joinGame, getPlayersId, endGame, updateGamePos, updateGameStatus, displayGameList, Game } from "./routes/game/game";
+import { games_map, createGame, joinGame, getPlayersId, endGame, displayGameList, ServerGame } from "./routes/game/game";
 import fs from "fs";
 import { Tournament } from './DB/tournament';
 import { uploadPendingTournaments } from "./routes/tournament/tournament.service";
@@ -23,7 +23,7 @@ import { getProfile, displayAvatar } from "./routes/profile/profile";
 import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus } from "./routes/profile/getUpdate";
 import { logout } from "./routes/logout/logout";
 import { request } from "http";
-import { setupSocket } from "./websockets/gamesocket";
+import { setupGameServer } from "./pong/gameServer";
 import { Friends } from "./DB/friend";
 import { displayFriendPage } from "./routes/friends/friends";
 
@@ -138,8 +138,7 @@ fastify.post("/api/private/friend", async (request: FastifyRequest, reply: Fasti
 })
 
 fastify.post("/api/private/game/create", async (request, reply) => {
-	const playerId = request.user?.user_id as any;
-	const gameId = createGame(playerId);
+	const gameId = createGame();
 	reply.send({ gameId });
 });
 
@@ -164,16 +163,10 @@ fastify.get("/api/private/game/list", async (request, reply) => {
 	return { games: list };
 })
 
-fastify.post("/api/private/game/update/pos", async (request, reply) => {
-	const { gameId, ballPos, paddlePos } = request.body as any;
-	updateGamePos(gameId, ballPos, paddlePos );
-	return { ok: true };
-});
-
 fastify.post("/api/private/game/update/status", async (request, reply) => {
 	const { id, status } = request.body as any;
 	const gameid = Number(id);
-	updateGameStatus(gameid, status);
+	// updateGameStatus(gameid, status);
 	return { message: "Game status updated!" };
 });
 
@@ -200,7 +193,7 @@ fastify.get("/api/logout", async (request, reply) => {
 const io = new Server(fastify.server, {
 			cors: { origin: "*" }
 		});
-setupSocket(io, games_map);
+setupGameServer(io);
 
 fastify.setNotFoundHandler((request: FastifyRequest, reply: FastifyReply) => {
 	return reply.sendFile("index.html");

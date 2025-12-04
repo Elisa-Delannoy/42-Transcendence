@@ -182,7 +182,7 @@ function initGame() {
     const { gameId } = await genericFetch2("/api/private/game/create", {
       method: "POST"
     });
-    navigateTo(`/quickgame/${gameId}`);
+    navigateTo(`/pongmatch/${gameId}`);
   });
   const gameListButton = document.getElementById("display-game-list");
   gameListButton?.addEventListener("click", async () => {
@@ -210,8 +210,6 @@ function renderGameList(games) {
   container.innerHTML = games.map((game) => `
 	<div class="game-item">
 		<p>Game #${game.id}</p>
-		<p>Player1 : ${game.player1.pseudo}</p>
-		<p>Player2 : ${game.player2.pseudo}</p>
 		<p>Status : ${game.state}</p>
 		<p>Date : ${game.createdAt}</p>
 		<button data-game-id="${game.id}" class="join-game-btn btn w-32">Rejoindre</button>
@@ -232,7 +230,7 @@ function renderGameList(games) {
       } catch (err) {
         console.error("Error saving game:", err);
       }
-      navigateTo(`/quickgame/${id}`);
+      navigateTo(`/pongmatch/${id}`);
     });
   });
 }
@@ -243,367 +241,57 @@ var init_p_game = __esm({
   }
 });
 
-// front/src/game/gameInstance.ts
-var GameInstance;
-var init_gameInstance = __esm({
-  "front/src/game/gameInstance.ts"() {
+// front/src/game/gameRenderer.ts
+var GameRenderer;
+var init_gameRenderer = __esm({
+  "front/src/game/gameRenderer.ts"() {
     "use strict";
-    init_router();
-    GameInstance = class {
-      constructor(gameID) {
-        this.networkStatus = "ok";
-        this.isPlaying = false;
-        this.anim = 0;
-        this.maxScore = 10;
-        this.increaseSpeed = -1.1;
-        this.maxAngle = Math.PI / 4;
-        this.startTime = 0;
-        this.elapsedTime = 0;
-        this.role = "player1";
-        // Game state
-        this.game = {
-          player1: {
-            id: 0,
-            y: 0,
-            movingUp: false,
-            movingDown: false,
-            speed: 5,
-            score: 0,
-            attraction: -2
-          },
-          player2: {
-            id: 0,
-            y: 0,
-            movingUp: false,
-            movingDown: false,
-            speed: 5,
-            score: 0,
-            attraction: 2
-          },
-          ball: {
-            x: 0,
-            y: 0,
-            r: 5,
-            speed: {
-              maxX: 25,
-              maxY: 1.6,
-              minY: -1.6,
-              x: 2,
-              y: 2
-            }
-          }
-        };
-        this.keydownHandler = (e) => this.onKeyDown(e);
-        this.keyupHandler = (e) => this.onKeyUp(e);
-        /** ============================================================
-         ** GAME LOOP
-         *============================================================ */
-        this.play = () => {
-          if (!this.isPlaying) {
-            this.stopTimer();
-            this.displayWinner();
-            return;
-          }
-          this.moveAll();
-          this.draw();
-          this.anim = requestAnimationFrame(this.play);
-        };
-        this.gameID = gameID;
-        this.canvas = document.querySelector("canvas");
+    GameRenderer = class {
+      constructor() {
+        this.canvas = document.getElementById("canvas");
         this.ctx = this.canvas.getContext("2d");
-        this.initPositions();
-        this.draw();
-        this.attachEvents();
       }
-      setNetworkStatus(s) {
-        this.networkStatus = s;
+      draw(state) {
+        this.clear();
+        if (state.paddles)
+          this.drawPaddles(state.paddles);
+        if (state.ball)
+          this.drawBall(state.ball);
+        if (state.score)
+          this.drawScore(state.score);
       }
-      getNetworkStatus() {
-        return this.networkStatus;
+      clear() {
+        this.drawCanvas();
+        this.drawMiddleLine();
       }
-      getId() {
-        return this.gameID;
+      drawCanvas() {
+        this.ctx.fillStyle = "black";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       }
-      getState() {
-        const { player1, player2, ball } = this.game;
-        return {
-          player1: { ...player1 },
-          player2: { ...player2 },
-          ball: { ...ball }
-        };
+      drawMiddleLine() {
+        this.ctx.strokeStyle = "white";
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.canvas.width / 2, 0);
+        this.ctx.lineTo(this.canvas.width / 2, this.canvas.height);
+        this.ctx.stroke();
       }
-      setNetwork(network, role) {
-        this.network = network;
-        this.role = role;
+      drawBall(ball) {
+        this.ctx.fillStyle = "white";
+        this.ctx.beginPath();
+        this.ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2);
+        this.ctx.fill();
       }
-      applyServerState(state) {
-        if (state.ball) {
-          this.game.ball.x = state.ball.x;
-          this.game.ball.y = state.ball.y;
-        }
-        if (state.paddles) {
-          if (typeof state.paddles.player1 === "number") this.game.player1.y = state.paddles.player1;
-          if (typeof state.paddles.player2 === "number") this.game.player2.y = state.paddles.player2;
-        }
-        if (state.score) {
-          if (typeof state.score.player1 === "number") this.game.player1.score = state.score.player1;
-          if (typeof state.score.player2 === "number") this.game.player2.score = state.score.player2;
-        }
+      drawPaddles(paddles) {
+        this.ctx.fillStyle = "white";
+        if (paddles.player1 !== void 0)
+          this.ctx.fillRect(10, paddles.player1, 10, 60);
+        if (paddles.player2 !== void 0)
+          this.ctx.fillRect(this.canvas.width - 20, paddles.player2, 10, 60);
       }
-      /** ============================================================
-       ** INIT
-       *============================================================ */
-      initPositions() {
-        this.game.player1.y = this.canvas.height / 2 - 30;
-        this.game.player2.y = this.canvas.height / 2 - 30;
-        this.game.ball.x = this.canvas.width / 2;
-        this.game.ball.y = this.canvas.height / 2;
-      }
-      attachEvents() {
-        document.addEventListener("keydown", this.keydownHandler);
-        document.addEventListener("keyup", this.keyupHandler);
-      }
-      /** ============================================================
-       ** START / STOP
-       *============================================================ */
-      async start() {
-        if (this.isPlaying) return;
-        this.isPlaying = true;
-        try {
-          const res = await genericFetch2("/api/private/game/update/status", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              id: this.gameID,
-              status: "playing"
-            })
-          });
-          console.log("Saved data:", res);
-        } catch (err) {
-          console.error("Error saving game:", err);
-        }
-        this.audioCtx = new AudioContext();
-        if (this.role === "player1") {
-          this.resetGame();
-          this.randomizeBall();
-          this.startTimer();
-        }
-        this.play();
-      }
-      stop() {
-        this.isPlaying = false;
-        cancelAnimationFrame(this.anim);
-        this.resetGame();
-      }
-      destroy() {
-        this.stop();
-        cancelAnimationFrame(this.anim);
-        document.removeEventListener("keydown", this.keydownHandler);
-        document.removeEventListener("keyup", this.keyupHandler);
-        console.log("Game destroyed and listeners removed");
-      }
-      getLocalPlayer() {
-        return this.role === "player1" ? this.game.player1 : this.game.player2;
-      }
-      /** ============================================================
-       ** TIMER
-       *============================================================ */
-      startTimer() {
-        this.startTime = Date.now();
-      }
-      stopTimer() {
-        this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1e3);
-      }
-      /** ============================================================
-       ** CONTROLS
-       *============================================================ */
-      onKeyDown(e) {
-        if (e.key === "w" || e.key === "W") this.getLocalPlayer().movingUp = true;
-        if (e.key === "s" || e.key === "S") this.getLocalPlayer().movingDown = true;
-      }
-      onKeyUp(e) {
-        if (e.key === "w" || e.key === "W") this.getLocalPlayer().movingUp = false;
-        if (e.key === "s" || e.key === "S") this.getLocalPlayer().movingDown = false;
-      }
-      /** ============================================================
-       ** GAME LOGIC
-       *============================================================ */
-      moveAll() {
-        this.movePlayer(this.getLocalPlayer());
-        this.moveBall();
-      }
-      movePlayer(player) {
-        if (!this.network) {
-          if (player.movingUp && player.y > 0) player.y -= player.speed;
-          if (player.movingDown && player.y + 60 < this.canvas.height) player.y += player.speed;
-          return;
-        }
-        if (player === this.getLocalPlayer()) {
-          this.network.sendPaddleMove(this.role === "player1" ? "player1" : "player2", player.y);
-        }
-      }
-      moveBall() {
-        const ball = this.game.ball;
-        if (ball.y > this.canvas.height || ball.y < 0) {
-          this.playSound(500, 60);
-          ball.speed.y *= -1;
-        }
-        if (ball.x > this.canvas.width - 5)
-          this.collide(this.game.player2, this.game.player1);
-        else if (ball.x < 5)
-          this.collide(this.game.player1, this.game.player2);
-        ball.x += ball.speed.x;
-        ball.y += ball.speed.y;
-        if (this.network) {
-          this.network.sendBallMove(this.game.ball.y, this.game.ball.x, this.game.ball.speed.x, this.game.ball.speed.y);
-        }
-      }
-      collide(player, otherPlayer) {
-        const ball = this.game.ball;
-        if (ball.y < player.y || ball.y > player.y + 60) {
-          this.playSound(300, 300);
-          this.resetPos();
-          otherPlayer.score++;
-          ball.speed.x = player.attraction;
-          if (otherPlayer.score === this.maxScore) this.isPlaying = false;
-        } else {
-          this.playSound(700, 80);
-          this.modifyBallAngle(player);
-          this.increaseBallSpeed();
-          if (this.network) {
-            this.network.sendBallMove(this.game.ball.y, this.game.ball.x, this.game.ball.speed.x, this.game.ball.speed.y);
-          }
-        }
-      }
-      /** ============================================================
-       ** UTILS FUNCTIONS
-       *============================================================ */
-      randomizeBall() {
-        const angle = Math.random() * (Math.PI / 3) - Math.PI / 6;
-        const speed = 4;
-        this.game.ball.speed.x = Math.cos(angle) * speed * (Math.random() < 0.5 ? -1 : 1);
-        this.game.ball.speed.y = Math.sin(angle) * speed;
-      }
-      resetPos() {
-        this.game.player1.y = this.canvas.height / 2 - 30;
-        this.game.player2.y = this.canvas.height / 2 - 30;
-        this.game.ball.x = this.canvas.width / 2;
-        this.game.ball.y = this.canvas.height / 2;
-        const b = this.game.ball;
-        b.speed.y = Math.random() * (b.speed.maxY - b.speed.minY) + b.speed.minY;
-      }
-      resetGame() {
-        this.resetPos();
-        this.game.player1.score = 0;
-        this.game.player2.score = 0;
-        this.draw();
-      }
-      increaseBallSpeed() {
-        const b = this.game.ball;
-        const sign = b.speed.x * this.increaseSpeed < 0 ? -1 : 1;
-        if (Math.abs(b.speed.x * this.increaseSpeed) > b.speed.maxX)
-          b.speed.x = b.speed.maxX * sign;
-        else
-          b.speed.x *= this.increaseSpeed;
-      }
-      modifyBallAngle(player) {
-        const paddleCenter = player.y + 30;
-        let hitPos = this.game.ball.y - paddleCenter;
-        const normalized = hitPos / 30;
-        const bounceAngle = normalized * this.maxAngle;
-        const speed = Math.sqrt(
-          this.game.ball.speed.x ** 2 + this.game.ball.speed.y ** 2
-        );
-        this.game.ball.speed.y = speed * Math.sin(bounceAngle);
-      }
-      playSound(freq, duration) {
-        const o = this.audioCtx.createOscillator();
-        const g = this.audioCtx.createGain();
-        o.connect(g);
-        g.connect(this.audioCtx.destination);
-        o.type = "square";
-        o.frequency.value = freq;
-        g.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
-        o.start();
-        o.stop(this.audioCtx.currentTime + duration / 1e3);
-      }
-      /** ============================================================
-       ** DRAW
-       *============================================================ */
-      draw() {
-        const ctx = this.ctx;
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        ctx.strokeStyle = "white";
-        ctx.beginPath();
-        ctx.moveTo(this.canvas.width / 2, 0);
-        ctx.lineTo(this.canvas.width / 2, this.canvas.height);
-        ctx.stroke();
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, this.game.player1.y, 10, 60);
-        ctx.fillRect(
-          this.canvas.width - 10,
-          this.game.player2.y,
-          10,
-          60
-        );
-        ctx.beginPath();
-        ctx.arc(this.game.ball.x, this.game.ball.y, 5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.font = "40px Verdana";
-        ctx.textAlign = "center";
-        ctx.fillText(`${this.game.player1.score}`, this.canvas.width * 0.43, 50);
-        ctx.fillText(`${this.game.player2.score}`, this.canvas.width * 0.57, 50);
-      }
-      /** ============================================================
-       ** ENDGAME
-       *============================================================ */
-      displayWinner() {
-        const ctx = this.ctx;
-        ctx.fillStyle = "white";
-        ctx.font = "40px Arial";
-        ctx.textAlign = "center";
-        let winnerId, loserId, winnerText;
-        if (this.game.player1.score > this.game.player2.score) {
-          winnerText = "Player 1 Wins!";
-          winnerId = 1;
-          loserId = 2;
-        } else {
-          winnerText = "Player 2 Wins!";
-          winnerId = 2;
-          loserId = 1;
-        }
-        ctx.fillText(winnerText, this.canvas.width / 2, this.canvas.height / 2);
-        this.sendGameResult(
-          winnerId,
-          loserId,
-          this.game.player1.score,
-          this.game.player2.score,
-          this.elapsedTime,
-          this.gameID
-        );
-      }
-      /** ============================================================
-       ** API
-       *============================================================ */
-      async sendGameResult(winnerId, loserId, winnerScore, loserScore, duration, id) {
-        try {
-          const res = await genericFetch2("/api/private/game/end", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              winner_id: winnerId,
-              loser_id: loserId,
-              winner_score: winnerScore,
-              loser_score: loserScore,
-              duration_game: duration,
-              id
-            })
-          });
-          console.log("Saved data:", res);
-        } catch (err) {
-          console.error("Error saving game:", err);
-        }
+      drawScore(score) {
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "40px Verdana";
+        this.ctx.fillText(`${score.player1} - ${score.player2}`, this.canvas.width / 2 - 20, 50);
       }
     };
   }
@@ -4181,147 +3869,123 @@ var init_gameNetwork = __esm({
     "use strict";
     init_esm5();
     GameNetwork = class {
-      constructor(serverUrl, game, gameId) {
-        this.lastSend = 0;
-        this.socket = lookup2(serverUrl, {
-          autoConnect: true,
-          transports: ["websocket"],
-          secure: true,
-          rejectUnauthorized: false
-        });
-        this.game = game;
-        this.gameId = gameId;
-        this.registerListeners();
-      }
-      registerListeners() {
+      constructor(serverUrl, gameId) {
+        this.socket = lookup2(serverUrl, { transports: ["websocket"] });
         this.socket.on("connect", () => {
-          console.log("[WS] connected:", this.socket.id);
-          this.socket.emit("joinGame", this.gameId);
-        });
-        this.socket.on("gameState", (state) => {
-          this.game.applyServerState(state);
+          this.socket.emit("joinGame", gameId);
         });
         this.socket.on("assignRole", (role) => {
-          console.log("My role:", role);
+          this.onRoleCallback?.(role);
         });
-        this.socket.on("paddleMove", (data) => {
-          const paddles = data.player === "player1" ? { player1: data.y } : { player2: data.y };
-          this.game.applyServerState({ paddles });
-        });
-        this.socket.on("ballMove", (pos) => {
-          this.game.applyServerState({ ball: { x: pos.x, y: pos.y } });
-        });
-        this.socket.on("updateScore", (score) => {
-          this.game.applyServerState({ score: { player1: score.scoreP1, player2: score.scoreP2 } });
-        });
-        this.socket.on("disconnect", (reason) => {
-          console.warn("[WS] disconnected", reason);
-        });
-        this.socket.on("connect_error", (err) => {
-          console.error("[WS] connect_error", err);
+        this.socket.on("state", (state) => {
+          this.onStateCallback?.(state);
         });
       }
-      /**
-       * Envoie un mouvement de paddle au serveur.
-       * On throttle pour éviter spam.
-       */
-      sendPaddleMove(player, y) {
-        const now = performance.now();
-        this.lastSend = now;
-        const payload = {
-          gameId: this.gameId,
-          player,
-          y
-        };
-        this.socket.emit("paddleMove", payload);
+      onRole(cb) {
+        this.onRoleCallback = cb;
       }
-      sendBallMove(y, x, speedX, speedY) {
-        const now = performance.now();
-        this.lastSend = now;
-        const payload = {
-          gameId: this.gameId,
-          y,
-          x,
-          speedX,
-          speedY
-        };
-        this.socket.emit("ballMove", payload);
+      onState(cb) {
+        this.onStateCallback = cb;
       }
-      updateScore(scoreP1, scoreP2) {
-        const now = performance.now();
-        this.lastSend = now;
-        const payload = {
-          gameId: this.gameId,
-          scoreP1,
-          scoreP2
-        };
-        this.socket.emit("updateScore", payload);
+      sendInput(direction) {
+        this.socket.emit("input", { direction });
+      }
+      join(gameId) {
+        this.socket.emit("joinGame", gameId);
       }
       disconnect() {
         this.socket.disconnect();
+      }
+      getSocket() {
+        return this.socket;
       }
     };
   }
 });
 
-// front/src/views/p_quickgame.ts
-function QuickGameView(params) {
-  loadHeader();
-  return document.getElementById("quickgamehtml").innerHTML;
-}
-function initQuickGame(params) {
-  const gameID = params?.id;
-  if (currentGame) {
-    currentGame.destroy();
-    currentGame = null;
-  }
-  const serverUrl = "https://localhost:3000";
-  currentGame = new GameInstance(gameID);
-  net = new GameNetwork(serverUrl, currentGame, Number(gameID));
-  net["socket"].on("assignRole", (role) => {
-    if (currentGame && net)
-      currentGame.setNetwork(net, role);
-  });
-  net["socket"].emit("joinGame", gameID);
-  net["socket"].on("startGame", () => {
-    console.log("phoque it");
-    if (currentGame)
-      currentGame.start();
-  });
-}
-async function stopGame() {
-  if (currentGame) {
-    const id = currentGame.getId();
-    currentGame.destroy();
-    currentGame = null;
-    try {
-      const res = await genericFetch2("/api/private/game/update/status", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id,
-          status: "error"
-        })
-      });
-      console.log("Saved data:", res);
-    } catch (err) {
-      console.error("Error saving game:", err);
-    }
-  }
-  if (net) {
-    if (net["socket"]) net["socket"].disconnect();
-    net = null;
-  }
-}
-var currentGame, net;
-var init_p_quickgame = __esm({
-  "front/src/views/p_quickgame.ts"() {
+// front/src/game/gameInstance.ts
+var GameInstance;
+var init_gameInstance = __esm({
+  "front/src/game/gameInstance.ts"() {
     "use strict";
-    init_gameInstance();
+    GameInstance = class {
+      constructor() {
+        this.role = null;
+        this.currentState = {
+          ball: { x: 0, y: 0 },
+          paddles: { player1: 0, player2: 0 },
+          score: { player1: 0, player2: 0 }
+        };
+        this.network = null;
+      }
+      setNetwork(network, role) {
+        this.network = network;
+        this.role = role;
+      }
+      applyServerState(state) {
+        this.currentState = { ...this.currentState, ...state };
+      }
+      getCurrentState() {
+        return this.currentState;
+      }
+      sendInput(direction) {
+        if (!this.network || !this.role)
+          return;
+        this.network.sendInput(direction);
+      }
+    };
+  }
+});
+
+// front/src/views/p_pongmatch.ts
+function PongMatchView(params) {
+  loadHeader();
+  return document.getElementById("pongmatchhtml").innerHTML;
+}
+function initPongMatch(params) {
+  const gameID = params?.id;
+  const serverUrl = "https://localhost:3000";
+  currentGame = new GameInstance();
+  renderer = new GameRenderer();
+  net = new GameNetwork(serverUrl, Number(gameID));
+  net.onRole((role) => {
+    if (net)
+      currentGame?.setNetwork(net, role);
+  });
+  net.join(Number(gameID));
+  net.onState((state) => {
+    if (!currentGame || !renderer)
+      return;
+    currentGame.applyServerState(state);
+    renderer.draw(currentGame.getCurrentState());
+  });
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "w" || e.key === "W")
+      currentGame?.sendInput("up");
+    if (e.key === "s" || e.key === "S")
+      currentGame?.sendInput("down");
+  });
+  window.addEventListener("keyup", () => {
+    currentGame?.sendInput("stop");
+  });
+}
+function stopGame() {
+  net?.disconnect();
+  net = null;
+  renderer = null;
+  currentGame = null;
+}
+var renderer, net, currentGame;
+var init_p_pongmatch = __esm({
+  "front/src/views/p_pongmatch.ts"() {
+    "use strict";
+    init_gameRenderer();
     init_gameNetwork();
     init_router();
-    currentGame = null;
+    init_gameInstance();
+    renderer = null;
     net = null;
+    currentGame = null;
   }
 });
 
@@ -4766,7 +4430,7 @@ var init_router = __esm({
     init_p_dashboard();
     init_register();
     init_p_game();
-    init_p_quickgame();
+    init_p_pongmatch();
     init_p_homelogin();
     init_p_profile();
     init_p_updateinfo();
@@ -4786,7 +4450,7 @@ var init_router = __esm({
       { path: "/profile", view: ProfileView, init: initProfile },
       { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },
       { path: "/game", view: GameView, init: initGame },
-      { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
+      { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
       { path: "/tournament", view: TournamentView },
       { path: "/error", view: ErrorView, init: initError }
     ];

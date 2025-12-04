@@ -1,48 +1,38 @@
-export const games_map = new Map<number, Game>();
+export const games_map = new Map<number, ServerGame>();
 import { GameInfo } from "./../../DB/gameinfo";
 import { users } from '../../server';
 import { Socket } from "socket.io";
+import { GameState } from "../../pong/gameEngine";
 
-export class Game {
+export class ServerGame {
 
 	id: number;
-	idPlayer1: number;
-	idPlayer2: number;
-	ballPos: { x: number, y: number};
-	ballSpeed: { x: number, y: number};
-	paddlePos: { player1: number, player2: number};
-	score: { player1: number, player2: number};
-	status: string;
+	idPlayer1: number | null;
+	idPlayer2: number | null;
+	status: "waiting" | "playing" | "finished";
 	gameDate: string;
 	sockets: { player1: string | null, player2: string | null };
 
-	constructor(id: number, playerId1: number, playerId2: number)
+	state: GameState;
+
+	constructor(id: number, width = 600, height = 480)
 	{
 		this.id = id;
-		this.idPlayer1 = playerId1;
-		this.idPlayer2 = playerId2;
-		this.ballPos = { x: 0, y: 0};
-		this.ballSpeed = { x: 0, y: 0};
-		this.paddlePos = { player1: 0, player2: 0};
-		this.score = { player1: 0, player2: 0};
+		this.idPlayer1 = null;
+		this.idPlayer2 = null;
 		this.status = "waiting";
 		this.gameDate = new Date().toISOString().replace("T", " ").split(".")[0];
 		this.sockets = { player1: null, player2: null };
-	}
-
-	update(data: any) {
-		this.ballPos = data.ballPos;
-		this.paddlePos = data.paddlePos;
+		
+		this.state = {
+			ball: { x: width / 2, y: height / 2, speedX: 2, speedY: 2 },
+			paddles: { player1: height / 2 - 30, player2: height / 2 - 30 },
+			score: { player1: 0, player2: 0 },
+			width,
+			height
+		};
 	}
 }
-
-// enum GameS_maptatus
-// {
-// 	ongoing,
-// 	finished,
-// 	error,
-// 	waiting
-// }
 
 function getDate(id: number)
 {
@@ -67,29 +57,25 @@ export function getPlayersId(id: number)
 	return ids;
 }
 
-export function createGame(playerId: number)
+export function createGame()
 {
 	let id: number = 1;
 	while (games_map.has(id))
 		id++;
 	const gameId = id;
-	const game = new Game(gameId, playerId, NaN);
+	const game = new ServerGame(gameId);
 	games_map.set(gameId, game);
-	console.log([...games_map]);
+	console.log(["games_map", ...games_map]);
 	return gameId;
 }
 
-export function updateGamePos(gameId: number, ballPos: { x: number, y: number }, paddlePos: { player1: number, player2: number })
-{
-	games_map.get(gameId)?.update({ ballPos, paddlePos });
-}
 
-export function updateGameStatus(gameId: number, status: string)
-{
-	const game = games_map.get(gameId);
-	if (game)
-		game.status = status;
-}
+// export function updateGameStatus(gameId: number, status: string)
+// {
+// 	const game = games_map.get(gameId);
+// 	if (game)
+// 		game.status = status;
+// }
 
 export async function displayGameList()
 {
@@ -98,8 +84,6 @@ export async function displayGameList()
 	for (const game of games_map.values()) {
 		list.push({
 			id: game.id,
-			player1: await users.getPseudoFromId(game.idPlayer1),
-			player2: await users.getPseudoFromId(game.idPlayer2),
 			state: game.status,
 			createdAt: game.gameDate
 		});
@@ -113,7 +97,7 @@ export function joinGame(playerId: number, gameId: number)
 	const game = games_map.get(gameId);
 	if (game)
 		{
-			if (isNaN(game.idPlayer2))
+			if (!(game.idPlayer2))
 			game.idPlayer2 = playerId;
 		else
 			console.log("Game is already full.");
@@ -138,9 +122,9 @@ export async function endGame(winner_id: number, loser_id: number, winner_score:
 		loser = getIdPlayer1(gameid);
 		winner = getIdPlayer2(gameid);
 	}
-	const game = games_map.get(gameid);
-	if (game)
-		updateGameStatus(gameid, "finished");
+	// const game = games_map.get(gameid);
+	// // if (game)
+	// // 	updateGameStatus(gameid, "finished");
 	await gameInfo.finishGame(winner, loser, winner_score, loser_score, duration_game, gameDate);
 	games_map.delete(gameid);
 }

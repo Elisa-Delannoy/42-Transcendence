@@ -47,8 +47,6 @@ function renderGameList(games: any[]) {
 	container.innerHTML = games.map(game => `
 	<div class="game-item">
 		<p>Game #${game.id}</p>
-		<p>Player1 : ${game.player1.pseudo}</p>
-		<p>Player2 : ${game.player2.pseudo}</p>
 		<p>Status : ${game.state}</p>
 		<p>Date : ${game.createdAt}</p>
 		<button data-game-id="${game.id}" class="join-game-btn btn w-32">Rejoindre</button>

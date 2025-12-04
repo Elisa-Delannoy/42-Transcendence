@@ -1,9 +1,9 @@
 // import { genericFetch } from "../router";
-import { GameNetwork, ServerGameState } from "./gameNetwork";
+import { GameNetwork, GameState } from "./gameNetwork";
 
 export class GameInstance {
 	private role: "player1" | "player2" | null = null;
-	private currentState: ServerGameState = {
+	private currentState: GameState = {
 		ball: { x: 0, y: 0 },
 		paddles: { player1: 0, player2: 0 },
 		score: { player1: 0, player2: 0 }
@@ -15,7 +15,7 @@ export class GameInstance {
 		this.role = role;
 	}
 
-	applyServerState(state: Partial<ServerGameState>) {
+	applyServerState(state: Partial<GameState>) {
 		this.currentState = { ...this.currentState, ...state };
 	}
 

@@ -26,10 +26,16 @@ export function initPongMatch(params?: any) {
 	// 3. Connect to server
 	net = new GameNetwork(serverUrl, Number(gameID));
 
-	// 4. Join game room
+	//4. set role (player 1 or 2)
+	net.onRole((role) => {
+		if (net)
+			currentGame?.setNetwork(net, role);
+	})
+
+	// 5. Join game room
 	net.join(Number(gameID));
 
-	// 5. Receive game state from server
+	// 6. Receive game state from server
 	net.onState((state) => {
 		if (!currentGame || !renderer)
 			return;
@@ -41,7 +47,7 @@ export function initPongMatch(params?: any) {
 		renderer.draw(currentGame.getCurrentState());
 	});
 
-	// 6. Send inputs to server
+	// 7. Send inputs to server
 	window.addEventListener("keydown", (e) => {
 		if (e.key === "w" || e.key === "W")
 			currentGame?.sendInput("up");
