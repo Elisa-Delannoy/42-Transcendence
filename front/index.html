@@ -56,24 +56,24 @@
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 		</header>
-		<form id="login-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 h-80 mx-auto">
-	 		<h1 class="mt-4 dark:text-white font-bold text-xl">Welcome Back</h1>
+		<form id="login-form" class="flex flex-col rounded-lg text-center bg-white ring-4 ring-amber-300 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 h-80 mx-auto">
+	 		<h1 class="mt-4 text-amber-950 dark:text-white font-bold text-xl">Welcome Back</h1>
 			<div class="flex flex-col mx-10">
 				<div class="items-start text-start">
-					<h2 class="text-sm dark:text-white mt-3 mb-0.5">Username</h2>
+					<h2 class="text-sm text-amber-950 dark:text-white mt-3 mb-0.5">Username</h2>
 					<input class="input" 
 						id="username" name="username" placeholder="Enter your username" required />
 					<p class="text-red-600 text-xs mt-1 text-left block" id="username-loginmsg"></p>
 				</div>
 				<div class="items-start text-start">
-					<h2 class="text-sm dark:text-white mt-3 mb-0.5">Password</h2>
+					<h2 class="text-sm text-amber-950 dark:text-white mt-3 mb-0.5">Password</h2>
 					<input class="input" 
 						id="password" type="password" name="password" placeholder="••••••••" required />
 					<p class="text-red-600 text-xs mt-1 text-left block" id="password-loginmsg"></p>
 				</div>
 			</div>
 			<button class="btn mx-auto w-40 justify-end">Log in</button>
-			<a class="mt-1 dark:text-white hover:underline text-sm" href="/register" data-link>Create account ?</a>
+			<a class="mt-1 text-amber-950 dark:text-white hover:underline text-sm" href="/register" data-link>Create account ?</a>
 		</form>
 	</template>
 
@@ -89,38 +89,38 @@
 			</a>
 		</header>
 		<div class="register-container flex flex-col">
-			<form id="register-form" class="flex flex-col rounded-lg text-center bg-amber-600/20 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-20 w-100 h-120 mx-auto">
-				<h1 class="mt-4 dark:text-white font-bold text-xl">Registration<br> <span class="opacity-50 text-lg font-normal">Create your account to get started</span></h1>
+			<form id="register-form" class="flex flex-col rounded-lg text-center ring-4 ring-amber-300 bg-white dark:bg-black/20 backdrop-blur-lg shadow-lg mt-20 w-100 h-120 mx-auto">
+				<h1 class="mt-4 text-amber-950 dark:text-white font-bold text-xl">Registration<br> <span class="opacity-50 text-lg font-normal">Create your account to get started</span></h1>
 				<div class="flex flex-col mx-10">
 					<div class="items-start text-start">
-						<h2 class="text-sm dark:text-white mt-3 mb-0.5">Username</h2>
+						<h2 class="text-sm text-amber-950 dark:text-white mt-3 mb-0.5">Username</h2>
 						<input class="input"
 							type="text" name="username" placeholder="Select a username" required />
 						<p class="text-red-600 text-xs mt-1 text-left block" id="username-message"></p>
 					</div>
 					<div class="items-start text-start">
-						<h2 class="text-sm dark:text-white mt-3 mb-0.5">Email</h2>
+						<h2 class="text-sm text-amber-950 dark:text-white mt-3 mb-0.5">Email</h2>
 						<input class="input"
 							type="email" name="email" placeholder="your.email@example.com" required />
 						<p class="text-red-600 text-xs mt-1 text-left block" id="email-message"></p>
 					</div>
 					<div class="items-start text-start">
-						<h2 class="text-sm dark:text-white mt-3 mb-0.5">Password</h2>
+						<h2 class="text-sm text-amber-950 dark:text-white mt-3 mb-0.5">Password</h2>
 						<input class="input" 
 							type="password" name="password" placeholder="••••••••" required />
 							<p class="text-red-600 text-xs mt-1 text-left block" id="password-message"> </p>
 					</div>
 					<div class="items-start text-start">
-						<h2 class="text-sm dark:text-white mt-3 mb-0.5">Confirm Password</h2>
+						<h2 class="text-sm text-amber-950 dark:text-white mt-3 mb-0.5">Confirm Password</h2>
 						<input class="input"
 							type="password" name="confirm-password" placeholder="••••••••" required />
 						<p class="text-red-600 text-xs mt-1 text-left block" id="confirm-password-message"> </p>
 					</div>
 				</div>
 				<button class="btn mx-auto w-40 justify-end" type="submit">Register</button>
-				<a class="mt-1 dark:text-white hover:underline text-sm" href="/login" data-link>Already register ?</a>
+				<a class="mt-1 text-amber-950 dark:text-white hover:underline text-sm" href="/login" data-link>Already register ?</a>
 			</form>
-			<p id="rules-password" class="text-xs dark:text-white opacity-50 mt-2 text-center block">
+			<p id="rules-password" class="text-xs text-amber-950 dark:text-white opacity-50 mt-2 text-center block">
 				Password rules :<br>
 				- The password must contain at least 12 characters.<br>
 				- It must include at least one uppercase letter (A-Z), one lowercase letter (a-z) and one digit (0-9).<br>
@@ -149,17 +149,18 @@
 	<template id="homehtml">
 		<div class="w-full h-screen">
 			<header id="header-container"></header>
-			<main>
-				<h1 class="ml-40 text-6xl w-200 mt-20 font-bold mx-auto
-				bg-linear-to-r from-amber-800 via-amber-600 to-orange-500 
-				bg-clip-text text-transparent drop-shadow-lg
-				hover:bg-linear-to-r hover:from-orange-500 hover:via-amber-800 hover:to-amber-600
-				animate-pulse">Welcome in Croiscendence</h1>
-				<p class="w-80 mt-12 ml-88 opacity-50">
-					You can start playing by clicking the button below, 
+			<main class="w-[60%] ml-[5%] mt-40 text-center">
+				<h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mx-auto
+						bg-linear-to-r from-amber-800 via-amber-600 to-orange-500 
+						bg-clip-text text-transparent drop-shadow-lg
+						hover:bg-linear-to-r hover:from-orange-500 hover:via-amber-800 hover:to-amber-600
+						animate-pulse w-fit">Welcome in Croiscendence</h1>
+				<p class="mt-10 text-base md:text-lg lg:text-xl opacity-50
+          				 max-w-md mx-auto">
+					You can start playing by clicking the button below,
 					and view your profile information by clicking 
 					your avatar in the top-right corner.</p>
-				<button class="btn ml-104 mt-20 w-40" id="scroll-button">Start playing !</button>
+				<button class="btn w-40 mx-auto mt-20 block" id="scroll-button">Start playing !</button>
 			</main>
 		</div>
 		<div id="gamepage">
@@ -201,22 +202,50 @@
 	<template id="profilehtml">
 		<div id="header-container"></div>
 		<main>
-			<div class="bg-amber-500/40 flex flex-col w-80 rounded-lg mt-2 mx-auto items-center">
-				<img class="rounded-full" id="profile-avatar" src="" alt="Your avatar" width="150">
-				<label for="statusSelect" class="inline-block text-sm font-medium text-gray-700 mb-2"></label>
+			<div class="bg-[linear-gradient(180deg,var(--color-amber-500)_20%,var(--color-amber-50)_20%)] 
+						ring-4 ring-amber-400 flex flex-col w-100 h-180 rounded-lg mt-2 
+						mx-auto shadow-2xl items-center">
+				<img class="ring-4 ring-amber-50 mt-12 rounded-full shadow-xl" id="profile-avatar" src="" alt="Your avatar" width="150">
+				<!-- <label for="statusSelect" class="inline-block rounded-lg text-sm font-medium text-gray-700 mb-2"></label> -->
 				<select id="profile-status"
-					class="inline-block rounded-md shadow-sm ring-2 ring-gray-700 focus:ring-amber-500 sm:text-sm">
+					class="inline-block mt-4 rounded-md shadow-sm ring-2 bg-amber-500/20 ring-amber-400 sm:text-sm">
 					<option value="online">🟢 Online </option>
 					<option value="offline">⚪ Offline </option>
 					<option value="busy">🔴 Busy </option>
 				</select>
-				<p class="font-bold mt-4">Username: <span class="font-normal" id="profile-pseudo"></span></p>
-				<p class="font-bold mt-4">Email: <span class="font-normal" id="profile-email"></span></p>
-				<p class="font-bold mt-4">Money: <span class="font-normal" id="profile-money"></span></p>
-				<p class="font-bold mt-4">ELO: <span class="font-normal" id="profile-elo"></span></p>
+				<div class="flex flex-col">
+					<div class="flex items-start bg-amber-500/20 w-80 ring-1 h-16 pt-1 ring-amber-600 rounded-lg mt-8">
+						<img class="bg-blue-600 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/bonhomme.png" alt="">
+						<div>
+							<h1 class="ml-2 font-bold">Username</h1>
+							<p id="profile-pseudo" class="ml-2"></p>
+						</div>
+					</div>
+					<div class="flex items-start bg-amber-500/20 w-80 ring-1 h-16 pt-1 ring-amber-600 rounded-lg mt-8">
+						<img class="bg-blue-600 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/email.png" alt="">
+						<div>
+							<h1 class="ml-2 font-bold">Email</h1>
+							<p id="profile-email" class="ml-2"></p>
+						</div>
+					</div>
+					<div class="flex items-start bg-amber-500/20 w-80 ring-1 h-16 pt-1 ring-amber-600 rounded-lg mt-8">
+						<img class="bg-blue-600 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/euro.png" alt="">
+						<div>
+							<h1 class="ml-2 font-bold">Money</h1>
+							<p id="profile-money" class="ml-2"></p>
+						</div>
+					</div>
+					<div class="flex items-start bg-amber-500/20 w-80 ring-1 h-16 pt-1 ring-amber-600 rounded-lg mt-8">
+						<img class="bg-blue-600 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/coupe.png" alt="">
+						<div>
+							<h1 class="ml-2 font-bold">Elo</h1>
+							<p id="profile-elo" class="ml-2"></p>
+						</div>
+					</div>
+				</div>
+
+				<a href="/updateinfo" data-link class="btn mt-8 mx-auto w-40">Update Profile</a>
 			</div>
-			<div class="relative inline-block text-left">
-			<a href="/updateinfo" data-link class="btn mx-auto w-48">Update Profile</a>
 		</main>
 	</template>
 
