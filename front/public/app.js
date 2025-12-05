@@ -250,6 +250,8 @@ var init_gameRenderer = __esm({
       constructor() {
         this.canvas = document.getElementById("canvas");
         this.ctx = this.canvas.getContext("2d");
+        this.paddleWidth = 10;
+        this.paddleHeight = 60;
       }
       draw(state) {
         this.clear();
@@ -284,14 +286,16 @@ var init_gameRenderer = __esm({
       drawPaddles(paddles) {
         this.ctx.fillStyle = "white";
         if (paddles.player1 !== void 0)
-          this.ctx.fillRect(10, paddles.player1, 10, 60);
+          this.ctx.fillRect(0, paddles.player1, this.paddleWidth, this.paddleHeight);
         if (paddles.player2 !== void 0)
-          this.ctx.fillRect(this.canvas.width - 20, paddles.player2, 10, 60);
+          this.ctx.fillRect(this.canvas.width - 10, paddles.player2, this.paddleWidth, this.paddleHeight);
       }
       drawScore(score) {
         this.ctx.fillStyle = "white";
         this.ctx.font = "40px Verdana";
-        this.ctx.fillText(`${score.player1} - ${score.player2}`, this.canvas.width / 2 - 20, 50);
+        this.ctx.textAlign = "center";
+        this.ctx.fillText(`${score.player1}`, this.canvas.width * 0.43, 50);
+        this.ctx.fillText(`${score.player2}`, this.canvas.width * 0.57, 50);
       }
     };
   }

@@ -91,42 +91,6 @@ export class GameInstance {
 // 	private startTime = 0;
 // 	private elapsedTime = 0;
 
-// 	private network?: GameNetwork;
-// 	private role: "player1" | "player2" = "player1";
-
-// 	// Game state
-// 	private game: Game = {
-// 		player1: {
-// 			id: 0,
-// 			y: 0,
-// 			movingUp: false,
-// 			movingDown: false,
-// 			speed: 5,
-// 			score: 0,
-// 			attraction: -2
-// 		},
-// 		player2: {
-// 			id: 0,
-// 			y: 0,
-// 			movingUp: false,
-// 			movingDown: false,
-// 			speed: 5,
-// 			score: 0,
-// 			attraction: 2
-// 		},
-// 		ball: {
-// 			x: 0,
-// 			y: 0,
-// 			r: 5,
-// 			speed: {
-// 				maxX: 25,
-// 				maxY: 1.6,
-// 				minY: -1.6,
-// 				x: 2,
-// 				y: 2
-// 			}
-// 		}
-// 	};
 
 // 	private keydownHandler = (e: KeyboardEvent) => this.onKeyDown(e);
 // 	private keyupHandler = (e: KeyboardEvent) => this.onKeyUp(e);
@@ -142,44 +106,6 @@ export class GameInstance {
 // 		this.attachEvents();
 // 	}
 
-// 	public getId()
-// 	{
-// 		return this.gameID;
-// 	}
-
-// 	public getState() {
-// 		const { player1, player2, ball } = this.game;
-
-// 		return {
-// 			player1: { ...player1 },
-// 			player2: { ...player2 },
-// 			ball: { ...ball }
-// 		};
-// 	}
-
-// 	  public setNetwork(network: GameNetwork, role: "player1" | "player2") {
-// 		this.network = network;
-// 		this.role = role;
-// 	}
-
-// 	public applyServerState(state: {
-// 		ball?: { x: number; y: number; };
-// 		paddles?: { player1?: number; player2?: number; };
-// 		score?: { player1?: number; player2?: number; };
-// 		}) {
-// 		if (state.ball) {
-// 			this.game.ball.x = state.ball.x;
-// 			this.game.ball.y = state.ball.y;
-// 		}
-// 		if (state.paddles) {
-// 			if (typeof state.paddles.player1 === "number") this.game.player1.y = state.paddles.player1;
-// 			if (typeof state.paddles.player2 === "number") this.game.player2.y = state.paddles.player2;
-// 		}
-// 		if (state.score) {
-// 			if (typeof state.score.player1 === "number") this.game.player1.score = state.score.player1;
-// 			if (typeof state.score.player2 === "number") this.game.player2.score = state.score.player2;
-// 		}
-// 	}
 
 // 	/** ============================================================
 // 	 ** INIT
@@ -246,10 +172,6 @@ export class GameInstance {
 // 		console.log("Game destroyed and listeners removed");
 // 	}
 
-// 	private getLocalPlayer(): Player {
-// 		return this.role === "player1" ? this.game.player1 : this.game.player2;
-// 	}
-
 // 	/** ============================================================
 // 	 ** TIMER
 // 	 *============================================================ */
@@ -275,19 +197,6 @@ export class GameInstance {
 // 		this.draw();
 // 		this.anim = requestAnimationFrame(this.play);
 // 	};
-
-// 	/** ============================================================
-// 	 ** CONTROLS
-// 	 *============================================================ */
-// 	private onKeyDown(e: KeyboardEvent) {
-// 		if (e.key === "w" || e.key === "W") this.getLocalPlayer().movingUp = true;
-// 		if (e.key === "s" || e.key === "S") this.getLocalPlayer().movingDown = true;
-// 	}
-
-// 	private onKeyUp(e: KeyboardEvent) {
-// 		if (e.key === "w" || e.key === "W") this.getLocalPlayer().movingUp = false;
-// 		if (e.key === "s" || e.key === "S") this.getLocalPlayer().movingDown = false;
-// 	}
 
 // 	/** ============================================================
 // 	 ** GAME LOGIC
@@ -416,33 +325,7 @@ export class GameInstance {
 // 	/** ============================================================
 // 	 ** DRAW
 // 	 *============================================================ */
-// 	private draw() {
-// 		const ctx = this.ctx;
 
-// 		ctx.fillStyle = "black";
-// 		ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-// 		// middle line
-// 		ctx.strokeStyle = "white";
-// 		ctx.beginPath();
-// 		ctx.moveTo(this.canvas.width / 2, 0);
-// 		ctx.lineTo(this.canvas.width / 2, this.canvas.height);
-// 		ctx.stroke();
-
-// 		// paddles
-// 		ctx.fillStyle = "white";
-// 		ctx.fillRect(0, this.game.player1.y, 10, 60);
-// 		ctx.fillRect(
-// 			this.canvas.width - 10,
-// 			this.game.player2.y,
-// 			10,
-// 			60
-// 		);
-
-// 		// ball
-// 		ctx.beginPath();
-// 		ctx.arc(this.game.ball.x, this.game.ball.y, 5, 0, Math.PI * 2);
-// 		ctx.fill();
 
 // 		// score
 // 		ctx.font = "40px Verdana";

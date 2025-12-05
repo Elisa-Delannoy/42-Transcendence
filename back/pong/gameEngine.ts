@@ -23,20 +23,20 @@ export interface GameState {
 	height: number;
 }
 
+const paddleWidth = 10;
+const paddleHeight = 60;
+
 export function updateBall(game: GameState) {
-	// 1Déplacement
+	// ball movement
 	game.ball.x += game.ball.speedX;
 	game.ball.y += game.ball.speedY;
 
-	// Collision murs
+	// walls collision
 	if (game.ball.y <= 0 || game.ball.y >= game.height) {
 		game.ball.speedY *= -1;
 	}
 
-	// Collision paddles
-	const paddleWidth = 10;
-	const paddleHeight = 60;
-
+	// paddles collision
 	if (game.ball.x <= paddleWidth &&
 		game.ball.y >= game.paddles.player1 &&
 		game.ball.y <= game.paddles.player1 + paddleHeight) {
@@ -74,9 +74,9 @@ export function applyInput(
 ) {
 	const speed = 5;
 
-	if (direction === "up")
+	if (direction === "up" && game.paddles[player] > 0)
 		game.paddles[player] -= speed;
 
-	if (direction === "down")
+	if (direction === "down" && game.paddles[player] < (game.height - paddleHeight))
 		game.paddles[player] += speed;
 }
