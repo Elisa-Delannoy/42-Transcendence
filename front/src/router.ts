@@ -3,7 +3,7 @@ import { LoginView, initLogin } from "./views/login";
 import { DashboardView } from "./views/p_dashboard";
 import { RegisterValidView, RegisterView, initRegister } from "./views/register";
 import { GameView, initGame} from "./views/p_game";
-import { QuickGameView, initQuickGame, stopGame} from "./views/p_quickgame";
+import { PongMatchView, initPongMatch, stopGame} from "./views/p_pongmatch";
 import { homeView, initHomePage } from "./views/p_homelogin";
 import { ProfileView, initProfile} from "./views/p_profile";
 import { UpdateInfoView, initUpdateInfo } from "./views/p_updateinfo";
@@ -26,7 +26,7 @@ const routes = [
   { path: "/profile", view: ProfileView, init: initProfile},
   { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo},
   { path: "/game", view: GameView, init: initGame},
-  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
+  { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
   { path: "/tournament", view: TournamentView},
   { path: "/error", view: ErrorView, init:initError},
 
@@ -123,8 +123,6 @@ export function router() {
 		document.querySelector("#app")!.innerHTML = route.view(params);
 	route.init?.(params);
 	currentRoute = route;
-	// if (!currentRoute.cleanup) {
-	// 	currentRoute.cleanup = () => {};}
 }
 
 export function initRouter() {

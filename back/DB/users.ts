@@ -136,6 +136,15 @@ export class Users
 		return updatedUser;
 	}
 
+	async getPseudoFromId(id: number)
+	{
+		const infos: any[] = await this._db.query(`SELECT pseudo FROM Users WHERE user_id = ?`, [id])
+		if (infos.length  === 0)
+			return [];
+		else
+			return infos[0];
+	}
+
 	async updateEmail(id: number, newEmail: string): Promise<IUsers>
 	{
 		if (!newEmail || newEmail.trim() === '') {

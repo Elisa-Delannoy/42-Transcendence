@@ -1,0 +1,71 @@
+import { GameState } from "./gameNetwork";
+
+export class GameRenderer {
+	private canvas: HTMLCanvasElement;
+	private ctx: CanvasRenderingContext2D;
+	private paddleWidth: number;
+	private paddleHeight: number;
+
+	constructor() {
+		this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
+		this.ctx = this.canvas.getContext("2d")!;
+		this.paddleWidth = 10;
+		this.paddleHeight = 60;
+	}
+
+	public draw(state: GameState) {
+		this.clear();
+
+		if (state.paddles)
+			this.drawPaddles(state.paddles);
+
+		if (state.ball)
+			this.drawBall(state.ball);
+
+		if (state.score)
+			this.drawScore(state.score);
+	}
+
+	private clear() {
+		this.drawCanvas();
+		this.drawMiddleLine();
+	}
+
+	private drawCanvas() {
+		this.ctx.fillStyle = "black";
+		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+
+	private drawMiddleLine() {
+		this.ctx.strokeStyle = "white";
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.canvas.width / 2, 0);
+		this.ctx.lineTo(this.canvas.width / 2, this.canvas.height);
+		this.ctx.stroke();
+	}
+
+	private drawBall(ball: { x: number; y: number }) {
+		this.ctx.fillStyle = "white";
+		this.ctx.beginPath();
+		this.ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2);
+		this.ctx.fill();
+	}
+
+	private drawPaddles(paddles: { player1?: number; player2?: number }) {
+		this.ctx.fillStyle = "white";
+
+		if (paddles.player1 !== undefined)
+			this.ctx.fillRect(0, paddles.player1, this.paddleWidth, this.paddleHeight);
+
+		if (paddles.player2 !== undefined)
+			this.ctx.fillRect(this.canvas.width - 10, paddles.player2, this.paddleWidth, this.paddleHeight);
+	}
+
+	private drawScore(score: { player1: number; player2: number }) {
+		this.ctx.fillStyle = "white";
+		this.ctx.font = "40px Verdana";
+		this.ctx.textAlign = "center";
+		this.ctx.fillText(`${score.player1}`, this.canvas.width * 0.43, 50);
+		this.ctx.fillText(`${score.player2}`, this.canvas.width * 0.57, 50);
+	}
+}
