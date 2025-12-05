@@ -88,6 +88,40 @@ function DashboardView() {
   loadHeader();
   return document.getElementById("dashboardhtml").innerHTML;
 }
+async function initDashboard() {
+  const container = document.getElementById("game-list");
+  if (!container)
+    return;
+  try {
+    const response = await fetch(`/api/private/dashboard`, {
+      method: "GET"
+    });
+    const dashboards = await response.json();
+    container.innerHTML = "";
+    dashboards.forEach(async (game) => {
+      const item = document.createElement("div");
+      item.classList.add("dash");
+      console.log("test", game.WinnerPath);
+      item.innerHTML = `
+                <div class="flex flex-row">
+					<img class="rounded-full w-20 h-20" id="profile-avatar" src="${game.WinnerPath}" alt="Your avatar" width="70">
+					<section>
+					<div class="flex justify-between mb-2">
+						<span class="font-semibold">Winner: ${game.WinnerPseudo}</span>
+						<span>${new Date(game.GameDate).toLocaleDateString()}</span>
+					</div>
+					<p class="opacity-80">Winner Score: ${game.WinnerScore}</p>
+					<p class="opacity-80">Loser Score: ${game.LoserScore}</p>
+					<p class="opacity-60">Duration: ${game.GameDuration}</p>
+					</section>
+				</div>
+            `;
+      container.appendChild(item);
+    });
+  } catch (error) {
+    console.error("Erreur lors du chargement :", error);
+  }
+}
 var init_p_dashboard = __esm({
   "front/src/views/p_dashboard.ts"() {
     "use strict";
@@ -1074,7 +1108,7 @@ var init_router = __esm({
       { path: "/register", view: RegisterView, init: initRegister },
       { path: "/registerok", view: RegisterValidView },
       { path: "/home", view: homeView, init: initHomePage },
-      { path: "/dashboard", view: DashboardView },
+      { path: "/dashboard", view: DashboardView, init: initDashboard },
       { path: "/friends", view: FriendsView, init: initFriends },
       { path: "/profile", view: ProfileView, init: initProfile },
       { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },

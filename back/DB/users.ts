@@ -57,7 +57,7 @@ export class Users
 			"IA_Player",
 			"ia@system.local",
 			"AI_PASSWORD",  
-			"ai.png",
+			"12.png",
 			"online",
 			new Date().toISOString().replace("T", " ").split(".")[0],
 			new Date().toISOString().replace("T", " ").split(".")[0],

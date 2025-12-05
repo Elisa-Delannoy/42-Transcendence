@@ -1,6 +1,6 @@
 import Fastify, { FastifyRequest, FastifyReply } from "fastify";
 import fastifyStatic from "@fastify/static";
-import { join } from "path";
+import path, { join } from "path";
 import  { ManageDB } from "./DB/manageDB";
 import { Users } from './DB/users';
 import { manageLogin } from './routes/login/login';
@@ -21,6 +21,8 @@ import { logout } from "./routes/logout/logout";
 import { Friends } from "./DB/friend";
 import { displayFriendPage, displayFriendAvatar } from "./routes/friends/friends";
 import { dashboardInfo } from "./routes/dashboard/dashboard";
+import { request } from "http";
+import { getAvatarFromID } from "./routes/avatar/avatar";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -62,8 +64,26 @@ fastify.register(multipart, {
 	}
 })
 
+fastify.register(async function (instance) {
+
+  instance.register(fastifyStatic, {
+    root: join(__dirname, "uploads"),
+    prefix: "/files/",
+    index: false,
+  });
+
+});
+
 fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
 	if (request.url.startsWith("/api/private")) {
+		const user = await tokenOK(request, reply);
+		if (user !== null)
+			request.user = user;
+	}
+})
+
+fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
+	if (request.url.startsWith("/files")) {
 		const user = await tokenOK(request, reply);
 		if (user !== null)
 			request.user = user;
@@ -133,7 +153,6 @@ fastify.post("/api/private/friend", async (request: FastifyRequest, reply: Fasti
 	// 	request.myfriends = friends;
 	// return friends;
 })
-
 
 fastify.get("/api/private/avatar/:id", async (request: FastifyRequest, reply: FastifyReply) => {
 	await displayFriendAvatar(request, reply);
@@ -207,7 +226,7 @@ const start = async () => {
 		console.log(`Server running on port ${PORT}`);
 		await db.connect();
 		// await users.deleteUserTable();
-		await gameInfo.deleteGameInfoTable();
+		// await gameInfo.deleteGameInfoTable();
 		await users.createUserTable();
 		await friends.createFriendsTable();
 		await gameInfo.createGameInfoTable();
