@@ -166,7 +166,14 @@ fastify.get("/api/private/avatar/:id", async (request: FastifyRequest, reply: Fa
 
 fastify.post("/api/private/game/create", async (request, reply) => {
 	const playerId = request.user?.user_id as any;
-	const gameId = createGame(Number(playerId));
+	const { vsAI } = request.body as { vsAI: boolean };
+	let gameId: number;
+	console.log(`vsAI is: ${vsAI}`);
+	if (vsAI) {
+		gameId = createGame(Number(playerId), { vsAI: true });
+	} else {
+		gameId = createGame(Number(playerId), { vsAI: false });
+	}
 	reply.send({ gameId });
 });
 
@@ -228,7 +235,7 @@ const start = async () => {
 		await friends.createFriendsTable();
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();
-		await users.CreateUserIA();
+		//await users.CreateUserIA();
 		// const hashedPassword = await bcrypt.hash("42", 12);
 		// users.addUser("42", "42", hashedPassword);
 		// friends.deleteFriendTable();

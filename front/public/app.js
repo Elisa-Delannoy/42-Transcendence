@@ -297,8 +297,11 @@ function GameLocalinit() {
   });
   const pvaiButton = document.getElementById("pvai");
   pvaiButton?.addEventListener("click", async () => {
+    const vsAI = true;
     const { gameId } = await genericFetch2("/api/private/game/create", {
-      method: "POST"
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ vsAI })
     });
     navigateTo(`/pongmatch/${gameId}`);
   });
@@ -356,8 +359,10 @@ var init_gameRenderer = __esm({
         this.ctx.fillStyle = "white";
         if (paddles.player1 !== void 0)
           this.ctx.fillRect(0, paddles.player1, this.paddleWidth, this.paddleHeight);
-        if (paddles.player2 !== void 0)
+        if (paddles.player2 !== void 0) {
+          this.ctx.fillStyle = "#6B8AA4";
           this.ctx.fillRect(this.canvas.width - 10, paddles.player2, this.paddleWidth, this.paddleHeight);
+        }
       }
       drawScore(score) {
         this.ctx.fillStyle = "white";

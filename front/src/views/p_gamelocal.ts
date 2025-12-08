@@ -16,8 +16,11 @@ export function GameLocalinit() {
 
 	const pvaiButton = document.getElementById("pvai");
 	pvaiButton?.addEventListener("click", async () => {
+		const vsAI = true;
 		const { gameId } = await genericFetch("/api/private/game/create", {
-			method: "POST"
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ vsAI }),
 		});
 		navigateTo(`/pongmatch/${gameId}`);
 	});

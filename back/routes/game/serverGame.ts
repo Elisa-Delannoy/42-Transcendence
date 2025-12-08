@@ -4,6 +4,8 @@ import { users } from '../../server';
 import { Socket } from "socket.io";
 import { GameState } from "../../pong/gameEngine";
 
+let maxGameId = 0;
+
 export class ServerGame {
 	id: number;
 	idPlayer1: number;
@@ -12,7 +14,7 @@ export class ServerGame {
 	gameDate: string;
 	sockets: { player1: string | null, player2: string | null };
 
-	state: GameState;
+	state: GameState & { aiLastUpdate?: number };
 
 	constructor(id: number, width = 600, height = 480)
 	{
@@ -26,9 +28,10 @@ export class ServerGame {
 		this.state = {
 			ball: { x: width / 2, y: height / 2, speedX: 2, speedY: 2 },
 			paddles: { player1: height / 2 - 30, player2: height / 2 - 30 },
-			score: { player1: 0, player2: 0, max: 1 },
+			score: { player1: 0, player2: 0, max: 4 },
 			width,
-			height
+			height,
+			aiLastUpdate: 0
 		};
 	}
 }
@@ -56,14 +59,14 @@ export function getPlayersId(id: number)
 	return ids;
 }
 
-export function createGame(PlayerId: number)
+export function createGame(PlayerId: number, options: { vsAI: boolean }): number 
 {
-	let id: number = 1;
-	while (games_map.has(id))
-		id++;
-	const gameId = id;
+	maxGameId++;
+	const gameId = maxGameId;
 	const game = new ServerGame(gameId);
 	game.idPlayer1 = PlayerId;
+	if (options.vsAI)
+		game.idPlayer2 = -1;
 	games_map.set(gameId, game);
 	// console.log(["games_map", ...games_map]);
 	return gameId;
@@ -104,6 +107,6 @@ export async function endGame(winner_id: number, loser_id: number, winner_score:
 	loser_score: number, duration_game: number, gameid: number, gameInfo: GameInfo): Promise<void>
 {
 	const gameDate: any = getDate(Number(gameid));
-	await gameInfo.finishGame(winner_id, loser_id, winner_score, loser_score, duration_game, gameDate);
+	await gameInfo.finishGame(gameid, winner_id, loser_id, winner_score, loser_score, duration_game, gameDate);
 	games_map.delete(gameid);
 }
