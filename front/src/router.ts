@@ -2,7 +2,8 @@ import { View, init } from "./views/home";
 import { LoginView, initLogin } from "./views/login";
 import { DashboardView } from "./views/p_dashboard";
 import { RegisterValidView, RegisterView, initRegister } from "./views/register";
-import { GameView, initGame} from "./views/p_game";
+import { GameOnlineView, GameOnlineinit} from "./views/p_gameonline";
+import { GameLocalView, GameLocalinit} from "./views/p_gamelocal";
 import { PongMatchView, initPongMatch, stopGame} from "./views/p_pongmatch";
 import { homeView, initHomePage } from "./views/p_homelogin";
 import { ProfileView, initProfile} from "./views/p_profile";
@@ -25,7 +26,8 @@ const routes = [
   { path: "/friends", view: FriendsView, init: initFriends },
   { path: "/profile", view: ProfileView, init: initProfile},
   { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo},
-  { path: "/game", view: GameView, init: initGame},
+  { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit},
+  { path: "/gamelocal", view: GameLocalView, init: GameLocalinit},
   { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
   { path: "/tournament", view: TournamentView},
   { path: "/error", view: ErrorView, init:initError},

@@ -170,20 +170,12 @@ fastify.post("/api/private/game/start", async (request, reply) => {
 fastify.get("/api/private/game/list", async (request, reply) => {
 	const list = await displayGameList();
 	return { games: list };
-})
-
-fastify.post("/api/private/game/end", async (request, reply) => {
-	const { winner_id, loser_id, winner_score, loser_score, duration_game, id } = request.body as any;
-
-	await endGame(winner_id, loser_id, winner_score, loser_score, duration_game, id, gameInfo);
-	return { message: "Game saved!" };
 });
-
 
 fastify.post("/api/private/tournament/add", (req, reply) => {
 	return tournamentService.updateTournament(req, reply);
-	});
-	  
+});
+
 fastify.get("/api/private/tournament/all", (req, reply) => {
 	return tournamentService.getAllTournamentsDetailed(req, reply);
 });

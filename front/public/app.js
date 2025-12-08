@@ -171,13 +171,13 @@ var init_register = __esm({
   }
 });
 
-// front/src/views/p_game.ts
-function GameView() {
+// front/src/views/p_gameonline.ts
+function GameOnlineView() {
   loadHeader();
-  return document.getElementById("gamehtml").innerHTML;
+  return document.getElementById("gameonlinehtml").innerHTML;
 }
-function initGame() {
-  const createGameButton = document.getElementById("create-game");
+function GameOnlineinit() {
+  const createGameButton = document.getElementById("create-onlinegame");
   createGameButton?.addEventListener("click", async () => {
     const { gameId } = await genericFetch2("/api/private/game/create", {
       method: "POST"
@@ -187,13 +187,6 @@ function initGame() {
   const gameListButton = document.getElementById("display-game-list");
   gameListButton?.addEventListener("click", async () => {
     loadGames();
-  });
-  const tournamentButton = document.getElementById("start-tournament");
-  tournamentButton?.addEventListener("click", async () => {
-    const { tournamentId } = await genericFetch2("/api/private/tournament/create", {
-      method: "POST"
-    });
-    navigateTo(`/tournament/${tournamentId}`);
   });
 }
 async function loadGames() {
@@ -234,8 +227,36 @@ function renderGameList(games) {
     });
   });
 }
-var init_p_game = __esm({
-  "front/src/views/p_game.ts"() {
+var init_p_gameonline = __esm({
+  "front/src/views/p_gameonline.ts"() {
+    "use strict";
+    init_router();
+  }
+});
+
+// front/src/views/p_gamelocal.ts
+function GameLocalView() {
+  loadHeader();
+  return document.getElementById("gamelocalhtml").innerHTML;
+}
+function GameLocalinit() {
+  const pvpButton = document.getElementById("pvp");
+  pvpButton?.addEventListener("click", async () => {
+    const { gameId } = await genericFetch2("/api/private/game/create", {
+      method: "POST"
+    });
+    navigateTo(`/pongmatch/${gameId}`);
+  });
+  const pvaiButton = document.getElementById("pvai");
+  pvaiButton?.addEventListener("click", async () => {
+    const { gameId } = await genericFetch2("/api/private/game/create", {
+      method: "POST"
+    });
+    navigateTo(`/pongmatch/${gameId}`);
+  });
+}
+var init_p_gamelocal = __esm({
+  "front/src/views/p_gamelocal.ts"() {
     "use strict";
     init_router();
   }
@@ -4456,7 +4477,8 @@ var init_router = __esm({
     init_login();
     init_p_dashboard();
     init_register();
-    init_p_game();
+    init_p_gameonline();
+    init_p_gamelocal();
     init_p_pongmatch();
     init_p_homelogin();
     init_p_profile();
@@ -4476,7 +4498,8 @@ var init_router = __esm({
       { path: "/friends", view: FriendsView, init: initFriends },
       { path: "/profile", view: ProfileView, init: initProfile },
       { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },
-      { path: "/game", view: GameView, init: initGame },
+      { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit },
+      { path: "/gamelocal", view: GameLocalView, init: GameLocalinit },
       { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
       { path: "/tournament", view: TournamentView },
       { path: "/error", view: ErrorView, init: initError }

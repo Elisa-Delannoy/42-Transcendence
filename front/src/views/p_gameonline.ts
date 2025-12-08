@@ -1,12 +1,12 @@
 import { navigateTo, genericFetch, loadHeader } from "../router";
 
-export function GameView(): string {
+export function GameOnlineView(): string {
 	loadHeader();
-  	return (document.getElementById("gamehtml") as HTMLTemplateElement).innerHTML;
+  	return (document.getElementById("gameonlinehtml") as HTMLTemplateElement).innerHTML;
 }
 
-export function initGame() {
-	const createGameButton = document.getElementById("create-game");
+export function GameOnlineinit() {
+	const createGameButton = document.getElementById("create-onlinegame");
 	createGameButton?.addEventListener("click", async () => {
 		const { gameId } = await genericFetch("/api/private/game/create", {
 			method: "POST"
@@ -17,15 +17,6 @@ export function initGame() {
 	const gameListButton = document.getElementById("display-game-list");
 	gameListButton?.addEventListener("click", async () => {
 		loadGames();
-	});
-
-	const tournamentButton = document.getElementById("start-tournament");
-	tournamentButton?.addEventListener("click", async () => {
-		const { tournamentId } = await genericFetch("/api/private/tournament/create", {
-			method: "POST"
-		});
-
-		navigateTo(`/tournament/${tournamentId}`);
 	});
 }
 
