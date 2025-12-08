@@ -27,7 +27,6 @@ import { setupGameServer } from "./pong/pongServer";
 import { Friends } from "./DB/friend";
 import { displayFriendPage, displayFriendAvatar } from "./routes/friends/friends";
 import { dashboardInfo } from "./routes/dashboard/dashboard";
-import { request } from "http";
 import { getAvatarFromID } from "./routes/avatar/avatar";
 
 export const db = new ManageDB("./back/DB/database.db");
@@ -166,7 +165,8 @@ fastify.get("/api/private/avatar/:id", async (request: FastifyRequest, reply: Fa
 });
 
 fastify.post("/api/private/game/create", async (request, reply) => {
-	const gameId = createGame();
+	const playerId = request.user?.user_id as any;
+	const gameId = createGame(Number(playerId));
 	reply.send({ gameId });
 });
 
@@ -189,27 +189,12 @@ fastify.post("/api/private/game/start", async (request, reply) => {
 fastify.get("/api/private/game/list", async (request, reply) => {
 	const list = await displayGameList();
 	return { games: list };
-})
-
-fastify.post("/api/private/game/update/status", async (request, reply) => {
-	const { id, status } = request.body as any;
-	const gameid = Number(id);
-	// updateGameStatus(gameid, status);
-	return { message: "Game status updated!" };
 });
-
-fastify.post("/api/private/game/end", async (request, reply) => {
-	const { winner_id, loser_id, winner_score, loser_score, duration_game, id } = request.body as any;
-
-	await endGame(winner_id, loser_id, winner_score, loser_score, duration_game, id, gameInfo);
-	return { message: "Game saved!" };
-});
-
 
 fastify.post("/api/private/tournament/add", (req, reply) => {
 	return tournamentService.updateTournament(req, reply);
-	});
-	  
+});
+
 fastify.get("/api/private/tournament/all", (req, reply) => {
 	return tournamentService.getAllTournamentsDetailed(req, reply);
 });

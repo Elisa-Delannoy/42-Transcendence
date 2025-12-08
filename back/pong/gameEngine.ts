@@ -13,6 +13,7 @@ export interface Paddles {
 export interface Score {
 	player1: number;
 	player2: number;
+	max: number;
 }
 
 export interface GameState {

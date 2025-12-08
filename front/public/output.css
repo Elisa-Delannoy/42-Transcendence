@@ -29,10 +29,6 @@
     --color-green-700: oklch(52.7% 0.154 150.069);
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-blue-600: oklch(54.6% 0.245 262.881);
-<<<<<<< HEAD
-=======
-    --color-indigo-500: oklch(58.5% 0.233 277.117);
->>>>>>> phil
     --color-gray-200: oklch(92.8% 0.006 264.531);
     --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-gray-400: oklch(70.7% 0.022 261.325);
@@ -231,12 +227,6 @@
   .absolute {
     position: absolute;
   }
-<<<<<<< HEAD
-=======
-  .relative {
-    position: relative;
-  }
->>>>>>> phil
   .top-28 {
     top: calc(var(--spacing) * 28);
   }
@@ -400,6 +390,9 @@
   .w-32 {
     width: calc(var(--spacing) * 32);
   }
+  .w-36 {
+    width: calc(var(--spacing) * 36);
+  }
   .w-40 {
     width: calc(var(--spacing) * 40);
   }
@@ -548,15 +541,12 @@
   }
   .bg-white {
     background-color: var(--color-white);
-<<<<<<< HEAD
   }
   .bg-white\/90 {
     background-color: color-mix(in srgb, #fff 90%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-white) 90%, transparent);
     }
-=======
->>>>>>> phil
   }
   .bg-linear-to-r {
     --tw-gradient-position: to right;
@@ -611,15 +601,6 @@
   .pl-5 {
     padding-left: calc(var(--spacing) * 5);
   }
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-  .pl-\[5\%\] {
-    padding-left: 5%;
-  }
-=======
->>>>>>> phil
->>>>>>> 4446cdf55dc402b1c609a11138cb73dc315f9fbe
   .text-center {
     text-align: center;
   }
@@ -865,17 +846,10 @@
       }
     }
   }
-<<<<<<< HEAD
   .hover\:text-amber-700 {
     &:hover {
       @media (hover: hover) {
         color: var(--color-amber-700);
-=======
-  .hover\:text-blue-600 {
-    &:hover {
-      @media (hover: hover) {
-        color: var(--color-blue-600);
->>>>>>> phil
       }
     }
   }
@@ -953,9 +927,12 @@
       }
     }
   }
-  .dark\:bg-gray-800 {
+  .dark\:bg-gray-800\/90 {
     &:where(.dark, .dark *) {
-      background-color: var(--color-gray-800);
+      background-color: color-mix(in srgb, oklch(27.8% 0.033 256.848) 90%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-gray-800) 90%, transparent);
+      }
     }
   }
   .dark\:text-white {

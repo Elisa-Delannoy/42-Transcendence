@@ -1,6 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { applyInput, GameState, updateBall } from "./gameEngine";
-import { ServerGame, games_map } from "../routes/game/serverGame";
+import { ServerGame, games_map, endGame } from "../routes/game/serverGame";
+import { gameInfo } from "../server";
 
 const TICK_RATE = 16; //60 FPS (62.5 exactly : 1000ms / 16ms)
 
@@ -8,7 +9,7 @@ export function setupGameServer(io: Server) {
 	io.on("connection", (socket) => {
 		console.log("Client connected:", socket.id);
 
-		socket.on("joinGame", (gameId: number) => {
+		socket.on("joinGame", async (gameId: number) => {
 			let game = games_map.get(gameId);
 
 			// create game if doesn't exist
@@ -71,6 +72,7 @@ export function setupGameServer(io: Server) {
 					game!.sockets.player2 = null;
 				console.log("Client disconnected:", socket.id);
 			});
+
 		});
 	});
 
@@ -80,9 +82,30 @@ export function setupGameServer(io: Server) {
 			if (game.status === "playing") {
 				updateBall(game.state);
 				io.to(`game-${game.id}`).emit("state", serializeForClient(game.state));
+				checkForWinner(game, io);
 			}
 		}
 	}, TICK_RATE);
+}
+
+function checkForWinner(game: ServerGame, io: Server)
+{
+	if (game.state.score.player2 === game.state.score.max || game.state.score.player1 === game.state.score.max)
+		game.status = "finished";
+
+	if (game.status == "finished")
+	{
+		if (game.state.score.player1 > game.state.score.player2)
+		{
+			endGame(game.idPlayer1, game.idPlayer2, game.state.score.player1, game.state.score.player2, 5 , game.id, gameInfo);
+		}
+		else
+		{
+			endGame(game.idPlayer2, game.idPlayer1, game.state.score.player2, game.state.score.player1, 5 , game.id, gameInfo);
+		}
+		io.to(`game-${game.id}`).emit("gameOver");
+		io.in(`game-${game.id}`).socketsLeave(`game-${game.id}`);
+	}
 }
 
 function serializeForClient(state: GameState) {
