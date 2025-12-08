@@ -22,7 +22,8 @@ export class GameInfo
 	async createGameInfoTable() {
 		await this._db.execute(`
 			CREATE TABLE IF NOT EXISTS game_info (
-				game_id INTEGER PRIMARY KEY AUTOINCREMENT,
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				game_id INTEGER UNIQUE,
 				status INTEGER NOT NULL,
 				winner_id INTEGER,
 				loser_id INTEGER,
@@ -34,16 +35,17 @@ export class GameInfo
 		`);
 	};
 
-	async finishGame(winner_id: number, loser_id: number, winner_score: number,
+	async finishGame(gameId: number, winner_id: number, loser_id: number, winner_score: number,
 		loser_score: number, duration_game: number, gameDate: string): Promise<void>
 	{
 		const query = `
-			INSERT INTO game_info (status, winner_id, loser_id,
+			INSERT INTO game_info (game_id, status, winner_id, loser_id,
 			 date_game, duration_game, winner_score, loser_score)
-			VALUES (?,?,?,?,?,?,?)
+			VALUES (?,?,?,?,?,?,?,?)
 			`;
 
 		const parameters = [
+			gameId,
 			GameInfoStatus.finished,
 			winner_id,
 			loser_id,

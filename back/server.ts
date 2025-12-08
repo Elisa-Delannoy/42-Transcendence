@@ -165,7 +165,15 @@ fastify.get("/api/private/avatar/:id", async (request: FastifyRequest, reply: Fa
 });
 
 fastify.post("/api/private/game/create", async (request, reply) => {
-	const gameId = createGame();
+	const playerId = request.user?.user_id as any;
+	const { vsAI } = request.body as { vsAI: boolean };
+	let gameId: number;
+	console.log(`vsAI is: ${vsAI}`);
+	if (vsAI) {
+		gameId = createGame(Number(playerId), { vsAI: true });
+	} else {
+		gameId = createGame(Number(playerId), { vsAI: false });
+	}
 	reply.send({ gameId });
 });
 
@@ -188,27 +196,12 @@ fastify.post("/api/private/game/start", async (request, reply) => {
 fastify.get("/api/private/game/list", async (request, reply) => {
 	const list = await displayGameList();
 	return { games: list };
-})
-
-fastify.post("/api/private/game/update/status", async (request, reply) => {
-	const { id, status } = request.body as any;
-	const gameid = Number(id);
-	// updateGameStatus(gameid, status);
-	return { message: "Game status updated!" };
 });
-
-fastify.post("/api/private/game/end", async (request, reply) => {
-	const { winner_id, loser_id, winner_score, loser_score, duration_game, id } = request.body as any;
-
-	await endGame(winner_id, loser_id, winner_score, loser_score, duration_game, id, gameInfo);
-	return { message: "Game saved!" };
-});
-
 
 fastify.post("/api/private/tournament/add", (req, reply) => {
 	return tournamentService.updateTournament(req, reply);
-	});
-	  
+});
+
 fastify.get("/api/private/tournament/all", (req, reply) => {
 	return tournamentService.getAllTournamentsDetailed(req, reply);
 });
@@ -242,7 +235,7 @@ const start = async () => {
 		await friends.createFriendsTable();
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();
-		await users.CreateUserIA();
+		//await users.CreateUserIA();
 		// const hashedPassword = await bcrypt.hash("42", 12);
 		// users.addUser("42", "42", hashedPassword);
 		// friends.deleteFriendTable();

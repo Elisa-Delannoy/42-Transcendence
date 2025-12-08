@@ -171,11 +171,15 @@
 				<ul>
 					<li class="mt-20">
 						<h1 class="text-2xl">Local</h1>
-						<a href="/game" data-link class="btn w-48">Game</a>
+						<a href="/gamelocal" data-link class="btn w-48">Player or AI</a>
+					</li>
+					<li class="mt-20">
+						<h1 class="text-2xl">Online</h1>
+						<a href="/gameonline" data-link class="btn w-48">1 VS 1</a>
 					</li>
 					<li class="mt-20">
 						<h1 class="text-2xl">Tournament</h1>
-						<a href="/tournament" data-link class="btn w-48">Tournament</a>
+						<a href="/tournament" data-link class="btn w-48">8 Players</a>
 					</li>
 				</ul>
 			</section>
@@ -285,13 +289,21 @@
 		</main>
 	</template>
 
-	<template id="gamehtml">
+	<template id="gamelocalhtml">
 		<div id="header-container"></div>
-		<h1>Page game</h1>
+		<h1>Local Game</h1>
 		<div class="game-buttons flex justify-center">
-			<button class="btn mx-auto w-32" id="create-game">Create game</button>
+			<button class="btn mx-auto w-32" id="pvp">Player VS Player</button>
+			<button class="btn mx-auto w-32" id="pvai">Player VS AI</button>
+		</div>
+	</template>
+
+	<template id="gameonlinehtml">
+		<div id="header-container"></div>
+		<h1>Online games</h1>
+		<div class="game-buttons flex justify-center">
+			<button class="btn mx-auto w-32" id="create-onlinegame">Create game</button>
 			<button class="btn mx-auto w-32" id="display-game-list">Display game list</button>
-			<button class="btn mx-auto w-32" id="start-tournament">Start tournament</button>
 		</div>
 		<div id="game-list"></div>
 	</template>

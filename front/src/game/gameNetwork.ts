@@ -38,6 +38,12 @@ pour que le front n’ait jamais à manipuler le socket directement.
 		this.socket.on("state", (state: GameState) => {
 			this.onStateCallback?.(state);
 		});
+
+		this.socket.on("gameOver", () => {
+			console.log("Game over, closing socket...");
+			this.socket.close();
+	});
+
 	}
 
 	onRole(cb: (role: "player1" | "player2") => void) {

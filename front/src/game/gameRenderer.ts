@@ -58,7 +58,10 @@ export class GameRenderer {
 			this.ctx.fillRect(0, paddles.player1, this.paddleWidth, this.paddleHeight);
 
 		if (paddles.player2 !== undefined)
+		{
+			this.ctx.fillStyle = "#6B8AA4";
 			this.ctx.fillRect(this.canvas.width - 10, paddles.player2, this.paddleWidth, this.paddleHeight);
+		}
 	}
 
 	private drawScore(score: { player1: number; player2: number }) {
