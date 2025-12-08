@@ -27,7 +27,6 @@ import { setupGameServer } from "./pong/pongServer";
 import { Friends } from "./DB/friend";
 import { displayFriendPage, displayFriendAvatar } from "./routes/friends/friends";
 import { dashboardInfo } from "./routes/dashboard/dashboard";
-import { request } from "http";
 import { getAvatarFromID } from "./routes/avatar/avatar";
 
 export const db = new ManageDB("./back/DB/database.db");
