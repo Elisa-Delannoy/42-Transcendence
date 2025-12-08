@@ -118,7 +118,7 @@
 					</div>
 				</div>
 				<button class="btn mx-auto w-40 justify-end" type="submit">Register</button>
-				<a class="mt-1 text-amber-950 dark:text-white hover:underline text-sm" href="/login" data-link>Already register ?</a>
+				<a class="mt-1 text-amber-950 dark:text-white hover:underline text-sm" href="/login" data-link>Already registered ?</a>
 			</form>
 			<p id="rules-password" class="text-xs text-amber-950 dark:text-white opacity-50 mt-2 text-center block">
 				Password rules :<br>
@@ -188,7 +188,12 @@
 	
 	<template id="dashboardhtml">
 		<div id="header-container"></div>
-		<h1>Dashboard 🎮</h1>
+	<div class="p-6">
+    	<h2 class="text-2xl font-bold mb-4">Dernières parties</h2>
+		<div id="game-list" class="space-y-4">
+			
+		</div>
+	</div>				
 	</template>
 
 	<template id="friendshtml">

@@ -1,5 +1,15 @@
 import { ManageDB } from "./manageDB";
 
+export interface IGameInfo {
+    status: string;
+    winner_id: number;
+    loser_id: number;
+    date_game: string;
+    duration_game: number;
+    winner_score: number;
+    loser_score: number;
+}
+
 export class GameInfo
 {
 	private _db: ManageDB;
@@ -44,6 +54,29 @@ export class GameInfo
 		];
 
 		await this._db.execute(query, parameters);
+	}
+
+	async getGamesByUser(userId: number): Promise<IGameInfo[]>
+	{
+		const sql = `
+			SELECT status, winner_id, loser_id, date_game, duration_game, winner_score, loser_score
+			FROM game_info
+			WHERE winner_id = ? OR loser_id = ?
+			ORDER BY date_game DESC
+			LIMIT 10
+		`;
+
+		const rows = await this._db.query(sql, [userId, userId]);
+		
+		return rows.map((row: IGameInfo) => ({
+			status: row.status,
+			winner_id: row.winner_id,
+			loser_id: row.loser_id,
+			date_game: row.date_game,
+			duration_game: row.duration_game,
+			winner_score: row.winner_score,
+			loser_score: row.loser_score
+		}));
 	}
 
 	async deleteGameInfoTable()

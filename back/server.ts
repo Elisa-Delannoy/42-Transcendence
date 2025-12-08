@@ -1,6 +1,6 @@
 import Fastify, { FastifyRequest, FastifyReply } from "fastify";
 import fastifyStatic from "@fastify/static";
-import { join } from "path";
+import path, { join } from "path";
 import  { ManageDB } from "./DB/manageDB";
 import { Users } from './DB/users';
 import { manageLogin } from './routes/login/login';
@@ -26,6 +26,8 @@ import { request } from "http";
 import { setupGameServer } from "./pong/pongServer";
 import { Friends } from "./DB/friend";
 import { displayFriendPage, displayFriendAvatar } from "./routes/friends/friends";
+import { dashboardInfo } from "./routes/dashboard/dashboard";
+import { getAvatarFromID } from "./routes/avatar/avatar";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -68,8 +70,26 @@ fastify.register(multipart, {
 	}
 })
 
+fastify.register(async function (instance) {
+
+  instance.register(fastifyStatic, {
+    root: join(__dirname, "uploads"),
+    prefix: "/files/",
+    index: false,
+  });
+
+});
+
 fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
 	if (request.url.startsWith("/api/private")) {
+		const user = await tokenOK(request, reply);
+		if (user !== null)
+			request.user = user;
+	}
+})
+
+fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
+	if (request.url.startsWith("/files")) {
 		const user = await tokenOK(request, reply);
 		if (user !== null)
 			request.user = user;
@@ -140,7 +160,6 @@ fastify.post("/api/private/friend", async (request: FastifyRequest, reply: Fasti
 	// return friends;
 })
 
-
 fastify.get("/api/private/avatar/:id", async (request: FastifyRequest, reply: FastifyReply) => {
 	await displayFriendAvatar(request, reply);
 });
@@ -193,6 +212,9 @@ fastify.setNotFoundHandler((request: FastifyRequest, reply: FastifyReply) => {
 	return reply.sendFile("index.html");
 })
 
+fastify.get("/api/private/dashboard", async (request, reply) => {
+	return dashboardInfo(request, reply);
+});
 
 const start = async () => {
 	const PORT = 3000
@@ -201,7 +223,7 @@ const start = async () => {
 		console.log(`Server running on port ${PORT}`);
 		await db.connect();
 		// await users.deleteUserTable();
-		await gameInfo.deleteGameInfoTable();
+		// await gameInfo.deleteGameInfoTable();
 		await users.createUserTable();
 		await friends.createFriendsTable();
 		await gameInfo.createGameInfoTable();
@@ -210,8 +232,8 @@ const start = async () => {
 		// const hashedPassword = await bcrypt.hash("42", 12);
 		// users.addUser("42", "42", hashedPassword);
 		// friends.deleteFriendTable();
-		// friends.addFriendship(7, 11);
-		// friends.addFriendship(10, 7);
+		// friends.addFriendship(12, 11);
+		// friends.addFriendship(12, 7);
 	} catch (err) {
 		console.log(err);
 		fastify.log.error(err);

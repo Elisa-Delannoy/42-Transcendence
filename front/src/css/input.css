@@ -8,6 +8,12 @@
 }
 
 @layer components {
+	.dash {
+		@apply w-full max-w-3xl mx-auto bg-gray-800 text-white rounded-xl p-4 flex items-center justify-between shadow-lg;
+	}
+}
+
+@layer components {
 	.btn {
 		@apply  /* Mobile */
 			bg-amber-500 text-white text-center py-3

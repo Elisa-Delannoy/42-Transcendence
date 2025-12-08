@@ -1,6 +1,6 @@
 import { View, init } from "./views/home";
 import { LoginView, initLogin } from "./views/login";
-import { DashboardView } from "./views/p_dashboard";
+import { DashboardView, initDashboard } from "./views/p_dashboard";
 import { RegisterValidView, RegisterView, initRegister } from "./views/register";
 import { GameOnlineView, GameOnlineinit} from "./views/p_gameonline";
 import { GameLocalView, GameLocalinit} from "./views/p_gamelocal";
@@ -22,7 +22,7 @@ const routes = [
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/registerok", view: RegisterValidView},
   { path: "/home", view: homeView, init: initHomePage},
-  { path: "/dashboard", view: DashboardView },
+  { path: "/dashboard", view: DashboardView, init: initDashboard },
   { path: "/friends", view: FriendsView, init: initFriends },
   { path: "/profile", view: ProfileView, init: initProfile},
   { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo},
