@@ -153,4 +153,10 @@ export class Users
 		// console.log("dans upadte", updatedUser.status);
 		return updatedUser;
 	}
+
+	async searchMember(pseudo: string, id: number): Promise<IUsers[]> {
+		const query = ` SELECT * FROM Users WHERE user_id != ? AND LOWER(pseudo) LIKE LOWER(?) LIMIT 10`;
+		const members = await this._db.query(query, [id, `${pseudo}%`])
+		return members;
+	}
 }

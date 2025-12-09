@@ -4112,6 +4112,9 @@ async function initProfile() {
   const profile = await genericFetch2("/api/private/profile", {
     method: "POST"
   });
+  const avatar = document.getElementById("profile-avatar");
+  if (avatar)
+    avatar.src = "/api/private/avatar?ts=" + Date.now();
   document.getElementById("profile-pseudo").textContent = profile.pseudo;
   document.getElementById("profile-email").textContent = profile.email;
   const select = document.getElementById("profile-status");
@@ -4372,20 +4375,66 @@ async function initFriends() {
       divFriend.classList.remove("hidden");
       divNoFriend.classList.add("hidden");
       const ul = divFriend.querySelector("ul");
-      myfriends.forEach((friend) => {
+      const prepareInfo = myfriends.map(async (friend) => {
+        const avatarBin = await loadAvatar(friend.id);
         const li = document.createElement("li");
         li.textContent = "Pseudo: " + friend.pseudo + ", status: " + friend.webStatus + ", invitation: " + friend.friendship_status + ", friend since: " + friend.friendship_date;
         const img = document.createElement("img");
-        img.src = friend.avatar;
+        img.src = URL.createObjectURL(avatarBin);
         img.alt = `${friend.pseudo}'s avatar`;
         img.width = 64;
         li.appendChild(img);
-        ul?.appendChild(li);
+        return li;
       });
+      const allInfo = await Promise.all(prepareInfo);
+      allInfo.forEach((li) => ul?.appendChild(li));
     }
+    search();
   } catch (err) {
     console.log(err);
   }
+}
+async function search() {
+  const input = document.getElementById("searchInput");
+  const listedMember = document.getElementById("members");
+  if (!input || !listedMember)
+    return;
+  input.addEventListener("input", async () => {
+    const memberSearched = input.value.trim();
+    if (memberSearched === "") {
+      listedMember.innerHTML = "";
+      return;
+    }
+    try {
+      const existedMember = await genericFetch2("/api/private/friend/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ member: memberSearched })
+      });
+      listedMember.innerHTML = "";
+      if (existedMember.length === 0)
+        listedMember.innerHTML = "<li>No result</li>";
+      else {
+        existedMember.forEach((member) => {
+          const li = document.createElement("li");
+          li.textContent = member.pseudo;
+          listedMember.appendChild(li);
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+}
+async function loadAvatar(id) {
+  const res = await fetch("api/private/member/avatar", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ memberID: id })
+  });
+  const avatarBin = await res.blob();
+  return avatarBin;
 }
 var init_p_friends = __esm({
   "front/src/views/p_friends.ts"() {
