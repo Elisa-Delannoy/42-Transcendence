@@ -15,17 +15,6 @@ export async function getProfile(fastify: FastifyInstance, request: FastifyReque
 	} catch (error) {
 		fastify.log.error(error)
 		return reply.code(500).send({message: "Internal Server Error"});
- 	}
+	}
 }
 
-export async function displayAvatar( request: FastifyRequest, reply: FastifyReply) {
-	const avatar = request.user?.avatar;
-	if (!avatar)
-		return reply.code(404).send({message: "Avatar not found"});
-	const avatarPath = path.join(__dirname, "../../uploads", avatar);
-	const type = mime.lookup(avatarPath);
-	if (type !== "image/png" && type !== "image/jpeg")
-		return reply.code(404).send({message: "Extension file should be PNG or JPEG"});
-	const stream = fs.createReadStream(avatarPath);
-	return reply.type(type).send(stream);
-}

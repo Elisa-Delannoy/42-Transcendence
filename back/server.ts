@@ -19,15 +19,16 @@ import { Server } from "socket.io";
 import multipart from "@fastify/multipart"
 import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always";
 import * as tournamentService from "./routes/tournament/tournament.service";
-import { getProfile, displayAvatar } from "./routes/profile/profile";
+import { getProfile } from "./routes/profile/profile";
 import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus } from "./routes/profile/getUpdate";
 import { logout } from "./routes/logout/logout";
 import { setupGameServer } from "./pong/pongServer";
 import { Friends } from "./DB/friend";
-import { displayFriendPage, displayFriendAvatar, searchUser } from "./routes/friends/friends";
+import { displayFriendPage, searchUser } from "./routes/friends/friends";
 import { dashboardInfo } from "./routes/dashboard/dashboard";
 import { request } from "http";
-import { getAvatarFromID } from "./routes/avatar/avatar";
+import { displayAvatar } from "./routes/avatar/avatar";
+import { navigateTo } from "../front/src/router";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -160,8 +161,8 @@ fastify.post("/api/private/friend/search", async( request: FastifyRequest, reply
 	await searchUser(request, reply);
 })
 
-fastify.get("/api/private/avatar/:id", async (request: FastifyRequest, reply: FastifyReply) => {
-	await displayFriendAvatar(request, reply);
+fastify.post("/api/private/member/avatar", async (request: FastifyRequest, reply: FastifyReply) => {
+	await displayAvatar(request, reply);
 });
 
 fastify.post("/api/private/game/create", async (request, reply) => {

@@ -1,9 +1,6 @@
 import { db, friends, users } from '../../server';
 import { IFriends, IMyFriend } from '../../DB/friend';
 import { FastifyReply, FastifyRequest, FastifySerializerCompiler } from 'fastify';
-import path from "path";
-import fs from "fs";
-import mime from "mime-types";
 
 export async function displayFriendPage(request: FastifyRequest, reply: FastifyReply): Promise< IMyFriend[] | undefined> 
 {
@@ -44,31 +41,6 @@ async function allMyFriendsInfo(allMyFrd: Partial<IMyFriend>[]): Promise<IMyFrie
 		})
 	);
 	return myFriendsinfo;
-}
-
-export async function displayFriendAvatar( request: FastifyRequest, reply: FastifyReply) {
-	const friendID = Number((request.params as any).id)
-	const allFriend: IFriends[]= await friends.getMyFriends(request.user!.user_id);
-	const isFriend: boolean = allFriend.some((findThisFriend) => { 
-		return findThisFriend.user_id1 === friendID || findThisFriend.user_id2 == friendID;
-	});
-	if (!isFriend)
-		return reply.code(404).send({message: "Not your friend"});
-	try {
-		const avatar: string = (await users.getIDUser(friendID)).avatar;
-		if (!avatar)
-			return reply.code(404).send({message: "AVatar not found"});
-		const avatarPath = path.join(__dirname, "../../uploads", avatar);
-		const type = mime.lookup(avatarPath);
-		if (type !== "image/png" && type !== "image/jpeg")
-			return reply.code(404).send({message: "Extension file should be PNG or JPEG"});
-		const stream = fs.createReadStream(avatarPath);
-		// const etag = Date.now().toString();
-		return reply.type(type).send(stream);
-	}
-	catch (err) {
-		console.log(err);
-	}
 }
 
 export async function searchUser(request: FastifyRequest, reply: FastifyReply) {
