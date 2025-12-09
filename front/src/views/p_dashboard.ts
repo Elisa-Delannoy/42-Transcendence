@@ -21,40 +21,29 @@ export async function initDashboard()
         container.innerHTML = "";
 
         dashboards.forEach(async (game : any) => {
+			const template = document.getElementById("history-dashboard") as HTMLTemplateElement;
             const item = document.createElement("div") as HTMLDivElement;
             item.classList.add("dash");
-			// console.log("test", game.GameDate)
-            item.innerHTML = `
-					<!-- WINNER -->
-					<div class="flex items-center gap-4 w-1/3">
-						<img src="${game.WinnerPath}" alt="winner avatar"
-							class="w-16 h-16 rounded-full object-cover border-2 border-green-400">
-						
-						<div>
-							<p class="text-lg font-semibold text-green-300">${game.WinnerPseudo}</p>
-							<p class="text-2xl font-bold">${game.WinnerScore}</p>
-						</div>
-					</div>
+           	const clone = template.content.cloneNode(true);
+			item.appendChild(clone);
+			container.appendChild(item);
+			const winnerpath = document.getElementById("winnerpath") as HTMLImageElement;
+			const winnerscore = document.getElementById("winnerscore") as HTMLParagraphElement;
+			const winnerpseudo = document.getElementById("winnerpseudo") as HTMLParagraphElement;
+			const loserpath = document.getElementById("loserpath") as HTMLImageElement;
+			const loserscore = document.getElementById("loserscore") as HTMLParagraphElement;
+			const loserpseudo = document.getElementById("loserpseudo") as HTMLParagraphElement;
+			const date = document.getElementById("date") as HTMLParagraphElement;
+			const duration = document.getElementById("duration") as HTMLParagraphElement;
 
-					<!-- CENTER : DATE + DURÉE -->
-					<div class="flex flex-col items-center w-1/3">
-						<p class="text-sm text-gray-300">${new Date(game.DateGame).toLocaleDateString()}</p>
-						<p class="text-xs text-gray-400">Durée : ${game.GameDuration}</p>
-					</div>
-
-					<!-- LOSER -->
-					<div class="flex items-center gap-4 w-1/3 justify-end">
-						<div class="text-right">
-							<p class="text-lg font-semibold text-red-300">${game.LoserPseudo}</p>
-							<p class="text-2xl font-bold">${game.LoserScore}</p>
-						</div>
-
-						<img src="${game.LoserPath}" alt="loser avatar"
-							class="w-16 h-16 rounded-full object-cover border-2 border-red-400">
-					</div>
-            `;
-
-            container.appendChild(item);
+			winnerpath.src = game.WinnerPath;
+			winnerscore.textContent = game.WinnerScore;
+			winnerpseudo.textContent = game.WinnerPseudo;
+			loserpath.src = game.LoserPath;
+			loserscore.textContent = game.LoserScore;
+			loserpseudo.textContent = game.LoserPseudo;
+			date.textContent = new Date(game.DateGame).toLocaleDateString();
+			duration.textContent = "Durée : " + game.GameDuration;
         });
     } catch (error) {
         console.error("Erreur lors du chargement :", error);

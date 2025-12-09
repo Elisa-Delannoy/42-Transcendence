@@ -236,7 +236,7 @@ const start = async () => {
 		await friends.createFriendsTable();
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();
-		//await users.CreateUserIA();
+		await users.CreateUserIA();
 		// const hashedPassword = await bcrypt.hash("42", 12);
 		// users.addUser("42", "42", hashedPassword);
 		// friends.deleteFriendTable();

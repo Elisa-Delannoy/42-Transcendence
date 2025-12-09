@@ -60,11 +60,43 @@ export class Users
 		await this._db.execute(query, parameters);
 	}
 
+	async CreateUserIA()
+	{
+		const query = `
+			INSERT INTO Users (user_id, pseudo, email, password, avatar, status, creation_date, modification_date, money, elo)
+			VALUES (?,?,?,?,?,?,?,?,?,?)
+			ON CONFLICT(user_id) DO NOTHING
+		`;
+		const parameters = [
+		-1,
+		"AI_Player",
+		"ia@ia.ia",
+		"iapassiapass",
+		"ai.png",
+		"online",
+		new Date().toISOString().replace("T", " ").split(".")[0],
+		new Date().toISOString().replace("T", " ").split(".")[0],
+		0,
+		0
+		];
+		await this._db.execute(query, parameters);
+	}
+
 	async deleteUserTable()
 	{
 		const query = `DROP TABLE IF EXISTS Users`
 		await this._db.execute(query, []);
 	}
+
+	async deleteOneUser(userId: number)
+	{
+		const query = `
+			DELETE FROM Users
+			WHERE user_id = ?
+		`;
+		await this._db.execute(query, [userId]);
+	}
+
 
 	async getEmailUser(email: string)
 	{
