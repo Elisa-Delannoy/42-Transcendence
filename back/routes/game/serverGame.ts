@@ -1,7 +1,5 @@
 export const games_map = new Map<number, ServerGame>();
 import { GameInfo } from "../../DB/gameinfo";
-import { users } from '../../server';
-import { Socket } from "socket.io";
 import { GameState } from "../../pong/gameEngine";
 
 let maxGameId = 0;
@@ -70,7 +68,6 @@ export function createGame(PlayerId: number,  isLocal: boolean, options: { vsAI:
 	if (options.vsAI)
 		game.idPlayer2 = -1;
 	games_map.set(gameId, game);
-	// console.log(["games_map", ...games_map]);
 	return gameId;
 }
 
@@ -88,7 +85,6 @@ export async function displayGameList()
 			});
 		}
 	}
-	console.log("list :", list);
 	return list;
 }
 
