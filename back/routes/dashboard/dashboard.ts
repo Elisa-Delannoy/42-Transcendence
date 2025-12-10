@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { gameInfo } from '../../server';
 import { IGameInfo } from '../../DB/gameinfo';
-import { getAvatarFromID } from '../avatar/avatar';
+// import { getAvatarFromID } from '../avatar/avatar';
 import { users } from '../../server';
 
 export interface IDashBoard
@@ -38,8 +38,8 @@ export async function dashboardInfo(request: FastifyRequest, reply: FastifyReply
 				loserpseudo = await users.getIDUser(0);
 			else
 				loserpseudo = await users.getIDUser(game.loser_id);
-			const winnerPath = await getAvatarFromID(winnerpseudo.user_id);
-			const loserPath = await getAvatarFromID(loserpseudo.user_id);
+			const winnerPath = winnerpseudo.avatar;
+			const loserPath = loserpseudo.avatar;
 			return {
 				WinnerPseudo: winnerpseudo.pseudo,
 				WinnerPath: winnerPath,

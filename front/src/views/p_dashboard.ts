@@ -35,7 +35,6 @@ export async function initDashboard()
 			const loserpseudo = document.getElementById("loserpseudo") as HTMLParagraphElement;
 			const date = document.getElementById("date") as HTMLParagraphElement;
 			const duration = document.getElementById("duration") as HTMLParagraphElement;
-
 			winnerpath.src = game.WinnerPath;
 			winnerscore.textContent = game.WinnerScore;
 			winnerpseudo.textContent = game.WinnerPseudo;

@@ -17,7 +17,7 @@ export function initPongMatch(params?: any) {
 	const url = new URL(window.location.href);
 	const localMode = url.searchParams.get("local") === "1";
 
-	const serverUrl = "https://localhost:3000";
+	const serverUrl = "https://127.0.0.1:3000";
 
 	// 1. Create game for client
 	currentGame = new GameInstance();

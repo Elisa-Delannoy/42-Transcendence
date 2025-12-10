@@ -4034,7 +4034,7 @@ function initPongMatch(params) {
   const gameID = params?.id;
   const url2 = new URL(window.location.href);
   const localMode = url2.searchParams.get("local") === "1";
-  const serverUrl = "https://localhost:3000";
+  const serverUrl = "https://127.0.0.1:3000";
   currentGame = new GameInstance();
   renderer = new GameRenderer();
   if (localMode)

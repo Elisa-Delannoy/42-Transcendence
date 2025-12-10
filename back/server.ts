@@ -49,7 +49,7 @@ const fastify = Fastify({
 const httpsAlwaysOpts: HttpsAlwaysOptions = {
   productionOnly: false,
   redirect:       false,
-  httpsPort:      3002
+  httpsPort:      3000
 }
 
 fastify.register(fastifyStatic, {
@@ -209,7 +209,7 @@ fastify.get("/api/private/dashboard", async (request, reply) => {
 });
 
 const start = async () => {
-	const PORT = 3002
+	const PORT = 3000
 	try {
 		await fastify.listen({ port: PORT, host: "0.0.0.0" });
 		console.log(`Server running on port ${PORT}`);
