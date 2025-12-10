@@ -8,8 +8,6 @@ export function FriendsView(): string {
 	return (document.getElementById("friendshtml") as HTMLTemplateElement).innerHTML;
 }
 
-
-
 export async function initFriends() {
 	try {
 		const myfriends = await genericFetch("/api/private/friend", {
@@ -85,7 +83,14 @@ async function search(memberSearched: string) {
 		else {
 			existedMember.forEach((member: IUsers) => {
 				const li = document.createElement("li");
-				li.textContent = member.pseudo;
+				const img = document.createElement("img");
+			
+				// console.log("search av= ", member.avatar);
+  				img.src =  member.avatar;
+				img.alt = `${member.pseudo}'s avatar`;
+				img.className = "w-8 h-8 rounded-full object-cover";
+				li.textContent =" " + member.pseudo;
+				listedMember.appendChild(img);
 				listedMember.appendChild(li);
 			})
 		}

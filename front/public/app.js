@@ -4415,7 +4415,6 @@ async function initFriends() {
   }
 }
 function debounce(fn, delay) {
-  console.log("dasn debounce");
   let timeout;
   return (...args) => {
     clearTimeout(timeout);
@@ -4425,7 +4424,6 @@ function debounce(fn, delay) {
   };
 }
 function doSearch() {
-  console.log("dasn doseqrch");
   const input = document.getElementById("searchInput");
   if (!input)
     return;
@@ -4436,7 +4434,6 @@ function doSearch() {
   });
 }
 async function search(memberSearched) {
-  console.log("search lanc\xE9 avec:", memberSearched);
   const listedMember = document.getElementById("members");
   if (!listedMember)
     return;
@@ -4456,7 +4453,12 @@ async function search(memberSearched) {
     else {
       existedMember.forEach((member) => {
         const li = document.createElement("li");
-        li.textContent = member.pseudo;
+        const img = document.createElement("img");
+        img.src = member.avatar;
+        img.alt = `${member.pseudo}'s avatar`;
+        img.className = "w-8 h-8 rounded-full object-cover";
+        li.textContent = " " + member.pseudo;
+        listedMember.appendChild(img);
         listedMember.appendChild(li);
       });
     }
