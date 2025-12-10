@@ -9,6 +9,11 @@ export function FriendsView(): string {
 }
 
 export async function initFriends() {
+	doSearch();
+	myFriends();
+}
+
+async function myFriends() {
 	try {
 		const myfriends = await genericFetch("/api/private/friend", {
 			method: "POST",
@@ -16,28 +21,41 @@ export async function initFriends() {
 
 		const divNoFriend = document.getElementById("no-friend") as HTMLElement;
 		const divFriend = document.getElementById("friends") as HTMLElement;
+		const divPending = document.getElementById("pending") as HTMLElement;
 
-    	if (myfriends.length === 0) {
+		if (myfriends.length === 0) {
 			divNoFriend.textContent = "No friends yet";
 			divFriend.classList.add("hidden");
 			divNoFriend.classList.remove("hidden");
 		}
-    	else {
+		else {
 			divFriend.classList.remove("hidden");
 			divNoFriend.classList.add("hidden");
 			const ul = divFriend.querySelector("ul");
 			myfriends.forEach(async (friend: IMyFriend) => {
 				const li = document.createElement("li");
-      			li.textContent = "Pseudo: " + friend.pseudo + ", status: " + friend.webStatus + ", invitation: " + friend.friendship_status + ", friend since: " + friend.friendship_date;
+				li.textContent = "Pseudo: " + friend.pseudo + ", status: " + friend.webStatus + ", invitation: " + friend.friendship_status + ", friend since: " + friend.friendship_date;
 				const img = document.createElement("img");
-  				img.src =  friend.avatar;
+				img.src =  friend.avatar;
 				img.alt = `${friend.pseudo}'s avatar`;
-  				img.width = 64;
-  				li.appendChild(img)
-				ul?.appendChild(li)	
+				img.width = 64;
+				li.appendChild(img);
+				ul?.appendChild(li);
 			});
-  		}
-  		doSearch()
+		}
+		const ul = divPending.querySelector("ul");
+		myfriends.forEach(async (friend: IMyFriend) => {
+				if (friend.friendship_status === "pending") {
+					const li = document.createElement("li");
+					li.textContent = "Pseudo: " + friend.pseudo + ", invitation: " + friend.friendship_status;
+					const img = document.createElement("img");
+					img.src =  friend.avatar;
+					img.alt = `${friend.pseudo}'s avatar`;
+					img.width = 64;
+					li.appendChild(img);
+					ul?.appendChild(li);
+				}
+			});
 	}
 	catch (err) {
 		console.log(err);
@@ -83,14 +101,17 @@ async function search(memberSearched: string) {
 		else {
 			existedMember.forEach((member: IUsers) => {
 				const li = document.createElement("li");
+				li.className = "flex items-center gap-3 p-2 justify-center";
 				const img = document.createElement("img");
-			
-				// console.log("search av= ", member.avatar);
+				const span = document.createElement("span");
+				span.textContent = member.pseudo;
   				img.src =  member.avatar;
 				img.alt = `${member.pseudo}'s avatar`;
 				img.className = "w-8 h-8 rounded-full object-cover";
-				li.textContent =" " + member.pseudo;
-				listedMember.appendChild(img);
+				const button = toAddFriend(member.user_id);
+				li.appendChild(img);
+				li.appendChild(span);
+				li.appendChild(button);
 				listedMember.appendChild(li);
 			})
 		}
@@ -99,3 +120,48 @@ async function search(memberSearched: string) {
 		console.log(error);
 	}
 }
+
+function toAddFriend(id: number): HTMLButtonElement {
+	const button = document.createElement("button") as HTMLButtonElement;
+	button.textContent = "Add friend";
+	button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
+
+	button.addEventListener("click", async () => {
+		try {
+			await genericFetch("/api/private/friend/add", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ friendID: id })
+			});
+			button.textContent = "pending";
+			button.disabled = true;
+		}
+		catch (err) {
+			console.log(err);
+			button.disabled = false;
+		}
+	})
+	return button;
+}
+
+async function pending() {
+	try {
+		const myfriends = await genericFetch("/api/private/friend/pending", {
+			method: "GET",
+		});
+
+		myfriends.forEach(async (friend: IMyFriend) => {
+			const li = document.createElement("li");
+      		li.textContent = "Pseudo: " + friend.pseudo + ", status: " + friend.webStatus + ", invitation: " + friend.friendship_status + ", friend since: " + friend.friendship_date;
+			const img = document.createElement("img");
+  			img.src =  friend.avatar;
+			img.alt = `${friend.pseudo}'s avatar`;
+  			img.width = 64;
+  			li.appendChild(img)
+		});
+	}
+	catch (err) {
+		console.log(err);
+	}
+}
+

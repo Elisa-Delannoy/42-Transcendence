@@ -24,7 +24,7 @@ import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getU
 import { logout } from "./routes/logout/logout";
 import { setupGameServer } from "./pong/pongServer";
 import { Friends } from "./DB/friend";
-import { displayFriendPage, searchUser } from "./routes/friends/friends";
+import { displayFriendPage, searchUser, addFriend } from "./routes/friends/friends";
 import { dashboardInfo } from "./routes/dashboard/dashboard";
 import { request } from "http";
 import { navigateTo } from "../front/src/router";
@@ -49,7 +49,7 @@ const fastify = Fastify({
 const httpsAlwaysOpts: HttpsAlwaysOptions = {
   productionOnly: false,
   redirect:       false,
-  httpsPort:      3000
+  httpsPort:      3002
 }
 
 fastify.register(fastifyStatic, {
@@ -152,6 +152,10 @@ fastify.post("/api/private/friend", async (request: FastifyRequest, reply: Fasti
 	await displayFriendPage(request, reply);
 })
 
+fastify.post("/api/private/friend/add", async(request: FastifyRequest, reply: FastifyReply) => {
+	await addFriend(request, reply);
+})
+
 fastify.post("/api/private/friend/search", async( request: FastifyRequest, reply: FastifyReply) => {
 	await searchUser(request, reply);
 })
@@ -209,7 +213,7 @@ fastify.get("/api/private/dashboard", async (request, reply) => {
 });
 
 const start = async () => {
-	const PORT = 3000
+	const PORT = 3002
 	try {
 		await fastify.listen({ port: PORT, host: "0.0.0.0" });
 		console.log(`Server running on port ${PORT}`);

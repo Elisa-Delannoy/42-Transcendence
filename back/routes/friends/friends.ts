@@ -1,5 +1,5 @@
 import { db, friends, users } from '../../server';
-import { IFriends, IMyFriend } from '../../DB/friend';
+import { Friends, IFriends, IMyFriend } from '../../DB/friend';
 import { FastifyReply, FastifyRequest, FastifySerializerCompiler } from 'fastify';
 import { finished } from 'stream';
 
@@ -10,7 +10,6 @@ export async function displayFriendPage(request: FastifyRequest, reply: FastifyR
 		return (reply.send(infoFriends), undefined);
 	const allFriendID = friendsID(infoFriends, request.user!.user_id);
 	const allMyFriends = await allMyFriendsInfo(allFriendID);
-	// console.log("myfreind", allMyFriends);
 	reply.send(allMyFriends);
 	return  allMyFriends;
 }
@@ -57,3 +56,12 @@ export async function searchUser(request: FastifyRequest, reply: FastifyReply) {
 		return reply.code(500).send({ error: err});
 	}
 }
+
+export async function addFriend(request: FastifyRequest, reply: FastifyReply) {
+	const { friendID } = request.body as { friendID: number }
+	const status = await friends.getFriendshipStatus(request.user!.user_id, friendID);
+	if (status)
+		return;
+	friends.addFriendship(request.user!.user_id, friendID);
+}
+

@@ -4034,7 +4034,7 @@ function initPongMatch(params) {
   const gameID = params?.id;
   const url2 = new URL(window.location.href);
   const localMode = url2.searchParams.get("local") === "1";
-  const serverUrl = "https://127.0.0.1:3002";
+  const serverUrl = "https://127.0.0.1:3000";
   currentGame = new GameInstance();
   renderer = new GameRenderer();
   if (localMode)
@@ -4396,12 +4396,17 @@ function FriendsView() {
   return document.getElementById("friendshtml").innerHTML;
 }
 async function initFriends() {
+  doSearch();
+  myFriends();
+}
+async function myFriends() {
   try {
     const myfriends = await genericFetch2("/api/private/friend", {
       method: "POST"
     });
     const divNoFriend = document.getElementById("no-friend");
     const divFriend = document.getElementById("friends");
+    const divPending = document.getElementById("pending");
     if (myfriends.length === 0) {
       divNoFriend.textContent = "No friends yet";
       divFriend.classList.add("hidden");
@@ -4409,7 +4414,7 @@ async function initFriends() {
     } else {
       divFriend.classList.remove("hidden");
       divNoFriend.classList.add("hidden");
-      const ul = divFriend.querySelector("ul");
+      const ul2 = divFriend.querySelector("ul");
       myfriends.forEach(async (friend) => {
         const li = document.createElement("li");
         li.textContent = "Pseudo: " + friend.pseudo + ", status: " + friend.webStatus + ", invitation: " + friend.friendship_status + ", friend since: " + friend.friendship_date;
@@ -4418,10 +4423,22 @@ async function initFriends() {
         img.alt = `${friend.pseudo}'s avatar`;
         img.width = 64;
         li.appendChild(img);
-        ul?.appendChild(li);
+        ul2?.appendChild(li);
       });
     }
-    doSearch();
+    const ul = divPending.querySelector("ul");
+    myfriends.forEach(async (friend) => {
+      if (friend.friendship_status === "pending") {
+        const li = document.createElement("li");
+        li.textContent = "Pseudo: " + friend.pseudo + ", invitation: " + friend.friendship_status;
+        const img = document.createElement("img");
+        img.src = friend.avatar;
+        img.alt = `${friend.pseudo}'s avatar`;
+        img.width = 64;
+        li.appendChild(img);
+        ul?.appendChild(li);
+      }
+    });
   } catch (err) {
     console.log(err);
   }
@@ -4465,18 +4482,43 @@ async function search(memberSearched) {
     else {
       existedMember.forEach((member) => {
         const li = document.createElement("li");
+        li.className = "flex items-center gap-3 p-2 justify-center";
         const img = document.createElement("img");
+        const span = document.createElement("span");
+        span.textContent = member.pseudo;
         img.src = member.avatar;
         img.alt = `${member.pseudo}'s avatar`;
         img.className = "w-8 h-8 rounded-full object-cover";
-        li.textContent = " " + member.pseudo;
-        listedMember.appendChild(img);
+        const button = toAddFriend(member.user_id);
+        li.appendChild(img);
+        li.appendChild(span);
+        li.appendChild(button);
         listedMember.appendChild(li);
       });
     }
   } catch (error) {
     console.log(error);
   }
+}
+function toAddFriend(id) {
+  const button = document.createElement("button");
+  button.textContent = "Add friend";
+  button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
+  button.addEventListener("click", async () => {
+    try {
+      await genericFetch2("/api/private/friend/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ friendID: id })
+      });
+      button.textContent = "pending";
+      button.disabled = true;
+    } catch (err) {
+      console.log(err);
+      button.disabled = false;
+    }
+  });
+  return button;
 }
 var init_p_friends = __esm({
   "front/src/views/p_friends.ts"() {
