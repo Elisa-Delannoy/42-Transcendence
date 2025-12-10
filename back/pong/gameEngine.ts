@@ -41,15 +41,13 @@ export function updateBall(game: GameState) {
 	if (game.ball.x <= paddleWidth &&
 		game.ball.y >= game.paddles.player1 &&
 		game.ball.y <= game.paddles.player1 + paddleHeight) {
-		game.ball.speedX *= 1.15;
-		game.ball.speedX *= -1;
+		increaseBallSpeed(game.ball);
 	}
 
 	if (game.ball.x >= game.width - paddleWidth &&
 		game.ball.y >= game.paddles.player2 &&
 		game.ball.y <= game.paddles.player2 + paddleHeight) {
-		game.ball.speedX *= 1.15;
-		game.ball.speedX *= -1;
+		increaseBallSpeed(game.ball);
 	}
 
 	// Score
@@ -76,6 +74,13 @@ export function resetBall(game: GameState) {
 export function resetPaddles(game: GameState) {
 	game.paddles.player1 = game.height / 2;
 	game.paddles.player2 = game.height / 2;
+}
+
+function increaseBallSpeed(ball: Ball)
+{
+	if (ball.speedX > -8 && ball.speedX < 8)
+		ball.speedX *= 1.15;
+	ball.speedX *= -1;
 }
 
 export function applyInput(

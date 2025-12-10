@@ -63,35 +63,36 @@ export function initPongMatch(params?: any) {
 		keyState[e.key] = false;
 	});
 
-	function updateInput() {
-		if (!currentGame)
-			return;
+	function updateInput()
+	{
+		if (!currentGame) return;
 
 		if (currentGame.isLocalMode()) {
+			let input1: "up" | "down" | "stop" = "stop";
 			if (keyState["w"] || keyState["W"])
-				currentGame.sendInput("up", "player1");
+				input1 = "up";
 			else if (keyState["s"] || keyState["S"])
-				currentGame.sendInput("down", "player1");
-			else
-				currentGame.sendInput("stop", "player1");
+				input1 = "down";
+			currentGame.sendInput(input1, "player1");
 
+			let input2: "up" | "down" | "stop" = "stop";
 			if (keyState["ArrowUp"])
-				currentGame.sendInput("up", "player2");
+				input2 = "up";
 			else if (keyState["ArrowDown"])
-				currentGame.sendInput("down", "player2");
-			else
-				currentGame.sendInput("stop", "player2");
+				input2 = "down";
+			currentGame.sendInput(input2, "player2");
 		}
-		else
-		{
+		else {
+			let input: "up" | "down" | "stop" = "stop";
 			if (keyState["w"] || keyState["W"])
-				currentGame.sendInput("up");
+				input = "up";
 			else if (keyState["s"] || keyState["S"])
-				currentGame.sendInput("down");
-			else
-				currentGame.sendInput("stop");
+				input = "down";
+
+			currentGame.sendInput(input);
 		}
 	}
+
 	setInterval(updateInput, 16); // ~60 fps
 }
 
