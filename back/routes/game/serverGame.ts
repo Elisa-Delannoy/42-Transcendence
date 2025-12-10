@@ -41,24 +41,6 @@ function getDate(id: number)
 	return games_map.get(id)?.gameDate;
 }
 
-function getIdPlayer1(id: number)
-{
-	return games_map.get(id)?.idPlayer1;
-}
-
-function getIdPlayer2(id: number)
-{
-	return games_map.get(id)?.idPlayer2;
-}
-
-export function getPlayersId(id: number)
-{
-	const ids: any = [];
-	ids.push(getIdPlayer1(id));
-	ids.push(getIdPlayer2(id));
-	return ids;
-}
-
 export function createGame(PlayerId: number,  isLocal: boolean, options: { vsAI: boolean }): number 
 {
 	let id: number = 1;

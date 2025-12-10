@@ -10,7 +10,7 @@ import fastifyCookie from "@fastify/cookie";
 import { tokenOK } from "./middleware/jwt";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import bcrypt from "bcryptjs";
-import { games_map, createGame, joinGame, getPlayersId, endGame, displayGameList, ServerGame } from "./routes/game/serverGame";
+import { createGame, joinGame, displayGameList } from "./routes/game/serverGame";
 import fs from "fs";
 import { Tournament } from './DB/tournament';
 import { uploadPendingTournaments } from "./routes/tournament/tournament.service";
