@@ -57,9 +57,6 @@ export class Friends
 	async getMyFriends(id: number): Promise<IFriends[]> {
 		const friendship: IFriends[] = await this._db.query(
 			`SELECT * FROM Friend WHERE user_id1 = ? OR user_id2 = ? ORDER BY friendship_date DESC`, [id, id]);
-			// if (friendship.length === 0)
-			// 	throw new Error("Not firends yet");
-			// else
 			return friendship;
 	}
 
@@ -68,7 +65,6 @@ export class Friends
 		const query = `DROP TABLE IF EXISTS Friend`
 		await this._db.execute(query, []);
 	}
-
 }
 
 

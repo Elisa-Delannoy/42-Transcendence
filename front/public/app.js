@@ -104,38 +104,28 @@ async function initDashboard() {
     const dashboards = await response.json();
     container.innerHTML = "";
     dashboards.forEach(async (game) => {
+      const template = document.getElementById("history-dashboard");
       const item = document.createElement("div");
       item.classList.add("dash");
-      item.innerHTML = `
-					<!-- WINNER -->
-					<div class="flex items-center gap-4 w-1/3">
-						<img src="${game.WinnerPath}" alt="winner avatar"
-							class="w-16 h-16 rounded-full object-cover border-2 border-green-400">
-						
-						<div>
-							<p class="text-lg font-semibold text-green-300">${game.WinnerPseudo}</p>
-							<p class="text-2xl font-bold">${game.WinnerScore}</p>
-						</div>
-					</div>
-
-					<!-- CENTER : DATE + DUR\xC9E -->
-					<div class="flex flex-col items-center w-1/3">
-						<p class="text-sm text-gray-300">${new Date(game.DateGame).toLocaleDateString()}</p>
-						<p class="text-xs text-gray-400">Dur\xE9e : ${game.GameDuration}</p>
-					</div>
-
-					<!-- LOSER -->
-					<div class="flex items-center gap-4 w-1/3 justify-end">
-						<div class="text-right">
-							<p class="text-lg font-semibold text-red-300">${game.LoserPseudo}</p>
-							<p class="text-2xl font-bold">${game.LoserScore}</p>
-						</div>
-
-						<img src="${game.LoserPath}" alt="loser avatar"
-							class="w-16 h-16 rounded-full object-cover border-2 border-red-400">
-					</div>
-            `;
+      const clone = template.content.cloneNode(true);
+      item.appendChild(clone);
       container.appendChild(item);
+      const winnerpath = document.getElementById("winnerpath");
+      const winnerscore = document.getElementById("winnerscore");
+      const winnerpseudo = document.getElementById("winnerpseudo");
+      const loserpath = document.getElementById("loserpath");
+      const loserscore = document.getElementById("loserscore");
+      const loserpseudo = document.getElementById("loserpseudo");
+      const date = document.getElementById("date");
+      const duration = document.getElementById("duration");
+      winnerpath.src = game.WinnerPath;
+      winnerscore.textContent = game.WinnerScore;
+      winnerpseudo.textContent = game.WinnerPseudo;
+      loserpath.src = game.LoserPath;
+      loserscore.textContent = game.LoserScore;
+      loserpseudo.textContent = game.LoserPseudo;
+      date.textContent = new Date(game.DateGame).toLocaleDateString();
+      duration.textContent = "Dur\xE9e : " + game.GameDuration;
     });
   } catch (error) {
     console.error("Erreur lors du chargement :", error);
@@ -301,8 +291,11 @@ function GameLocalinit() {
   });
   const pvaiButton = document.getElementById("pvai");
   pvaiButton?.addEventListener("click", async () => {
+    const vsAI = true;
     const { gameId } = await genericFetch2("/api/private/game/create", {
-      method: "POST"
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ vsAI })
     });
     navigateTo(`/pongmatch/${gameId}`);
   });
@@ -360,8 +353,10 @@ var init_gameRenderer = __esm({
         this.ctx.fillStyle = "white";
         if (paddles.player1 !== void 0)
           this.ctx.fillRect(0, paddles.player1, this.paddleWidth, this.paddleHeight);
-        if (paddles.player2 !== void 0)
+        if (paddles.player2 !== void 0) {
+          this.ctx.fillStyle = "#6B8AA4";
           this.ctx.fillRect(this.canvas.width - 10, paddles.player2, this.paddleWidth, this.paddleHeight);
+        }
       }
       drawScore(score) {
         this.ctx.fillStyle = "white";
@@ -4141,6 +4136,9 @@ async function initProfile() {
   const profile = await genericFetch2("/api/private/profile", {
     method: "POST"
   });
+  const avatar = document.getElementById("profile-avatar");
+  if (avatar)
+    avatar.src = "/api/private/avatar?ts=" + Date.now();
   document.getElementById("profile-pseudo").textContent = profile.pseudo;
   document.getElementById("profile-email").textContent = profile.email;
   const select = document.getElementById("profile-status");
@@ -4401,20 +4399,66 @@ async function initFriends() {
       divFriend.classList.remove("hidden");
       divNoFriend.classList.add("hidden");
       const ul = divFriend.querySelector("ul");
-      myfriends.forEach((friend) => {
+      const prepareInfo = myfriends.map(async (friend) => {
+        const avatarBin = await loadAvatar(friend.id);
         const li = document.createElement("li");
         li.textContent = "Pseudo: " + friend.pseudo + ", status: " + friend.webStatus + ", invitation: " + friend.friendship_status + ", friend since: " + friend.friendship_date;
         const img = document.createElement("img");
-        img.src = friend.avatar;
+        img.src = URL.createObjectURL(avatarBin);
         img.alt = `${friend.pseudo}'s avatar`;
         img.width = 64;
         li.appendChild(img);
-        ul?.appendChild(li);
+        return li;
       });
+      const allInfo = await Promise.all(prepareInfo);
+      allInfo.forEach((li) => ul?.appendChild(li));
     }
+    search();
   } catch (err) {
     console.log(err);
   }
+}
+async function search() {
+  const input = document.getElementById("searchInput");
+  const listedMember = document.getElementById("members");
+  if (!input || !listedMember)
+    return;
+  input.addEventListener("input", async () => {
+    const memberSearched = input.value.trim();
+    if (memberSearched === "") {
+      listedMember.innerHTML = "";
+      return;
+    }
+    try {
+      const existedMember = await genericFetch2("/api/private/friend/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ member: memberSearched })
+      });
+      listedMember.innerHTML = "";
+      if (existedMember.length === 0)
+        listedMember.innerHTML = "<li>No result</li>";
+      else {
+        existedMember.forEach((member) => {
+          const li = document.createElement("li");
+          li.textContent = member.pseudo;
+          listedMember.appendChild(li);
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+}
+async function loadAvatar(id) {
+  const res = await fetch("api/private/member/avatar", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ memberID: id })
+  });
+  const avatarBin = await res.blob();
+  return avatarBin;
 }
 var init_p_friends = __esm({
   "front/src/views/p_friends.ts"() {

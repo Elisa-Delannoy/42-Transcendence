@@ -40,34 +40,6 @@ export class Users
 		`);
 	}
 
-	async CreateUserIA()
-	{
-		try
-		{
-			const result = await this.getIDUser(0);
-			return;
-		}
-		catch
-		{
-			const insertQuery = `
-    			INSERT INTO Users (user_id, pseudo, email, password, avatar, status, creation_date, modification_date, money, elo)
-        		VALUES (?,?,?,?,?,?,?,?,?,?)`;
-			const parameters = [
-			0,
-			"IA_Player",
-			"ia@system.local",
-			"AI_PASSWORD",  
-			"12.png",
-			"online",
-			new Date().toISOString().replace("T", " ").split(".")[0],
-			new Date().toISOString().replace("T", " ").split(".")[0],
-			0,
-			1000
-			];
-			await this._db.execute(insertQuery, parameters);
-		}
-	}
-
 	async addUser(pseudo:string, email: string, password: string):Promise<void>
 	{
 		const query = `
@@ -88,11 +60,43 @@ export class Users
 		await this._db.execute(query, parameters);
 	}
 
+	async CreateUserIA()
+	{
+		const query = `
+			INSERT INTO Users (user_id, pseudo, email, password, avatar, status, creation_date, modification_date, money, elo)
+			VALUES (?,?,?,?,?,?,?,?,?,?)
+			ON CONFLICT(user_id) DO NOTHING
+		`;
+		const parameters = [
+		-1,
+		"AI_Player",
+		"ia@ia.ia",
+		"iapassiapass",
+		"ai.png",
+		"online",
+		new Date().toISOString().replace("T", " ").split(".")[0],
+		new Date().toISOString().replace("T", " ").split(".")[0],
+		0,
+		0
+		];
+		await this._db.execute(query, parameters);
+	}
+
 	async deleteUserTable()
 	{
 		const query = `DROP TABLE IF EXISTS Users`
 		await this._db.execute(query, []);
 	}
+
+	async deleteOneUser(userId: number)
+	{
+		const query = `
+			DELETE FROM Users
+			WHERE user_id = ?
+		`;
+		await this._db.execute(query, [userId]);
+	}
+
 
 	async getEmailUser(email: string)
 	{
@@ -180,5 +184,11 @@ export class Users
 		const updatedUser = await this.getIDUser(id);
 		// console.log("dans upadte", updatedUser.status);
 		return updatedUser;
+	}
+
+	async searchMember(pseudo: string, id: number): Promise<IUsers[]> {
+		const query = ` SELECT * FROM Users WHERE user_id != ? AND LOWER(pseudo) LIKE LOWER(?) LIMIT 10`;
+		const members = await this._db.query(query, [id, `${pseudo}%`])
+		return members;
 	}
 }
