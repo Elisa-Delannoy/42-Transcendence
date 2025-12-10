@@ -61,8 +61,10 @@ export function getPlayersId(id: number)
 
 export function createGame(PlayerId: number,  isLocal: boolean, options: { vsAI: boolean }): number 
 {
-	maxGameId++;
-	const gameId = maxGameId;
+	let id: number = 1;
+	while (games_map.has(id))
+		id++;
+	const gameId = id;
 	const game = new ServerGame(gameId, isLocal);
 	game.idPlayer1 = PlayerId;
 	if (options.vsAI)
@@ -105,6 +107,6 @@ export async function endGame(winner_id: number, loser_id: number, winner_score:
 	loser_score: number, duration_game: number, gameid: number, gameInfo: GameInfo): Promise<void>
 {
 	const gameDate: any = getDate(Number(gameid));
-	await gameInfo.finishGame(gameid, winner_id, loser_id, winner_score, loser_score, duration_game, gameDate);
+	await gameInfo.finishGame(winner_id, loser_id, winner_score, loser_score, duration_game, gameDate);
 	games_map.delete(gameid);
 }
