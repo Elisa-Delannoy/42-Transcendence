@@ -58,10 +58,32 @@ export async function searchUser(request: FastifyRequest, reply: FastifyReply) {
 }
 
 export async function addFriend(request: FastifyRequest, reply: FastifyReply) {
-	const { friendID } = request.body as { friendID: number }
+	try {
+		const { friendID } = request.body as { friendID: number }
 	// const status = await friends.getFriendshipStatus(request.user!.user_id, friendID);
 	// if (status)
 	// 	return;
-	friends.addFriendship(request.user!.user_id, friendID);
+	await  friends.addFriendship(request.user!.user_id, friendID);
+	
+	reply.code(200).send({ message: "added" });
+	}
+	catch (err) {
+		console.log(err);
+	}
+}
+
+export async function acceptFriend(request: FastifyRequest, reply: FastifyReply) {
+	try {
+		const { friendID } = request.body as { friendID: number }
+	// const status = await friends.getFriendshipStatus(request.user!.user_id, friendID);
+	// if (status)
+	// 	return;
+	await friends.acceptFriendship(friendID, request.user!.user_id);
+	reply.code(200).send({ message: "accepted" });
+
+	}
+	catch (err) {
+		console.log(err);
+	}
 }
 

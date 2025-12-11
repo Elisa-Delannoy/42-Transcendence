@@ -4408,7 +4408,7 @@ async function initFriends() {
     const myfriends = await genericFetch2("/api/private/friend", {
       method: "POST"
     });
-    const acceptedFriends = myfriends.filter((f) => f.friendship_status === "accepting");
+    const acceptedFriends = myfriends.filter((f) => f.friendship_status === "accepted");
     const pendingFriends = myfriends.filter((f) => f.friendship_status === "pending");
     doSearch(acceptedFriends, pendingFriends, myfriends);
     myFriends(acceptedFriends);
@@ -4505,13 +4505,41 @@ function toAddFriend(id) {
   button.textContent = "Add friend";
   button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
   button.addEventListener("click", async () => {
+    console.log("before add");
     try {
       await genericFetch2("/api/private/friend/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ friendID: id })
       });
+      console.log("after add");
       button.textContent = "pending";
+      button.disabled = true;
+    } catch (err) {
+      console.log(err);
+      button.disabled = false;
+    }
+  });
+  return button;
+}
+function toAcceptFriend(friend) {
+  console.log("asked by : ", friend.asked_by, "friend ID:", friend.id);
+  const button = document.createElement("button");
+  if (friend.asked_by !== friend.id) {
+    button.textContent = "Pending invitation";
+    button.disabled = true;
+    return button;
+  }
+  button.textContent = "Accept invitation";
+  button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
+  button.addEventListener("click", async () => {
+    try {
+      await genericFetch2("/api/private/friend/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ friendID: friend.id })
+      });
+      button.textContent = "Accepted";
       button.disabled = true;
     } catch (err) {
       console.log(err);
@@ -4525,12 +4553,14 @@ function pendingFr(pendingFriends) {
   const ul = divPending.querySelector("ul");
   pendingFriends.forEach(async (friend) => {
     const li = document.createElement("li");
-    li.textContent = "Pseudo: " + friend.pseudo + ", invitation: " + friend.friendship_status;
+    li.textContent = "Pseudo: " + friend.pseudo + ", requested since: " + friend.friendship_date;
     const img = document.createElement("img");
     img.src = friend.avatar;
     img.alt = `${friend.pseudo}'s avatar`;
     img.width = 64;
+    const button = toAcceptFriend(friend);
     li.appendChild(img);
+    li.appendChild(button);
     ul?.appendChild(li);
   });
 }

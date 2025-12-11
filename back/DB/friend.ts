@@ -1,13 +1,5 @@
 import { ManageDB } from "./manageDB";
 
-// export interface IFriends {
-// 	id: number;
-// 	user_id1: number;
-// 	user_id2: number;
-// 	friendship_date: Date;
-// 	status: string;
-// }
-
 export interface IMyFriends {	
 	id: number;
 	avatar: string;
@@ -15,6 +7,7 @@ export interface IMyFriends {
 	webStatus: string;
 	friendship_date: Date;
 	friendship_status: string;
+	asked_by: number;
 }
 
 export class Friends
@@ -26,7 +19,7 @@ export class Friends
 		this._db = db;
 	}
 
-	async createFriendsTable()
+	async createFriendTable()
 	{
 		await this._db.execute(`
 			CREATE TABLE IF NOT EXISTS Friend (
@@ -34,7 +27,8 @@ export class Friends
 				user_id1 INTEGER NOT NULL, 
 				user_id2 INTEGER NOT NULL,
 				friendship_date TEXT NOT NULL,
-				status INTEGER NOT NULL
+				status INTEGER NOT NULL,
+				asked_by INTEGER NOT NULL
 			)
 		`);
 	}
@@ -42,14 +36,15 @@ export class Friends
 	async addFriendship(user_id1: number, user_id2: number): Promise<void>
 	{
 		const query = `
-			INSERT INTO Friend (user_id1, user_id2, friendship_date, status)
-			VALUES (?,?,?,?)
+			INSERT INTO Friend (user_id1, user_id2, friendship_date, status, asked_by)
+			VALUES (?,?,?,?,?)
 		`;
 		const parameters = [
 		user_id1,
 		user_id2,
 		new Date().toISOString().replace("T", " ").split(".")[0],
-		"pending"
+		"pending",
+		user_id1
 		];
 		await this._db.execute(query, parameters);
 	}
@@ -57,7 +52,7 @@ export class Friends
 	async getMyFriends(id: number): Promise<IMyFriends[]> {
 		const friendship: IMyFriends[] = await this._db.query(
 		`SELECT 
-			f.friendship_date, f.status AS friendship_status, u.pseudo, u.avatar, u.status AS web_status,
+			f.friendship_date, f.status AS friendship_status, f.asked_by, u.pseudo, u.avatar, u.status AS web_status,
 				CASE
 					WHEN f.user_id1 = ? THEN f.user_id2
 					ELSE f.user_id1
@@ -77,6 +72,13 @@ export class Friends
 	{
 		const query = `DROP TABLE IF EXISTS Friend`
 		await this._db.execute(query, []);
+	}
+
+	async acceptFriendship(id1: number, id2: number): Promise<void>
+	{
+		await this._db.execute(`UPDATE Friend SET status = 'accepted' WHERE user_id1 = ? AND user_id2 = ?`, [id1, id2]);	
+		const updatedTime = new Date().toISOString().replace("T", " ").split(".")[0];
+		await this._db.query(`UPDATE Friend SET friendship_date = ? WHERE user_id1 = ? AND user_id2 = ?`, [updatedTime, id1, id2]);
 	}
 
 	// async getFriendshipStatus(id1: number, id2: number): Promise<string | null> {

@@ -2,6 +2,7 @@ import { IMyFriends } from "../../../back/DB/friend";
 import { friends } from "../../../back/server";
 import { genericFetch, loadHeader } from "../router";
 import { IUsers } from "../../../back/DB/users";
+import { request } from "http";
 
 export function FriendsView(): string {
 	loadHeader();
@@ -14,7 +15,7 @@ export async function initFriends() {
 			method: "POST",
 		});
 
-		const acceptedFriends = myfriends.filter( f => f.friendship_status === "accepting");
+		const acceptedFriends = myfriends.filter( f => f.friendship_status === "accepted");
 		const pendingFriends = myfriends.filter( f => f.friendship_status === "pending");
 
 		doSearch(acceptedFriends, pendingFriends, myfriends);
@@ -120,13 +121,42 @@ function toAddFriend(id: number): HTMLButtonElement {
 	button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
 
 	button.addEventListener("click", async () => {
+		console.log("before add");
 		try {
 			await genericFetch("/api/private/friend/add", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ friendID: id })
 			});
+			console.log("after add", );
 			button.textContent = "pending";
+			button.disabled = true;
+		}
+		catch (err) {
+			console.log(err);
+			button.disabled = false;
+		}
+	})
+	return button;
+}
+
+function toAcceptFriend(friend: IMyFriends): HTMLButtonElement {
+	const button = document.createElement("button") as HTMLButtonElement;
+	if (friend.asked_by !== friend.id) {
+		button.textContent = "Pending invitation";
+		button.disabled = true
+		return button;
+	}
+	button.textContent = "Accept invitation";
+	button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
+	button.addEventListener("click", async () => {
+		try {
+			await genericFetch("/api/private/friend/accept", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ friendID: friend.id })
+			});
+			button.textContent = "Accepted";
 			button.disabled = true;
 		}
 		catch (err) {
@@ -142,12 +172,14 @@ function pendingFr(pendingFriends: IMyFriends[]) {
 	const ul = divPending.querySelector("ul");
 	pendingFriends.forEach(async (friend: IMyFriends) => {
 		const li = document.createElement("li");
-		li.textContent = "Pseudo: " + friend.pseudo + ", invitation: " + friend.friendship_status;
+		li.textContent = "Pseudo: " + friend.pseudo + ", requested since: " + friend.friendship_date;
 		const img = document.createElement("img");
 		img.src =  friend.avatar;
 		img.alt = `${friend.pseudo}'s avatar`;
 		img.width = 64;
+		const button = toAcceptFriend(friend);
 		li.appendChild(img);
+		li.appendChild(button);
 		ul?.appendChild(li);
 	});
 }
