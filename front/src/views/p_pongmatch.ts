@@ -40,6 +40,23 @@ export function initPongMatch(params?: any) {
 	// 5. Join game room
 	net.join(Number(gameID));
 
+	net.onCountdown(() => {
+		let countdown = 4;
+		let countdownActive = true;
+		const interval = setInterval(() => {
+			if (!currentGame || !renderer)
+				return;
+			renderer.drawCountdown(currentGame.getCurrentState(), countdown);
+			countdown--;
+			if (countdown < 0) {
+				clearInterval(interval);
+				countdownActive = false;
+				if (net)
+					net.startMatch();
+			}
+		}, 1000);
+	});
+
 	// 6. Receive game state from server
 	net.onState((state) => {
 		if (!currentGame || !renderer)

@@ -8,7 +8,7 @@ export class ServerGame {
 	id: number;
 	idPlayer1: number;
 	idPlayer2: number;
-	status: "waiting" | "playing" | "finished";
+	status: "waiting" | "playing" | "finished" | "countdown";
 	type: "Local" | "IA" | "Online" | "Tournament";
 	gameDate: string;
 	duration: number;

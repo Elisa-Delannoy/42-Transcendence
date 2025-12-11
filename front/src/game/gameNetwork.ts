@@ -10,6 +10,8 @@ export class GameNetwork {
 	private socket: Socket;
 	private onStateCallback?: (state: GameState) => void;
 
+	private onCountdownCallback?: () => void;
+
 	private onRoleCallback?: (role: "player1" | "player2") => void;
 
 	constructor(serverUrl: string, gameId: number) {
@@ -27,10 +29,14 @@ export class GameNetwork {
 			this.onStateCallback?.(state);
 		});
 
+		this.socket.on("startGame", () => {
+			this.onCountdownCallback?.();
+		});
+
 		this.socket.on("gameOver", () => {
 			console.log("Game over, closing socket...");
 			this.socket.close();
-	});
+		});
 
 	}
 
@@ -38,8 +44,16 @@ export class GameNetwork {
 		this.onRoleCallback = cb;
 	}
 
+	onCountdown(cb: () => void) {
+		this.onCountdownCallback = cb;
+	}
+
 	onState(cb: (state: GameState) => void) {
 		this.onStateCallback = cb;
+	}
+
+	startMatch() {
+		this.socket.emit("startMatch");
 	}
 
 	sendInput(direction: "up" | "down" | "stop", player?: "player1" | "player2") {

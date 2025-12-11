@@ -327,6 +327,28 @@ var init_gameRenderer = __esm({
         this.paddleWidth = 10;
         this.paddleHeight = 60;
       }
+      drawCountdown(state, countdown) {
+        this.draw(state);
+        if (countdown > 0) {
+          this.ctx.font = "80px Arial";
+          this.ctx.fillStyle = "white";
+          this.ctx.textAlign = "center";
+          if (countdown > 1) {
+            countdown--;
+            this.ctx.fillText(
+              countdown.toString(),
+              this.canvas.width / 2,
+              this.canvas.height / 2
+            );
+          } else {
+            this.ctx.fillText(
+              "GO!",
+              this.canvas.width / 2,
+              this.canvas.height / 2
+            );
+          }
+        }
+      }
       draw(state) {
         this.clear();
         if (state.paddles)
@@ -3960,6 +3982,9 @@ var init_gameNetwork = __esm({
         this.socket.on("state", (state) => {
           this.onStateCallback?.(state);
         });
+        this.socket.on("startGame", () => {
+          this.onCountdownCallback?.();
+        });
         this.socket.on("gameOver", () => {
           console.log("Game over, closing socket...");
           this.socket.close();
@@ -3968,8 +3993,14 @@ var init_gameNetwork = __esm({
       onRole(cb) {
         this.onRoleCallback = cb;
       }
+      onCountdown(cb) {
+        this.onCountdownCallback = cb;
+      }
       onState(cb) {
         this.onStateCallback = cb;
+      }
+      startMatch() {
+        this.socket.emit("startMatch");
       }
       sendInput(direction, player) {
         this.socket.emit("input", { direction, player });
@@ -4053,6 +4084,22 @@ function initPongMatch(params) {
       currentGame?.setNetwork(net, role);
   });
   net.join(Number(gameID));
+  net.onCountdown(() => {
+    let countdown = 4;
+    let countdownActive = true;
+    const interval = setInterval(() => {
+      if (!currentGame || !renderer)
+        return;
+      renderer.drawCountdown(currentGame.getCurrentState(), countdown);
+      countdown--;
+      if (countdown < 0) {
+        clearInterval(interval);
+        countdownActive = false;
+        if (net)
+          net.startMatch();
+      }
+    }, 1e3);
+  });
   net.onState((state) => {
     if (!currentGame || !renderer)
       return;

@@ -13,6 +13,33 @@ export class GameRenderer {
 		this.paddleHeight = 60;
 	}
 
+	public drawCountdown(state: GameState, countdown: number) {
+		this.draw(state);
+		if (countdown > 0)
+		{
+			this.ctx.font = "80px Arial";
+			this.ctx.fillStyle = "white";
+			this.ctx.textAlign = "center";
+			if (countdown > 1)
+			{
+				countdown--;
+				this.ctx.fillText(
+					countdown.toString(),
+					this.canvas.width / 2,
+					this.canvas.height / 2
+				);
+			}
+			else
+			{
+				this.ctx.fillText(
+					"GO!",
+					this.canvas.width / 2,
+					this.canvas.height / 2
+				);
+			}
+		}
+	}
+
 	public draw(state: GameState) {
 		this.clear();
 

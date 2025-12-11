@@ -25,7 +25,7 @@ export function setupGameServer(io: Server) {
 					game.sockets.player2 = socket.id;
 
 					game.idPlayer2 = 1;
-					game.status = "playing";
+					game.status = "countdown";
 					game.type = "Local";
 					game.state.ball.speedX = Math.random() < 0.5 ? -2.5 : 2.5;
 					resetBall(game.state);
@@ -64,7 +64,7 @@ export function setupGameServer(io: Server) {
 				// start game when 2 players are in the game
 				if ((game.sockets.player1 && game.idPlayer2 == -1) 
 					|| (game.sockets.player1 && game.sockets.player2 && game.status === "waiting")) {
-					game.status = "playing";
+					game.status = "countdown";
 					io.to(`game-${gameId}`).emit("startGame");
 				}
 	
@@ -72,6 +72,13 @@ export function setupGameServer(io: Server) {
 				socket.emit("state", game);
 	
 			}
+
+			socket.on("startMatch", () => {
+				const game = games_map.get(gameId);
+				if (!game) return;
+				game.status = "playing";
+			});
+
 			
 			// Paddle move
 			socket.on("input", ({ direction, player }: { direction: "up" | "down" | "stop", player?: "player1" | "player2" }) => {
@@ -94,6 +101,8 @@ export function setupGameServer(io: Server) {
 				if (game!.sockets.player2 === socket.id)
 					game!.sockets.player2 = null;
 				console.log("Client disconnected:", socket.id);
+				if (game.status == "playing")
+					game.status = "waiting";
 			});
 
 		});
