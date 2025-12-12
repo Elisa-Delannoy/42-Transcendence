@@ -4083,6 +4083,9 @@ function initPongMatch(params) {
   const url2 = new URL(window.location.href);
   const localMode = url2.searchParams.get("local") === "1";
   const serverUrl = window.location.host;
+  let input1 = "stop";
+  let input2 = "stop";
+  let input = "stop";
   currentGame = new GameInstance();
   renderer = new GameRenderer();
   if (localMode)
@@ -4095,7 +4098,6 @@ function initPongMatch(params) {
   net.join(Number(gameID));
   net.onCountdown(() => {
     let countdown = 4;
-    let countdownActive = true;
     const interval = setInterval(() => {
       if (!currentGame || !renderer)
         return;
@@ -4103,7 +4105,6 @@ function initPongMatch(params) {
       countdown--;
       if (countdown < 0) {
         clearInterval(interval);
-        countdownActive = false;
         if (net)
           net.startGame();
       }
@@ -4120,6 +4121,7 @@ function initPongMatch(params) {
       return;
     currentGame.applyServerState(state);
     renderer.draw(currentGame.getCurrentState(), true);
+    updateInput();
   });
   const keyState = {};
   window.addEventListener("keydown", (e) => {
@@ -4132,37 +4134,31 @@ function initPongMatch(params) {
     if (!currentGame) return;
     if (currentGame.getCurrentState().status == "playing") {
       if (currentGame.isLocalMode()) {
-        let input1 = "stop";
-        if (keyState["w"] || keyState["W"])
+        if (keyState["w"] || keyState["W"] && input1 != "up")
           input1 = "up";
-        else if (keyState["s"] || keyState["S"])
+        else if (keyState["s"] || keyState["S"] && input1 != "down")
           input1 = "down";
-        else
+        else if (input1 != "stop")
           input1 = "stop";
         currentGame.sendInput(input1, "player1");
-        let input2 = "stop";
-        if (keyState["ArrowUp"])
+        if (keyState["ArrowUp"] && input2 != "up")
           input2 = "up";
-        else if (keyState["ArrowDown"])
+        else if (keyState["ArrowDown"] && input2 != "down")
           input2 = "down";
-        else
+        else if (input2 != "stop")
           input2 = "stop";
         currentGame.sendInput(input2, "player2");
       } else {
-        let input = "stop";
-        if (keyState["w"] || keyState["W"])
+        if (keyState["w"] || keyState["W"] && input != "up")
           input = "up";
-        else if (keyState["s"] || keyState["S"])
+        else if (keyState["s"] || keyState["S"] && input != "down")
           input = "down";
-        else
+        else if (input != "stop")
           input = "stop";
         currentGame.sendInput(input);
       }
     }
   }
-  if (window.inputInterval)
-    clearInterval(window.inputInterval);
-  window.inputInterval = setInterval(updateInput, 16);
 }
 function stopGame() {
   net?.disconnect();

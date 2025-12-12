@@ -88,8 +88,8 @@ export function resetBall(game: GameState) {
 }
 
 export function resetPaddles(game: GameState) {
-	game.paddles.player1 = game.height / 2;
-	game.paddles.player2 = game.height / 2;
+	game.paddles.player1 = game.height / 2 - 30;
+	game.paddles.player2 = game.height / 2 - 30;
 }
 
 function increaseBallSpeed(ball: Ball)

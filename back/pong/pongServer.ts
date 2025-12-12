@@ -27,7 +27,8 @@ export function setupGameServer(io: Server) {
 			//after countdown, match is starting
 			socket.on("startGame", () => {
 				const game = games_map.get(gameId);
-				if (!game) return;
+				if (!game)
+					return;
 				game.status = "playing";
 				socket.emit("state", serializeForClient(game.state, game.status));
 			});
@@ -114,6 +115,7 @@ function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number)
 		resetBall(game.state);
 
 		socket.emit("assignRole", "player1");
+
 		//countdown starting
 		io.to(`game-${gameId}`).emit("startCountdown");
 		//predraw canvas without score to avoid empty screen before countdown
