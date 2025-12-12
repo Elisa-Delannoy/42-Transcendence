@@ -1,5 +1,6 @@
 import { genericFetch, getPseudoHeader, loadHeader } from "../router";
-
+import { IMyFriends } from "../../../back/DB/friend";
+import { AsyncLocalStorage } from "async_hooks";
 
 export function homeView(): string {
 	loadHeader();
@@ -32,6 +33,11 @@ function smoothScrollTo(targetY: number, duration: number) {
 export async function initHomePage() {
 	const btn = document.getElementById("scroll-button")!;
 	const target = document.getElementById("gamepage")!;
+        const myfriends: IMyFriends[] = await genericFetch("/api/private/friend", {
+                method: "POST",
+            });
+            // const acceptedFriends = myfriends.filter(f => f.friendship_status === "accepted");
+            const pendingFriends = myfriends.filter(f => f.friendship_status === "pending");
 
 btn.addEventListener("click", () => {
     const targetY = target.getBoundingClientRect().top + window.scrollY;

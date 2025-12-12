@@ -24,7 +24,7 @@ import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getU
 import { logout } from "./routes/logout/logout";
 import { setupGameServer } from "./pong/pongServer";
 import { Friends } from "./DB/friend";
-import { allMyFriends, searchUser, addFriend, acceptFriend } from "./routes/friends/friends";
+import { allMyFriends, searchUser, addFriend, acceptFriend, deleteFriend } from "./routes/friends/friends";
 import { dashboardInfo } from "./routes/dashboard/dashboard";
 import { request } from "http";
 import { navigateTo } from "../front/src/router";
@@ -34,7 +34,6 @@ export const users = new Users(db);
 export const friends = new Friends(db);
 export const gameInfo = new GameInfo(db);
 export const tournament = new Tournament(db);
-
 
 const fastify = Fastify({
 	logger: false,
@@ -108,8 +107,8 @@ fastify.post("/api/login", async (request: FastifyRequest, reply: FastifyReply) 
   await manageLogin(username, password, reply);
 });
 
-fastify.post("/api/private/getpseudoAv", async (request: FastifyRequest, reply: FastifyReply) => {
-	return { pseudo: request.user?.pseudo, avatar: request.user?.avatar }
+fastify.post("/api/private/getpseudoAvStatus", async (request: FastifyRequest, reply: FastifyReply) => {
+	return { pseudo: request.user?.pseudo, avatar: request.user?.avatar, status: request.user?.status, notif: globalThis.notif }
 });
 
 fastify.post("/api/private/profile", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -150,6 +149,10 @@ fastify.post("/api/private/friend/add", async(request: FastifyRequest, reply: Fa
 
 fastify.post("/api/private/friend/accept", async(request: FastifyRequest, reply: FastifyReply) => {
 	await acceptFriend(request, reply);
+})
+
+fastify.post("/api/private/friend/delete", async (request: FastifyRequest, reply: FastifyReply) => {
+	await deleteFriend(request, reply)
 })
 
 fastify.post("/api/private/friend/search", async( request: FastifyRequest, reply: FastifyReply) => {
@@ -211,6 +214,8 @@ fastify.get("/api/private/dashboard", async (request, reply) => {
 const start = async () => {
 	const PORT = 3002
 	try {
+		globalThis.notif = false;
+		console.log("global =", globalThis.notif);
 		await fastify.listen({ port: PORT, host: "0.0.0.0" });
 		console.log(`Server running on port ${PORT}`);
 		await db.connect();

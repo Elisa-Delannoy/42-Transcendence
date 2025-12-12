@@ -81,13 +81,10 @@ export class Friends
 		await this._db.query(`UPDATE Friend SET friendship_date = ? WHERE user_id1 = ? AND user_id2 = ?`, [updatedTime, id1, id2]);
 	}
 
-	// async getFriendshipStatus(id1: number, id2: number): Promise<string | null> {
-	// 	const friend: IFriends[] = await this._db.query(
-	// 		`SELECT * FROM Friend 
-	// 		WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?)`, [id1, id2, id2, id1]);
-	// 		if (friend.length === 0)
-	// 			return null;
-	// 		return friend[0].status;
-	// }
+		async deleteFriendship(id1: number, id2: number): Promise<void>
+	{
+		await this._db.execute(`DELETE FROM Friend WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2= ?)`, [id1, id2, id2, id1]);	
+	}
+
 }
 
