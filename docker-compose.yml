@@ -12,8 +12,8 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     volumes:
-      - ./devops/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./devops/prometheus/rules.yml:/etc/prometheus/rules.yml:ro
+      - ./DevOps/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./DevOps/prometheus/rules.yml:/etc/prometheus/rules.yml:ro
       - prometheus-data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -27,7 +27,7 @@ services:
     container_name: alertmanager
     volumes:
       - alertmanager-data:/alertmanager
-      - ./devops/prometheus/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - ./DevOps/prometheus/alertmanager.yml:/etc/alertmanager/alertmanager.yml
     ports:
       - "9093:9093"
     networks:
@@ -40,10 +40,10 @@ services:
       - "3003:3003"
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./devops/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
-      - ./devops/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
-      - ./devops/grafana/dashboards:/var/lib/grafana/dashboards
-      - ./devops/grafana/certs:/etc/grafana/certs
+      - ./DevOps/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./DevOps/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - ./DevOps/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./DevOps/grafana/certs:/etc/grafana/certs
     networks:
       - transcendence-net
     restart: unless-stopped
