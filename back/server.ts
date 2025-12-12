@@ -20,6 +20,7 @@ import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getU
 import { logout } from "./routes/logout/logout";
 import { Friends } from "./DB/friend";
 import { displayFriendPage } from "./routes/friends/friends";
+import fastifyMetrics from "fastify-metrics"; 
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -35,6 +36,13 @@ const fastify = Fastify({
 		cert: fs.readFileSync("server.cert"),
 	},
 	trustProxy: true
+});
+
+fastify.register(fastifyMetrics, {
+  endpoint: "/metrics",
+  defaultMetrics: {
+	enabled: true,
+  }
 });
 
 const httpsAlwaysOpts: HttpsAlwaysOptions = {
@@ -201,8 +209,8 @@ const start = async () => {
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();
 		await users.CreateUserIA();
-		// const hashedPassword = await bcrypt.hash("42", 12);
-		// users.addUser("42", "42", hashedPassword);
+		const hashedPassword = await bcrypt.hash("42", 12);
+		users.addUser("42", "42", hashedPassword);
 		// friends.addFriendship(7, 11);
 	} catch (err) {
 		console.log(err);

@@ -4,7 +4,7 @@
 FROM node:20-alpine AS base
 WORKDIR /app
 
-# Install Python + SQLite
+# Install SQLite
 RUN apk add --no-cache sqlite sqlite-dev build-base
 
 # Install dependencies first (cache optimization)
@@ -35,7 +35,7 @@ RUN npx tsc -p tsconfig.json
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Install SQLite + Python (runtime if needed)
+# Install SQLite (runtime if needed)
 RUN apk add --no-cache sqlite
 
 # Install only production dependencies
@@ -53,10 +53,10 @@ COPY ./server.cert ./server.cert
 COPY back/.env ./back/.env
 COPY back/uploads ./back/uploads
 COPY front/src/image ./front/src/image
-COPY front/*html ./front/
+COPY front/*.html ./front/
 
 # Expose backend port
-EXPOSE 3000
+EXPOSE 3001
 
 # Start backend from compiled JS
 CMD ["node", "./back/server.js"]
