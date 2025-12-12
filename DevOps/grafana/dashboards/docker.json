@@ -1,0 +1,153 @@
+{
+  "id": null,
+  "title": "Container Dashboard (cAdvisor)",
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "type": "row",
+      "title": "Container CPU",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }
+    },
+    {
+      "id": 1,
+      "title": "CPU Usage (%) per Container",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 1 },
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{cpu=\"total\", id!=\"/\"}[1m]) * 100",
+          "legendFormat": "{{id}}"
+        }
+      ],
+      "lines": true
+    },
+
+    {
+      "type": "row",
+      "title": "Container Memory",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 }
+    },
+    {
+      "id": 2,
+      "title": "Memory Usage (bytes) Per Container",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 10 },
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{id!=\"/\"}",
+          "legendFormat": "{{id}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Memory Usage (%) Per Container",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 18 },
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{id!=\"/\"} / container_spec_memory_limit_bytes{id!=\"/\"} * 100",
+          "legendFormat": "{{id}}"
+        }
+      ]
+    },
+
+    {
+      "type": "row",
+      "title": "Container Network",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 }
+    },
+    {
+      "id": 4,
+      "title": "Network RX (bytes/s)",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 27 },
+      "targets": [
+        {
+          "expr": "rate(container_network_receive_bytes_total{id!=\"/\"}[1m])",
+          "legendFormat": "{{id}}"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Network TX (bytes/s)",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 27 },
+      "targets": [
+        {
+          "expr": "rate(container_network_transmit_bytes_total{id!=\"/\"}[1m])",
+          "legendFormat": "{{id}}"
+        }
+      ]
+    },
+
+    {
+      "type": "row",
+      "title": "Container Disk IO",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 35 }
+    },
+    {
+      "id": 6,
+      "title": "Disk Read (bytes/s)",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 36 },
+      "targets": [
+        {
+          "expr": "rate(container_fs_reads_bytes_total{id!=\"/\"}[1m])",
+          "legendFormat": "{{id}}"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Disk Write (bytes/s)",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 36 },
+      "targets": [
+        {
+          "expr": "rate(container_fs_writes_bytes_total{id!=\"/\"}[1m])",
+          "legendFormat": "{{id}}"
+        }
+      ]
+    },
+
+    {
+      "type": "row",
+      "title": "Container Metadata",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 44 }
+    },
+    {
+      "id": 8,
+      "title": "Container Restarts",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 12, "x": 0, "y": 45 },
+      "targets": [
+        {
+          "expr": "container_start_time_seconds",
+          "legendFormat": "{{id}}"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Container Uptime (seconds)",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 45 },
+      "targets": [
+        {
+          "expr": "time() - container_start_time_seconds{id!=\"/\"}",
+          "legendFormat": "{{id}}"
+        }
+      ]
+    }
+  ]
+}

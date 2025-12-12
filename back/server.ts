@@ -24,6 +24,8 @@ import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getU
 import { logout } from "./routes/logout/logout";
 import { setupGameServer } from "./pong/pongServer";
 import { Friends } from "./DB/friend";
+import { displayFriendPage } from "./routes/friends/friends";
+import fastifyMetrics from "fastify-metrics"; 
 import { allMyFriends, searchUser, addFriend, acceptFriend } from "./routes/friends/friends";
 import { dashboardInfo } from "./routes/dashboard/dashboard";
 import { request } from "http";
@@ -44,6 +46,13 @@ const fastify = Fastify({
 		cert: fs.readFileSync("server.cert"),
 	},
 	trustProxy: true
+});
+
+fastify.register(fastifyMetrics, {
+  endpoint: "/metrics",
+  defaultMetrics: {
+	enabled: true,
+  }
 });
 
 const httpsAlwaysOpts: HttpsAlwaysOptions = {
