@@ -55,7 +55,7 @@ export class Users
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		0,
-		0
+		1000
 		];
 		await this._db.execute(query, parameters);
 	}
@@ -77,7 +77,29 @@ export class Users
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		0,
-		0
+		1000
+		];
+		await this._db.execute(query, parameters);
+	}
+
+	async CreateUserGuest()
+	{
+		const query = `
+			INSERT INTO Users (user_id, pseudo, email, password, avatar, status, creation_date, modification_date, money, elo)
+			VALUES (?,?,?,?,?,?,?,?,?,?)
+			ON CONFLICT(user_id) DO NOTHING
+		`;
+		const parameters = [
+		0,
+		"Guest",
+		"guest@g.g",
+		"guestpass",
+		"/files/0.png",
+		"online",
+		new Date().toISOString().replace("T", " ").split(".")[0],
+		new Date().toISOString().replace("T", " ").split(".")[0],
+		0,
+		1000
 		];
 		await this._db.execute(query, parameters);
 	}

@@ -38,10 +38,18 @@
 }
 
 @layer components {
+	.stat {
+		@apply bg-[linear-gradient(180deg,var(--color-amber-50)_95%,var(--color-amber-400)_95%)]
+				h-1/3 text-3xl hover:-translate-1 duration-300 text-amber-900 pt-10 rounded-xl mx-2 my-2 ring-4 ring-amber-400
+				shadow-xl hover:bg-[linear-gradient(180deg,var(--color-orange-50)_95%,var(--color-amber-400)_95%)] hover:shadow-2xl;
+	}
+}
+
+@layer components {
 	.input {
 		@apply bg-amber-300/20 dark:bg-amber-950/30 rounded-md w-80 duration-300
 				focus:ring-amber-500 ring-amber-300 ring-1 focus:ring-2 focus:outline-none
-				px-2 py-1 text-sm text-orange-900 dark:text-white shadow-xs;
+				px-2 py-1 text-sm text-orange-900 dark:text-white shadow-xs placeholder-amber-800/80;
 	}
 }
 

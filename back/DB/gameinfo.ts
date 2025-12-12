@@ -2,6 +2,7 @@ import { ManageDB } from "./manageDB";
 
 export interface IGameInfo {
     status: string;
+	type: string;
     winner_id: number;
 	winner_pseudo: string;
 	winner_avatar: string;
@@ -66,7 +67,7 @@ export class GameInfo
 	{
 		const sql = `
 				SELECT 
-				gi.status, gi.winner_id, gi.loser_id, gi.date_game, gi.duration_game, gi.winner_score, gi.loser_score,
+				gi.status, gi.winner_id, gi.loser_id, gi.type, gi.date_game, gi.duration_game, gi.winner_score, gi.loser_score,
 				uw.pseudo AS winner_pseudo,
 				uw.avatar AS winner_avatar,
 				ul.pseudo AS loser_pseudo,
@@ -84,6 +85,7 @@ export class GameInfo
 		
 		return rows.map((row: IGameInfo) => ({
 			status: row.status,
+			type: row.type,
 			winner_id: row.winner_id,
 			winner_avatar: row.winner_avatar,
 			winner_pseudo: row.winner_pseudo,
@@ -108,6 +110,32 @@ export class GameInfo
 		const rows = await this._db.query(sql, [userId, userId]);
 		
 		return { win: rows[0].total_wins, loose: rows[0].total_losses };
+	}
+
+	async getTotalScore(userID: number): Promise<{scored: number, taken:number}>
+	{
+		const sql = `SELECT
+			SUM(
+				CASE
+					WHEN winner_id = ? THEN winner_score
+					WHEN loser_id = ? THEN loser_score
+					ELSE 0
+				END
+			) AS total_points_scored,
+			SUM(
+				CASE
+					WHEN winner_id = ? THEN loser_score
+					WHEN loser_id = ? THEN winner_score
+					ELSE 0
+				END
+			) AS total_points_taken
+			FROM game_info
+			WHERE winner_id = ? OR loser_id = ?;
+			`;
+
+		const rows = await this._db.query(sql, [userID, userID, userID, userID, userID, userID])
+
+		return { scored: rows[0].total_points_scored, taken: rows[0].total_points_taken };
 	}
 
 	async deleteGameInfoTable()

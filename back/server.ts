@@ -208,11 +208,13 @@ const start = async () => {
 		await db.connect();
 		// await users.deleteUserTable();
 		// await gameInfo.deleteGameInfoTable();
+		await users.deleteOneUser(-1);
 		await users.createUserTable();
 		await friends.createFriendsTable();
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();
 		await users.CreateUserIA();
+		await users.CreateUserGuest();
 		// const hashedPassword = await bcrypt.hash("42", 12);
 		// users.addUser("42", "42", hashedPassword);
 		// friends.deleteFriendTable();

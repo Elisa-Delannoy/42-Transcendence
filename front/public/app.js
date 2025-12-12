@@ -96,6 +96,15 @@ function DashboardView() {
 function winrateCalcul(wins, losses) {
   return Math.round(wins / (wins + losses) * 100).toString();
 }
+function formatDuration(seconds) {
+  seconds = Math.floor(seconds);
+  if (seconds < 60) {
+    return `${seconds}s`;
+  }
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}m ${remainingSeconds}s`;
+}
 async function initDashboard() {
   const container = document.getElementById("game-list");
   if (!container)
@@ -118,6 +127,7 @@ async function initDashboard() {
       const loserpseudo = clone.getElementById("loserpseudo");
       const date = clone.getElementById("date");
       const duration = clone.getElementById("duration");
+      const type = clone.getElementById("type");
       winnerpath.src = game.winner_avatar;
       winnerscore.textContent = game.winner_score.toString();
       winnerpseudo.textContent = game.winner_pseudo;
@@ -125,16 +135,23 @@ async function initDashboard() {
       loserscore.textContent = game.loser_score.toString();
       loserpseudo.textContent = game.loser_pseudo;
       date.textContent = new Date(game.date_game).toLocaleDateString();
-      duration.textContent = "Dur\xE9e : " + game.duration_game;
+      duration.textContent = "Dur\xE9e : " + formatDuration(game.duration_game);
+      type.textContent = game.type;
       item.appendChild(clone);
       container.appendChild(item);
     });
     const winrate = document.getElementById("winrate");
     const win = document.getElementById("win");
     const loose = document.getElementById("loose");
-    winrate.textContent = winrateCalcul(dashboards.WinLoose.win, dashboards.WinLoose.loose);
+    winrate.textContent = winrateCalcul(dashboards.WinLoose.win, dashboards.WinLoose.loose) + "%";
     win.textContent = dashboards.WinLoose.win.toString();
     loose.textContent = dashboards.WinLoose.loose.toString();
+    const taken = document.getElementById("taken");
+    const scored = document.getElementById("scored");
+    const ratio = document.getElementById("ratio");
+    ratio.textContent = winrateCalcul(dashboards.TotalScore.scored, dashboards.TotalScore.taken) + "%";
+    taken.textContent = dashboards.TotalScore.taken.toString();
+    scored.textContent = dashboards.TotalScore.scored.toString();
   } catch (error) {
     console.error("Erreur lors du chargement :", error);
   }
