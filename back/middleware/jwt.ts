@@ -23,6 +23,7 @@ export const checkAuth = async (token: string, reply: FastifyReply): Promise< IU
 		if (err.name === "TokenExpiredError")
 		{
 			const id = jwt.decode(token) as { id : number }
+			// console.log("checkauth");
 			await users.updateStatus(id.id, "offline");
 		}
 		return err;

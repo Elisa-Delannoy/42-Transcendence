@@ -1,7 +1,7 @@
 import { navigateTo } from "../router";
 
 export const initLogout = async() => {
-	await fetch("/api/logout", {
+	await fetch("/api/private/logout", {
 		method: "GET",
 		credentials: "include"
 		});

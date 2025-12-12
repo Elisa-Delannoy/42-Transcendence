@@ -8,10 +8,26 @@
 }
 
 @layer components {
+	.dash {
+		@apply bg-[linear-gradient(180deg,var(--color-white)_95%,var(--color-amber-400)_95%)] mt-4 mx-4
+		ring-2 ring-amber-400 rounded-xl p-4 flex items-center justify-between shadow-lg duration-300
+		hover:-translate-0.5 hover:shadow-2xl hover:bg-[linear-gradient(180deg,var(--color-orange-50)_95%,var(--color-amber-400)_95%)];
+	}
+}
+
+@layer components {
 	.btn {
-		@apply bg-amber-700 dark:bg-amber-950 text-white text-center py-4 
-			rounded-lg hover:bg-gray-700 duration-300 cursor-pointer
-			block mt-10;
+		@apply  /* Mobile */
+			bg-amber-500 text-white text-center py-3
+			rounded-lg cursor-pointer block mt-10 duration-300
+
+			/* Desktop */
+			md:bg-linear-to-r md:from-amber-400 md:via-amber-500 md:to-amber-600
+			md:py-4
+
+			/* Hover */
+			hover:bg-gray-700
+			md:hover:from-transparent md:hover:via-transparent md:hover:to-transparent;
 	}
 }
 
@@ -23,12 +39,24 @@
 
 @layer components {
 	.input {
-		@apply bg-amber-600/30 dark:bg-amber-950/30 rounded-md w-80 duration-300
-				focus:ring-amber-500 focus:ring-2 focus:outline-none
-				px-2 py-1 text-sm dark:text-white shadow-xs;
+		@apply bg-amber-300/20 dark:bg-amber-950/30 rounded-md w-80 duration-300
+				focus:ring-amber-500 ring-amber-300 ring-1 focus:ring-2 focus:outline-none
+				px-2 py-1 text-sm text-orange-900 dark:text-white shadow-xs;
 	}
 }
 
 @utility flex-centered {
 	@apply flex justify-center items-center;
 }
+
+
+@layer utilities {
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none; /* Firefox */
+  }
+}
+

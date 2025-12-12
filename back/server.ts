@@ -1,6 +1,6 @@
 import Fastify, { FastifyRequest, FastifyReply } from "fastify";
 import fastifyStatic from "@fastify/static";
-import { join } from "path";
+import path, { join } from "path";
 import  { ManageDB } from "./DB/manageDB";
 import { Users } from './DB/users';
 import { manageLogin } from './routes/login/login';
@@ -8,25 +8,35 @@ import { manageRegister } from "./routes/register/register";
 import { GameInfo } from "./DB/gameinfo";
 import fastifyCookie from "@fastify/cookie";
 import { tokenOK } from "./middleware/jwt";
-import multipart from "@fastify/multipart"
-import { createGame, joinGame, endGame, updateGamePos, updateGameStatus, displayGameList } from "./routes/game/game";
-import fs from "fs";
-import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always"
-import { Tournament } from './DB/tournament';
-import * as tournamentService from "./routes/tournament/tournament.service";
-import { getProfile, displayAvatar } from "./routes/profile/profile";
+import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import bcrypt from "bcryptjs";
+import { createGame, joinGame, displayGameList } from "./routes/game/serverGame";
+import fs from "fs";
+import { Tournament } from './DB/tournament';
+import { uploadPendingTournaments } from "./routes/tournament/tournament.service";
+import * as avalancheService from "./blockchain/avalanche.service";
+import { Server } from "socket.io";
+import multipart from "@fastify/multipart"
+import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always";
+import * as tournamentService from "./routes/tournament/tournament.service";
+import { getProfile } from "./routes/profile/profile";
 import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus } from "./routes/profile/getUpdate";
 import { logout } from "./routes/logout/logout";
+import { setupGameServer } from "./pong/pongServer";
 import { Friends } from "./DB/friend";
 import { displayFriendPage } from "./routes/friends/friends";
 import fastifyMetrics from "fastify-metrics"; 
+import { allMyFriends, searchUser, addFriend, acceptFriend } from "./routes/friends/friends";
+import { dashboardInfo } from "./routes/dashboard/dashboard";
+import { request } from "http";
+import { navigateTo } from "../front/src/router";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
 export const friends = new Friends(db);
 export const gameInfo = new GameInfo(db);
 export const tournament = new Tournament(db);
+
 
 const fastify = Fastify({
 	logger: false,
@@ -48,7 +58,7 @@ fastify.register(fastifyMetrics, {
 const httpsAlwaysOpts: HttpsAlwaysOptions = {
   productionOnly: false,
   redirect:       false,
-  httpsPort:      8443
+  httpsPort:      3000
 }
 
 fastify.register(fastifyStatic, {
@@ -64,10 +74,19 @@ fastify.register(FastifyHttpsAlwaysPlugin, httpsAlwaysOpts)
 
 fastify.register(multipart, {
 	limits:{
-		fileSize: 2 * 1024 * 1024,
+		fileSize: 6 * 1024 * 1024,
 		files: 1,
 	}
 })
+
+fastify.register(async function (instance) {
+
+  instance.register(fastifyStatic, {
+    root: join(__dirname, "uploads"),
+    prefix: "/files/",
+    index: false,
+  });
+});
 
 fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
 	if (request.url.startsWith("/api/private")) {
@@ -98,8 +117,8 @@ fastify.post("/api/login", async (request: FastifyRequest, reply: FastifyReply) 
   await manageLogin(username, password, reply);
 });
 
-fastify.post("/api/private/getpseudo", async (request: FastifyRequest, reply: FastifyReply) => {
-	return { pseudo: request.user?.pseudo }
+fastify.post("/api/private/getpseudoAv", async (request: FastifyRequest, reply: FastifyReply) => {
+	return { pseudo: request.user?.pseudo, avatar: request.user?.avatar }
 });
 
 fastify.post("/api/private/profile", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -127,20 +146,36 @@ fastify.post("/api/private/updateinfo/password", async (request: FastifyRequest,
 })
 
 fastify.post("/api/private/updateinfo/uploads", async (request, reply) => {
-	return await getUploadAvatar(request, reply);
-});
-
-fastify.get("/api/private/avatar", async (request: FastifyRequest, reply: FastifyReply) => {
-	return await displayAvatar(request, reply);
+	await getUploadAvatar(request, reply);
 });
 
 fastify.post("/api/private/friend", async (request: FastifyRequest, reply: FastifyReply) => {
-	return await displayFriendPage(request.user!.user_id);
+	await allMyFriends(request, reply);
+})
+
+fastify.post("/api/private/friend/add", async(request: FastifyRequest, reply: FastifyReply) => {
+	await addFriend(request, reply);
+})
+
+fastify.post("/api/private/friend/accept", async(request: FastifyRequest, reply: FastifyReply) => {
+	await acceptFriend(request, reply);
+})
+
+fastify.post("/api/private/friend/search", async( request: FastifyRequest, reply: FastifyReply) => {
+	await searchUser(request, reply);
 })
 
 fastify.post("/api/private/game/create", async (request, reply) => {
+	const { localMode } = request.body as { localMode: boolean };
 	const playerId = request.user?.user_id as any;
-	const gameId = createGame(playerId);
+	const { vsAI } = request.body as { vsAI: boolean };
+	let gameId: number;
+	console.log(`vsAI is: ${vsAI}`);
+	if (vsAI) {
+		gameId = createGame(Number(playerId), localMode, { vsAI: true });
+	} else {
+		gameId = createGame(Number(playerId), localMode, { vsAI: false });
+	}
 	reply.send({ gameId });
 });
 
@@ -153,48 +188,34 @@ fastify.post("/api/private/game/join", async (request, reply) => {
 });
 
 fastify.get("/api/private/game/list", async (request, reply) => {
-	const list = displayGameList();
+	const list = await displayGameList();
 	return { games: list };
-})
-
-fastify.post("/api/private/game/update/pos", async (request, reply) => {
-	const { gameId, ballPos, paddlePos } = request.body as any;
-	updateGamePos(gameId, ballPos, paddlePos );
-	return { ok: true };
 });
-
-fastify.post("/api/private/game/update/status", async (request, reply) => {
-	const { id, status } = request.body as any;
-	const gameid = Number(id);
-	updateGameStatus(gameid, status);
-	return { message: "Game status updated!" };
-});
-
-fastify.post("/api/private/game/end", async (request, reply) => {
-	const { winner_id, loser_id, winner_score, loser_score, duration_game, id } = request.body as any;
-
-	await endGame(winner_id, loser_id, winner_score, loser_score, duration_game, id, gameInfo);
-	return { message: "Game saved!" };
-});
-
 
 fastify.post("/api/private/tournament/add", (req, reply) => {
 	return tournamentService.updateTournament(req, reply);
-	});
-	  
+});
+
 fastify.get("/api/private/tournament/all", (req, reply) => {
 	return tournamentService.getAllTournamentsDetailed(req, reply);
 });
 
-fastify.get("/api/logout", async (request, reply) => {
+fastify.get("/api/private/logout", async (request, reply) => {
 	return await logout(request, reply);
 })
 
+const io = new Server(fastify.server, {
+			cors: { origin: "*" }
+		});
+setupGameServer(io);
 
 fastify.setNotFoundHandler((request: FastifyRequest, reply: FastifyReply) => {
 	return reply.sendFile("index.html");
 })
 
+fastify.get("/api/private/dashboard", async (request, reply) => {
+	return dashboardInfo(request, reply);
+});
 
 const start = async () => {
 	const PORT = 3000
@@ -203,15 +224,17 @@ const start = async () => {
 		console.log(`Server running on port ${PORT}`);
 		await db.connect();
 		// await users.deleteUserTable();
-		await gameInfo.deleteGameInfoTable();
+		// await gameInfo.deleteGameInfoTable();
+		friends.deleteFriendTable();
 		await users.createUserTable();
-		await friends.createFriendsTable();
+		await friends.createFriendTable();
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();
 		await users.CreateUserIA();
-		const hashedPassword = await bcrypt.hash("42", 12);
-		users.addUser("42", "42", hashedPassword);
-		// friends.addFriendship(7, 11);
+		// const hashedPassword = await bcrypt.hash("42", 12);
+		// users.addUser("42", "42", hashedPassword);
+		// friends.addFriendship(5, 6);
+		// friends.addFriendship(4, 5);
 	} catch (err) {
 		console.log(err);
 		fastify.log.error(err);

@@ -1,9 +1,10 @@
 import { View, init } from "./views/home";
 import { LoginView, initLogin } from "./views/login";
-import { DashboardView } from "./views/p_dashboard";
+import { DashboardView, initDashboard } from "./views/p_dashboard";
 import { RegisterValidView, RegisterView, initRegister } from "./views/register";
-import { GameView, initGame} from "./views/p_game";
-import { QuickGameView, initQuickGame, stopGame} from "./views/p_quickgame";
+import { GameOnlineView, GameOnlineinit} from "./views/p_gameonline";
+import { GameLocalView, GameLocalinit} from "./views/p_gamelocal";
+import { PongMatchView, initPongMatch, stopGame} from "./views/p_pongmatch";
 import { homeView, initHomePage } from "./views/p_homelogin";
 import { ProfileView, initProfile} from "./views/p_profile";
 import { UpdateInfoView, initUpdateInfo } from "./views/p_updateinfo";
@@ -13,6 +14,8 @@ import { fromTwos } from "ethers";
 import { Statement } from "sqlite3";
 import { FriendsView, initFriends } from "./views/p_friends";
 import { ErrorView, initError } from "./views/error";
+import { request } from "http";
+import { userInfo } from "os";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -21,12 +24,13 @@ const routes = [
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/registerok", view: RegisterValidView},
   { path: "/home", view: homeView, init: initHomePage},
-  { path: "/dashboard", view: DashboardView },
+  { path: "/dashboard", view: DashboardView, init: initDashboard },
   { path: "/friends", view: FriendsView, init: initFriends },
   { path: "/profile", view: ProfileView, init: initProfile},
   { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo},
-  { path: "/game", view: GameView, init: initGame},
-  { path: "/quickgame/:id", view: QuickGameView, init: initQuickGame, cleanup: stopGame },
+  { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit},
+  { path: "/gamelocal", view: GameLocalView, init: GameLocalinit},
+  { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
   { path: "/tournament", view: TournamentView},
   { path: "/error", view: ErrorView, init:initError},
 
@@ -40,9 +44,9 @@ export function navigateTo(url: string) {
 	history.pushState(state, "", url);
 	currentPath = url;
 	router();
-	const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
-	if (avatar) 
-		avatar.src = "/api/private/avatar?ts=" + Date.now();
+	// const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
+	// if (avatar) 
+	// 	avatar.src = "/api/private/avatar?ts=" + Date.now();
 }
 
 export async function genericFetch(url: string, options: RequestInit = {}) {
@@ -85,35 +89,24 @@ export async function loadHeader() {
 	const html = await response.text();
 	const container = document.getElementById('header-container');
 	if (container) container.innerHTML = html;
-	getPseudoHeader()
-	const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
-	if (avatar) 
-		avatar.src = "/api/private/avatar?ts=" + Date.now();
+	getPseudoHeader();
 }
 
 export async function getPseudoHeader()
 {
   try {
-	const result = await genericFetch("/api/private/getpseudo", {
+	const result = await genericFetch("/api/private/getpseudoAv", {
 		method: "POST",
 		credentials: "include"
 	});
 	
 	document.getElementById("pseudo-header")!.textContent = result.pseudo;
+	const avatar = document.getElementById("header-avatar") as HTMLImageElement;
+	avatar.src = result.avatar + "?ts" + Date.now();
 	} catch (err) {
 		console.error(err);
 	}
 }
-
-export function isError(url: string): number {
-	for (let i: number = 0; i < routes.length; i++) {
-		let newUrl = new RegExp("^" + routes[i].path.replace(/:\w+/g, "([^/]+)") + "$");
-		if (newUrl.test(url))
-			return 0;
-	}
-	return 1;
-}
-
 
 export function router() {
 	//clean route who got cleanup function (game)
@@ -122,27 +115,17 @@ export function router() {
 		if (typeof currentRoute.cleanup === "function")
 			currentRoute.cleanup();
 	}
-	console.log("pathname= ", location.pathname);
 	const match = matchRoute(location.pathname);
-	console.log("match= ", match?.route.path);
-	// if (isError(currentRoute))
-	// 	navigateTo("/error");
-
-	// if (!match) 
-	// 	return errorPage();
-
-		if (!match) {
-			navigateTo("/error");
-			return;
-	}
+	if (!match) {
+		navigateTo("/error");
+		return;
+		}
 
 	const { route, params } = match;
 	if (route.view)
 		document.querySelector("#app")!.innerHTML = route.view(params);
 	route.init?.(params);
 	currentRoute = route;
-	// if (!currentRoute.cleanup) {
-	// 	currentRoute.cleanup = () => {};}
 }
 
 export function initRouter() {

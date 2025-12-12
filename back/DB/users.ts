@@ -40,34 +40,6 @@ export class Users
 		`);
 	}
 
-	async CreateUserIA()
-	{
-		try
-		{
-			const result = await this.getIDUser(0);
-			return;
-		}
-		catch
-		{
-			const insertQuery = `
-    			INSERT INTO Users (user_id, pseudo, email, password, avatar, status, creation_date, modification_date, money, elo)
-        		VALUES (?,?,?,?,?,?,?,?,?,?)`;
-			const parameters = [
-			0,
-			"IA_Player",
-			"ia@system.local",
-			"AI_PASSWORD",  
-			"ai.png",
-			"online",
-			new Date().toISOString().replace("T", " ").split(".")[0],
-			new Date().toISOString().replace("T", " ").split(".")[0],
-			0,
-			1000
-			];
-			await this._db.execute(insertQuery, parameters);
-		}
-	}
-
 	async addUser(pseudo:string, email: string, password: string):Promise<void>
 	{
 		const query = `
@@ -78,7 +50,29 @@ export class Users
 		pseudo,
 		email,
 		password,
-		"0.png",
+		"/files/0.png",
+		"online",
+		new Date().toISOString().replace("T", " ").split(".")[0],
+		new Date().toISOString().replace("T", " ").split(".")[0],
+		0,
+		0
+		];
+		await this._db.execute(query, parameters);
+	}
+
+	async CreateUserIA()
+	{
+		const query = `
+			INSERT INTO Users (user_id, pseudo, email, password, avatar, status, creation_date, modification_date, money, elo)
+			VALUES (?,?,?,?,?,?,?,?,?,?)
+			ON CONFLICT(user_id) DO NOTHING
+		`;
+		const parameters = [
+		-1,
+		"AI_Player",
+		"ia@ia.ia",
+		"iapassiapass",
+		"/files/ai.png",
 		"online",
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		new Date().toISOString().replace("T", " ").split(".")[0],
@@ -93,6 +87,16 @@ export class Users
 		const query = `DROP TABLE IF EXISTS Users`
 		await this._db.execute(query, []);
 	}
+
+	async deleteOneUser(userId: number)
+	{
+		const query = `
+			DELETE FROM Users
+			WHERE user_id = ?
+		`;
+		await this._db.execute(query, [userId]);
+	}
+
 
 	async getEmailUser(email: string)
 	{
@@ -136,6 +140,15 @@ export class Users
 		return updatedUser;
 	}
 
+	async getPseudoFromId(id: number)
+	{
+		const infos: any[] = await this._db.query(`SELECT pseudo FROM Users WHERE user_id = ?`, [id])
+		if (infos.length  === 0)
+			return [];
+		else
+			return infos[0];
+	}
+
 	async updateEmail(id: number, newEmail: string): Promise<IUsers>
 	{
 		if (!newEmail || newEmail.trim() === '') {
@@ -170,5 +183,11 @@ export class Users
 		await this._db.execute(`UPDATE Users SET status = ? WHERE user_id = ?`, [status, id]);
 		const updatedUser = await this.getIDUser(id);
 		return updatedUser;
+	}
+
+	async searchMember(pseudo: string, id: number): Promise<IUsers[]> {
+		const query = ` SELECT * FROM Users WHERE user_id != ? AND LOWER(pseudo) LIKE LOWER(?) LIMIT 10`; /*faire un join pour status != friend ou voir pour mettre bouton supprimer si friend*/
+		const members = await this._db.query(query, [id, `${pseudo}%`])
+		return members;
 	}
 }

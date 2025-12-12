@@ -116,7 +116,7 @@ export async function getUpdatePassword(fastify: FastifyInstance, request: Fasti
 }
 
 export async function getUploadAvatar(request: FastifyRequest, reply: FastifyReply) {
-	const MAX_SIZE = 2 * 1024 * 1024;
+	const MAX_SIZE = 6 * 1024 * 1024;
     const ALLOWED_MIME = ["image/png", "image/jpeg"];
 	
 	const avatar = await request.file();
@@ -124,23 +124,23 @@ export async function getUploadAvatar(request: FastifyRequest, reply: FastifyRep
 		return reply.status(400).send({ error: "Nothing uploaded"});
 	}
 	if (!ALLOWED_MIME.includes(avatar.mimetype)) {
-        return reply.status(400).send({ error: "Bad file type, png/jpeg only" });
-    }
+		return reply.status(400).send({ error: "Bad file type, png/jpeg only" });
+	}
 	const image = mime.lookup(avatar.filename);
 	if (!image)
 		return reply.status(400).send({ error: "Bad file"})
 	const type =  mime.extension(image);
 	if (!type) {
-        return reply.status(400).send({ error: "Cannot detect file extension" });
-    }
+		return reply.status(400).send({ error: "Cannot detect file extension" });
+	}
 	const avatar_name = request.user!.user_id + "." + type;
 	const avatar_path = path.join(__dirname, "../../uploads", avatar_name);
 	await pipeline(avatar.file, fs.createWriteStream(avatar_path));
 	if (avatar.file.truncated || avatar.file.bytesRead > MAX_SIZE) {
-        await fs.promises.unlink(avatar_path);
-        return reply.status(413).send({ error: "File too large (max 2MB)" });
-    }
-	await users.updateAvatar(request.user!.user_id, avatar_name);
+		await fs.promises.unlink(avatar_path);
+		return reply.status(413).send({ error: "File too large (max 2MB)" });
+	}
+	await users.updateAvatar(request.user!.user_id, "/files/" + avatar_name);
 	return reply.status(200).send({ message: "Upload succes", filename: avatar_name})
 }
 

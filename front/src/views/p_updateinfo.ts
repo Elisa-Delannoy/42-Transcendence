@@ -132,6 +132,7 @@ async function initUpdatePassword() {
       console.log("uplaod success ok : ", result);
       navigateTo("/profile");
       } catch (err) {
+          alert(err);
 		      console.error(err);
 	    }
   }

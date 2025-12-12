@@ -15,16 +15,16 @@
 			<label for="burger" class="cursor-pointer select-none">
 			<div class="flex flex-row">
 				<h1 class="mr-6 text-2xl my-auto" id="pseudo-header"></h1>
-				<img class="rounded-full" id="profile-avatar" src="" alt="Your avatar" width="70">
+				<img class="rounded-full w-20 h-20" id="header-avatar" src="" alt="Your avatar" width="70">
 			</div>
 			</label>
-			<nav class="absolute top-28 right-0 bg-white dark:bg-gray-800 shadow-lg w-48 rounded-lg p-4 
-					hidden flex-col space-y-3 text-lg font-medium
-					peer-checked:flex md:hidden">
-				<a href="/profile" data-link class="hover:text-blue-600">Profile</a>
-				<a href="/dashboard" data-link class="hover:text-blue-600">Dashboard</a>
-				<a href="/friends" data-link class="hover:text-blue-600">Friends</a>
-				<a href="/logout" data-link class="hover:text-blue-600">Logout</a>
+			<nav class="absolute top-28 right-0 bg-white/90 dark:bg-gray-800/90 shadow-lg w-48 rounded-lg p-4 
+					hidden flex-col space-y-3 text-lg font-medium mr-6
+					peer-checked:flex md:hidden duration-300">
+				<a href="/profile" data-link class="hover:text-amber-700 mx-auto w-36">Profile</a>
+				<a href="/dashboard" data-link class="hover:text-amber-700 mx-auto w-36">Dashboard</a>
+				<a href="/friends" data-link class="hover:text-amber-700 mx-auto w-36">Friends</a>
+				<a href="/logout" data-link class="hover:text-amber-700 mx-auto w-36">Logout</a>
 			</nav>
 		</div>
 	</header>

@@ -11,11 +11,11 @@ export async function logout(request: FastifyRequest, reply: FastifyReply) {
 			path: "/",
 		};
 		try {
-		reply.clearCookie("token", options);
-		if (request.user?.user_id)
-			await users.updateStatus(request.user?.user_id, "offline");
-		return { message: "is logged out" };
-}
+			reply.clearCookie("token", options);
+			if (request.user?.user_id)
+				await users.updateStatus(request.user?.user_id, "offline");
+			return { message: "is logged out" };
+	}
 		catch (err) {
 		console.log(err);
 	}

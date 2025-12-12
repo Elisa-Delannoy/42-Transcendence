@@ -25,7 +25,7 @@ async function checkPseudo(pseudo: string)
 {
 	const info = await users.getPseudoUser(pseudo);
 	if (pseudo.length > 16 || pseudo.length < 1)
-		throw { field: "username", message: "Pseudo invalid! 1 character minimum and 16 character maximum." };
+		throw { field: "username", message: "Pseudo must have 16 character maximum." };
 	if (info?.pseudo === pseudo)
 		throw { field: "username", message: "Pseudo already exists." };
 	const valid = /^[a-zA-Z0-9_]+$/.test(pseudo);
