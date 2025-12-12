@@ -31,7 +31,7 @@ groups:
     # High Memory Usage
     - alert: HighMemoryUsage
       expr: nodejs_heap_size_used_bytes / nodejs_heap_size_total_bytes > 0.9
-      for: 5m
+      for: 2m
       labels:
         severity: 🔵 info
       annotations:
