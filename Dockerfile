@@ -20,7 +20,7 @@ COPY . .
 FROM base AS build
 
 # 1) Build CSS
-RUN npm run css
+RUN npm run css-final
 
 # 2) Build frontend bundle
 RUN npm run front
@@ -56,7 +56,7 @@ COPY front/src/image ./front/src/image
 COPY front/*.html ./front/
 
 # Expose backend port
-EXPOSE 3001
+EXPOSE 3000
 
 # Start backend from compiled JS
 CMD ["node", "./back/server.js"]
