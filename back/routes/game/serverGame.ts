@@ -3,7 +3,7 @@ import { GameInfo } from "../../DB/gameinfo";
 import { GameState, updateBall } from "../../pong/gameEngine";
 import { simulateAI } from "../../pong/simulateAI";
 import { checkForWinner, serializeForClient } from "../../pong/pongServer";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 
 const TICK_RATE = 16;
 
@@ -55,8 +55,7 @@ export class ServerGame {
 			if (this.idPlayer2 === -1)
 				simulateAI(this.state as any, Date.now());
 
-			// broadcast
-			this.io.to(`game-${this.id}`).emit("state", serializeForClient(this.state));
+			this.io.to(`game-${this.id}`).emit("state", serializeForClient(this.state, this.status));
 
 			checkForWinner(this, this.io);
 		}

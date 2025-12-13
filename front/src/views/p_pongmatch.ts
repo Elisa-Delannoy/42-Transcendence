@@ -12,9 +12,6 @@ export function PongMatchView(params?: any): string {
 	return (document.getElementById("pongmatchhtml") as HTMLTemplateElement).innerHTML;
 }
 
-declare global {
-	interface Window { inputInterval?: NodeJS.Timeout; }
-}
 
 export function initPongMatch(params?: any) {
 	const gameID: string = params?.id;
@@ -22,6 +19,9 @@ export function initPongMatch(params?: any) {
 	const localMode = url.searchParams.get("local") === "1";
 
 	const serverUrl = window.location.host;
+	let input1: "up" | "down" | "stop" = "stop";
+	let input2: "up" | "down" | "stop" = "stop";
+	let input: "up" | "down" | "stop" = "stop";
 
 	// 1. Create game for client
 	currentGame = new GameInstance();
@@ -46,7 +46,6 @@ export function initPongMatch(params?: any) {
 
 	net.onCountdown(() => {
 		let countdown = 4;
-		let countdownActive = true;
 		const interval = setInterval(() => {
 			if (!currentGame || !renderer)
 				return;
@@ -54,9 +53,8 @@ export function initPongMatch(params?: any) {
 			countdown--;
 			if (countdown < 0) {
 				clearInterval(interval);
-				countdownActive = false;
 				if (net)
-					net.startMatch();
+					net.startGame();
 			}
 		}, 1000);
 	});
@@ -80,6 +78,7 @@ export function initPongMatch(params?: any) {
 
 		//draw actual state
 		renderer.draw(currentGame.getCurrentState(), true);
+		updateInput();
 	});
 
 	// 7. Send inputs to server
@@ -97,45 +96,45 @@ export function initPongMatch(params?: any) {
 	{
 		if (!currentGame) return;
 
-		if (currentGame.isLocalMode()) {
-			let input1: "up" | "down" | "stop" = "stop";
-			if (keyState["w"] || keyState["W"])
-				input1 = "up";
-			else if (keyState["s"] || keyState["S"])
-				input1 = "down";
-			else
-				input1 = "stop";
-			currentGame.sendInput(input1, "player1");
+		if (currentGame.getCurrentState().status == "playing")
+		{
+			if (currentGame.isLocalMode())
+			{
+				//player1
+				if (keyState["w"] || keyState["W"] && input1 != "up")
+					input1 = "up";
+				else if (keyState["s"] || keyState["S"] && input1 != "down")
+					input1 = "down";
+				else if (input1 != "stop")
+					input1 = "stop";
+				currentGame.sendInput(input1, "player1");
 
-			let input2: "up" | "down" | "stop" = "stop";
-			if (keyState["ArrowUp"])
-				input2 = "up";
-			else if (keyState["ArrowDown"])
-				input2 = "down";
+				//player2
+				if (keyState["ArrowUp"] && input2 != "up")
+					input2 = "up";
+				else if (keyState["ArrowDown"] && input2 != "down")
+					input2 = "down";
+				else if (input2 != "stop")
+					input2 = "stop";
+				currentGame.sendInput(input2, "player2");
+			}
 			else
-				input2 = "stop";
-			currentGame.sendInput(input2, "player2");
-		}
-		else {
-			let input: "up" | "down" | "stop" = "stop";
-			if (keyState["w"] || keyState["W"])
-				input = "up";
-			else if (keyState["s"] || keyState["S"])
-				input = "down";
-			else
-				input = "stop";
+			{
+				if (keyState["w"] || keyState["W"] && input != "up")
+					input = "up";
+				else if (keyState["s"] || keyState["S"] && input != "down")
+					input = "down";
+				else if (input != "stop")
+					input = "stop";
 
-			currentGame.sendInput(input);
+				currentGame.sendInput(input);
+			}
 		}
 	}
-
-	if (window.inputInterval)
-		clearInterval(window.inputInterval);
-	window.inputInterval = setInterval(updateInput, 16);
-
 }
 
-export function stopGame() {
+export function stopGame()
+{
 	net?.disconnect();
 	net = null;
 	renderer = null;

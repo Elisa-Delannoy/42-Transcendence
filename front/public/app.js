@@ -96,6 +96,15 @@ function DashboardView() {
 function winrateCalcul(wins, losses) {
   return Math.round(wins / (wins + losses) * 100).toString();
 }
+function formatDuration(seconds) {
+  seconds = Math.floor(seconds);
+  if (seconds < 60) {
+    return `${seconds}s`;
+  }
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}m ${remainingSeconds}s`;
+}
 async function initDashboard() {
   const container = document.getElementById("game-list");
   if (!container)
@@ -118,6 +127,7 @@ async function initDashboard() {
       const loserpseudo = clone.getElementById("loserpseudo");
       const date = clone.getElementById("date");
       const duration = clone.getElementById("duration");
+      const type = clone.getElementById("type");
       winnerpath.src = game.winner_avatar;
       winnerscore.textContent = game.winner_score.toString();
       winnerpseudo.textContent = game.winner_pseudo;
@@ -125,16 +135,23 @@ async function initDashboard() {
       loserscore.textContent = game.loser_score.toString();
       loserpseudo.textContent = game.loser_pseudo;
       date.textContent = new Date(game.date_game).toLocaleDateString();
-      duration.textContent = "Dur\xE9e : " + game.duration_game;
+      duration.textContent = "Dur\xE9e : " + formatDuration(game.duration_game);
+      type.textContent = game.type;
       item.appendChild(clone);
       container.appendChild(item);
     });
     const winrate = document.getElementById("winrate");
     const win = document.getElementById("win");
     const loose = document.getElementById("loose");
-    winrate.textContent = winrateCalcul(dashboards.WinLoose.win, dashboards.WinLoose.loose);
+    winrate.textContent = winrateCalcul(dashboards.WinLoose.win, dashboards.WinLoose.loose) + "%";
     win.textContent = dashboards.WinLoose.win.toString();
     loose.textContent = dashboards.WinLoose.loose.toString();
+    const taken = document.getElementById("taken");
+    const scored = document.getElementById("scored");
+    const ratio = document.getElementById("ratio");
+    ratio.textContent = winrateCalcul(dashboards.TotalScore.scored, dashboards.TotalScore.taken) + "%";
+    taken.textContent = dashboards.TotalScore.taken.toString();
+    scored.textContent = dashboards.TotalScore.scored.toString();
   } catch (error) {
     console.error("Erreur lors du chargement :", error);
   }
@@ -3987,7 +4004,7 @@ var init_gameNetwork = __esm({
         this.socket.on("predraw", (state) => {
           this.onPredrawCallback?.(state);
         });
-        this.socket.on("startGame", () => {
+        this.socket.on("startCountdown", () => {
           this.onCountdownCallback?.();
         });
         this.socket.on("gameOver", () => {
@@ -4007,8 +4024,8 @@ var init_gameNetwork = __esm({
       onPredraw(cb) {
         this.onPredrawCallback = cb;
       }
-      startMatch() {
-        this.socket.emit("startMatch");
+      startGame() {
+        this.socket.emit("startGame");
       }
       sendInput(direction, player) {
         this.socket.emit("input", { direction, player });
@@ -4034,7 +4051,8 @@ var init_gameInstance = __esm({
         this.currentState = {
           ball: { x: 300, y: 240 },
           paddles: { player1: 210, player2: 210 },
-          score: { player1: 0, player2: 0 }
+          score: { player1: 0, player2: 0 },
+          status: "waiting"
         };
         this.network = null;
         this.localMode = false;
@@ -4082,6 +4100,9 @@ function initPongMatch(params) {
   const url2 = new URL(window.location.href);
   const localMode = url2.searchParams.get("local") === "1";
   const serverUrl = window.location.host;
+  let input1 = "stop";
+  let input2 = "stop";
+  let input = "stop";
   currentGame = new GameInstance();
   renderer = new GameRenderer();
   if (localMode)
@@ -4094,7 +4115,6 @@ function initPongMatch(params) {
   net.join(Number(gameID));
   net.onCountdown(() => {
     let countdown = 4;
-    let countdownActive = true;
     const interval = setInterval(() => {
       if (!currentGame || !renderer)
         return;
@@ -4102,9 +4122,8 @@ function initPongMatch(params) {
       countdown--;
       if (countdown < 0) {
         clearInterval(interval);
-        countdownActive = false;
         if (net)
-          net.startMatch();
+          net.startGame();
       }
     }, 1e3);
   });
@@ -4119,6 +4138,7 @@ function initPongMatch(params) {
       return;
     currentGame.applyServerState(state);
     renderer.draw(currentGame.getCurrentState(), true);
+    updateInput();
   });
   const keyState = {};
   window.addEventListener("keydown", (e) => {
@@ -4129,37 +4149,33 @@ function initPongMatch(params) {
   });
   function updateInput() {
     if (!currentGame) return;
-    if (currentGame.isLocalMode()) {
-      let input1 = "stop";
-      if (keyState["w"] || keyState["W"])
-        input1 = "up";
-      else if (keyState["s"] || keyState["S"])
-        input1 = "down";
-      else
-        input1 = "stop";
-      currentGame.sendInput(input1, "player1");
-      let input2 = "stop";
-      if (keyState["ArrowUp"])
-        input2 = "up";
-      else if (keyState["ArrowDown"])
-        input2 = "down";
-      else
-        input2 = "stop";
-      currentGame.sendInput(input2, "player2");
-    } else {
-      let input = "stop";
-      if (keyState["w"] || keyState["W"])
-        input = "up";
-      else if (keyState["s"] || keyState["S"])
-        input = "down";
-      else
-        input = "stop";
-      currentGame.sendInput(input);
+    if (currentGame.getCurrentState().status == "playing") {
+      if (currentGame.isLocalMode()) {
+        if (keyState["w"] || keyState["W"] && input1 != "up")
+          input1 = "up";
+        else if (keyState["s"] || keyState["S"] && input1 != "down")
+          input1 = "down";
+        else if (input1 != "stop")
+          input1 = "stop";
+        currentGame.sendInput(input1, "player1");
+        if (keyState["ArrowUp"] && input2 != "up")
+          input2 = "up";
+        else if (keyState["ArrowDown"] && input2 != "down")
+          input2 = "down";
+        else if (input2 != "stop")
+          input2 = "stop";
+        currentGame.sendInput(input2, "player2");
+      } else {
+        if (keyState["w"] || keyState["W"] && input != "up")
+          input = "up";
+        else if (keyState["s"] || keyState["S"] && input != "down")
+          input = "down";
+        else if (input != "stop")
+          input = "stop";
+        currentGame.sendInput(input);
+      }
     }
   }
-  if (window.inputInterval)
-    clearInterval(window.inputInterval);
-  window.inputInterval = setInterval(updateInput, 16);
 }
 function stopGame() {
   net?.disconnect();

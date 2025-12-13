@@ -8,17 +8,85 @@ services:
     networks:
       - transcendence-net
 
-  # prometheus:
-  #   image: prom/prometheus:latest
-  #   container_name: prometheus
-  #   volumes:
-  #     - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-  #     - ./prometheus/rules.yml:/etc/prometheus/rules.yml:ro
-  #     - prometheus-data:/prometheus
-  #   command:
-  #     - "--config.file=/etc/prometheus/prometheus.yml"
-  #   ports:
-  #     - "9090:9090"
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./DevOps/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./DevOps/prometheus/rules.yml:/etc/prometheus/rules.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+    networks:
+      - transcendence-net
+
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    volumes:
+      - alertmanager-data:/alertmanager
+      - ./DevOps/prometheus/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9093:9093"
+    networks:
+      - transcendence-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3003:3003"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./DevOps/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./DevOps/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - ./DevOps/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./DevOps/grafana/certs:/etc/grafana/certs
+    networks:
+      - transcendence-net
+    restart: unless-stopped
+    env_file:
+      - ./back/.env
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - transcendence-net
+
+  cadvisor:
+    # Use 'gcr.io/cadvisor/cadvisor:latest' or 'zcube/cadvisor' if you are on an M1/M2 Mac
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - "8080:8080"
+    volumes:
+      # These volume mounts are REQUIRED for it to work:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    networks:
+      - transcendence-net
+    devices:
+      - /dev/kmsg
+    restart: unless-stopped
+
+
+volumes:
+  prometheus-data:
+    driver: local
+
+  grafana-data:
+    driver: local
+
+  alertmanager-data:
+    driver: local
 
 networks:
   transcendence-net:

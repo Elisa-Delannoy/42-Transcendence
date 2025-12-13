@@ -5,6 +5,7 @@
   "scripts": {
     "front": "npx esbuild front/src/main.ts --bundle --outfile=front/public/app.js --format=esm",
     "css": "npx @tailwindcss/cli -i front/src/css/input.css -o front/public/output.css --watch",
+    "css-final": "npx @tailwindcss/cli -i front/src/css/input.css -o front/public/output.css",
     "back": "tsx back/server.ts"
   },
   "devDependencies": {
@@ -28,10 +29,12 @@
     "ethers": "^6.15.0",
     "fastify": "^5.6.2",
     "fastify-https-always": "^2.0.0",
+    "fastify-metrics": "^12.1.0",
     "jsonwebtoken": "^9.0.2",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "mime-types": "^3.0.2",
+    "prom-client": "^15.1.3",
     "sqlite3": "^5.1.7",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",

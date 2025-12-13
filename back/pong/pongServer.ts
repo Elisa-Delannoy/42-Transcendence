@@ -24,14 +24,16 @@ export function setupGameServer(io: Server) {
 			else
 				initRemoteAndAi(game, io, socket, gameId);
 
-			socket.on("startMatch", () => {
+			//after countdown, match is starting
+			socket.on("startGame", () => {
 				const game = games_map.get(gameId);
-				if (!game) return;
+				if (!game)
+					return;
 				game.status = "playing";
-				socket.emit("state", serializeForClient(game.state));
+				socket.emit("state", serializeForClient(game.state, game.status));
 			});
 
-			// Paddle move
+			// Input
 			socket.on("input", ({ direction, player }: { direction: "up" | "down" | "stop", player?: "player1" | "player2" }) => {
 				const game = games_map.get(gameId);
 				if (!game)
@@ -90,11 +92,12 @@ export function checkForWinner(game: ServerGame, io: Server)
 	}
 }
 
-export function serializeForClient(state: GameState) {
+export function serializeForClient(state: GameState, status: "waiting" | "playing" | "finished" | "countdown") {
 	return {
 		ball: { x: state.ball.x, y: state.ball.y },
 		paddles: state.paddles,
-		score: state.score
+		score: state.score,
+		status: status
 	};
 }
 
@@ -112,12 +115,15 @@ function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number)
 		resetBall(game.state);
 
 		socket.emit("assignRole", "player1");
-		io.to(`game-${gameId}`).emit("startGame");
-		socket.emit("predraw", serializeForClient(game.state));
+
+		//countdown starting
+		io.to(`game-${gameId}`).emit("startCountdown");
+		//predraw canvas without score to avoid empty screen before countdown
+		socket.emit("predraw", serializeForClient(game.state, game.status));
 	}
 	else
 	{
-		// Already taken (another local session occupying it)
+		// Already taken (another local session occupying it) => UNUSED SO FAR
 		socket.emit("gameFull");
 	}
 }
@@ -145,7 +151,7 @@ function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gameId: n
 	}
 	else
 	{
-		socket.emit("gameFull");
+		socket.emit("gameFull"); // => UNUSED SO FAR
 		return;
 	}
 	socket.emit("assignRole", role);
@@ -160,11 +166,11 @@ function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gameId: n
 	if ((game.sockets.player1 && game.idPlayer2 == -1) 
 		|| (game.sockets.player1 && game.sockets.player2 && game.status === "waiting")) {
 		game.status = "countdown";
-		io.to(`game-${gameId}`).emit("startGame");
+		io.to(`game-${gameId}`).emit("startCountdown");
 	}
 
-	// send initial state
-	socket.emit("predraw", serializeForClient(game.state));
+	//predraw canvas without score to avoid empty screen before countdown
+	socket.emit("predraw", serializeForClient(game.state, game.status));
 }
 
 function getPlayer(game: ServerGame, socket: Socket) {

@@ -7,7 +7,8 @@ import { users } from '../../server';
 export interface IDashBoard
 {
 	GamesInfo: IGameInfo[],
-	WinLoose: {win:number; loose:number}
+	WinLoose: {win:number, loose:number}
+	TotalScore: {scored:number, taken:number}
 }
 
 export async function dashboardInfo(request: FastifyRequest, reply: FastifyReply)
@@ -21,10 +22,11 @@ export async function dashboardInfo(request: FastifyRequest, reply: FastifyReply
         const games = await gameInfo.getGamesByUser(user_id);
 		const dashboard: IDashBoard = {} as IDashBoard;
 		dashboard.GamesInfo = await Promise.all(
-   		games.map(async (game: any) => 
+   		games.map(async (game: IGameInfo) => 
 		{
 			return {
 				status: game.status,
+				type: game.type,
    				winner_id: game.winner_id,
 				winner_pseudo: game.winner_pseudo,
 				winner_avatar: game.winner_avatar,
@@ -38,6 +40,7 @@ export async function dashboardInfo(request: FastifyRequest, reply: FastifyReply
 				};
 		}));
 		dashboard.WinLoose = await gameInfo.getWinsLosses(user_id);
+		dashboard.TotalScore = await gameInfo.getTotalScore(user_id);
         reply.status(200).send(dashboard);
     }
     catch (err)

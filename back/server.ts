@@ -25,6 +25,7 @@ import { logout } from "./routes/logout/logout";
 import { setupGameServer } from "./pong/pongServer";
 import { Friends } from "./DB/friend";
 import { allMyFriends, searchUser, addFriend, acceptFriend, deleteFriend } from "./routes/friends/friends";
+import fastifyMetrics from "fastify-metrics";
 import { dashboardInfo } from "./routes/dashboard/dashboard";
 import { request } from "http";
 import { navigateTo } from "../front/src/router";
@@ -45,10 +46,17 @@ const fastify = Fastify({
 	trustProxy: true
 });
 
+fastify.register(fastifyMetrics, {
+  endpoint: "/metrics",
+  defaultMetrics: {
+	enabled: true,
+  }
+});
+
 const httpsAlwaysOpts: HttpsAlwaysOptions = {
   productionOnly: false,
   redirect:       false,
-  httpsPort:      3002
+  httpsPort:      3000
 }
 
 fastify.register(fastifyStatic, {
@@ -212,7 +220,7 @@ fastify.get("/api/private/dashboard", async (request, reply) => {
 });
 
 const start = async () => {
-	const PORT = 3002
+	const PORT = 3000
 	try {
 		globalThis.notif = false;
 		console.log("global =", globalThis.notif);
@@ -221,12 +229,13 @@ const start = async () => {
 		await db.connect();
 		// await users.deleteUserTable();
 		// await gameInfo.deleteGameInfoTable();
-		friends.deleteFriendTable();
+		// await friends.deleteFriendTable();
 		await users.createUserTable();
 		await friends.createFriendTable();
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();
 		await users.CreateUserIA();
+		await users.CreateUserGuest();
 		// const hashedPassword = await bcrypt.hash("42", 12);
 		// users.addUser("42", "42", hashedPassword);
 		// friends.addFriendship(5, 6);

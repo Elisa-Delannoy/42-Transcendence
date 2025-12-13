@@ -5,7 +5,8 @@ export class GameInstance {
 	private currentState: GameState = {
 		ball: { x: 300, y: 240 },
 		paddles: { player1: 210, player2: 210 },
-		score: { player1: 0, player2: 0 }
+		score: { player1: 0, player2: 0 },
+		status: "waiting"
 	};
 	private network: GameNetwork | null = null;
 	private localMode: boolean = false;

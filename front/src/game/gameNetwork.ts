@@ -4,6 +4,7 @@ export interface GameState {
 	ball: { x: number; y: number };
 	paddles: { player1: number; player2: number };
 	score: { player1: number; player2: number };
+	status: "waiting" | "playing" | "finished" | "countdown";
 }
 
 export class GameNetwork {
@@ -35,7 +36,7 @@ export class GameNetwork {
 			this.onPredrawCallback?.(state);
 		});
 
-		this.socket.on("startGame", () => {
+		this.socket.on("startCountdown", () => {
 			this.onCountdownCallback?.();
 		});
 
@@ -62,8 +63,8 @@ export class GameNetwork {
 		this.onPredrawCallback = cb;
 	}
 
-	startMatch() {
-		this.socket.emit("startMatch");
+	startGame() {
+		this.socket.emit("startGame");
 	}
 
 	sendInput(direction: "up" | "down" | "stop", player?: "player1" | "player2") {
