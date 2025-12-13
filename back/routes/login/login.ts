@@ -4,13 +4,31 @@ import { createJWT} from "../../middleware/jwt";
 import { CookieSerializeOptions } from "@fastify/cookie";
 import { FastifyReply } from "fastify";
 import bcrypt from "bcryptjs";
+import speakeasy from "speakeasy";
 
-export async function manageLogin(pseudo: string, password: string, reply: FastifyReply)
+export async function manageLogin(pseudo: string, password: string, code: string | undefined, reply: FastifyReply)
 {
 	try 
 	{
 		await checkLogin(pseudo, password);
 		const info = await users.getPseudoUser(pseudo);
+		if (info.twofa_enabled === 1) {
+			if (!code) {
+                return reply.send({ require2FA: true });
+            }
+            const verified = speakeasy.totp.verify({
+                secret: info.twofa_secret,
+                encoding: "base32",
+                token: code,
+                window: 1,
+            });
+            if (!verified) {
+                return reply.status(401).send({
+                    field: "2fa",
+                    error: "Invalid 2FA code.",
+                });
+            }
+		}
 		const jwtoken = createJWT(info.user_id);
 		const options: CookieSerializeOptions = {
 			httpOnly: true,

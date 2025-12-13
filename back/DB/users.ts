@@ -11,6 +11,8 @@ export interface IUsers {
 	modification_date: Date;
 	money: number;
 	elo: number;
+	twofa_secret?: string | null;
+	twofa_enabled?: number;
 }
 
 export class Users
@@ -88,6 +90,16 @@ export class Users
 		await this._db.execute(query, []);
 	}
 
+	async migrateUsersTable() {
+		await this._db.execute(`
+			ALTER TABLE Users ADD COLUMN twofa_secret TEXT;
+		`).catch(() => {});
+	
+		await this._db.execute(`
+			ALTER TABLE Users ADD COLUMN twofa_enabled INTEGER DEFAULT 0;
+		`).catch(() => {});
+	}
+	
 	async deleteOneUser(userId: number)
 	{
 		const query = `
@@ -189,5 +201,12 @@ export class Users
 		const query = ` SELECT * FROM Users WHERE user_id != ? AND LOWER(pseudo) LIKE LOWER(?) LIMIT 10`;
 		const members = await this._db.query(query, [id, `${pseudo}%`])
 		return members;
+	}
+
+	async setTwoFA(userId: number, secret: string | null = null, enabled: boolean = false): Promise<void> {
+		await this._db.execute(
+		  `UPDATE Users SET twofa_secret = ?, twofa_enabled = ? WHERE user_id = ?`,
+		  [secret, enabled ? 1 : 0, userId]
+		);
 	}
 }

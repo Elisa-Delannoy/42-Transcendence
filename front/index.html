@@ -72,7 +72,12 @@
 					<p class="text-red-600 text-xs mt-1 text-left block" id="password-loginmsg"></p>
 				</div>
 			</div>
-			<button class="btn mx-auto w-40 justify-end">Log in</button>
+			<div id="twofa-box" class="hidden flex flex-col mx-10 mt-4">
+				<h2 class="text-sm text-amber-900 dark:text-white mb-0.5">Two-Factor Code</h2>		
+				<input id="twofa-code" class="input" maxlength="6" placeholder="6-digit code"/>		
+				<p class="text-red-600 text-xs mt-1 text-left block" id="twofa-msg"></p>	
+			</div>	
+			<button type="submit" class="btn mx-auto w-40 justify-end">Log in</button>
 			<a class="mt-1 text-amber-900 dark:text-white hover:underline text-sm" href="/register" data-link>Create account ?</a>
 		</form>
 	</template>
@@ -259,6 +264,31 @@
 							<h1 class="ml-2 font-bold">Elo</h1>
 							<p id="profile-elo" class="ml-2"></p>
 						</div>
+					</div>
+					<!-- Two-Factor Management Section -->
+					<div id="twofa-container" class="flex flex-col items-center mt-6">
+						<p id="twofa-status" class="font-bold text-amber-900 mb-2">2FA Status</p>
+						<img id="twofa-qr" class="hidden w-40 h-40 mb-2 border-2 border-amber-900 rounded-lg" alt="2FA QR Code">
+						<div class="flex gap-4">
+							<button id="twofa-enable-btn" class="btn bg-green-500 text-white px-4 py-2 rounded hidden">
+								Enable 2FA
+							</button>
+							<button id="twofa-disable-btn" class="btn bg-red-500 text-white px-4 py-2 rounded hidden">
+								Disable 2FA
+							</button>
+						</div>
+					</div>
+					<div id="twofa-verify-container" class="flex flex-col items-center mt-4 hidden">
+						<input
+							id="twofa-code-input"
+							maxlength="6"
+							placeholder="Enter 6-digit code"
+							class="border px-2 py-1 rounded w-32 text-center"
+						/>
+						<button id="twofa-verify-btn"
+							class="mt-2 bg-blue-500 text-white px-3 py-1 rounded">
+							Verify Code
+						</button>
 					</div>
 				</div>
 			</div>

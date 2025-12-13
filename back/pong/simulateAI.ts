@@ -1,13 +1,13 @@
 import { applyInput, GameState } from "./gameEngine";
 
-const AI_REFRESH_INTERVAL = 1000; // AI refresh interval in milliseconds (once per second)
+const AI_REFRESH_INTERVAL = 150; // AI refresh interval in milliseconds (once per second)
 let aiTargetY: number | null = null; 
 
-export const AI_USER = {
-    id: -1,
-    pseudo: "AI_Player",
-    avatar: "ai.png",
-};
+// export const AI_USER = {
+//     id: -1,
+//     pseudo: "AI_Player",
+//     avatar: "ai.png",
+// };
 /**
  * Simulate AI as Player 2
  * @param game GameState

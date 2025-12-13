@@ -28,6 +28,8 @@ import { displayFriendPage, searchUser } from "./routes/friends/friends";
 import { dashboardInfo } from "./routes/dashboard/dashboard";
 import { request } from "http";
 import { navigateTo } from "../front/src/router";
+import * as twofa from "./routes/twofa/twofa";
+
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -104,8 +106,20 @@ fastify.post("/api/register", async (request, reply) => {
 });
 
 fastify.post("/api/login", async (request: FastifyRequest, reply: FastifyReply) => {
-  const { username, password } = request.body as { username: string, password: string};
-  await manageLogin(username, password, reply);
+  const { username, password, code } = request.body as { username: string, password: string, code?: string};
+  await manageLogin(username, password, code, reply);
+});
+
+fastify.post("/api/private/2fa/setup", async (request: FastifyRequest, reply: FastifyReply) => {
+    return await twofa.setupTwoFA(request, reply);
+});
+
+fastify.post("/api/private/2fa/enable", async (request: FastifyRequest, reply: FastifyReply) => {
+	return await twofa.enableTwoFA(request, reply);
+});
+
+fastify.post("/api/private/2fa/disable", async (request: FastifyRequest, reply: FastifyReply) => {
+	return await twofa.disableTwoFA(request, reply);
 });
 
 fastify.post("/api/private/getpseudoAv", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -209,6 +223,7 @@ const start = async () => {
 		// await users.deleteUserTable();
 		// await gameInfo.deleteGameInfoTable();
 		await users.createUserTable();
+		await users.migrateUsersTable();
 		await friends.createFriendsTable();
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();

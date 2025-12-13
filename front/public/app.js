@@ -36,55 +36,74 @@ async function initLogin() {
   const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
   if (res.ok) {
     navigateTo("/home");
+    return;
   }
   const form = document.getElementById("login-form");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
-    const success = await login(username, password, form);
+    const code = document.getElementById("twofa-code")?.value;
+    const success = await login(username, password, code, form);
     if (success)
       navigateTo("/home");
   });
 }
-async function login(username, password, form) {
+async function login(username, password, code, form) {
   try {
+    clearLoginErrors(form);
+    const twofaBox = document.getElementById("twofa-box");
+    const twofaMsg = document.getElementById("twofa-msg");
+    twofaMsg.textContent = "";
+    if (require2FA && !code) {
+      twofaMsg.textContent = "No 2FA code submitted.";
+      return false;
+    }
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, password, code }),
       credentials: "include"
     });
     const result = await res.json();
-    const usernameInput = form.querySelector("input[name='username']");
-    const passwordInput = form.querySelector("input[name='password']");
-    const usernameMsg = document.getElementById("username-loginmsg");
-    const passwordMsg = document.getElementById("password-loginmsg");
-    [usernameMsg, passwordMsg].forEach((p) => p.textContent = "");
-    [usernameInput, passwordInput].forEach((p) => p.classList.remove("error"));
-    if (res.ok == true)
-      return true;
-    else {
-      if (result.field === "password") {
-        console.log("test1");
-        passwordInput.classList.add("error");
-        passwordMsg.textContent = result.error;
-      }
+    if (result.require2FA === true) {
+      require2FA = true;
+      twofaBox.classList.remove("hidden");
+      twofaMsg.textContent = "Please input 2FA code.";
+      return false;
+    }
+    if (!res.ok) {
       if (result.field === "username") {
-        usernameInput.classList.add("error");
-        usernameMsg.textContent = result.error;
+        document.getElementById("username-loginmsg").textContent = result.error;
+      }
+      if (result.field === "password") {
+        document.getElementById("password-loginmsg").textContent = result.error;
+      }
+      if (result.field === "2fa") {
+        twofaMsg.textContent = result.error;
       }
       return false;
     }
+    return true;
   } catch (err) {
     console.error(err);
     return false;
   }
 }
+function clearLoginErrors(form) {
+  const usernameInput = form.querySelector("input[name='username']");
+  const passwordInput = form.querySelector("input[name='password']");
+  const usernameMsg = document.getElementById("username-loginmsg");
+  const passwordMsg = document.getElementById("password-loginmsg");
+  [usernameMsg, passwordMsg].forEach((p) => p.textContent = "");
+  [usernameInput, passwordInput].forEach((p) => p.classList.remove("error"));
+}
+var require2FA;
 var init_login = __esm({
   "front/src/views/login.ts"() {
     "use strict";
     init_router();
+    require2FA = false;
   }
 });
 
@@ -225,7 +244,7 @@ function GameOnlineView() {
 function GameOnlineinit() {
   const createGameButton = document.getElementById("create-onlinegame");
   createGameButton?.addEventListener("click", async () => {
-    const { gameId } = await genericFetch2("/api/private/game/create", {
+    const { gameId } = await genericFetch("/api/private/game/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ localMode: false })
@@ -238,7 +257,7 @@ function GameOnlineinit() {
   });
 }
 async function loadGames() {
-  const { games } = await genericFetch2("/api/private/game/list");
+  const { games } = await genericFetch("/api/private/game/list");
   renderGameList(games);
 }
 function renderGameList(games) {
@@ -260,7 +279,7 @@ function renderGameList(games) {
     btn.addEventListener("click", async () => {
       const id = btn.dataset.gameId;
       try {
-        const res = await genericFetch2("/api/private/game/join", {
+        const res = await genericFetch("/api/private/game/join", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -290,7 +309,7 @@ function GameLocalView() {
 function GameLocalinit() {
   const pvpButton = document.getElementById("pvp");
   pvpButton?.addEventListener("click", async () => {
-    const { gameId } = await genericFetch2("/api/private/game/create", {
+    const { gameId } = await genericFetch("/api/private/game/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ localMode: true })
@@ -300,7 +319,7 @@ function GameLocalinit() {
   const pvaiButton = document.getElementById("pvai");
   pvaiButton?.addEventListener("click", async () => {
     const vsAI = true;
-    const { gameId } = await genericFetch2("/api/private/game/create", {
+    const { gameId } = await genericFetch("/api/private/game/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ vsAI })
@@ -4222,7 +4241,7 @@ function ProfileView() {
   return document.getElementById("profilehtml").innerHTML;
 }
 async function initProfile() {
-  const profile = await genericFetch2("/api/private/profile", {
+  const profile = await genericFetch("/api/private/profile", {
     method: "POST"
   });
   const avatar = document.getElementById("profile-avatar");
@@ -4234,7 +4253,7 @@ async function initProfile() {
     select.value = profile.status;
     select.addEventListener("change", async (e) => {
       const status = e.target.value;
-      await genericFetch2("/api/private/updateinfo/status", {
+      await genericFetch("/api/private/updateinfo/status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status })
@@ -4244,6 +4263,74 @@ async function initProfile() {
   }
   document.getElementById("profile-money").textContent = profile.money;
   document.getElementById("profile-elo").textContent = profile.elo;
+  const twofaStatusText = document.getElementById("twofa-status");
+  const twofaEnableBtn = document.getElementById("twofa-enable-btn");
+  const twofaDisableBtn = document.getElementById("twofa-disable-btn");
+  const twofaQr = document.getElementById("twofa-qr");
+  const verifyContainer = document.getElementById("twofa-verify-container");
+  const verifyInput = document.getElementById("twofa-code-input");
+  const verifyBtn = document.getElementById("twofa-verify-btn");
+  twofaEnableBtn.classList.add("hidden");
+  twofaDisableBtn.classList.add("hidden");
+  twofaQr.classList.add("hidden");
+  verifyContainer.classList.add("hidden");
+  if (profile.twofa_enabled) {
+    twofaStatusText.textContent = "2FA Enabled";
+    twofaDisableBtn.classList.remove("hidden");
+  } else {
+    twofaStatusText.textContent = "2FA Disabled";
+    twofaEnableBtn.classList.remove("hidden");
+  }
+  twofaEnableBtn.addEventListener("click", async () => {
+    try {
+      const res = await genericFetch("/api/private/2fa/setup", { method: "POST" });
+      twofaQr.src = res.qr;
+      twofaQr.classList.remove("hidden");
+      verifyContainer.classList.remove("hidden");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to setup 2FA.");
+    }
+  });
+  verifyBtn.addEventListener("click", async () => {
+    const code = verifyInput.value.trim();
+    if (code.length !== 6) {
+      alert("Please enter a valid 6-digit code.");
+      return;
+    }
+    try {
+      await genericFetch("/api/private/2fa/enable", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code })
+      });
+      alert("2FA Enabled!");
+      twofaEnableBtn.classList.add("hidden");
+      twofaDisableBtn.classList.remove("hidden");
+      twofaStatusText.textContent = "2FA Enabled";
+      twofaQr.classList.add("hidden");
+      verifyContainer.classList.add("hidden");
+      verifyInput.value = "";
+    } catch (err) {
+      console.error(err);
+      alert("Invalid code, please try again.");
+    }
+  });
+  twofaDisableBtn.addEventListener("click", async () => {
+    try {
+      await genericFetch("/api/private/2fa/disable", { method: "POST" });
+      alert("2FA Disabled!");
+      twofaDisableBtn.classList.add("hidden");
+      twofaEnableBtn.classList.remove("hidden");
+      twofaStatusText.textContent = "2FA Disabled";
+      twofaQr.classList.add("hidden");
+      verifyContainer.classList.add("hidden");
+      verifyInput.value = "";
+    } catch (err) {
+      console.error(err);
+      alert("Failed to disable 2FA.");
+    }
+  });
 }
 var init_p_profile = __esm({
   "front/src/views/p_profile.ts"() {
@@ -4258,7 +4345,7 @@ function UpdateInfoView() {
   return document.getElementById("updateinfohtml").innerHTML;
 }
 async function initUpdateInfo() {
-  const profil = await genericFetch2("/api/private/updateinfo", {
+  const profil = await genericFetch("/api/private/updateinfo", {
     method: "POST"
   });
   document.getElementById("profile-username").textContent = profil.pseudo;
@@ -4274,7 +4361,7 @@ async function initUpdateUsername() {
     const newUsername = formUsername["new-username"].value;
     const password = formUsername["password"].value;
     try {
-      const response = await genericFetch2("/api/private/updateinfo/username", {
+      const response = await genericFetch("/api/private/updateinfo/username", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newUsername, password })
@@ -4293,7 +4380,7 @@ async function initUpdateEmail() {
     const newEmail = formEmail["new-email"].value;
     const password = formEmail["password"].value;
     try {
-      const response = await genericFetch2("/api/private/updateinfo/email", {
+      const response = await genericFetch("/api/private/updateinfo/email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newEmail, password })
@@ -4313,7 +4400,7 @@ async function initUpdatePassword() {
     const newPw = formPassword["new-password"].value;
     const confirm = formPassword["confirm-new-password"].value;
     try {
-      const response = await genericFetch2("/api/private/updateinfo/password", {
+      const response = await genericFetch("/api/private/updateinfo/password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ oldPw, newPw, confirm })
@@ -4344,7 +4431,7 @@ async function uploadAvatar(avatar) {
   const form = new FormData();
   form.append("avatar", avatar);
   try {
-    const result = await genericFetch2("/api/private/updateinfo/uploads", {
+    const result = await genericFetch("/api/private/updateinfo/uploads", {
       method: "POST",
       body: form,
       credentials: "include"
@@ -4397,7 +4484,7 @@ function initTournamentPage() {
 async function testTournamentDB() {
   const testRanking = generateRandomRanking();
   try {
-    const data = await genericFetch2("/api/private/tournament/add", {
+    const data = await genericFetch("/api/private/tournament/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ranking: testRanking })
@@ -4419,7 +4506,7 @@ async function testTournamentDB() {
 }
 async function showDBOnChain() {
   try {
-    const data = await genericFetch2("/api/private/tournament/all");
+    const data = await genericFetch("/api/private/tournament/all");
     const dbPanel = document.getElementById("db-panel");
     const chainPanel = document.getElementById("chain-panel");
     if (!dbPanel || !chainPanel) return;
@@ -4474,7 +4561,7 @@ function FriendsView() {
 }
 async function initFriends() {
   try {
-    const myfriends = await genericFetch2("/api/private/friend", {
+    const myfriends = await genericFetch("/api/private/friend", {
       method: "POST"
     });
     const divNoFriend = document.getElementById("no-friend");
@@ -4531,7 +4618,7 @@ async function search(memberSearched) {
     return;
   }
   try {
-    const existedMember = await genericFetch2("/api/private/friend/search", {
+    const existedMember = await genericFetch("/api/private/friend/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ member: memberSearched })
@@ -4581,7 +4668,7 @@ function navigateTo(url2) {
   currentPath = url2;
   router();
 }
-async function genericFetch2(url2, options = {}) {
+async function genericFetch(url2, options = {}) {
   const res = await fetch(url2, {
     ...options,
     credentials: "include"
@@ -4622,7 +4709,7 @@ async function loadHeader() {
 }
 async function getPseudoHeader3() {
   try {
-    const result = await genericFetch2("/api/private/getpseudoAv", {
+    const result = await genericFetch("/api/private/getpseudoAv", {
       method: "POST",
       credentials: "include"
     });
