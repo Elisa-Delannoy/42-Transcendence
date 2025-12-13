@@ -4749,10 +4749,22 @@ async function getPseudoHeader3() {
     });
     document.getElementById("pseudo-header").textContent = result.pseudo;
     const avatar = document.getElementById("header-avatar");
+    const status = document.getElementById("status");
     avatar.src = result.avatar + "?ts" + Date.now();
+    switch (result.status) {
+      case "online":
+        status.classList.add("bg-green-500");
+        break;
+      case "busy":
+        status.classList.add("bg-red-500");
+        break;
+      case "offline":
+        status.classList.add("bg-white");
+    }
     console.log("notification =", document.getElementById("notification"));
     const notification = document.getElementById("notification");
     notification.classList.add("hidden");
+    console.log("notif = ", result.notif);
     if (result.notif === true) {
       notification.classList.remove("hidden");
     }

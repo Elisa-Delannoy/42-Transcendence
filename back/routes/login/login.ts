@@ -5,6 +5,9 @@ import { CookieSerializeOptions } from "@fastify/cookie";
 import { FastifyReply } from "fastify";
 import bcrypt from "bcryptjs";
 import { IMyFriends } from "../../DB/friend";
+import { IUsers } from "../../DB/users";
+import { notification } from "../friends/friends";
+
 
 export async function manageLogin(pseudo: string, password: string, reply: FastifyReply)
 {
@@ -20,10 +23,8 @@ export async function manageLogin(pseudo: string, password: string, reply: Fasti
 			path: "/",
 		};
 		users.updateStatus(info.user_id, "online");
-		const printNotif = (await friends.getMyFriends(info.user_id)).filter(f => f.friendship_status === "pending" && f.asked_by != info.user_id);
-		console.log("printNotif= ", printNotif);
-		if (printNotif)
-			globalThis.notif = true;
+		const allFriends = await friends.getMyFriends(info.user_id);
+		notification(allFriends, info.user_id);
 		reply.setCookie("token", jwtoken, options).status(200).send({ ok:true, message: "Login successful"})
 	}
 	catch (err)

@@ -104,20 +104,21 @@ export async function getPseudoHeader()
 	
 	document.getElementById("pseudo-header")!.textContent = result.pseudo;
 	const avatar = document.getElementById("header-avatar") as HTMLImageElement;
-	// const status = document.getElementById("status") as HTMLImageElement;
+	const status = document.getElementById("status") as HTMLImageElement;
 	avatar.src = result.avatar + "?ts" + Date.now();
-	// switch (result.status)
-	// {
-	// 	case "online": status.classList.add("bg-green-500");
-	// 		break;
-	// 	case "busy": status.classList.add("bg-red-500");
-	// 		break;
-	// 	case "offline": status.classList.add("bg-white");
-	// }
+	switch (result.status)
+	{
+		case "online": status.classList.add("bg-green-500");
+			break;
+		case "busy": status.classList.add("bg-red-500");
+			break;
+		case "offline": status.classList.add("bg-white");
+	}
 	console.log("notification =", document.getElementById("notification"));
 
 	const notification = document.getElementById("notification") as HTMLImageElement;
 	notification.classList.add("hidden");
+	console.log("notif = ", result.notif);
 	if (result.notif === true) {
 		notification.classList.remove("hidden");
 	}

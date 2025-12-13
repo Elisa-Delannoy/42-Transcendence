@@ -1,5 +1,6 @@
 import { db, friends, users } from '../../server';
 import { Friends, IMyFriends } from '../../DB/friend';
+import { IUsers } from '../../DB/users'; 
 import { FastifyReply, FastifyRequest, FastifySerializerCompiler } from 'fastify';
 import { log } from 'console';
 
@@ -9,6 +10,7 @@ export async function allMyFriends(request: FastifyRequest, reply: FastifyReply)
 		const infoFriends: IMyFriends[]= await friends.getMyFriends(request.user!.user_id);
 		if (infoFriends.length === 0)
 			return (reply.send(infoFriends), undefined);
+		notification(infoFriends, request.user!.user_id);
 		reply.send(infoFriends);
 		return infoFriends;
 	}
@@ -45,9 +47,6 @@ export async function addFriend(request: FastifyRequest, reply: FastifyReply) {
 export async function acceptFriend(request: FastifyRequest, reply: FastifyReply) {
 	try {
 		const { friendID } = request.body as { friendID: number };
-	// const status = await friends.getFriendshipStatus(request.user!.user_id, friendID);
-	// if (status)
-	// 	return;
 	await friends.acceptFriendship(friendID, request.user!.user_id);
 	globalThis.notif = false;
 	reply.code(200).send({ message: "accepted" });
@@ -68,4 +67,11 @@ export async function deleteFriend(request: FastifyRequest, reply: FastifyReply)
 	}
 }
 
+export function notification(allFriends: IMyFriends[], id: number) {
+	const printNotif = allFriends.filter(f => f.friendship_status === "pending" && f.asked_by != id);
+		if (printNotif.length > 0)
+			globalThis.notif = true;
+		else
+			globalThis.notif = false;
+}
 
