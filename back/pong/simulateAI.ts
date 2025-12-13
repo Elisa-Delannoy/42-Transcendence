@@ -1,6 +1,6 @@
 import { applyInput, GameState } from "./gameEngine";
 
-const AI_REFRESH_INTERVAL = 150; // AI refresh interval in milliseconds (once per second)
+//const AI_REFRESH_INTERVAL = 150; // AI refresh interval in milliseconds (once per second)
 let aiTargetY: number | null = null; 
 
 // export const AI_USER = {
@@ -13,6 +13,7 @@ let aiTargetY: number | null = null;
  * @param game GameState
  * @param timestamp Current timestamp in milliseconds
  */
+/* 
 export function simulateAI(game: GameState & { aiLastUpdate?: number }, timestamp: number) {
 	// Only update AI decision once per second
 	if (!game.aiLastUpdate) game.aiLastUpdate = 0;
@@ -29,8 +30,42 @@ export function simulateAI(game: GameState & { aiLastUpdate?: number }, timestam
             applyInput(game, "player2", "up");
         }
     }
-	// TODO: Power-up usage logic if implemented
-	// maybeUsePowerUp(game);
+} 
+*/
+export function simulateAI(game: GameState & { aiLastUpdate?: number }, timestamp?: number) {
+    const now = timestamp || Date.now();
+
+    // Control AI update frequency to simulate reaction time
+    if (game.aiLastUpdate && now - game.aiLastUpdate < 20) return;
+    game.aiLastUpdate = now;
+
+    // AI miss chance
+    const missChance = 0.1; // 10% chance to make a mistake
+    if (Math.random() < missChance) {
+        applyInput(game, "player2", "stop");
+        return;
+    }
+    // Simplified ball prediction + random error
+    aiTargetY = predictBallY(game) + (Math.random() * 80 - 20); // +-20px random offset
+    if (aiTargetY !== null) {
+        const paddleCenter = game.paddles.player2 + 30; // paddleHeight/2
+        const diff = aiTargetY - paddleCenter;
+        // AI speed adapts to ball speed
+        const baseSpeed = 3; // minimal paddle speed per update
+        const adaptiveSpeed = Math.min(baseSpeed + Math.abs(game.ball.speedX), 6); // cap at 6px per update
+
+        if (Math.abs(diff) < 5) {
+            applyInput(game, "player2", "stop");
+        } else if (diff > 0) {
+            // Move paddle down
+            game.paddles.player2 += Math.min(diff, adaptiveSpeed);
+            if (game.paddles.player2 > game.height - 60) game.paddles.player2 = game.height - 60;
+        } else {
+            // Move paddle up
+            game.paddles.player2 += Math.max(diff, -adaptiveSpeed);
+            if (game.paddles.player2 < 0) game.paddles.player2 = 0;
+        }
+    }
 }
 
 /**
