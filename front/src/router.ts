@@ -88,21 +88,40 @@ export async function loadHeader() {
 	const response = await fetch('/header.html');
 	const html = await response.text();
 	const container = document.getElementById('header-container');
-	if (container) container.innerHTML = html;
-	getPseudoHeader();
+	if (container) {
+		container.innerHTML = html;		
+		getPseudoHeader();
+	}
 }
 
 export async function getPseudoHeader()
 {
   try {
-	const result = await genericFetch("/api/private/getpseudoAv", {
+	const result = await genericFetch("/api/private/getpseudoAvStatus", {
 		method: "POST",
 		credentials: "include"
 	});
 	
 	document.getElementById("pseudo-header")!.textContent = result.pseudo;
 	const avatar = document.getElementById("header-avatar") as HTMLImageElement;
+	const status = document.getElementById("status") as HTMLImageElement;
 	avatar.src = result.avatar + "?ts" + Date.now();
+	switch (result.status)
+	{
+		case "online": status.classList.add("bg-green-500");
+			break;
+		case "busy": status.classList.add("bg-red-500");
+			break;
+		case "offline": status.classList.add("bg-white");
+	}
+	console.log("notification =", document.getElementById("notification"));
+
+	const notification = document.getElementById("notification") as HTMLImageElement;
+	notification.classList.add("hidden");
+	console.log("notif = ", result.notif);
+	if (result.notif === true) {
+		notification.classList.remove("hidden");
+	}
 	} catch (err) {
 		console.error(err);
 	}

@@ -15,10 +15,10 @@ export async function initFriends() {
 			method: "POST",
 		});
 
-		const acceptedFriends = myfriends.filter( f => f.friendship_status === "accepted");
-		const pendingFriends = myfriends.filter( f => f.friendship_status === "pending");
+		const acceptedFriends = myfriends.filter(f => f.friendship_status === "accepted");
+		const pendingFriends = myfriends.filter(f => f.friendship_status === "pending");
 
-		doSearch(acceptedFriends, pendingFriends, myfriends);
+		doSearch(myfriends);
 		myFriends(acceptedFriends);
 		pendingFr(pendingFriends);
 	}
@@ -46,6 +46,8 @@ async function myFriends(acceptedFriends: IMyFriends[]) {
 			img.src =  friend.avatar;
 			img.alt = `${friend.pseudo}'s avatar`;
 			img.width = 64;
+			const button: HTMLButtonElement = toDeleteFriend(friend.id);
+			li.appendChild(button);
 			li.appendChild(img);
 			ul?.appendChild(li);
 		});
@@ -60,7 +62,7 @@ function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
 	};
 }
 
-function doSearch(acceptedFriends: IMyFriends[], pendingFriends: IMyFriends[], myfriends: IMyFriends[]) {
+function doSearch(myfriends: IMyFriends[]) {
 	const input = (document.getElementById("searchInput") as HTMLInputElement | null);
 	if (!input)
 		return;
@@ -101,10 +103,12 @@ async function search(memberSearched: string, myfriends: IMyFriends[]) {
 				const isFriend = myfriends.some(f => f.id === member.user_id);
 				li.appendChild(img);
 				li.appendChild(span);
-				if (!isFriend) {
-					const button = toAddFriend(member.user_id);
-					li.appendChild(button);
-				}
+				let button: HTMLButtonElement;
+				if (!isFriend) 
+					button = toAddFriend(member.user_id);
+				else
+					button = toDeleteFriend(member.user_id);
+				li.appendChild(button);
 				listedMember.appendChild(li);
 				
 			})
@@ -121,14 +125,12 @@ function toAddFriend(id: number): HTMLButtonElement {
 	button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
 
 	button.addEventListener("click", async () => {
-		console.log("before add");
 		try {
 			await genericFetch("/api/private/friend/add", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ friendID: id })
 			});
-			console.log("after add", );
 			button.textContent = "pending";
 			button.disabled = true;
 		}
@@ -157,6 +159,29 @@ function toAcceptFriend(friend: IMyFriends): HTMLButtonElement {
 				body: JSON.stringify({ friendID: friend.id })
 			});
 			button.textContent = "Accepted";
+			button.disabled = true;
+		}
+		catch (err) {
+			console.log(err);
+			button.disabled = false;
+		}
+	})
+	return button;
+}
+
+function toDeleteFriend(id: number): HTMLButtonElement {
+	const button = document.createElement("button") as HTMLButtonElement;
+	button.textContent = "Delete";
+	button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
+
+	button.addEventListener("click", async () => {
+		try {
+			await genericFetch("/api/private/friend/delete", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ friendID: id })
+			});
+			button.textContent = "deleted";
 			button.disabled = true;
 		}
 		catch (err) {
