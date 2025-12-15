@@ -9,17 +9,18 @@ export interface IFriendsAndNot {
 	playedWith: {id: number, pseudo: string, avatar: string}[];
 }
 
-export async function allMyFriendsAndOpponent(request: FastifyRequest, reply: FastifyReply): Promise< IFriendsAndNot | undefined> 
+export async function allMyFriendsAndOpponent(request: FastifyRequest, reply: FastifyReply) 
 {
 	try {
 		const allInfo: IFriendsAndNot = {} as IFriendsAndNot;
 		allInfo.allMyFriends = await friends.getMyFriends(request.user!.user_id);
 		allInfo.playedWith = await gameInfo.getRecentPlayerNotFriend(request.user!.user_id);
 
-		if (allInfo.allMyFriends.length === 0)
-			return (reply.send(allInfo.allMyFriends), undefined);
+		// if (allInfo.allMyFriends.length === 0)
+		// 	return (reply.send(allInfo.allMyFriends), undefined);
 		notification(allInfo.allMyFriends, request.user!.user_id);
 		reply.send(allInfo);
+
 	}
 	catch (err) {
 		console.log(err);

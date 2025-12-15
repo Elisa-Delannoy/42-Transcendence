@@ -43,104 +43,35 @@ async function initLogin() {
     e.preventDefault();
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
-<<<<<<< HEAD
-<<<<<<< HEAD
     const success = await login(username, password, form);
     if (success == 2)
       navigateTo("/twofa");
     if (success == 1)
-=======
-=======
->>>>>>> elisa
-    const code = document.getElementById("twofa-code")?.value;
-    const success = await login(username, password, code, form);
-    if (success)
->>>>>>> c7632bd29018b259e79a24110c4b38deda366efa
       navigateTo("/home");
   });
 }
-async function login(username, password, code, form) {
+async function login(username, password, form) {
   try {
     clearLoginErrors(form);
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> elisa
-    const twofaBox = document.getElementById("twofa-box");
-    const twofaMsg = document.getElementById("twofa-msg");
-    twofaMsg.textContent = "";
-    if (require2FA && !code) {
-      twofaMsg.textContent = "No 2FA code submitted.";
-      return false;
-    }
-<<<<<<< HEAD
->>>>>>> c7632bd29018b259e79a24110c4b38deda366efa
-=======
->>>>>>> elisa
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password, code }),
+      body: JSON.stringify({ username, password }),
       credentials: "include"
     });
     const result = await res.json();
-<<<<<<< HEAD
-<<<<<<< HEAD
     if (!result.ok) {
       if (result.field === "username") {
         document.getElementById("username-loginmsg").textContent = result.error;
-=======
-    if (result.require2FA === true) {
-      require2FA = true;
-      twofaBox.classList.remove("hidden");
-      twofaMsg.textContent = "Please input 2FA code.";
-      return false;
-    }
-    if (!res.ok) {
-      if (result.field === "username") {
-        document.getElementById("username-loginmsg").textContent = result.error;
-      }
-      if (result.field === "password") {
-        document.getElementById("password-loginmsg").textContent = result.error;
-      }
-      if (result.field === "2fa") {
-        twofaMsg.textContent = result.error;
->>>>>>> c7632bd29018b259e79a24110c4b38deda366efa
       }
       if (result.field === "password") {
         document.getElementById("password-loginmsg").textContent = result.error;
       }
       return 0;
     }
-<<<<<<< HEAD
     if (result.ok && result.twofa === true)
       return 2;
     return 1;
-=======
-    return true;
->>>>>>> c7632bd29018b259e79a24110c4b38deda366efa
-=======
-    if (result.require2FA === true) {
-      require2FA = true;
-      twofaBox.classList.remove("hidden");
-      twofaMsg.textContent = "Please input 2FA code.";
-      return false;
-    }
-    if (!res.ok) {
-      if (result.field === "username") {
-        document.getElementById("username-loginmsg").textContent = result.error;
-      }
-      if (result.field === "password") {
-        document.getElementById("password-loginmsg").textContent = result.error;
-      }
-      if (result.field === "2fa") {
-        twofaMsg.textContent = result.error;
-      }
-      return false;
-    }
-    return true;
->>>>>>> elisa
   } catch (err) {
     console.error(err);
     return 0;
@@ -154,19 +85,10 @@ function clearLoginErrors(form) {
   [usernameMsg, passwordMsg].forEach((p) => p.textContent = "");
   [usernameInput, passwordInput].forEach((p) => p.classList.remove("error"));
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-var require2FA;
->>>>>>> c7632bd29018b259e79a24110c4b38deda366efa
-=======
-var require2FA;
->>>>>>> elisa
 var init_login = __esm({
   "front/src/views/login.ts"() {
     "use strict";
     init_router();
-    require2FA = false;
   }
 });
 
@@ -4353,13 +4275,6 @@ function smoothScrollTo(targetY, duration) {
 async function initHomePage() {
   const btn = document.getElementById("scroll-button");
   const target = document.getElementById("gamepage");
-<<<<<<< HEAD
-  const myfriends = await genericFetch("/api/private/friend", {
-    method: "POST"
-  });
-  const pendingFriends = myfriends.filter((f) => f.friendship_status === "pending");
-=======
->>>>>>> elisa
   btn.addEventListener("click", () => {
     const targetY = target.getBoundingClientRect().top + window.scrollY;
     smoothScrollTo(targetY, 1e3);
@@ -4482,15 +4397,7 @@ function UpdateInfoView() {
   return document.getElementById("updateinfohtml").innerHTML;
 }
 async function initUpdateInfo() {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  const profil = await genericFetch("/api/private/updateinfo", {
-=======
   const profile = await genericFetch("/api/private/profile", {
->>>>>>> c7632bd29018b259e79a24110c4b38deda366efa
-=======
-  const profil = await genericFetch("/api/private/updateinfo", {
->>>>>>> elisa
     method: "POST"
   });
   const avatar = document.getElementById("profile-avatar");
@@ -4517,79 +4424,6 @@ async function initUpdateUsername() {
     }
   });
 }
-<<<<<<< HEAD
-async function initUpdateEmail() {
-  const formEmail = document.getElementById("change-email-form");
-  formEmail.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const newEmail = formEmail["new-email"].value;
-    const password = formEmail["password"].value;
-    try {
-      const response = await genericFetch("/api/private/updateinfo/email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newEmail, password })
-      });
-      alert("Username updated successfully to <<  " + response.email + "  >>");
-      navigateTo("/home");
-    } catch (err) {
-      alert(err.message);
-    }
-  });
-}
-async function initUpdatePassword() {
-  const formPassword = document.getElementById("change-password-form");
-  formPassword.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const oldPw = formPassword["old-password"].value;
-    const newPw = formPassword["new-password"].value;
-    const confirm = formPassword["confirm-new-password"].value;
-    try {
-      const response = await genericFetch("/api/private/updateinfo/password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ oldPw, newPw, confirm })
-      });
-      alert("Password is updated successfully! Please re-log in!");
-      navigateTo("/logout");
-    } catch (err) {
-      alert(err.message);
-    }
-  });
-}
-async function initAvatar() {
-  const formAvatar = document.getElementById("upload_avatar");
-  if (formAvatar instanceof HTMLFormElement) {
-    formAvatar.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const avatarInput = formAvatar.querySelector('input[name="avatar"]');
-      const avatarFile = avatarInput?.files?.[0];
-      if (!avatarFile || avatarFile.size === 0 || !avatarFile.name) {
-        alert("Please upload an avatar");
-        return;
-      }
-      await uploadAvatar(avatarFile);
-    });
-  }
-}
-async function uploadAvatar(avatar) {
-  const form = new FormData();
-  form.append("avatar", avatar);
-  try {
-    const result = await genericFetch("/api/private/updateinfo/uploads", {
-      method: "POST",
-      body: form,
-      credentials: "include"
-    });
-    console.log("uplaod success ok : ", result);
-    navigateTo("/profile");
-  } catch (err) {
-    alert(err);
-    console.error(err);
-  }
-}
-=======
->>>>>>> c7632bd29018b259e79a24110c4b38deda366efa
 var init_p_updateinfo = __esm({
   "front/src/views/p_updateinfo.ts"() {
     "use strict";
@@ -4708,11 +4542,7 @@ function FriendsView() {
 }
 async function initFriends() {
   try {
-<<<<<<< HEAD
-    const myfriends = await genericFetch("/api/private/friend", {
-=======
     const allInfo = await genericFetch("/api/private/friend", {
->>>>>>> elisa
       method: "POST"
     });
     const acceptedFriends = allInfo.allMyFriends.filter((f) => f.friendship_status === "accepted");
@@ -4955,7 +4785,6 @@ var init_error = __esm({
   }
 });
 
-<<<<<<< HEAD
 // front/src/views/twofa.ts
 function towfaView() {
   return document.getElementById("twofahtml").innerHTML;
@@ -4982,7 +4811,11 @@ async function initTowfa() {
 }
 var init_twofa = __esm({
   "front/src/views/twofa.ts"() {
-=======
+    "use strict";
+    init_router();
+  }
+});
+
 // front/src/views/p_updateemail.ts
 function UpdateEmailView() {
   loadHeader();
@@ -5015,7 +4848,6 @@ async function initUpdateEmail() {
 }
 var init_p_updateemail = __esm({
   "front/src/views/p_updateemail.ts"() {
->>>>>>> c7632bd29018b259e79a24110c4b38deda366efa
     "use strict";
     init_router();
   }
@@ -5173,11 +5005,8 @@ var init_router = __esm({
     init_logout();
     init_p_friends();
     init_error();
-<<<<<<< HEAD
     init_twofa();
-=======
     init_p_updateemail();
->>>>>>> c7632bd29018b259e79a24110c4b38deda366efa
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
