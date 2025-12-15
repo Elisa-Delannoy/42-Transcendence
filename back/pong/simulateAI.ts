@@ -17,8 +17,10 @@ export function simulateAI(game: GameState & { aiLastUpdate?: number }, timestam
 	// Only update AI decision once per second
 	if (!game.aiLastUpdate) game.aiLastUpdate = 0;
 	// Only update AI decision once per second
-	game.aiLastUpdate = timestamp;
-    aiTargetY = predictBallY(game) + (Math.random() * 50 - 10);
+	if (timestamp - game.aiLastUpdate >= AI_REFRESH_INTERVAL){
+        game.aiLastUpdate = timestamp;
+        aiTargetY = predictBallY(game) + (Math.random() * 50 - 10);
+    }
 	if (aiTargetY !== null) {
         const paddleCenter = game.paddles.player2 + 30; // paddleHeight/2
         if (Math.abs(aiTargetY - paddleCenter) < 5) {

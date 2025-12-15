@@ -131,6 +131,12 @@ export function initPongMatch(params?: any) {
 			}
 		}
 	}
+
+	net.onGameOver(() => {
+		if (!currentGame || !renderer)
+			return;
+		renderer.drawGameOver(currentGame.getCurrentState());
+	});
 }
 
 export function stopGame()

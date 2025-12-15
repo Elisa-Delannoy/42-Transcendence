@@ -41,6 +41,37 @@ export class GameRenderer {
 		}
 	}
 
+	public drawGameOver(state: GameState) {
+		this.ctx.fillStyle = "black";
+		this.canvas.height = this.canvas.height / 2;
+		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		if (state.score)
+		{
+			this.drawScore(state.score);
+			this.ctx.font = "60px Arial";
+			this.ctx.fillStyle = "white";
+			this.ctx.textAlign = "center";
+			if (state.score.player1 > state.score.player2)
+			{
+				this.ctx.fillText(
+					"Player1 wins!",
+					this.canvas.width / 2,
+					this.canvas.height * .75
+				);
+			}
+			else
+			{
+				this.ctx.fillText(
+					"Player2 wins!",
+					this.canvas.width / 2,
+					this.canvas.height * .75
+				);
+			}
+		}
+		document.getElementById("buttons")?.classList.remove("hidden");
+
+	}
+
 	public draw(state: GameState, drawScore: boolean) {
 		this.clear();
 

@@ -349,6 +349,31 @@ var init_gameRenderer = __esm({
           }
         }
       }
+      drawGameOver(state) {
+        this.ctx.fillStyle = "black";
+        this.canvas.height = this.canvas.height / 2;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        if (state.score) {
+          this.drawScore(state.score);
+          this.ctx.font = "60px Arial";
+          this.ctx.fillStyle = "white";
+          this.ctx.textAlign = "center";
+          if (state.score.player1 > state.score.player2) {
+            this.ctx.fillText(
+              "Player1 wins!",
+              this.canvas.width / 2,
+              this.canvas.height * 0.75
+            );
+          } else {
+            this.ctx.fillText(
+              "Player2 wins!",
+              this.canvas.width / 2,
+              this.canvas.height * 0.75
+            );
+          }
+        }
+        document.getElementById("buttons")?.classList.remove("hidden");
+      }
       draw(state, drawScore) {
         this.clear();
         if (state.paddles)
@@ -3991,6 +4016,7 @@ var init_gameNetwork = __esm({
           this.onCountdownCallback?.();
         });
         this.socket.on("gameOver", () => {
+          this.onGameOverCallback?.();
           console.log("Game over, closing socket...");
           this.socket.close();
         });
@@ -4015,6 +4041,9 @@ var init_gameNetwork = __esm({
       }
       join(gameId) {
         this.socket.emit("joinGame", gameId);
+      }
+      onGameOver(cb) {
+        this.onGameOverCallback = cb;
       }
       disconnect() {
         this.socket.disconnect();
@@ -4159,6 +4188,11 @@ function initPongMatch(params) {
       }
     }
   }
+  net.onGameOver(() => {
+    if (!currentGame || !renderer)
+      return;
+    renderer.drawGameOver(currentGame.getCurrentState());
+  });
 }
 function stopGame() {
   net?.disconnect();

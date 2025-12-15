@@ -89,6 +89,7 @@ export function checkForWinner(game: ServerGame, io: Server)
 		}
 		io.to(`game-${game.id}`).emit("gameOver");
 		io.in(`game-${game.id}`).socketsLeave(`game-${game.id}`);
+		console.log("function checkforwinner done");
 	}
 }
 
