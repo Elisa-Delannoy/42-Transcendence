@@ -4111,6 +4111,8 @@ function initPongMatch(params) {
   const gameID = params?.id;
   const url2 = new URL(window.location.href);
   const localMode = url2.searchParams.get("local") === "1";
+  const replayBtn = document.getElementById("replay-btn");
+  const dashboardBtn = document.getElementById("dashboard-btn");
   const serverUrl = window.location.host;
   let input1 = "stop";
   let input2 = "stop";
@@ -4192,6 +4194,18 @@ function initPongMatch(params) {
     if (!currentGame || !renderer)
       return;
     renderer.drawGameOver(currentGame.getCurrentState());
+    if (currentGame.isLocalMode()) {
+      replayBtn?.addEventListener("click", async () => {
+        navigateTo(`/gamelocal`);
+      });
+    } else {
+      replayBtn?.addEventListener("click", async () => {
+        navigateTo(`/gameonline`);
+      });
+    }
+    dashboardBtn?.addEventListener("click", async () => {
+      navigateTo(`/dashboard`);
+    });
   });
 }
 function stopGame() {

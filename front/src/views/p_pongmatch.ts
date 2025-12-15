@@ -1,6 +1,6 @@
 import { GameRenderer } from "../game/gameRenderer";
 import { GameNetwork } from "../game/gameNetwork";
-import { loadHeader } from "../router";
+import { loadHeader, navigateTo } from "../router";
 import { GameInstance } from "../game/gameInstance";
 
 let renderer: GameRenderer | null = null;
@@ -17,6 +17,8 @@ export function initPongMatch(params?: any) {
 	const gameID: string = params?.id;
 	const url = new URL(window.location.href);
 	const localMode = url.searchParams.get("local") === "1";
+	const replayBtn = document.getElementById("replay-btn");
+	const dashboardBtn = document.getElementById("dashboard-btn");
 
 	const serverUrl = window.location.host;
 	let input1: "up" | "down" | "stop" = "stop";
@@ -136,6 +138,21 @@ export function initPongMatch(params?: any) {
 		if (!currentGame || !renderer)
 			return;
 		renderer.drawGameOver(currentGame.getCurrentState());
+		if (currentGame.isLocalMode())
+		{
+			replayBtn?.addEventListener("click", async () => {
+				navigateTo(`/gamelocal`);
+			});
+		}
+		else
+		{
+			replayBtn?.addEventListener("click", async () => {
+				navigateTo(`/gameonline`);
+			});
+		}
+		dashboardBtn?.addEventListener("click", async () => {
+			navigateTo(`/dashboard`);
+		});
 	});
 }
 
