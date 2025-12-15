@@ -4155,34 +4155,37 @@ function initPongMatch(params) {
     updateInput();
   });
   const keyState = {};
+  const keyState2 = {};
   window.addEventListener("keydown", (e) => {
     keyState[e.key] = true;
+    keyState2[e.key] = true;
   });
   window.addEventListener("keyup", (e) => {
     keyState[e.key] = false;
+    keyState2[e.key] = false;
   });
   function updateInput() {
     if (!currentGame) return;
     if (currentGame.getCurrentState().status == "playing") {
       if (currentGame.isLocalMode()) {
-        if (keyState["w"] || keyState["W"] && input1 != "up")
+        if ((keyState["w"] || keyState["W"]) && input1 != "up")
           input1 = "up";
-        else if (keyState["s"] || keyState["S"] && input1 != "down")
+        else if ((keyState["s"] || keyState["S"]) && input1 != "down")
           input1 = "down";
         else if (input1 != "stop")
           input1 = "stop";
         currentGame.sendInput(input1, "player1");
-        if (keyState["ArrowUp"] && input2 != "up")
+        if (keyState2["ArrowUp"] && input2 != "up")
           input2 = "up";
-        else if (keyState["ArrowDown"] && input2 != "down")
+        else if (keyState2["ArrowDown"] && input2 != "down")
           input2 = "down";
         else if (input2 != "stop")
           input2 = "stop";
         currentGame.sendInput(input2, "player2");
       } else {
-        if (keyState["w"] || keyState["W"] && input != "up")
+        if ((keyState["w"] || keyState["W"]) && input != "up")
           input = "up";
-        else if (keyState["s"] || keyState["S"] && input != "down")
+        else if ((keyState["s"] || keyState["S"]) && input != "down")
           input = "down";
         else if (input != "stop")
           input = "stop";
