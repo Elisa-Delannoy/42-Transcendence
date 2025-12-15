@@ -108,7 +108,19 @@ export async function getPseudoHeader()
 	const avatar = document.getElementById("header-avatar") as HTMLImageElement;
 	const status = document.getElementById("status") as HTMLImageElement;
 	avatar.src = result.avatar + "?ts" + Date.now();
-	switch (result.status)
+	displayStatus(result, status);
+	const notification = document.getElementById("notification") as HTMLImageElement;
+	notification.classList.add("hidden");
+	if (result.notif === true) {
+		notification.classList.remove("hidden");
+	}
+	} catch (err) {
+		console.error(err);
+	}
+}
+
+export function displayStatus(info: any, status: HTMLImageElement): void {
+	switch (info.web_status)
 	{
 		case "online": status.classList.add("bg-green-500");
 			break;
@@ -116,17 +128,7 @@ export async function getPseudoHeader()
 			break;
 		case "offline": status.classList.add("bg-white");
 	}
-	console.log("notification =", document.getElementById("notification"));
-
-	const notification = document.getElementById("notification") as HTMLImageElement;
-	notification.classList.add("hidden");
-	console.log("notif = ", result.notif);
-	if (result.notif === true) {
-		notification.classList.remove("hidden");
-	}
-	} catch (err) {
-		console.error(err);
-	}
+	status.title = info.web_status;
 }
 
 export function router() {

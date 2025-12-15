@@ -24,7 +24,7 @@ import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getU
 import { logout } from "./routes/logout/logout";
 import { setupGameServer } from "./pong/pongServer";
 import { Friends } from "./DB/friend";
-import { allMyFriends, searchUser, addFriend, acceptFriend, deleteFriend } from "./routes/friends/friends";
+import { allMyFriendsAndOpponent, searchUser, addFriend, acceptFriend, deleteFriend } from "./routes/friends/friends";
 import fastifyMetrics from "fastify-metrics";
 import { dashboardInfo } from "./routes/dashboard/dashboard";
 import { request } from "http";
@@ -130,7 +130,7 @@ fastify.post("/api/private/2fa/disable", async (request: FastifyRequest, reply: 
 });
 
 fastify.post("/api/private/getpseudoAvStatus", async (request: FastifyRequest, reply: FastifyReply) => {
-	return { pseudo: request.user?.pseudo, avatar: request.user?.avatar, status: request.user?.status, notif: globalThis.notif }
+	return { pseudo: request.user?.pseudo, avatar: request.user?.avatar, web_status: request.user?.status, notif: globalThis.notif }
 });
 
 fastify.post("/api/private/profile", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -162,7 +162,7 @@ fastify.post("/api/private/updateinfo/uploads", async (request, reply) => {
 });
 
 fastify.post("/api/private/friend", async (request: FastifyRequest, reply: FastifyReply) => {
-	await allMyFriends(request, reply);
+	await allMyFriendsAndOpponent(request, reply);
 })
 
 fastify.post("/api/private/friend/add", async(request: FastifyRequest, reply: FastifyReply) => {
@@ -242,7 +242,6 @@ const start = async () => {
 	const PORT = 3000
 	try {
 		globalThis.notif = false;
-		console.log("global =", globalThis.notif);
 		await fastify.listen({ port: PORT, host: "0.0.0.0" });
 		console.log(`Server running on port ${PORT}`);
 		await db.connect();

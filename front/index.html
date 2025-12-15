@@ -215,16 +215,27 @@
 		<ul id ="members"  class="space-y-2"></ul>
 
 		<div id="no-friend" class="hidden">
-			<h1>Clic here to add friends</h1>
 		</div>
 		<div id="friends" class="hidden">
-			<h1>Your friends :</h1>
+			<h1>Your friends:</h1>
 			<ul class="list-disc pl-5">
 			</ul>
 		</div>
-		<div id = "pending" class="flex justify-end p-4">
-			<h1>Pending friends :</h1>
-			<ul class="list-disc pl-5"></ul>
+		<div id="no-pending" class="hidden flex justify-end p-4">
+		</div>
+		<div id="pending" class="hidden flex  flex-col items-end p-4">
+			<h1>Pending friends:</h1>
+			<ul class="list-disc pl-5">
+			</ul>
+		</div>
+		<div id="no-opponent" class="hidden flex p-4">
+			<h1 id="no opponent text" class="text-2xl">Click below to begin a party and meet new users !</h1>
+			<a href="/gameonline" data-link class="btn w-48">1 VS 1</a>
+		</div>
+		<div id="opponent" class="hidden flex flex-col p-4">
+			<h1>Players you played with and may know:</h1>
+			<ul class="list-disc pl-5">
+			</ul>
 		</div>
 	</template>
 
@@ -247,9 +258,9 @@
 				</a>
 				<select id="profile-status"
 					class="inline-block text-amber-900 mt-4 rounded-md shadow-sm ring-2 bg-amber-500/20 ring-amber-400 sm:text-sm">
-					<option value="online">🟢 Online </option>
-					<option value="offline">⚪ Offline </option>
-					<option value="busy">🔴 Busy </option>
+					<option value="online">🟢 online </option>
+					<option value="busy">🔴 busy </option>
+					<option value="offline">⚪ offline </option>
 				</select>
 				<div class="flex flex-col">
 					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-8">

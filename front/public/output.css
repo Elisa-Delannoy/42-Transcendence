@@ -398,6 +398,7 @@
     height: calc(var(--spacing) * 40);
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
   .h-50 {
     height: calc(var(--spacing) * 50);
   }
@@ -406,6 +407,8 @@
   }
 =======
 >>>>>>> c7632bd29018b259e79a24110c4b38deda366efa
+=======
+>>>>>>> elisa
   .h-80 {
     height: calc(var(--spacing) * 80);
   }

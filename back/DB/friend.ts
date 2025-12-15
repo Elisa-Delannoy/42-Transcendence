@@ -4,9 +4,9 @@ export interface IMyFriends {
 	id: number;
 	avatar: string;
 	pseudo: string;
-	webStatus: string;
+	web_status: "online" | "offline" | "busy";
 	friendship_date: Date;
-	friendship_status: string;
+	friendship_status: "pending" | "accepted";
 	asked_by: number;
 }
 
@@ -63,7 +63,7 @@ export class Friends
 					WHEN f.user_id1 = ? THEN f.user_id2
 					ELSE f.user_id1
 				END
-			WHERE f.user_id1 = ? OR f.user_id2 = ?
+			WHERE (f.user_id1 = ? OR f.user_id2 = ?) AND (f.user_id1 > 0 AND f.user_id2 > 0)
 			ORDER BY f.friendship_date DESC;`, [id, id, id, id]);
 			return friendship;
 	}
@@ -81,10 +81,9 @@ export class Friends
 		await this._db.query(`UPDATE Friend SET friendship_date = ? WHERE user_id1 = ? AND user_id2 = ?`, [updatedTime, id1, id2]);
 	}
 
-		async deleteFriendship(id1: number, id2: number): Promise<void>
+	async deleteFriendship(id1: number, id2: number): Promise<void>
 	{
 		await this._db.execute(`DELETE FROM Friend WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2= ?)`, [id1, id2, id2, id1]);	
 	}
-
 }
 
