@@ -33,17 +33,10 @@ function smoothScrollTo(targetY: number, duration: number) {
 export async function initHomePage() {
 	const btn = document.getElementById("scroll-button")!;
 	const target = document.getElementById("gamepage")!;
-        const myfriends: IMyFriends[] = await genericFetch("/api/private/friend", {
-                method: "POST",
-            });
-            // const acceptedFriends = myfriends.filter(f => f.friendship_status === "accepted");
-            const pendingFriends = myfriends.filter(f => f.friendship_status === "pending");
-
-btn.addEventListener("click", () => {
-    const targetY = target.getBoundingClientRect().top + window.scrollY;
-    smoothScrollTo(targetY, 1000);
-});
-
+    btn.addEventListener("click", () => {
+        const targetY = target.getBoundingClientRect().top + window.scrollY;
+        smoothScrollTo(targetY, 1000);
+    });
 }
 
 

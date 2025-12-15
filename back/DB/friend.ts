@@ -63,7 +63,7 @@ export class Friends
 					WHEN f.user_id1 = ? THEN f.user_id2
 					ELSE f.user_id1
 				END
-			WHERE f.user_id1 = ? OR f.user_id2 = ?
+			WHERE (f.user_id1 = ? OR f.user_id2 = ?) AND (f.user_id1 > 0 AND f.user_id2 > 0)
 			ORDER BY f.friendship_date DESC;`, [id, id, id, id]);
 			return friendship;
 	}

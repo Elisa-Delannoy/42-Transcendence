@@ -9,7 +9,7 @@ export interface IFriendsAndNot {
 	playedWith: {id: number, pseudo: string, avatar: string}[];
 }
 
-export async function allMyFriendsAndAdvers(request: FastifyRequest, reply: FastifyReply): Promise< IFriendsAndNot | undefined> 
+export async function allMyFriendsAndOpponent(request: FastifyRequest, reply: FastifyReply): Promise< IFriendsAndNot | undefined> 
 {
 	try {
 		const allInfo: IFriendsAndNot = {} as IFriendsAndNot;

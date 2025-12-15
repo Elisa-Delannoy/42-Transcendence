@@ -156,7 +156,7 @@ function toAddFriend(id: number): HTMLButtonElement {
 function toAcceptFriend(friend: IMyFriends): HTMLButtonElement {
 	const button = document.createElement("button") as HTMLButtonElement;
 	if (friend.asked_by !== friend.id) {
-		button.textContent = "Pending invitation";
+		// button.textContent = "Pending invitation";
 		button.disabled = true
 		return button;
 	}
@@ -208,7 +208,6 @@ function toDeleteFriend(id: number): HTMLButtonElement {
 function pendingFr(pendingFriends: IMyFriends[]) {
 	const divNoPending = document.getElementById("no-pending") as HTMLElement;
 	const divPending = document.getElementById("pending") as HTMLElement;
-	// console.log(pendingFriends);
 	if (pendingFriends.length === 0) {
 		divNoPending.textContent = "No pending friends";
 		divPending.classList.add("hidden");
@@ -233,6 +232,28 @@ function pendingFr(pendingFriends: IMyFriends[]) {
 	}
 }
 
-function youMayKnow(adversary: {id: number, pseudo: string, avatar: string}[]) {
-	console.log("adversaire = ", adversary);
+function youMayKnow(opponent: {id: number, pseudo: string, avatar: string}[]) {
+	const divNoOpponent = document.getElementById("no-opponent") as HTMLElement;
+	const divOpponent = document.getElementById("opponent") as HTMLElement;
+	if (opponent.length === 0) {
+		divOpponent.classList.add("hidden");
+		divNoOpponent.classList.remove("hidden");
+	}
+	else {
+		divOpponent.classList.remove("hidden");
+		divNoOpponent.classList.add("hidden");
+		const ul = divOpponent.querySelector("ul");
+		opponent.forEach(async (players: {id: number, pseudo: string, avatar: string}) => {
+			const li = document.createElement("li");
+			li.textContent = players.pseudo;
+			const img = document.createElement("img");
+			img.src =  players.avatar;
+			img.alt = `${players.pseudo}'s avatar`;
+			img.width = 64;
+			const button = toAddFriend(players.id);
+			li.appendChild(img);
+			li.appendChild(button);
+			ul?.appendChild(li);
+		});
+	}
 }

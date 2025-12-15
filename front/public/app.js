@@ -4239,10 +4239,6 @@ function smoothScrollTo(targetY, duration) {
 async function initHomePage() {
   const btn = document.getElementById("scroll-button");
   const target = document.getElementById("gamepage");
-  const myfriends = await genericFetch("/api/private/friend", {
-    method: "POST"
-  });
-  const pendingFriends = myfriends.filter((f) => f.friendship_status === "pending");
   btn.addEventListener("click", () => {
     const targetY = target.getBoundingClientRect().top + window.scrollY;
     smoothScrollTo(targetY, 1e3);
@@ -4713,7 +4709,6 @@ function toAddFriend(id) {
 function toAcceptFriend(friend) {
   const button = document.createElement("button");
   if (friend.asked_by !== friend.id) {
-    button.textContent = "Pending invitation";
     button.disabled = true;
     return button;
   }
@@ -4782,8 +4777,29 @@ function pendingFr(pendingFriends) {
     });
   }
 }
-function youMayKnow(adversary) {
-  console.log("adversaire = ", adversary);
+function youMayKnow(opponent) {
+  const divNoOpponent = document.getElementById("no-opponent");
+  const divOpponent = document.getElementById("opponent");
+  if (opponent.length === 0) {
+    divOpponent.classList.add("hidden");
+    divNoOpponent.classList.remove("hidden");
+  } else {
+    divOpponent.classList.remove("hidden");
+    divNoOpponent.classList.add("hidden");
+    const ul = divOpponent.querySelector("ul");
+    opponent.forEach(async (players) => {
+      const li = document.createElement("li");
+      li.textContent = players.pseudo;
+      const img = document.createElement("img");
+      img.src = players.avatar;
+      img.alt = `${players.pseudo}'s avatar`;
+      img.width = 64;
+      const button = toAddFriend(players.id);
+      li.appendChild(img);
+      li.appendChild(button);
+      ul?.appendChild(li);
+    });
+  }
 }
 var init_p_friends = __esm({
   "front/src/views/p_friends.ts"() {

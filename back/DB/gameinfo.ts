@@ -151,12 +151,13 @@ export class GameInfo
 					WHEN gi.winner_id = ? THEN gi.loser_id
 					ELSE gi.winner_id
 				END
+				AND u.user_id > 0
 			LEFT JOIN Friend AS f ON
 				(f.user_id1 = ? AND f.user_id2 = u.user_id)
 				OR (f.user_id1 = u.user_id AND f.user_id2 = ?)
 			WHERE
 				(gi.winner_id = ? OR gi.loser_id = ?) 
-				AND f.user_id1 IS NULL
+				AND f.user_id1 IS NULL 
 			ORDER BY gi.date_game DESC
 			LIMIT 20`
 			const players = await this._db.query(query, [id, id, id, id, id, id]);
