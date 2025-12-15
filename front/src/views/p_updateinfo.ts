@@ -6,19 +6,22 @@ export function UpdateInfoView(): string {
 	return (document.getElementById("updateinfohtml") as HTMLTemplateElement).innerHTML;
 }
 
+// get pseudo and avatar
 export async function initUpdateInfo() {
-	const profil = await genericFetch("/api/private/updateinfo", {
-    method: "POST"
-  });
-
-  (document.getElementById("profile-username") as HTMLElement).textContent = profil.pseudo;
+	const profile = await genericFetch("/api/private/profile", {
+	  method: "POST",
+	});
+			
+	const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
+	avatar.src = profile.avatar + "?ts=" + Date.now();
+	(document.getElementById("profile-pseudo") as HTMLElement).textContent = profile.pseudo;
 
   // HANDLE CHANGE USERNAME, EMAIL, PASSWORD
   await initUpdateUsername();
-  await initUpdateEmail();
-  await initUpdatePassword();
+  // await initUpdateEmail();
+  // await initUpdatePassword();
   
-  await initAvatar();
+  // await initAvatar();
 }
 
 async function initUpdateUsername() {
@@ -46,12 +49,17 @@ async function initUpdateUsername() {
 }
 
 async function initUpdateEmail() {
+  console.log('inside UpdateEmail');
   const formEmail = document.getElementById("change-email-form") as HTMLFormElement;
   formEmail.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const newEmail = formEmail["new-email"].value;
-    const password = formEmail["password"].value;
+    const formData = new FormData(formEmail);
+    const newEmail = formData.get("new-email") as string;
+    const password = formData.get("password") as string;
+    // const newEmail = formEmail["new-email"].value;
+    // const password = formEmail["password"].value;
+    console.log('newEmail', newEmail)
 
     try {
       const response = await genericFetch("/api/private/updateinfo/email", {

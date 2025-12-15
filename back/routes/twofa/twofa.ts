@@ -8,6 +8,9 @@ export async function setupTwoFA(request: FastifyRequest, reply: FastifyReply) {
     try {
         const userId = request.user!.user_id;
         const secret = speakeasy.generateSecret({ length: 20, name: `Transcendence:${userId}` });
+        if (!secret.otpauth_url) {
+            throw new Error("Failed to generate OTP Auth URL");
+        }
         await users.setTwoFA(userId, secret.base32, false);
         const qr = await qrcode.toDataURL(secret.otpauth_url);
         return reply.send({
