@@ -385,6 +385,31 @@ var init_gameRenderer = __esm({
           }
         }
       }
+      drawGameOver(state) {
+        this.ctx.fillStyle = "black";
+        this.canvas.height = this.canvas.height / 2;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        if (state.score) {
+          this.drawScore(state.score);
+          this.ctx.font = "60px Arial";
+          this.ctx.fillStyle = "white";
+          this.ctx.textAlign = "center";
+          if (state.score.player1 > state.score.player2) {
+            this.ctx.fillText(
+              "Player1 wins!",
+              this.canvas.width / 2,
+              this.canvas.height * 0.75
+            );
+          } else {
+            this.ctx.fillText(
+              "Player2 wins!",
+              this.canvas.width / 2,
+              this.canvas.height * 0.75
+            );
+          }
+        }
+        document.getElementById("buttons")?.classList.remove("hidden");
+      }
       draw(state, drawScore) {
         this.clear();
         if (state.paddles)
@@ -4027,6 +4052,7 @@ var init_gameNetwork = __esm({
           this.onCountdownCallback?.();
         });
         this.socket.on("gameOver", () => {
+          this.onGameOverCallback?.();
           console.log("Game over, closing socket...");
           this.socket.close();
         });
@@ -4051,6 +4077,9 @@ var init_gameNetwork = __esm({
       }
       join(gameId) {
         this.socket.emit("joinGame", gameId);
+      }
+      onGameOver(cb) {
+        this.onGameOverCallback = cb;
       }
       disconnect() {
         this.socket.disconnect();
@@ -4118,6 +4147,8 @@ function initPongMatch(params) {
   const gameID = params?.id;
   const url2 = new URL(window.location.href);
   const localMode = url2.searchParams.get("local") === "1";
+  const replayBtn = document.getElementById("replay-btn");
+  const dashboardBtn = document.getElementById("dashboard-btn");
   const serverUrl = window.location.host;
   let input1 = "stop";
   let input2 = "stop";
@@ -4160,34 +4191,37 @@ function initPongMatch(params) {
     updateInput();
   });
   const keyState = {};
+  const keyState2 = {};
   window.addEventListener("keydown", (e) => {
     keyState[e.key] = true;
+    keyState2[e.key] = true;
   });
   window.addEventListener("keyup", (e) => {
     keyState[e.key] = false;
+    keyState2[e.key] = false;
   });
   function updateInput() {
     if (!currentGame) return;
     if (currentGame.getCurrentState().status == "playing") {
       if (currentGame.isLocalMode()) {
-        if (keyState["w"] || keyState["W"] && input1 != "up")
+        if ((keyState["w"] || keyState["W"]) && input1 != "up")
           input1 = "up";
-        else if (keyState["s"] || keyState["S"] && input1 != "down")
+        else if ((keyState["s"] || keyState["S"]) && input1 != "down")
           input1 = "down";
         else if (input1 != "stop")
           input1 = "stop";
         currentGame.sendInput(input1, "player1");
-        if (keyState["ArrowUp"] && input2 != "up")
+        if (keyState2["ArrowUp"] && input2 != "up")
           input2 = "up";
-        else if (keyState["ArrowDown"] && input2 != "down")
+        else if (keyState2["ArrowDown"] && input2 != "down")
           input2 = "down";
         else if (input2 != "stop")
           input2 = "stop";
         currentGame.sendInput(input2, "player2");
       } else {
-        if (keyState["w"] || keyState["W"] && input != "up")
+        if ((keyState["w"] || keyState["W"]) && input != "up")
           input = "up";
-        else if (keyState["s"] || keyState["S"] && input != "down")
+        else if ((keyState["s"] || keyState["S"]) && input != "down")
           input = "down";
         else if (input != "stop")
           input = "stop";
@@ -4195,6 +4229,23 @@ function initPongMatch(params) {
       }
     }
   }
+  net.onGameOver(() => {
+    if (!currentGame || !renderer)
+      return;
+    renderer.drawGameOver(currentGame.getCurrentState());
+    if (currentGame.isLocalMode()) {
+      replayBtn?.addEventListener("click", async () => {
+        navigateTo(`/gamelocal`);
+      });
+    } else {
+      replayBtn?.addEventListener("click", async () => {
+        navigateTo(`/gameonline`);
+      });
+    }
+    dashboardBtn?.addEventListener("click", async () => {
+      navigateTo(`/dashboard`);
+    });
+  });
 }
 function stopGame() {
   net?.disconnect();

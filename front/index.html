@@ -401,15 +401,19 @@
 		<div id="game-list"></div>
 	</template>
 
-  	<template id="pongmatchhtml">
+	<template id="pongmatchhtml">
 		<div id="header-container"></div>
 		<h1>Quick game</h1>
 		<div class="game-container">
 			<div class="flex justify-center mx-auto w-full">
 				<canvas id="canvas" width="600" height="480"></canvas>
 			</div>
+			<div id="buttons" class="game-buttons flex justify-center hidden">
+				<button class="btn mx-auto w-32" id="replay-btn">Replay</button>
+				<button class="btn mx-auto w-32" id="dashboard-btn">Dashboard</button>
+			</div>
 		</div>
-  	</template>
+	</template>
 
 	<template id="tournamenthtml">
 		<div id="header-container"></div>
