@@ -4416,14 +4416,13 @@ function UpdateInfoView() {
   return document.getElementById("updateinfohtml").innerHTML;
 }
 async function initUpdateInfo() {
-  const profil = await genericFetch("/api/private/updateinfo", {
+  const profile = await genericFetch("/api/private/profile", {
     method: "POST"
   });
-  document.getElementById("profile-username").textContent = profil.pseudo;
+  const avatar = document.getElementById("profile-avatar");
+  avatar.src = profile.avatar + "?ts=" + Date.now();
+  document.getElementById("profile-pseudo").textContent = profile.pseudo;
   await initUpdateUsername();
-  await initUpdateEmail();
-  await initUpdatePassword();
-  await initAvatar();
 }
 async function initUpdateUsername() {
   const formUsername = document.getElementById("change-username-form");
@@ -4443,76 +4442,6 @@ async function initUpdateUsername() {
       alert(err.message);
     }
   });
-}
-async function initUpdateEmail() {
-  const formEmail = document.getElementById("change-email-form");
-  formEmail.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const newEmail = formEmail["new-email"].value;
-    const password = formEmail["password"].value;
-    try {
-      const response = await genericFetch("/api/private/updateinfo/email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newEmail, password })
-      });
-      alert("Username updated successfully to <<  " + response.email + "  >>");
-      navigateTo("/home");
-    } catch (err) {
-      alert(err.message);
-    }
-  });
-}
-async function initUpdatePassword() {
-  const formPassword = document.getElementById("change-password-form");
-  formPassword.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const oldPw = formPassword["old-password"].value;
-    const newPw = formPassword["new-password"].value;
-    const confirm = formPassword["confirm-new-password"].value;
-    try {
-      const response = await genericFetch("/api/private/updateinfo/password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ oldPw, newPw, confirm })
-      });
-      alert("Password is updated successfully! Please re-log in!");
-      navigateTo("/logout");
-    } catch (err) {
-      alert(err.message);
-    }
-  });
-}
-async function initAvatar() {
-  const formAvatar = document.getElementById("upload_avatar");
-  if (formAvatar instanceof HTMLFormElement) {
-    formAvatar.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const avatarInput = formAvatar.querySelector('input[name="avatar"]');
-      const avatarFile = avatarInput?.files?.[0];
-      if (!avatarFile || avatarFile.size === 0 || !avatarFile.name) {
-        alert("Please upload an avatar");
-        return;
-      }
-      await uploadAvatar(avatarFile);
-    });
-  }
-}
-async function uploadAvatar(avatar) {
-  const form = new FormData();
-  form.append("avatar", avatar);
-  try {
-    const result = await genericFetch("/api/private/updateinfo/uploads", {
-      method: "POST",
-      body: form,
-      credentials: "include"
-    });
-    console.log("uplaod success ok : ", result);
-    navigateTo("/profile");
-  } catch (err) {
-    alert(err);
-    console.error(err);
-  }
 }
 var init_p_updateinfo = __esm({
   "front/src/views/p_updateinfo.ts"() {
@@ -4831,6 +4760,43 @@ var init_error = __esm({
   }
 });
 
+// front/src/views/p_updateemail.ts
+function UpdateEmailView() {
+  loadHeader();
+  return document.getElementById("update-email-html").innerHTML;
+}
+async function initUpdateEmail() {
+  const profile = await genericFetch("/api/private/profile", {
+    method: "POST"
+  });
+  const avatar = document.getElementById("profile-avatar");
+  avatar.src = profile.avatar + "?ts=" + Date.now();
+  document.getElementById("profile-pseudo").textContent = profile.pseudo;
+  const formEmail = document.getElementById("change-email-form");
+  formEmail.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const newEmail = formEmail["new-email"].value;
+    const password = formEmail["password"].value;
+    try {
+      const response = await genericFetch("/api/private/updateinfo/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newEmail, password })
+      });
+      alert("Username updated successfully to <<  " + response.email + "  >>");
+      navigateTo("/profile");
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+}
+var init_p_updateemail = __esm({
+  "front/src/views/p_updateemail.ts"() {
+    "use strict";
+    init_router();
+  }
+});
+
 // front/src/router.ts
 function navigateTo(url2) {
   const state = { from: window.location.pathname };
@@ -4981,6 +4947,7 @@ var init_router = __esm({
     init_logout();
     init_p_friends();
     init_error();
+    init_p_updateemail();
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
@@ -4992,6 +4959,7 @@ var init_router = __esm({
       { path: "/friends", view: FriendsView, init: initFriends },
       { path: "/profile", view: ProfileView, init: initProfile },
       { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },
+      { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
       { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit },
       { path: "/gamelocal", view: GameLocalView, init: GameLocalinit },
       { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
