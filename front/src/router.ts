@@ -16,10 +16,13 @@ import { FriendsView, initFriends } from "./views/p_friends";
 import { ErrorView, initError } from "./views/error";
 import { request } from "http";
 import { userInfo } from "os";
+import { initTowfa, towfaView } from "./views/twofa";
+import { UpdateEmailView, initUpdateEmail } from "./views/p_updateemail";
 
 const routes = [
   { path: "/", view: View, init: init},
-  { path: "/login", view: LoginView, init:initLogin},
+  { path: "/login", view: LoginView, init: initLogin},
+  { path: "/twofa", view: towfaView, init: initTowfa},
   { path: "/logout", init: initLogout},
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/registerok", view: RegisterValidView},
@@ -28,6 +31,7 @@ const routes = [
   { path: "/friends", view: FriendsView, init: initFriends },
   { path: "/profile", view: ProfileView, init: initProfile},
   { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo},
+  { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
   { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit},
   { path: "/gamelocal", view: GameLocalView, init: GameLocalinit},
   { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
@@ -44,12 +48,10 @@ export function navigateTo(url: string) {
 	history.pushState(state, "", url);
 	currentPath = url;
 	router();
-	// const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
-	// if (avatar) 
-	// 	avatar.src = "/api/private/avatar?ts=" + Date.now();
 }
 
-export async function genericFetch(url: string, options: RequestInit = {}) {
+export async function genericFetch(url: string, options: RequestInit = {})
+{
 	const res = await fetch(url, {
 	...options,
 	credentials: "include"
@@ -106,7 +108,19 @@ export async function getPseudoHeader()
 	const avatar = document.getElementById("header-avatar") as HTMLImageElement;
 	const status = document.getElementById("status") as HTMLImageElement;
 	avatar.src = result.avatar + "?ts" + Date.now();
-	switch (result.status)
+	displayStatus(result, status);
+	const notification = document.getElementById("notification") as HTMLImageElement;
+	notification.classList.add("hidden");
+	if (result.notif === true) {
+		notification.classList.remove("hidden");
+	}
+	} catch (err) {
+		console.error(err);
+	}
+}
+
+export function displayStatus(info: any, status: HTMLImageElement): void {
+	switch (info.web_status)
 	{
 		case "online": status.classList.add("bg-green-500");
 			break;
@@ -114,17 +128,7 @@ export async function getPseudoHeader()
 			break;
 		case "offline": status.classList.add("bg-white");
 	}
-	// console.log("notification =", document.getElementById("notification"));
-
-	const notification = document.getElementById("notification") as HTMLImageElement;
-	notification.classList.add("hidden");
-	// console.log("notif = ", result.notif);
-	if (result.notif === true) {
-		notification.classList.remove("hidden");
-	}
-	} catch (err) {
-		console.error(err);
-	}
+	status.title = info.web_status;
 }
 
 export function router() {

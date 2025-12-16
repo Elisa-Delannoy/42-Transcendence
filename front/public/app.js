@@ -43,51 +43,38 @@ async function initLogin() {
     e.preventDefault();
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
-    const code = document.getElementById("twofa-code")?.value;
-    const success = await login(username, password, code, form);
-    if (success)
+    const success = await login(username, password, form);
+    if (success == 2)
+      navigateTo("/twofa");
+    if (success == 1)
       navigateTo("/home");
   });
 }
-async function login(username, password, code, form) {
+async function login(username, password, form) {
   try {
     clearLoginErrors(form);
-    const twofaBox = document.getElementById("twofa-box");
-    const twofaMsg = document.getElementById("twofa-msg");
-    twofaMsg.textContent = "";
-    if (require2FA && !code) {
-      twofaMsg.textContent = "No 2FA code submitted.";
-      return false;
-    }
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password, code }),
+      body: JSON.stringify({ username, password }),
       credentials: "include"
     });
     const result = await res.json();
-    if (result.require2FA === true) {
-      require2FA = true;
-      twofaBox.classList.remove("hidden");
-      twofaMsg.textContent = "Please input 2FA code.";
-      return false;
-    }
-    if (!res.ok) {
+    if (!result.ok) {
       if (result.field === "username") {
         document.getElementById("username-loginmsg").textContent = result.error;
       }
       if (result.field === "password") {
         document.getElementById("password-loginmsg").textContent = result.error;
       }
-      if (result.field === "2fa") {
-        twofaMsg.textContent = result.error;
-      }
-      return false;
+      return 0;
     }
-    return true;
+    if (result.ok && result.twofa === true)
+      return 2;
+    return 1;
   } catch (err) {
     console.error(err);
-    return false;
+    return 0;
   }
 }
 function clearLoginErrors(form) {
@@ -98,12 +85,10 @@ function clearLoginErrors(form) {
   [usernameMsg, passwordMsg].forEach((p) => p.textContent = "");
   [usernameInput, passwordInput].forEach((p) => p.classList.remove("error"));
 }
-var require2FA;
 var init_login = __esm({
   "front/src/views/login.ts"() {
     "use strict";
     init_router();
-    require2FA = false;
   }
 });
 
@@ -4313,10 +4298,6 @@ function smoothScrollTo(targetY, duration) {
 async function initHomePage() {
   const btn = document.getElementById("scroll-button");
   const target = document.getElementById("gamepage");
-  const myfriends = await genericFetch("/api/private/friend", {
-    method: "POST"
-  });
-  const pendingFriends = myfriends.filter((f) => f.friendship_status === "pending");
   btn.addEventListener("click", () => {
     const targetY = target.getBoundingClientRect().top + window.scrollY;
     smoothScrollTo(targetY, 1e3);
@@ -4439,14 +4420,13 @@ function UpdateInfoView() {
   return document.getElementById("updateinfohtml").innerHTML;
 }
 async function initUpdateInfo() {
-  const profil = await genericFetch("/api/private/updateinfo", {
+  const profile = await genericFetch("/api/private/profile", {
     method: "POST"
   });
-  document.getElementById("profile-username").textContent = profil.pseudo;
+  const avatar = document.getElementById("profile-avatar");
+  avatar.src = profile.avatar + "?ts=" + Date.now();
+  document.getElementById("profile-pseudo").textContent = profile.pseudo;
   await initUpdateUsername();
-  await initUpdateEmail();
-  await initUpdatePassword();
-  await initAvatar();
 }
 async function initUpdateUsername() {
   const formUsername = document.getElementById("change-username-form");
@@ -4466,76 +4446,6 @@ async function initUpdateUsername() {
       alert(err.message);
     }
   });
-}
-async function initUpdateEmail() {
-  const formEmail = document.getElementById("change-email-form");
-  formEmail.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const newEmail = formEmail["new-email"].value;
-    const password = formEmail["password"].value;
-    try {
-      const response = await genericFetch("/api/private/updateinfo/email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newEmail, password })
-      });
-      alert("Username updated successfully to <<  " + response.email + "  >>");
-      navigateTo("/home");
-    } catch (err) {
-      alert(err.message);
-    }
-  });
-}
-async function initUpdatePassword() {
-  const formPassword = document.getElementById("change-password-form");
-  formPassword.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const oldPw = formPassword["old-password"].value;
-    const newPw = formPassword["new-password"].value;
-    const confirm = formPassword["confirm-new-password"].value;
-    try {
-      const response = await genericFetch("/api/private/updateinfo/password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ oldPw, newPw, confirm })
-      });
-      alert("Password is updated successfully! Please re-log in!");
-      navigateTo("/logout");
-    } catch (err) {
-      alert(err.message);
-    }
-  });
-}
-async function initAvatar() {
-  const formAvatar = document.getElementById("upload_avatar");
-  if (formAvatar instanceof HTMLFormElement) {
-    formAvatar.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const avatarInput = formAvatar.querySelector('input[name="avatar"]');
-      const avatarFile = avatarInput?.files?.[0];
-      if (!avatarFile || avatarFile.size === 0 || !avatarFile.name) {
-        alert("Please upload an avatar");
-        return;
-      }
-      await uploadAvatar(avatarFile);
-    });
-  }
-}
-async function uploadAvatar(avatar) {
-  const form = new FormData();
-  form.append("avatar", avatar);
-  try {
-    const result = await genericFetch("/api/private/updateinfo/uploads", {
-      method: "POST",
-      body: form,
-      credentials: "include"
-    });
-    console.log("uplaod success ok : ", result);
-    navigateTo("/profile");
-  } catch (err) {
-    alert(err);
-    console.error(err);
-  }
 }
 var init_p_updateinfo = __esm({
   "front/src/views/p_updateinfo.ts"() {
@@ -4655,14 +4565,16 @@ function FriendsView() {
 }
 async function initFriends() {
   try {
-    const myfriends = await genericFetch("/api/private/friend", {
+    const allInfo = await genericFetch("/api/private/friend", {
       method: "POST"
     });
-    const acceptedFriends = myfriends.filter((f) => f.friendship_status === "accepted");
-    const pendingFriends = myfriends.filter((f) => f.friendship_status === "pending");
-    doSearch(myfriends);
+    const acceptedFriends = allInfo.allMyFriends.filter((f) => f.friendship_status === "accepted");
+    const pendingFriends = allInfo.allMyFriends.filter((f) => f.friendship_status === "pending");
+    const playedWithNotF = allInfo.playedWith;
+    doSearch(allInfo.allMyFriends);
     myFriends(acceptedFriends);
     pendingFr(pendingFriends);
+    youMayKnow(playedWithNotF);
   } catch (err) {
     console.log(err);
   }
@@ -4679,15 +4591,22 @@ async function myFriends(acceptedFriends) {
     divNoFriend.classList.add("hidden");
     const ul = divFriend.querySelector("ul");
     acceptedFriends.forEach(async (friend) => {
+      const status = document.createElement("span");
+      status.className = "absolute w-4 h-4 rounded-full border-2 border-white";
+      displayStatus(friend, status);
       const li = document.createElement("li");
-      li.textContent = "Pseudo: " + friend.pseudo + ", status: " + friend.webStatus + ", invitation: " + friend.friendship_status + ", friend since: " + friend.friendship_date;
+      li.className = "flex items-center gap-3";
+      const span = document.createElement("span");
+      span.textContent = friend.pseudo + " friend since: " + friend.friendship_date;
       const img = document.createElement("img");
       img.src = friend.avatar;
       img.alt = `${friend.pseudo}'s avatar`;
       img.width = 64;
       const button = toDeleteFriend(friend.id);
-      li.appendChild(button);
       li.appendChild(img);
+      li.appendChild(status);
+      li.appendChild(span);
+      li.appendChild(button);
       ul?.appendChild(li);
     });
   }
@@ -4767,6 +4686,7 @@ function toAddFriend(id) {
       });
       button.textContent = "pending";
       button.disabled = true;
+      navigateTo("/friends");
     } catch (err) {
       console.log(err);
       button.disabled = false;
@@ -4777,7 +4697,6 @@ function toAddFriend(id) {
 function toAcceptFriend(friend) {
   const button = document.createElement("button");
   if (friend.asked_by !== friend.id) {
-    button.textContent = "Pending invitation";
     button.disabled = true;
     return button;
   }
@@ -4792,6 +4711,7 @@ function toAcceptFriend(friend) {
       });
       button.textContent = "Accepted";
       button.disabled = true;
+      navigateTo("/friends");
     } catch (err) {
       console.log(err);
       button.disabled = false;
@@ -4812,6 +4732,7 @@ function toDeleteFriend(id) {
       });
       button.textContent = "deleted";
       button.disabled = true;
+      navigateTo("/friends");
     } catch (err) {
       console.log(err);
       button.disabled = false;
@@ -4820,20 +4741,53 @@ function toDeleteFriend(id) {
   return button;
 }
 function pendingFr(pendingFriends) {
+  const divNoPending = document.getElementById("no-pending");
   const divPending = document.getElementById("pending");
-  const ul = divPending.querySelector("ul");
-  pendingFriends.forEach(async (friend) => {
-    const li = document.createElement("li");
-    li.textContent = "Pseudo: " + friend.pseudo + ", requested since: " + friend.friendship_date;
-    const img = document.createElement("img");
-    img.src = friend.avatar;
-    img.alt = `${friend.pseudo}'s avatar`;
-    img.width = 64;
-    const button = toAcceptFriend(friend);
-    li.appendChild(img);
-    li.appendChild(button);
-    ul?.appendChild(li);
-  });
+  if (pendingFriends.length === 0) {
+    divNoPending.textContent = "No pending friends";
+    divPending.classList.add("hidden");
+    divNoPending.classList.remove("hidden");
+  } else {
+    divPending.classList.remove("hidden");
+    divNoPending.classList.add("hidden");
+    const ul = divPending.querySelector("ul");
+    pendingFriends.forEach(async (friend) => {
+      const li = document.createElement("li");
+      li.textContent = friend.pseudo + ", requested since: " + friend.friendship_date;
+      const img = document.createElement("img");
+      img.src = friend.avatar;
+      img.alt = `${friend.pseudo}'s avatar`;
+      img.width = 64;
+      const button = toAcceptFriend(friend);
+      li.appendChild(img);
+      li.appendChild(button);
+      ul?.appendChild(li);
+    });
+  }
+}
+function youMayKnow(opponent) {
+  const divNoOpponent = document.getElementById("no-opponent");
+  const divOpponent = document.getElementById("opponent");
+  if (opponent.length === 0) {
+    divOpponent.classList.add("hidden");
+    divNoOpponent.classList.remove("hidden");
+  } else {
+    divOpponent.classList.remove("hidden");
+    divNoOpponent.classList.add("hidden");
+    const ul = divOpponent.querySelector("ul");
+    opponent.forEach(async (players) => {
+      const li = document.createElement("li");
+      li.textContent = players.pseudo;
+      const img = document.createElement("img");
+      img.src = players.avatar;
+      img.alt = `${players.pseudo}'s avatar`;
+      img.width = 64;
+      const button = toAddFriend(players.id);
+      li.appendChild(img);
+      li.appendChild(button);
+      ul?.appendChild(li);
+    });
+  }
 }
 var init_p_friends = __esm({
   "front/src/views/p_friends.ts"() {
@@ -4851,6 +4805,74 @@ function initError() {
 var init_error = __esm({
   "front/src/views/error.ts"() {
     "use strict";
+  }
+});
+
+// front/src/views/twofa.ts
+function towfaView() {
+  return document.getElementById("twofahtml").innerHTML;
+}
+async function initTowfa() {
+  const form = document.getElementById("twofa-form");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const code = document.getElementById("twofa-code").value;
+    const res = await fetch("/api/twofa", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }),
+      credentials: "include"
+    });
+    if (res.ok === false) {
+      const error = document.getElementById("twofa-msg");
+      error.textContent = "";
+      error.textContent = (await res.json()).error;
+      return;
+    }
+    navigateTo("/home");
+  });
+}
+var init_twofa = __esm({
+  "front/src/views/twofa.ts"() {
+    "use strict";
+    init_router();
+  }
+});
+
+// front/src/views/p_updateemail.ts
+function UpdateEmailView() {
+  loadHeader();
+  return document.getElementById("update-email-html").innerHTML;
+}
+async function initUpdateEmail() {
+  const profile = await genericFetch("/api/private/profile", {
+    method: "POST"
+  });
+  const avatar = document.getElementById("profile-avatar");
+  avatar.src = profile.avatar + "?ts=" + Date.now();
+  document.getElementById("profile-pseudo").textContent = profile.pseudo;
+  const formEmail = document.getElementById("change-email-form");
+  formEmail.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const newEmail = formEmail["new-email"].value;
+    const password = formEmail["password"].value;
+    try {
+      const response = await genericFetch("/api/private/updateinfo/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newEmail, password })
+      });
+      alert("Username updated successfully to <<  " + response.email + "  >>");
+      navigateTo("/profile");
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+}
+var init_p_updateemail = __esm({
+  "front/src/views/p_updateemail.ts"() {
+    "use strict";
+    init_router();
   }
 });
 
@@ -4912,6 +4934,7 @@ async function getPseudoHeader3() {
     const avatar = document.getElementById("header-avatar");
     const status = document.getElementById("status");
     avatar.src = result.avatar + "?ts" + Date.now();
+<<<<<<< HEAD
     switch (result.status) {
       case "online":
         status.classList.add("bg-green-500");
@@ -4922,6 +4945,9 @@ async function getPseudoHeader3() {
       case "offline":
         status.classList.add("bg-white");
     }
+=======
+    displayStatus(result, status);
+>>>>>>> main
     const notification = document.getElementById("notification");
     notification.classList.add("hidden");
     if (result.notif === true) {
@@ -4930,6 +4956,19 @@ async function getPseudoHeader3() {
   } catch (err) {
     console.error(err);
   }
+}
+function displayStatus(info, status) {
+  switch (info.web_status) {
+    case "online":
+      status.classList.add("bg-green-500");
+      break;
+    case "busy":
+      status.classList.add("bg-red-500");
+      break;
+    case "offline":
+      status.classList.add("bg-white");
+  }
+  status.title = info.web_status;
 }
 function router() {
   if (currentRoute?.cleanup) {
@@ -5002,9 +5041,12 @@ var init_router = __esm({
     init_logout();
     init_p_friends();
     init_error();
+    init_twofa();
+    init_p_updateemail();
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
+      { path: "/twofa", view: towfaView, init: initTowfa },
       { path: "/logout", init: initLogout },
       { path: "/register", view: RegisterView, init: initRegister },
       { path: "/registerok", view: RegisterValidView },
@@ -5013,6 +5055,7 @@ var init_router = __esm({
       { path: "/friends", view: FriendsView, init: initFriends },
       { path: "/profile", view: ProfileView, init: initProfile },
       { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },
+      { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
       { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit },
       { path: "/gamelocal", view: GameLocalView, init: GameLocalinit },
       { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },

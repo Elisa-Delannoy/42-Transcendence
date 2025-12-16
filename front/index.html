@@ -72,14 +72,30 @@
 					<p class="text-red-600 text-xs mt-1 text-left block" id="password-loginmsg"></p>
 				</div>
 			</div>
-			<div id="twofa-box" class="hidden flex flex-col mx-10 mt-4">
-				<h2 class="text-sm text-amber-900 dark:text-white mb-0.5">Two-Factor Code</h2>		
-				<input id="twofa-code" class="input" maxlength="6" placeholder="6-digit code"/>		
-				<p class="text-red-600 text-xs mt-1 text-left block" id="twofa-msg"></p>	
-			</div>	
 			<button type="submit" class="btn mx-auto w-40 justify-end">Log in</button>
 			<a class="mt-1 text-amber-900 dark:text-white hover:underline text-sm" href="/register" data-link>Create account ?</a>
 		</form>
+	</template>
+		
+	<template id="twofahtml">
+		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+			<a href="/" data-link class="block dark:hidden ml-4">
+				<img src="/src/image/croissant-white.png" alt="croissantw"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			<a href="/" data-link class="hidden dark:block ml-4">
+				<img src="/src/image/croissant-black.png" alt="croissantd"
+					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+		</header>
+		<form id="twofa-form" class="flex flex-col rounded-lg text-center bg-white ring-4 ring-amber-300 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 h-52 mx-auto">
+			<div class="mx-10">
+				<h2 class="text-2xl font-bold text-amber-900 dark:text-white my-3">Two-Factor Authentication</h2>		
+				<input id="twofa-code" class="input" placeholder="6-digit code"/>		
+				<p class="text-red-600 text-xs mt-1 text-left block" id="twofa-msg"></p>
+			</div>
+			<button type="submit" class="btn mx-auto w-40">Log in</button>
+		</form>	
 	</template>
 
 	<template id="registerhtml">
@@ -199,16 +215,27 @@
 		<ul id ="members"  class="space-y-2"></ul>
 
 		<div id="no-friend" class="hidden">
-			<h1>Clic here to add friends</h1>
 		</div>
 		<div id="friends" class="hidden">
-			<h1>Your friends :</h1>
+			<h1>Your friends:</h1>
 			<ul class="list-disc pl-5">
 			</ul>
 		</div>
-		<div id = "pending" class="flex justify-end p-4">
-			<h1>Pending friends :</h1>
-			<ul class="list-disc pl-5"></ul>
+		<div id="no-pending" class="hidden flex justify-end p-4">
+		</div>
+		<div id="pending" class="hidden flex  flex-col items-end p-4">
+			<h1>Pending friends:</h1>
+			<ul class="list-disc pl-5">
+			</ul>
+		</div>
+		<div id="no-opponent" class="hidden flex p-4">
+			<h1 id="no opponent text" class="text-2xl">Click below to begin a party and meet new users !</h1>
+			<a href="/gameonline" data-link class="btn w-48">1 VS 1</a>
+		</div>
+		<div id="opponent" class="hidden flex flex-col p-4">
+			<h1>Players you played with and may know:</h1>
+			<ul class="list-disc pl-5">
+			</ul>
 		</div>
 	</template>
 
@@ -231,9 +258,9 @@
 				</a>
 				<select id="profile-status"
 					class="inline-block text-amber-900 mt-4 rounded-md shadow-sm ring-2 bg-amber-500/20 ring-amber-400 sm:text-sm">
-					<option value="online">🟢 Online </option>
-					<option value="offline">⚪ Offline </option>
-					<option value="busy">🔴 Busy </option>
+					<option value="online">🟢 online </option>
+					<option value="busy">🔴 busy </option>
+					<option value="offline">⚪ offline </option>
 				</select>
 				<div class="flex flex-col">
 					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-8">
@@ -242,7 +269,7 @@
 							<h1 class="ml-2 font-bold">Email</h1>
 							<p id="profile-email" class="ml-2"></p>
 						</div>
-						<a class="size-6 mt-4 ml-auto justify-end mr-5 object-contain" href="/updateinfo">
+						<a class="size-6 mt-4 ml-auto justify-end mr-5 object-contain" href="/updateemail">
 							<img class="invert p-0.5 bg-blue-600 rounded-md" src="src/image/crayon.png" alt="crayon">
 						</a>
 					</div>
@@ -331,6 +358,56 @@
 			</form>
 		</main>
 	</template>
+
+	<template id="update-email-html">
+		<div id="header-container"></div>
+		<main class="flex">
+			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
+						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
+						mx-auto shadow-2xl items-center">
+				<div class="flex flex-row w-100 mt-3 justify-between">
+					<div class="w-5"></div>
+					<h1 class="text-3xl mx-auto font-bold text-amber-900
+						drop-shadow-lg" id="profile-pseudo"></h1>
+				</div>
+				<a class="mt-2 object-contain">
+					<img class="ring-4 ring-amber-900 rounded-full shadow-xl" id="profile-avatar" src="" alt="Your avatar" width="150">
+				</a>
+				<div class="flex flex-col mt-6">
+					<!-- Change Email -->
+					<div class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
+								w-80 ring-1 ring-amber-900 rounded-lg mt-6 p-3">
+						<h2 class="font-bold mb-2">Change Email</h2>
+						<form id="change-email-form" class="flex flex-col gap-2">
+							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">New Email</h2>
+							<input
+								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+								type="text"
+								name="new-email"
+								placeholder="your.new-email@example.com"
+								required />
+							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">Confirm Password</h2>
+							<input
+								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+								type="password"
+								name="password"
+								placeholder="••••••••••••"
+								required />
+							<button
+								type="submit" 
+								class="btn w-40 mx-auto mt-20 block">
+								Update Email
+							</button>
+						</form>
+					</div>
+				</div>
+				<div>
+					<br>
+				</div>
+			</div>
+		</main>
+	</template>
+
 
 	<template id="gamelocalhtml">
 		<div id="header-container"></div>
@@ -437,34 +514,34 @@
 	<template id="history-dashboard">
 		<div class="flex items-center gap-4 w-1/3">
 			<img id="winnerpath" src="" alt="winner avatar"
-				class="w-16 h-16 rounded-full object-cover border-2 border-green-500">
+				class="size-10 lg:size-16 rounded-full border-2 border-green-500">
 			
 			<div>
-				<p id="winnerpseudo" class="text-xl font-semibold text-green-500"></p>
-				<p id="winnerscore" class="text-2xl bg-amber-600/30 rounded-sm w-6 text-center ring-1 ring-amber-600/50 text-amber-900 font-bold"></p>
+				<p id="winnerpseudo" class="text-xs lg:text-xl font-semibold text-green-500"></p>
+				<p id="winnerscore" class="text-sm lg:text-2xl bg-amber-600/30 rounded-sm w-3 lg:w-6 text-center ring-1 ring-amber-600/50 text-amber-900 font-bold"></p>
 			</div>
 		</div>
 
 		<div>
-			<p class="text-xl items-end font-semibold text-green-500">Winner</p>
+			<p class="text-xs lg:text-xl items-end font-semibold text-green-500">Winner</p>
 		</div>
 		<div class="flex flex-col items-center w-1/3">
-			<p id="type" class="text-xl text-amber-950"></p>
-			<p id="date" class="text-lg text-amber-800"></p>
-			<p id="duration" class="text-sm text-amber-900"></p>
+			<p id="type" class="text-sm lg:text-xl text-amber-950"></p>
+			<p id="date" class="text-xs lg:text-lg text-amber-800"></p>
+			<p id="duration" class="text-xs lg:text-sm text-amber-900"></p>
 		</div>
 		<div>
-			<p class="text-xl items-start font-semibold text-red-500">Loser</p>
+			<p class="text-xs lg:text-xl items-start font-semibold text-red-500">Loser</p>
 		</div>
 
 		<div class="flex items-center gap-4 w-1/3 justify-end">
 			<div class="">
-				<p id="loserpseudo" class="text-xl font-semibold text-red-500"></p>
-				<p id="loserscore" class="text-2xl bg-amber-600/30 rounded-sm ring-1 ring-amber-600/50 w-6 text-center ml-auto text-amber-900 font-bold"></p>
+				<p id="loserpseudo" class="text-xs lg:text-xl font-semibold text-red-500"></p>
+				<p id="loserscore" class="text-sm lg:text-2xl bg-amber-600/30 rounded-sm ring-1 ring-amber-600/50 w-3 lg:w-6 text-center ml-auto text-amber-900 font-bold"></p>
 			</div>
 
 			<img id="loserpath" src="" alt="loser avatar"
-				class="w-16 h-16 rounded-full object-cover border-2 border-red-500">
+				class="size-10 lg:size-16 rounded-full object-cover border-2 border-red-500">
 		</div>
 	</template>
 

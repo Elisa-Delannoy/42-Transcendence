@@ -11,8 +11,8 @@ export interface IUsers {
 	modification_date: Date;
 	money: number;
 	elo: number;
-	twofa_secret?: string | null;
-	twofa_enabled?: number;
+	twofa_secret: string;
+	twofa_enabled: number;
 }
 
 export class Users
@@ -37,6 +37,8 @@ export class Users
                 creation_date TEXT NOT NULL,
 				modification_date TEXT NOT NULL,
                 money INTEGER DEFAULT 0,
+				twofa_secret TEXT,
+				twofa_enabled INTEGER DEFAULT 0,
                 elo INTEGER DEFAULT 0
 			)
 		`);
@@ -45,8 +47,8 @@ export class Users
 	async addUser(pseudo:string, email: string, password: string):Promise<void>
 	{
 		const query = `
-			INSERT INTO Users (pseudo, email, password, avatar, status, creation_date, modification_date, money, elo)
-			VALUES (?,?,?,?,?,?,?,?,?)
+			INSERT INTO Users (pseudo, email, password, avatar, status, creation_date, modification_date, money, twofa_secret, twofa_enabled, elo)
+			VALUES (?,?,?,?,?,?,?,?,?,?,?)
 		`;
 		const parameters = [
 		pseudo,
@@ -57,6 +59,8 @@ export class Users
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		0,
+		"",
+		0,
 		1000
 		];
 		await this._db.execute(query, parameters);
@@ -65,8 +69,8 @@ export class Users
 	async CreateUserIA()
 	{
 		const query = `
-			INSERT INTO Users (user_id, pseudo, email, password, avatar, status, creation_date, modification_date, money, elo)
-			VALUES (?,?,?,?,?,?,?,?,?,?)
+			INSERT INTO Users (user_id, pseudo, email, password, avatar, status, creation_date, modification_date, money, twofa_secret, twofa_enabled, elo)
+			VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
 			ON CONFLICT(user_id) DO NOTHING
 		`;
 		const parameters = [
@@ -79,6 +83,8 @@ export class Users
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		0,
+		"",
+		0,
 		1000
 		];
 		await this._db.execute(query, parameters);
@@ -87,8 +93,8 @@ export class Users
 	async CreateUserGuest()
 	{
 		const query = `
-			INSERT INTO Users (user_id, pseudo, email, password, avatar, status, creation_date, modification_date, money, elo)
-			VALUES (?,?,?,?,?,?,?,?,?,?)
+			INSERT INTO Users (user_id, pseudo, email, password, avatar, status, creation_date, modification_date, money, twofa_secret, twofa_enabled, elo)
+			VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
 			ON CONFLICT(user_id) DO NOTHING
 		`;
 		const parameters = [
@@ -100,6 +106,8 @@ export class Users
 		"online",
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		new Date().toISOString().replace("T", " ").split(".")[0],
+		0,
+		"",
 		0,
 		1000
 		];
@@ -220,15 +228,15 @@ export class Users
 	}
 
 	async searchMember(pseudo: string, id: number): Promise<IUsers[]> {
-		const query = ` SELECT * FROM Users WHERE user_id != ? AND LOWER(pseudo) LIKE LOWER(?) LIMIT 10`; /*faire un join pour status != friend ou voir pour mettre bouton supprimer si friend*/
+		const query = ` SELECT * FROM Users WHERE user_id != ? AND user_id > 0 AND LOWER(pseudo) LIKE LOWER(?) LIMIT 10`; /*faire un join pour status != friend ou voir pour mettre bouton supprimer si friend*/
 		const members = await this._db.query(query, [id, `${pseudo}%`])
 		return members;
 	}
 
-	async setTwoFA(userId: number, secret: string | null = null, enabled: boolean = false): Promise<void> {
+	async setTwoFA(userId: number, secret: string | null = null, enabled: boolean): Promise<void> {
 		await this._db.execute(
 		  `UPDATE Users SET twofa_secret = ?, twofa_enabled = ? WHERE user_id = ?`,
-		  [secret, enabled ? 1 : 0, userId]
+		  [secret, enabled, userId]
 		);
-	}
+	} 
 }

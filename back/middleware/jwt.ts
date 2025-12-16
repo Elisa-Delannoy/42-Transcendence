@@ -3,9 +3,12 @@ import * as dotenv from "dotenv";
 import { users } from "../server";
 import { IUsers } from "../DB/users"
 import { FastifyRequest, FastifyReply } from "fastify";
+import { IsDeepStrictEqualOptions } from "util";
 
 dotenv.config({ path: "./back/.env" });
 const secretkey: string = process.env.SECRETKEY as string;
+const TEMP_JWT_SECRET = process.env.TEMP_JWT_SECRET!;
+
 if (!secretkey)
 	throw new Error("SECRETKEY is missing in .env");
 
@@ -43,4 +46,36 @@ export const tokenOK = async (request: FastifyRequest, reply: FastifyReply): Pro
 	}
 	reply.code(200);
 	return user_loged;
+}
+
+export function createTemp2FAToken( user_id: number)
+{
+  return jwt.sign(
+    {
+      id : user_id
+    },
+    TEMP_JWT_SECRET,
+    {
+      expiresIn: "5m"
+    }
+  );
+}
+
+export async function checkTempToken(request: FastifyRequest) : Promise<IUsers> 
+{
+	try 
+	{
+		const token: string = request.cookies.tempToken as string;
+		if (!token) {
+			throw { error : "Unauthorized: token is missing."};
+		}
+		const infoJWT = jwt.verify(token, TEMP_JWT_SECRET) as {id : number};
+		const user = await users.getIDUser(infoJWT.id);
+		return user;
+	}
+	catch (error)
+	{
+		throw { error : "Token Expired."};
+	}
+		
 }

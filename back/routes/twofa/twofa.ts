@@ -1,15 +1,23 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import speakeasy from "speakeasy";
 import qrcode from "qrcode";
-import { users } from '../../server';
+import { friends, users } from '../../server';
+import { checkTempToken, createJWT } from "../../middleware/jwt";
+import { CookieSerializeOptions } from "@fastify/cookie";
+import { devNull } from "os";
+import { IUsers } from "../../DB/users";
+import { notification } from "../friends/friends";
 
 // create secret + otpauth_url（for creating qrcode）
 export async function setupTwoFA(request: FastifyRequest, reply: FastifyReply) {
     try {
         const userId = request.user!.user_id;
         const secret = speakeasy.generateSecret({ length: 20, name: `Transcendence:${userId}` });
+        if (!secret.otpauth_url) {
+            throw new Error("Failed to generate OTP Auth URL");
+        }
         await users.setTwoFA(userId, secret.base32, false);
-        const qr = await qrcode.toDataURL(secret.otpauth_url);
+        const qr = await qrcode.toDataURL(secret.otpauth_url!);
         return reply.send({
             base32: secret.base32,
             otpauth_url: secret.otpauth_url,
@@ -64,4 +72,37 @@ export async function disableTwoFA(request: FastifyRequest, reply: FastifyReply)
         console.error(err);
         return reply.status(500).send({ error: "Failed to disable 2FA." });
     }
+}
+
+export async function checkTwoFA(request: FastifyRequest, reply: FastifyReply, code: number)
+{
+	try
+	{
+		const user = await checkTempToken(request);
+		const verified = speakeasy.totp.verify({
+			secret: user.twofa_secret,
+			encoding: "base32",
+			token: code.toString(),
+			window: 1,
+		});
+		if (!verified)
+		{
+			return reply.status(401).send({ ok: false, field: "2fa", error: "Invalid 2FA code." });
+		}
+		const options: CookieSerializeOptions = {
+				httpOnly: true,
+				secure: true,
+				sameSite: "strict",
+				path: "/",
+		};
+		const jwtoken = createJWT(user.user_id);
+		users.updateStatus(user.user_id, "online");
+		const allFriends = await friends.getMyFriends(user.user_id);
+		notification(allFriends, user.user_id);
+		reply.clearCookie("tempToken", options).setCookie("token", jwtoken, options).status(200).send({ twofa:false, ok:true, message: "Login successful"})
+	}
+	catch (err)
+	{
+		reply.status(401).send({ error: err })
+	}
 }
