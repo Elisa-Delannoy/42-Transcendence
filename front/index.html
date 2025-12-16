@@ -354,11 +354,27 @@
 	<template id="pongmatchhtml">
 		<div id="header-container"></div>
 		<h1>Quick game</h1>
+
 		<div class="game-container">
-			<div class="flex justify-center mx-auto w-full">
+			<div class="flex justify-center items-center mx-auto w-full gap-4">
+
+				<!-- Player 1 -->
+				<div id="player1-info" class="w-32 text-right font-semibold text-blue-500">
+					<span id="player1-name">Waiting for Player 1</span>
+				</div>
+
+				<!-- Canvas -->
 				<canvas id="canvas" width="600" height="480"></canvas>
+
+				<!-- Player 2 -->
+				<div id="player2-info" class="w-32 text-left font-semibold text-red-500">
+					<span id="player2-name">Waiting for Player 2</span>
+				</div>
+
 			</div>
-			<div id="buttons" class="game-buttons flex justify-center hidden">
+
+			<!-- Buttons -->
+			<div id="buttons" class="game-buttons flex justify-center hidden mt-4">
 				<button class="btn mx-auto w-32" id="replay-btn">Replay</button>
 				<button class="btn mx-auto w-32" id="dashboard-btn">Dashboard</button>
 			</div>

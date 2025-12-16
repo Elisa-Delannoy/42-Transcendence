@@ -14,11 +14,22 @@ export function PongMatchView(params?: any): string {
 
 export async function initPongMatch(params?: any) {
 	const gameID: string = params?.id;
-	const url = new URL(window.location.href);
-	const localMode = url.searchParams.get("local") === "1";
 	const replayBtn = document.getElementById("replay-btn");
 	const dashboardBtn = document.getElementById("dashboard-btn");
-	const playerId = await genericFetch("/api/private/game/playerid");
+	const pseudoP1 = document.getElementById("player1-name");
+	const pseudoP2 = document.getElementById("player2-name");
+
+	const res = await genericFetch("/api/private/game/playerinfo");
+	const resType = await genericFetch("/api/private/game/type", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({
+			gameId: gameID
+		})
+	});
+
+	const { playerId } = res;
+	const type = resType.type;
 
 	const serverUrl = window.location.host;
 	let input1: "up" | "down" | "stop" = "stop";
@@ -31,9 +42,10 @@ export async function initPongMatch(params?: any) {
 	// 2. Prepare drawing system
 	renderer = new GameRenderer();
 
-	if (localMode)
+	if (type == "Local")
+	{
 		currentGame.enableLocalMode();
-
+	}
 	// 3. Connect to server
 	net = new GameNetwork(serverUrl, Number(gameID));
 
@@ -51,6 +63,7 @@ export async function initPongMatch(params?: any) {
 		const interval = setInterval(() => {
 			if (!currentGame || !renderer)
 				return;
+			updatePseudo();
 			renderer.drawCountdown(currentGame.getCurrentState(), countdown);
 			countdown--;
 			if (countdown < 0) {
@@ -66,6 +79,7 @@ export async function initPongMatch(params?: any) {
 			return;
 
 		currentGame.applyServerState(state);
+		updatePseudo();
 
 		renderer.draw(currentGame.getCurrentState(), false);
 	})
@@ -77,6 +91,7 @@ export async function initPongMatch(params?: any) {
 
 		//update local state
 		currentGame.applyServerState(state);
+		updatePseudo();
 
 		//draw actual state
 		renderer.draw(currentGame.getCurrentState(), true);
@@ -134,6 +149,16 @@ export async function initPongMatch(params?: any) {
 
 				currentGame.sendInput(input);
 			}
+		}
+	}
+
+	function updatePseudo() {
+		if (currentGame)
+		{
+			if (pseudoP1)
+				pseudoP1.innerText = currentGame.getCurrentState().pseudo.player1;
+			if (pseudoP2)
+				pseudoP2.innerText = currentGame.getCurrentState().pseudo.player2;
 		}
 	}
 

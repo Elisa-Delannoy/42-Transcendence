@@ -5,6 +5,7 @@ export interface GameState {
 	paddles: { player1: number; player2: number };
 	score: { player1: number; player2: number };
 	status: "waiting" | "playing" | "finished" | "countdown";
+	pseudo: { player1: string; player2: string };
 }
 
 export class GameNetwork {
