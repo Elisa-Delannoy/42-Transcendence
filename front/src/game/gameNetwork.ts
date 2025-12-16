@@ -13,6 +13,8 @@ export class GameNetwork {
 
 	private onPredrawCallback?: (state: GameState) => void;
 
+	private onGameOverCallback?: () => void;
+
 	private onCountdownCallback?: () => void;
 
 	private onRoleCallback?: (role: "player1" | "player2") => void;
@@ -41,10 +43,10 @@ export class GameNetwork {
 		});
 
 		this.socket.on("gameOver", () => {
+			this.onGameOverCallback?.();
 			console.log("Game over, closing socket...");
 			this.socket.close();
 		});
-
 	}
 
 	onRole(cb: (role: "player1" | "player2") => void) {
@@ -73,6 +75,10 @@ export class GameNetwork {
 
 	join(gameId: number) {
 		this.socket.emit("joinGame", gameId);
+	}
+
+	onGameOver(cb: () => void) {
+		this.onGameOverCallback = cb;
 	}
 
 	disconnect() {

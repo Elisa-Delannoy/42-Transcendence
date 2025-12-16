@@ -1,6 +1,6 @@
 import { GameRenderer } from "../game/gameRenderer";
 import { GameNetwork } from "../game/gameNetwork";
-import { loadHeader } from "../router";
+import { loadHeader, navigateTo } from "../router";
 import { GameInstance } from "../game/gameInstance";
 
 let renderer: GameRenderer | null = null;
@@ -17,6 +17,8 @@ export function initPongMatch(params?: any) {
 	const gameID: string = params?.id;
 	const url = new URL(window.location.href);
 	const localMode = url.searchParams.get("local") === "1";
+	const replayBtn = document.getElementById("replay-btn");
+	const dashboardBtn = document.getElementById("dashboard-btn");
 
 	const serverUrl = window.location.host;
 	let input1: "up" | "down" | "stop" = "stop";
@@ -83,13 +85,16 @@ export function initPongMatch(params?: any) {
 
 	// 7. Send inputs to server
 	const keyState: { [key: string]: boolean } = {};
+	const keyState2: { [key: string]: boolean } = {};
 
 	window.addEventListener("keydown", (e) => {
 		keyState[e.key] = true;
+		keyState2[e.key] = true;
 	});
 
 	window.addEventListener("keyup", (e) => {
 		keyState[e.key] = false;
+		keyState2[e.key] = false;
 	});
 
 	function updateInput()
@@ -101,18 +106,18 @@ export function initPongMatch(params?: any) {
 			if (currentGame.isLocalMode())
 			{
 				//player1
-				if (keyState["w"] || keyState["W"] && input1 != "up")
+				if ((keyState["w"] || keyState["W"]) && input1 != "up")
 					input1 = "up";
-				else if (keyState["s"] || keyState["S"] && input1 != "down")
+				else if ((keyState["s"] || keyState["S"]) && input1 != "down")
 					input1 = "down";
 				else if (input1 != "stop")
 					input1 = "stop";
 				currentGame.sendInput(input1, "player1");
 
 				//player2
-				if (keyState["ArrowUp"] && input2 != "up")
+				if (keyState2["ArrowUp"] && input2 != "up")
 					input2 = "up";
-				else if (keyState["ArrowDown"] && input2 != "down")
+				else if (keyState2["ArrowDown"] && input2 != "down")
 					input2 = "down";
 				else if (input2 != "stop")
 					input2 = "stop";
@@ -120,9 +125,9 @@ export function initPongMatch(params?: any) {
 			}
 			else
 			{
-				if (keyState["w"] || keyState["W"] && input != "up")
+				if ((keyState["w"] || keyState["W"]) && input != "up")
 					input = "up";
-				else if (keyState["s"] || keyState["S"] && input != "down")
+				else if ((keyState["s"] || keyState["S"]) && input != "down")
 					input = "down";
 				else if (input != "stop")
 					input = "stop";
@@ -131,6 +136,27 @@ export function initPongMatch(params?: any) {
 			}
 		}
 	}
+
+	net.onGameOver(() => {
+		if (!currentGame || !renderer)
+			return;
+		renderer.drawGameOver(currentGame.getCurrentState());
+		if (currentGame.isLocalMode())
+		{
+			replayBtn?.addEventListener("click", async () => {
+				navigateTo(`/gamelocal`);
+			});
+		}
+		else
+		{
+			replayBtn?.addEventListener("click", async () => {
+				navigateTo(`/gameonline`);
+			});
+		}
+		dashboardBtn?.addEventListener("click", async () => {
+			navigateTo(`/dashboard`);
+		});
+	});
 }
 
 export function stopGame()

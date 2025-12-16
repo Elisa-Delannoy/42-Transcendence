@@ -1,6 +1,6 @@
 export const games_map = new Map<number, ServerGame>();
 import { GameInfo } from "../../DB/gameinfo";
-import { GameState, updateBall } from "../../pong/gameEngine";
+import { GameState, updateBall, updatePaddles } from "../../pong/gameEngine";
 import { simulateAI } from "../../pong/simulateAI";
 import { checkForWinner, serializeForClient } from "../../pong/pongServer";
 import { Server } from "socket.io";
@@ -16,6 +16,7 @@ export class ServerGame {
 	gameDate: string;
 	duration: number;
 	isLocal: boolean;
+	lastTick: number;
 	sockets: { player1: string | null, player2: string | null };
 	intervalId: NodeJS.Timeout;
 
@@ -33,6 +34,7 @@ export class ServerGame {
 		this.gameDate = new Date().toISOString().replace("T", " ").split(".")[0];
 		this.duration = Date.now();
 		this.isLocal = isLocal;
+		this.lastTick = Date.now();
 		this.io = io;
 		this.sockets = { player1: null, player2: null };
 		this.intervalId = setInterval(() => {
@@ -45,16 +47,25 @@ export class ServerGame {
 			score: { player1: 0, player2: 0, max: 4 },
 			width,
 			height,
-			aiLastUpdate: 0
+			aiLastUpdate: 0,
+			inputs: {
+				player1: "stop",
+				player2: "stop"
+			},
 		};
 	}
 
 	gameLoop() {
+		const now = Date.now();
+		const deltaTime = (now - this.lastTick) / 1000;
+		this.lastTick = now;
+
 		if (this.status === "playing" && this.io) {
 			updateBall(this.state);
 			if (this.idPlayer2 === -1)
-				simulateAI(this.state as any, Date.now());
+				simulateAI(this.state as any, deltaTime);
 
+			updatePaddles(this.state, deltaTime);
 			this.io.to(`game-${this.id}`).emit("state", serializeForClient(this.state, this.status));
 
 			checkForWinner(this, this.io);

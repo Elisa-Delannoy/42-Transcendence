@@ -22,6 +22,11 @@ export interface GameState {
 	score: Score;
 	width: number;
 	height: number;
+	aiLastUpdate: number;
+	inputs: {
+		player1: "up" | "down" | "stop",
+		player2: "up" | "down" | "stop"
+	};
 }
 
 const paddleWidth = 10;
@@ -104,11 +109,52 @@ export function applyInput(
 	player: "player1" | "player2",
 	direction: "up" | "down" | "stop"
 ) {
-	const speed = 1.5;
+	game.inputs[player] = direction;
+}
 
-	if (direction === "up" && game.paddles[player] > 0)
-		game.paddles[player] -= speed;
+export function updatePaddles(game: GameState, deltaTime: number) {
+	const speed = 450; // pixels / seconde
 
-	if (direction === "down" && game.paddles[player] < (game.height - paddleHeight))
-		game.paddles[player] += speed;
+	if (game.aiLastUpdate != 0)
+	{
+		if (game.inputs.player1 === "up")
+			game.paddles.player1 -= speed * deltaTime;
+			
+		if (game.inputs.player1 === "down")
+			game.paddles.player1 += speed * deltaTime;
+
+		// clamp
+		game.paddles.player1 = Math.max(
+			0,
+			Math.min(game.height - paddleHeight, game.paddles.player1)
+		);
+
+		if (game.inputs.player2 === "up")
+			game.paddles.player2 -= (speed * deltaTime) / 2;
+			
+		if (game.inputs.player2 === "down")
+			game.paddles.player2 += (speed * deltaTime) / 2;
+
+		// clamp
+		game.paddles.player2 = Math.max(
+			0,
+			Math.min(game.height - paddleHeight, game.paddles.player2)
+		);
+	}
+	else
+	{
+		for (const player of ["player1", "player2"] as const) {
+			if (game.inputs[player] === "up")
+				game.paddles[player] -= speed * deltaTime;
+			
+			if (game.inputs[player] === "down")
+				game.paddles[player] += speed * deltaTime;
+
+			// clamp
+			game.paddles[player] = Math.max(
+				0,
+				Math.min(game.height - paddleHeight, game.paddles[player])
+			);
+		}
+	}
 }

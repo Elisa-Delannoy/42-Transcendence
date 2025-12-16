@@ -19,55 +19,40 @@ export async function initLogin()
 		e.preventDefault();
 		const username = (document.getElementById("username") as HTMLInputElement).value;
 		const password = (document.getElementById("password") as HTMLInputElement).value;
-		const code = (document.getElementById("twofa-code") as HTMLInputElement)?.value;
-	const success = await login(username, password, code, form)
-   	if (success)
+	const success = await login(username, password, form)
+   	if (success == 2)
+		navigateTo("/twofa");
+	if (success == 1)
 		navigateTo("/home");
     });
 }
 
-export async function login(username: string, password: string, code: string | undefined, form: HTMLFormElement): Promise<boolean> {
+export async function login(username: string, password: string, form: HTMLFormElement): Promise<number> {
 	try {
 		clearLoginErrors(form);
-		
-		const twofaBox = document.getElementById("twofa-box")!;
-		const twofaMsg = document.getElementById("twofa-msg")!;
-
-		twofaMsg.textContent = "";
-		if (require2FA && !code) {
-			twofaMsg.textContent = "No 2FA code submitted.";
-			return false;
-		}
 
 		const res = await fetch("/api/login", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({username, password, code}),
+		body: JSON.stringify({username, password}),
 		credentials: "include"
 		});
 		const result = await res.json();
-		if (result.require2FA === true) {
-			require2FA = true;
-			twofaBox.classList.remove("hidden");
-			twofaMsg.textContent = "Please input 2FA code.";
-			return false;
-		}
-		if (!res.ok) {
+		if (!result.ok) {
 			if (result.field === "username") {
 				document.getElementById("username-loginmsg")!.textContent = result.error;
 			}
 			if (result.field === "password") {
 				document.getElementById("password-loginmsg")!.textContent = result.error;
 			}
-			if (result.field === "2fa") {
-				twofaMsg.textContent = result.error;
-			}
-			return false;
+			return 0;
 		}
-		return true;
+		if (result.ok && result.twofa === true)
+			return 2;
+		return 1;
 	} catch (err) {
 		console.error(err);
-		return false;     
+		return 0;     
 	}
 }
 
@@ -81,12 +66,3 @@ function clearLoginErrors(form: HTMLFormElement) {
     [usernameMsg, passwordMsg].forEach(p => p.textContent = "");
     [usernameInput, passwordInput].forEach(p => p.classList.remove("error"));
 }
-
-
-// export async function isLoggedIn(): Promise<boolean> {
-// 	const res = await fetch("/api/isLoggedIn", { credentials: "include" });
-// 	const result = await res.json()
-// 	return result.logged;
-// }
-
-

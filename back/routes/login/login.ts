@@ -1,49 +1,36 @@
 import  { ManageDB } from "../../DB/manageDB";
 import { friends, users } from '../../server';
-import { createJWT} from "../../middleware/jwt";
+import { createJWT, createTemp2FAToken} from "../../middleware/jwt";
 import { CookieSerializeOptions } from "@fastify/cookie";
 import { FastifyReply } from "fastify";
 import bcrypt from "bcryptjs";
-import speakeasy from "speakeasy";
 import { IMyFriends } from "../../DB/friend";
 import { IUsers } from "../../DB/users";
 import { notification } from "../friends/friends";
 
 
-export async function manageLogin(pseudo: string, password: string, code: string | undefined, reply: FastifyReply)
+export async function manageLogin(pseudo: string, password: string, reply: FastifyReply)
 {
 	try 
 	{
 		await checkLogin(pseudo, password);
-		const info = await users.getPseudoUser(pseudo);
-		if (info.twofa_enabled === 1) {
-			if (!code) {
-                return reply.send({ require2FA: true });
-            }
-            const verified = speakeasy.totp.verify({
-                secret: info.twofa_secret,
-                encoding: "base32",
-                token: code,
-                window: 1,
-            });
-            if (!verified) {
-                return reply.status(401).send({
-                    field: "2fa",
-                    error: "Invalid 2FA code.",
-                });
-            }
-		}
-		const jwtoken = createJWT(info.user_id);
+		const info: IUsers = await users.getPseudoUser(pseudo);
 		const options: CookieSerializeOptions = {
-			httpOnly: true,
-			secure: true,
-			sameSite: "strict",
-			path: "/",
-		};
-		users.updateStatus(info.user_id, "online");
-		const allFriends = await friends.getMyFriends(info.user_id);
-		notification(allFriends, info.user_id);
-		reply.setCookie("token", jwtoken, options).status(200).send({ ok:true, message: "Login successful"})
+				httpOnly: true,
+				secure: true,
+				sameSite: "strict",
+				path: "/",
+			};
+		if (info.twofa_enabled === 0)
+		{
+			const jwtoken = createJWT(info.user_id);
+			users.updateStatus(info.user_id, "online");
+			const allFriends = await friends.getMyFriends(info.user_id);
+			notification(allFriends, info.user_id);
+			reply.setCookie("token", jwtoken, options).status(200).send({ twofa:false, ok:true, message: "Login successful"})
+		}
+		const tempToken: string = createTemp2FAToken(info.user_id);
+		reply.setCookie("tempToken", tempToken, options).status(200).send({ twofa:true, ok:true, message: "Login successful"})
 	}
 	catch (err)
 	{

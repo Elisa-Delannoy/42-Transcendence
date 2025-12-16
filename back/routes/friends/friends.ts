@@ -1,18 +1,26 @@
-import { db, friends, users } from '../../server';
+import { db, friends, gameInfo, users } from '../../server';
 import { Friends, IMyFriends } from '../../DB/friend';
 import { IUsers } from '../../DB/users'; 
 import { FastifyReply, FastifyRequest, FastifySerializerCompiler } from 'fastify';
 import { log } from 'console';
 
-export async function allMyFriends(request: FastifyRequest, reply: FastifyReply): Promise< IMyFriends[] | undefined> 
+export interface IFriendsAndNot {
+	allMyFriends: IMyFriends[];
+	playedWith: {id: number, pseudo: string, avatar: string}[];
+}
+
+export async function allMyFriendsAndOpponent(request: FastifyRequest, reply: FastifyReply) 
 {
 	try {
-		const infoFriends: IMyFriends[]= await friends.getMyFriends(request.user!.user_id);
-		if (infoFriends.length === 0)
-			return (reply.send(infoFriends), undefined);
-		notification(infoFriends, request.user!.user_id);
-		reply.send(infoFriends);
-		return infoFriends;
+		const allInfo: IFriendsAndNot = {} as IFriendsAndNot;
+		allInfo.allMyFriends = await friends.getMyFriends(request.user!.user_id);
+		allInfo.playedWith = await gameInfo.getRecentPlayerNotFriend(request.user!.user_id);
+
+		// if (allInfo.allMyFriends.length === 0)
+		// 	return (reply.send(allInfo.allMyFriends), undefined);
+		notification(allInfo.allMyFriends, request.user!.user_id);
+		reply.send(allInfo);
+
 	}
 	catch (err) {
 		console.log(err);
