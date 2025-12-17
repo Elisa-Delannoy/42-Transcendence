@@ -63,7 +63,7 @@ export function setupGameServer(io: Server, users: Users) {
 					game!.sockets.player2 = null;
 
 				if (game.status == "playing")
-					game.status = "waiting";
+					game.status = "disconnected";
 			});
 		});
 	});
@@ -94,7 +94,7 @@ export function checkForWinner(game: ServerGame, io: Server)
 	}
 }
 
-export function serializeForClient(state: GameState, status: "waiting" | "playing" | "finished" | "countdown") {
+export function serializeForClient(state: GameState, status: "waiting" | "playing" | "finished" | "countdown" | "disconnected") {
 	return {
 		ball: { x: state.ball.x, y: state.ball.y },
 		paddles: state.paddles,
@@ -112,11 +112,13 @@ function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number,
 		game.idPlayer2 = 1;
 		game.state.pseudo.player1 = pseudo;
 		game.state.pseudo.player2 = "Guest";
+		if (game.status !== "disconnected")
+		{
+			game.state.ball.speedX = Math.random() < 0.5 ? -2.5 : 2.5;
+			resetBall(game.state);
+		}
+
 		game.status = "countdown";
-
-		game.state.ball.speedX = Math.random() < 0.5 ? -2.5 : 2.5;
-		resetBall(game.state);
-
 		socket.emit("assignRole", "player1");
 
 		//countdown starting
@@ -155,15 +157,18 @@ async function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gam
 	}
 	socket.emit("assignRole", role);
 
-	game.state.ball.speedX = Math.random() < 0.5 ? -2.5 : 2.5;
-	resetBall(game.state);
+	if (game.status !== "disconnected")
+	{
+		game.state.ball.speedX = Math.random() < 0.5 ? -2.5 : 2.5;
+		resetBall(game.state);
+	}
 
 	if (game.idPlayer2 == -1)
 		game.state.pseudo.player2 = "AI";
 
 	// start countdown when 2 players are in the game
 	if ((game.sockets.player1 && game.idPlayer2 == -1) 
-		|| (game.sockets.player1 && game.sockets.player2 && game.status === "waiting")) {
+		|| (game.sockets.player1 && game.sockets.player2 && (game.status === "waiting" || game.status === "disconnected"))) {
 		game.status = "countdown";
 		io.to(`game-${gameId}`).emit("startCountdown");
 	}

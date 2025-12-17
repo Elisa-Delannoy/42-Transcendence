@@ -4934,20 +4934,7 @@ async function getPseudoHeader3() {
     const avatar = document.getElementById("header-avatar");
     const status = document.getElementById("status");
     avatar.src = result.avatar + "?ts" + Date.now();
-<<<<<<< HEAD
-    switch (result.status) {
-      case "online":
-        status.classList.add("bg-green-500");
-        break;
-      case "busy":
-        status.classList.add("bg-red-500");
-        break;
-      case "offline":
-        status.classList.add("bg-white");
-    }
-=======
     displayStatus(result, status);
->>>>>>> main
     const notification = document.getElementById("notification");
     notification.classList.add("hidden");
     if (result.notif === true) {

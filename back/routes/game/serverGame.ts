@@ -11,7 +11,7 @@ export class ServerGame {
 	id: number;
 	idPlayer1: number;
 	idPlayer2: number;
-	status: "waiting" | "playing" | "finished" | "countdown";
+	status: "waiting" | "playing" | "finished" | "countdown" | "disconnected";
 	type: "Local" | "IA" | "Online" | "Tournament";
 	gameDate: string;
 	duration: number;
