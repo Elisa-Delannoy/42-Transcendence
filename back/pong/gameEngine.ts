@@ -27,6 +27,10 @@ export interface GameState {
 		player1: "up" | "down" | "stop",
 		player2: "up" | "down" | "stop"
 	};
+	pseudo: {
+		player1: string,
+		player2: string
+	};
 }
 
 const paddleWidth = 10;

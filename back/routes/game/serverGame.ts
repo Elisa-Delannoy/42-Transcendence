@@ -11,7 +11,7 @@ export class ServerGame {
 	id: number;
 	idPlayer1: number;
 	idPlayer2: number;
-	status: "waiting" | "playing" | "finished" | "countdown";
+	status: "waiting" | "playing" | "finished" | "countdown" | "disconnected";
 	type: "Local" | "IA" | "Online" | "Tournament";
 	gameDate: string;
 	duration: number;
@@ -52,6 +52,10 @@ export class ServerGame {
 				player1: "stop",
 				player2: "stop"
 			},
+			pseudo: {
+				player1: "Waiting for Player 1",
+				player2: "Waiting for Player 2",
+			}
 		};
 	}
 
@@ -82,7 +86,7 @@ function getDate(id: number)
 	return games_map.get(id)?.gameDate;
 }
 
-export function createGame(PlayerId: number,  isLocal: boolean, options: { vsAI: boolean }): number 
+export function createGame(PlayerId: number,  isLocal: boolean, type: "Local" | "IA" | "Online" | "Tournament", options: { vsAI: boolean }): number 
 {
 	let id: number = 1;
 	while (games_map.has(id))
@@ -90,6 +94,7 @@ export function createGame(PlayerId: number,  isLocal: boolean, options: { vsAI:
 	const gameId = id;
 	const game = new ServerGame(gameId, isLocal);
 	game.idPlayer1 = PlayerId;
+	game.type = type;
 	if (options.vsAI)
 	{
 		game.idPlayer2 = -1;
@@ -120,13 +125,21 @@ export function joinGame(playerId: number, gameId: number)
 {
 	const game = games_map.get(gameId);
 	if (game)
-		{
-			if (!(game.idPlayer2))
+	{
+		if (game.idPlayer2 == 0)
 			game.idPlayer2 = playerId;
 		else
 			console.log("Game is already full.");
 	}
-	console.log(game);
+}
+
+export function getGameType(gameId: number)
+{
+	const game = games_map.get(gameId);
+	let res: string | null = null;
+	if (game)
+		res = game.type;
+	return res;
 }
 
 export async function endGame(winner_id: number, loser_id: number, winner_score: number,

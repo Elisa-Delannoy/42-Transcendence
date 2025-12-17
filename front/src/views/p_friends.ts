@@ -5,6 +5,7 @@ import { IUsers } from "../../../back/DB/users";
 import { request } from "http";
 import { stat } from "fs";
 import { IFriendsAndNot } from "../../../back/routes/friends/friends";
+import { linearBuckets } from "prom-client";
 
 export function FriendsView(): string {
 	loadHeader();
@@ -102,25 +103,19 @@ async function search(memberSearched: string, myfriends: IMyFriends[]) {
 			listedMember.innerHTML = "<li>No result</li>";
 		else {
 			existedMember.forEach((member: IUsers) => {
-				const li = document.createElement("li");
-				li.className = "flex items-center gap-3 p-2 justify-center";
-				const img = document.createElement("img");
-				const span = document.createElement("span");
-				span.textContent = member.pseudo;
-  				img.src =  member.avatar;
-				img.alt = `${member.pseudo}'s avatar`;
-				img.className = "w-8 h-8 rounded-full object-cover";
+				const template = document.getElementById("list-search") as HTMLTemplateElement;
+				const clone = template.content.cloneNode(true) as DocumentFragment;
+				const avatar = clone.getElementById("avatar") as HTMLImageElement;
+				const pseudo = clone.getElementById("pseudo") as HTMLParagraphElement;
+				pseudo.textContent = member.pseudo;
+  				avatar.src =  member.avatar;
+				avatar.alt = `${member.pseudo}'s avatar`;
 				const isFriend = myfriends.some(f => f.id === member.user_id);
-				li.appendChild(img);
-				li.appendChild(span);
-				let button: HTMLButtonElement;
 				if (!isFriend) 
-					button = toAddFriend(member.user_id);
+					toAddFriend(member.user_id, clone);
 				else
-					button = toDeleteFriend(member.user_id);
-				li.appendChild(button);
-				listedMember.appendChild(li);
-				
+					toDeleteFriend(member.user_id, clone);
+				listedMember.appendChild(clone);
 			})
 		}
 	}
@@ -129,11 +124,11 @@ async function search(memberSearched: string, myfriends: IMyFriends[]) {
 	}
 }
 
-function toAddFriend(id: number): HTMLButtonElement {
-	const button = document.createElement("button") as HTMLButtonElement;
+function toAddFriend(id: number, li: DocumentFragment)
+{
+	const button = li.getElementById("addordelete") as HTMLButtonElement;
 	button.textContent = "Add friend";
-	button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
-
+	button.classList.add("hover:bg-amber-600");
 	button.addEventListener("click", async () => {
 		try {
 			await genericFetch("/api/private/friend/add", {
@@ -150,7 +145,6 @@ function toAddFriend(id: number): HTMLButtonElement {
 			button.disabled = false;
 		}
 	})
-	return button;
 }
 
 function toAcceptFriend(friend: IMyFriends): HTMLButtonElement {
@@ -181,11 +175,10 @@ function toAcceptFriend(friend: IMyFriends): HTMLButtonElement {
 	return button;
 }
 
-function toDeleteFriend(id: number): HTMLButtonElement {
-	const button = document.createElement("button") as HTMLButtonElement;
+function toDeleteFriend(id: number, li: DocumentFragment) {
+	const button = li.getElementById("addordelete") as HTMLButtonElement;
 	button.textContent = "Delete";
-	button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
-
+	button.classList.add("hover:bg-amber-800");
 	button.addEventListener("click", async () => {
 		try {
 			await genericFetch("/api/private/friend/delete", {
@@ -202,7 +195,6 @@ function toDeleteFriend(id: number): HTMLButtonElement {
 			button.disabled = false;
 		}
 	})
-	return button;
 }
 
 function pendingFr(pendingFriends: IMyFriends[]) {

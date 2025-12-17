@@ -11,7 +11,7 @@ export function GameOnlineinit() {
 		const { gameId } = await genericFetch("/api/private/game/create", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ localMode: false })
+			body: JSON.stringify({ localMode: false, type: "Online" })
 		});
 		navigateTo(`/pongmatch/${gameId}`);
 	});
