@@ -259,11 +259,11 @@
 					<div class="w-5"></div>
 					<h1 class="text-3xl mx-auto font-bold text-amber-900
 						drop-shadow-lg" id="profile-pseudo"></h1>
-					<a class="size-6 mt-2 justify-end mr-5 object-contain" href="/updateinfo">
+					<a class="size-6 mt-2 justify-end mr-5 object-contain" href="/updateusername">
 						<img class="invert ring-1 p-0.5 ring-blue-950 rounded-md" src="src/image/crayon.png" alt="crayon">
 					</a>
 				</div>
-				<a class="mt-2 object-contain" href="/updateinfo">
+				<a class="mt-2 object-contain" href="/updateavatar">
 					<img class="ring-4 ring-amber-900 rounded-full shadow-xl" id="profile-avatar" src="" alt="Your avatar" width="150">
 				</a>
 				<select id="profile-status"
@@ -289,7 +289,7 @@
 							<h1 class="ml-2 font-bold">Password</h1>
 							<p class="ml-2">••••••••••••</p>
 						</div>
-						<a class="size-6 mt-4 ml-auto justify-end mr-5 object-contain" href="/updateinfo">
+						<a class="size-6 mt-4 ml-auto justify-end mr-5 object-contain" href="/updatepassword">
 							<img class="invert p-0.5 bg-blue-600 rounded-md" src="src/image/crayon.png" alt="crayon">
 						</a>
 					</div>
@@ -337,38 +337,6 @@
 		</main>
 	</template>
 
-	<template id="updateinfohtml">
-		<div id="header-container"></div>
-		<main>
-			<h1>Update profile</h1>
-			<p><strong>Update information for user:</strong> <span id="profile-username"></span></p>
-			<h2><strong>Change Username</strong></h2>
-			<form id="change-username-form">
-				<input type="text" name="new-username" placeholder="New Username" required />
-				<input type="password" name="password" placeholder="Confirm Password" required />
-				<button type="submit">Update Username</button>
-			</form>
-			<h2><strong>Change Email</strong></h2>
-			<form id="change-email-form">
-				<input type="text" name="new-email" placeholder="New Email" required />
-				<input type="password" name="password" placeholder="Confirm Password" required />
-				<button type="submit">Update Email</button>
-			</form>
-			<h2><strong>Change Password</strong></h2>
-			<form id="change-password-form">
-				<input type="password" name="old-password" placeholder="Old Password" required />
-				<input type="password" name="new-password" placeholder="New Password" required />
-				<input type="password" name="confirm-new-password" placeholder="Confirm New Password" required />
-				<button type="submit">Update Password</button>
-			</form>
-			<h2><strong>Upload avatar</strong></h2>
-			<form id="upload_avatar" method="POST" enctype="multipart/form-data">
-				<input type="file" name="avatar" accept="image/png, image/jpeg"/>
-				<button type="submit">Upload</button>
-			</form>
-		</main>
-	</template>
-
 	<template id="update-email-html">
 		<div id="header-container"></div>
 		<main class="flex">
@@ -378,7 +346,11 @@
 				<div class="flex flex-row w-100 mt-3 justify-between">
 					<div class="w-5"></div>
 					<h1 class="text-3xl mx-auto font-bold text-amber-900
-						drop-shadow-lg" id="profile-pseudo"></h1>
+						drop-shadow-lg" id="profile-pseudo">
+					</h1>
+					<a class="size-6 mt-2 justify-end mr-5 object-contain" href="/profile">
+						<img class="invert ring-1 p-0.5 ring-blue-950 rounded-md" src="src/image/back.png" alt="back">
+					</a>
 				</div>
 				<a class="mt-2 object-contain">
 					<img class="ring-4 ring-amber-900 rounded-full shadow-xl" id="profile-avatar" src="" alt="Your avatar" width="150">
@@ -418,6 +390,164 @@
 		</main>
 	</template>
 
+	<template id="update-username-html">
+		<div id="header-container"></div>
+		<main class="flex">
+			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
+						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
+						mx-auto shadow-2xl items-center">
+				<div class="flex flex-row w-100 mt-3 justify-between">
+					<div class="w-5"></div>
+					<h1 class="text-3xl mx-auto font-bold text-amber-900
+						drop-shadow-lg" id="profile-pseudo">
+					</h1>
+					<a class="size-6 mt-2 justify-end mr-5 object-contain" href="/profile">
+						<img class="invert ring-1 p-0.5 ring-blue-950 rounded-md" src="src/image/back.png" alt="back">
+					</a>
+				</div>
+				<a class="mt-2 object-contain">
+					<img class="ring-4 ring-amber-900 rounded-full shadow-xl" id="profile-avatar" src="" alt="Your avatar" width="150">
+				</a>
+				<div class="flex flex-col mt-6">
+					<!-- Change Username -->
+					<div class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
+								w-80 ring-1 ring-amber-900 rounded-lg mt-6 p-3">
+						<h2 class="font-bold mb-2">Change Username</h2>
+						<form id="change-username-form" class="flex flex-col gap-2">
+							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">New Username</h2>
+							<input
+								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+								type="text"
+								name="new-username"
+								placeholder="new_user_name"
+								required />
+							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">Confirm Password</h2>
+							<input
+								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+								type="password"
+								name="password"
+								placeholder="••••••••••••"
+								required />
+							<button
+								type="submit" 
+								class="btn w-40 mx-auto mt-20 block">
+								Update Username
+							</button>
+						</form>
+					</div>
+				</div>
+				<div>
+					<br>
+				</div>
+			</div>
+		</main>
+	</template>
+
+	<template id="update-password-html">
+		<div id="header-container"></div>
+		<main class="flex">
+			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
+						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
+						mx-auto shadow-2xl items-center">
+				<div class="flex flex-row w-100 mt-3 justify-between">
+					<div class="w-5"></div>
+					<h1 class="text-3xl mx-auto font-bold text-amber-900
+						drop-shadow-lg" id="profile-pseudo">
+					</h1>
+					<a class="size-6 mt-2 justify-end mr-5 object-contain" href="/profile">
+						<img class="invert ring-1 p-0.5 ring-blue-950 rounded-md" src="src/image/back.png" alt="back">
+					</a>
+				</div>
+				<a class="mt-2 object-contain">
+					<img class="ring-4 ring-amber-900 rounded-full shadow-xl" id="profile-avatar" src="" alt="Your avatar" width="150">
+				</a>
+				<div class="flex flex-col mt-6">
+					<!-- Change Password -->
+					<div class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
+								w-80 ring-1 ring-amber-900 rounded-lg mt-6 p-3">
+						<h2 class="font-bold mb-2">Change Password</h2>
+						<form id="change-password-form" class="flex flex-col gap-2">
+							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">Old Password</h2>
+							<input
+								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+								type="password"
+								name="old-password"
+								placeholder="••••••••••••"
+								required />
+							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">New Password</h2>
+							<input
+								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+								type="password"
+								name="new-password"
+								placeholder="••••••••••••"
+								required />
+							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">Confirm New Password</h2>
+							<input
+								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+								type="password"
+								name="confirm-new-password"
+								placeholder="••••••••••••"
+								required />
+							<button
+								type="submit" 
+								class="btn w-40 mx-auto mt-20 block">
+								Update Password
+							</button>
+						</form>
+					</div>
+				</div>
+				<div>
+					<br>
+				</div>
+			</div>
+		</main>
+	</template>
+
+	<template id="update-avatar-html">
+		<div id="header-container"></div>
+		<main class="flex">
+			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
+						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
+						mx-auto shadow-2xl items-center">
+				<div class="flex flex-row w-100 mt-3 justify-between">
+					<div class="w-5"></div>
+					<h1 class="text-3xl mx-auto font-bold text-amber-900
+						drop-shadow-lg" id="profile-pseudo">
+					</h1>
+					<a class="size-6 mt-2 justify-end mr-5 object-contain" href="/profile">
+						<img class="invert ring-1 p-0.5 ring-blue-950 rounded-md" src="src/image/back.png" alt="back">
+					</a>
+				</div>
+				<a class="mt-2 object-contain">
+					<img class="ring-4 ring-amber-900 rounded-full shadow-xl" id="profile-avatar" src="" alt="Your avatar" width="150">
+				</a>
+				<div class="flex flex-col mt-6">
+					<!-- Change Avatar -->
+					<div class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
+								w-80 ring-1 ring-amber-900 rounded-lg mt-6 p-3">
+						<h2 class="font-bold mb-2">Change Avatar</h2>
+						<form id="upload_avatar" method="POST" enctype="multipart/form-data" class="flex flex-col gap-2">
+							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">New Avatar</h2>
+							<input
+								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+								type="file"
+								name="avatar"
+								accept="image/png, image/jpeg"
+								required />
+							<button
+								type="submit" 
+								class="btn w-40 mx-auto mt-20 block">
+								Update Avatar
+							</button>
+						</form>
+					</div>
+				</div>
+				<div>
+					<br>
+				</div>
+			</div>
+		</main>
+	</template>
 
 	<template id="gamelocalhtml">
 		<div id="header-container"></div>

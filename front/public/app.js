@@ -4414,46 +4414,6 @@ var init_p_profile = __esm({
   }
 });
 
-// front/src/views/p_updateinfo.ts
-function UpdateInfoView() {
-  loadHeader();
-  return document.getElementById("updateinfohtml").innerHTML;
-}
-async function initUpdateInfo() {
-  const profile = await genericFetch("/api/private/profile", {
-    method: "POST"
-  });
-  const avatar = document.getElementById("profile-avatar");
-  avatar.src = profile.avatar + "?ts=" + Date.now();
-  document.getElementById("profile-pseudo").textContent = profile.pseudo;
-  await initUpdateUsername();
-}
-async function initUpdateUsername() {
-  const formUsername = document.getElementById("change-username-form");
-  formUsername.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const newUsername = formUsername["new-username"].value;
-    const password = formUsername["password"].value;
-    try {
-      const response = await genericFetch("/api/private/updateinfo/username", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newUsername, password })
-      });
-      alert("Username updated successfully to <<  " + response.pseudo + "  >>");
-      navigateTo("/home");
-    } catch (err) {
-      alert(err.message);
-    }
-  });
-}
-var init_p_updateinfo = __esm({
-  "front/src/views/p_updateinfo.ts"() {
-    "use strict";
-    init_router();
-  }
-});
-
 // front/src/views/p_tournament.ts
 function TournamentView() {
   loadHeader();
@@ -4869,6 +4829,130 @@ var init_p_updateemail = __esm({
   }
 });
 
+// front/src/views/p_updateusername.ts
+function UpdateUsernameView() {
+  loadHeader();
+  return document.getElementById("update-username-html").innerHTML;
+}
+async function initUpdateUsername() {
+  const profile = await genericFetch("/api/private/profile", {
+    method: "POST"
+  });
+  const avatar = document.getElementById("profile-avatar");
+  avatar.src = profile.avatar + "?ts=" + Date.now();
+  document.getElementById("profile-pseudo").textContent = profile.pseudo;
+  const formUsername = document.getElementById("change-username-form");
+  formUsername.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const newUsername = formUsername["new-username"].value;
+    const password = formUsername["password"].value;
+    try {
+      const response = await genericFetch("/api/private/updateinfo/username", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newUsername, password })
+      });
+      alert("Username updated successfully to <<  " + response.pseudo + "  >>");
+      navigateTo("/profile");
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+}
+var init_p_updateusername = __esm({
+  "front/src/views/p_updateusername.ts"() {
+    "use strict";
+    init_router();
+  }
+});
+
+// front/src/views/p_updatepassword.ts
+function UpdatePasswordView() {
+  loadHeader();
+  return document.getElementById("update-password-html").innerHTML;
+}
+async function initUpdatePassword() {
+  const profile = await genericFetch("/api/private/profile", {
+    method: "POST"
+  });
+  const avatar = document.getElementById("profile-avatar");
+  avatar.src = profile.avatar + "?ts=" + Date.now();
+  document.getElementById("profile-pseudo").textContent = profile.pseudo;
+  const formPassword = document.getElementById("change-password-form");
+  formPassword.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const oldPw = formPassword["old-password"].value;
+    const newPw = formPassword["new-password"].value;
+    const confirm = formPassword["confirm-new-password"].value;
+    try {
+      const response = await genericFetch("/api/private/updateinfo/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ oldPw, newPw, confirm })
+      });
+      alert("Password is updated successfully! Please re-log in!");
+      navigateTo("/logout");
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+}
+var init_p_updatepassword = __esm({
+  "front/src/views/p_updatepassword.ts"() {
+    "use strict";
+    init_router();
+  }
+});
+
+// front/src/views/p_updateavatar.ts
+function UpdateAvatarView() {
+  loadHeader();
+  return document.getElementById("update-avatar-html").innerHTML;
+}
+async function initUpdateAvatar() {
+  const profile = await genericFetch("/api/private/profile", {
+    method: "POST"
+  });
+  const avatar = document.getElementById("profile-avatar");
+  avatar.src = profile.avatar + "?ts=" + Date.now();
+  document.getElementById("profile-pseudo").textContent = profile.pseudo;
+  const formAvatar = document.getElementById("upload_avatar");
+  if (formAvatar instanceof HTMLFormElement) {
+    formAvatar.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const avatarInput = formAvatar.querySelector('input[name="avatar"]');
+      const avatarFile = avatarInput?.files?.[0];
+      if (!avatarFile || avatarFile.size === 0 || !avatarFile.name) {
+        alert("Please upload an avatar");
+        return;
+      }
+      await uploadAvatar(avatarFile);
+    });
+  }
+}
+async function uploadAvatar(avatar) {
+  const form = new FormData();
+  form.append("avatar", avatar);
+  try {
+    const result = await genericFetch("/api/private/updateinfo/uploads", {
+      method: "POST",
+      body: form,
+      credentials: "include"
+    });
+    console.log("uplaod success ok : ", result);
+    navigateTo("/profile");
+  } catch (err) {
+    alert(err);
+    console.error(err);
+  }
+}
+var init_p_updateavatar = __esm({
+  "front/src/views/p_updateavatar.ts"() {
+    "use strict";
+    init_router();
+  }
+});
+
 // front/src/router.ts
 function navigateTo(url2) {
   const state = { from: window.location.pathname };
@@ -5016,13 +5100,15 @@ var init_router = __esm({
     init_p_pongmatch();
     init_p_homelogin();
     init_p_profile();
-    init_p_updateinfo();
     init_p_tournament();
     init_logout();
     init_p_friends();
     init_error();
     init_twofa();
     init_p_updateemail();
+    init_p_updateusername();
+    init_p_updatepassword();
+    init_p_updateavatar();
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
@@ -5034,8 +5120,10 @@ var init_router = __esm({
       { path: "/dashboard", view: DashboardView, init: initDashboard },
       { path: "/friends", view: FriendsView, init: initFriends },
       { path: "/profile", view: ProfileView, init: initProfile },
-      { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo },
       { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
+      { path: "/updateusername", view: UpdateUsernameView, init: initUpdateUsername },
+      { path: "/updatepassword", view: UpdatePasswordView, init: initUpdatePassword },
+      { path: "/updateavatar", view: UpdateAvatarView, init: initUpdateAvatar },
       { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit },
       { path: "/gamelocal", view: GameLocalView, init: GameLocalinit },
       { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
