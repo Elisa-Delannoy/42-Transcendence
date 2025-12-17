@@ -31,7 +31,7 @@ function formatDuration(seconds: number) : string
 
 export async function initDashboard()
 {
-	const container = document.getElementById("game-list");
+	const container = document.getElementById("game-list") as HTMLDivElement;
 	
 	if (!container) 
 		return;

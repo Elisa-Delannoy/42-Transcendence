@@ -11,9 +11,9 @@ export function GameLocalinit() {
 		const { gameId } = await genericFetch("/api/private/game/create", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ localMode: true })
+			body: JSON.stringify({ localMode: true, type: "Local" })
 		});
-		navigateTo(`/pongmatch/${gameId}?local=1`);
+		navigateTo(`/pongmatch/${gameId}`);
 	});
 
 	const pvaiButton = document.getElementById("pvai");

@@ -4,7 +4,8 @@ export interface GameState {
 	ball: { x: number; y: number };
 	paddles: { player1: number; player2: number };
 	score: { player1: number; player2: number };
-	status: "waiting" | "playing" | "finished" | "countdown";
+	status: "waiting" | "playing" | "finished" | "countdown" | "disconnected";
+	pseudo: { player1: string; player2: string };
 }
 
 export class GameNetwork {
@@ -73,8 +74,8 @@ export class GameNetwork {
 		this.socket.emit("input", { direction, player });
 	}
 
-	join(gameId: number) {
-		this.socket.emit("joinGame", gameId);
+	join(gameId: number, playerId: number) {
+		this.socket.emit("joinGame", gameId, playerId);
 	}
 
 	onGameOver(cb: () => void) {

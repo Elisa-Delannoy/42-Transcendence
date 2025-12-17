@@ -2,27 +2,29 @@ import { Server, Socket } from "socket.io";
 import { applyInput, GameState, resetBall } from "./gameEngine";
 import { ServerGame, games_map, endGame } from "../routes/game/serverGame";
 import { gameInfo } from "../server";
+import { genericFetch } from "../../front/src/router";
+import { Users } from "../DB/users";
 
-export function setupGameServer(io: Server) {
+export function setupGameServer(io: Server, users: Users) {
 	io.on("connection", (socket) => {
 		console.log("Client connected:", socket.id);
 
-		socket.on("joinGame", async (gameId: number) => {
+		socket.on("joinGame", async (gameId: number, playerId: number) => {
 			let game = games_map.get(gameId);
-
+			
 			if (!game)
 				return;
 
 			//add io (server) to game
 			game.setIo(io);
-
+			const pseudo = await users.getPseudoFromId(playerId);
 			// join room
 			socket.join(`game-${gameId}`);
 
 			if (game.isLocal === true)
-				initLocal(game, io, socket, gameId);
+				initLocal(game, io, socket, gameId, pseudo.pseudo);
 			else
-				initRemoteAndAi(game, io, socket, gameId);
+				initRemoteAndAi(game, io, socket, gameId, playerId, pseudo.pseudo);
 
 			//after countdown, match is starting
 			socket.on("startGame", () => {
@@ -61,7 +63,7 @@ export function setupGameServer(io: Server) {
 					game!.sockets.player2 = null;
 
 				if (game.status == "playing")
-					game.status = "waiting";
+					game.status = "disconnected";
 			});
 		});
 	});
@@ -89,32 +91,34 @@ export function checkForWinner(game: ServerGame, io: Server)
 		}
 		io.to(`game-${game.id}`).emit("gameOver");
 		io.in(`game-${game.id}`).socketsLeave(`game-${game.id}`);
-		console.log("function checkforwinner done");
 	}
 }
 
-export function serializeForClient(state: GameState, status: "waiting" | "playing" | "finished" | "countdown") {
+export function serializeForClient(state: GameState, status: "waiting" | "playing" | "finished" | "countdown" | "disconnected") {
 	return {
 		ball: { x: state.ball.x, y: state.ball.y },
 		paddles: state.paddles,
 		score: state.score,
-		status: status
+		status: status,
+		pseudo: { player1: state.pseudo.player1, player2: state.pseudo.player2 }
 	};
 }
 
-function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number) {
+function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number, pseudo: string) {
 	if (!game.sockets.player1 && !game.sockets.player2)
 	{
 		game.sockets.player1 = socket.id;
 		game.sockets.player2 = socket.id;
 		game.idPlayer2 = 1;
+		game.state.pseudo.player1 = pseudo;
+		game.state.pseudo.player2 = "Guest";
+		if (game.status !== "disconnected")
+		{
+			game.state.ball.speedX = Math.random() < 0.5 ? -2.5 : 2.5;
+			resetBall(game.state);
+		}
 
 		game.status = "countdown";
-		game.type = "Local";
-
-		game.state.ball.speedX = Math.random() < 0.5 ? -2.5 : 2.5;
-		resetBall(game.state);
-
 		socket.emit("assignRole", "player1");
 
 		//countdown starting
@@ -129,26 +133,22 @@ function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number)
 	}
 }
 
-function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gameId: number) {
-	// automatic assignation
+async function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gameId: number, playerId: number, pseudo: string) {
+	
 	let role: "player1" | "player2";
-	if (!game.sockets.player1)
+
+	if (playerId === game.idPlayer1)
 	{
+		role = "player1";
 		game.sockets.player1 = socket.id;
-		role = "player1";
+		game.state.pseudo.player1 = pseudo;
 	}
-	else if (!game.sockets.player2 && game.sockets.player1 !== socket.id)
+	else if (playerId === game.idPlayer2)
 	{
+		role = "player2";
 		game.sockets.player2 = socket.id;
-		role = "player2";
-	}
-	else if (game.sockets.player1 === socket.id)
-	{
-		role = "player1";
-	}
-	else if (game.sockets.player2 === socket.id)
-	{
-		role = "player2";
+		game.state.pseudo.player2 = pseudo;
+		io.to(`game-${gameId}`).emit("state", serializeForClient(game.state, game.status));
 	}
 	else
 	{
@@ -157,15 +157,18 @@ function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gameId: n
 	}
 	socket.emit("assignRole", role);
 
-	if (game.idPlayer2 != -1)
-		game.type = "Online";
+	if (game.status !== "disconnected")
+	{
+		game.state.ball.speedX = Math.random() < 0.5 ? -2.5 : 2.5;
+		resetBall(game.state);
+	}
 
-	game.state.ball.speedX = Math.random() < 0.5 ? -2.5 : 2.5;
-	resetBall(game.state);
+	if (game.idPlayer2 == -1)
+		game.state.pseudo.player2 = "AI";
 
 	// start countdown when 2 players are in the game
 	if ((game.sockets.player1 && game.idPlayer2 == -1) 
-		|| (game.sockets.player1 && game.sockets.player2 && game.status === "waiting")) {
+		|| (game.sockets.player1 && game.sockets.player2 && (game.status === "waiting" || game.status === "disconnected"))) {
 		game.status = "countdown";
 		io.to(`game-${gameId}`).emit("startCountdown");
 	}

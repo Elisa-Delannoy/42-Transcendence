@@ -10,7 +10,7 @@ import fastifyCookie from "@fastify/cookie";
 import { checkAuth, tokenOK } from "./middleware/jwt";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import bcrypt from "bcryptjs";
-import { createGame, joinGame, displayGameList } from "./routes/game/serverGame";
+import { createGame, joinGame, displayGameList, getGameType } from "./routes/game/serverGame";
 import fs from "fs";
 import { Tournament } from './DB/tournament';
 import { uploadPendingTournaments } from "./routes/tournament/tournament.service";
@@ -182,15 +182,15 @@ fastify.post("/api/private/friend/search", async( request: FastifyRequest, reply
 })
 
 fastify.post("/api/private/game/create", async (request, reply) => {
-	const { localMode } = request.body as { localMode: boolean };
+	const { localMode, type } = request.body as { localMode: boolean, type: "Local" | "IA" | "Online" | "Tournament" };
 	const playerId = request.user?.user_id as any;
 	const { vsAI } = request.body as { vsAI: boolean };
 	let gameId: number;
 	console.log(`vsAI is: ${vsAI}`);
 	if (vsAI) {
-		gameId = createGame(Number(playerId), localMode, { vsAI: true });
+		gameId = createGame(Number(playerId), localMode, type, { vsAI: true });
 	} else {
-		gameId = createGame(Number(playerId), localMode, { vsAI: false });
+		gameId = createGame(Number(playerId), localMode, type, { vsAI: false });
 	}
 	reply.send({ gameId });
 });
@@ -208,6 +208,19 @@ fastify.get("/api/private/game/list", async (request, reply) => {
 	return { games: list };
 });
 
+fastify.get("/api/private/game/playerinfo", async (request, reply) => {
+	const id = request.user?.user_id as any;
+	const playerId = Number(id);
+	const pseudo = await users.getPseudoFromId(playerId);
+	reply.send({ playerId, pseudo });
+});
+
+fastify.post("/api/private/game/type", async (request, reply) => {
+	const { gameId } = request.body as { gameId: number };
+	const type = getGameType(Number(gameId));
+	reply.send({ type });
+});
+
 fastify.post("/api/private/tournament/add", (req, reply) => {
 	return tournamentService.updateTournament(req, reply);
 });
@@ -223,7 +236,7 @@ fastify.get("/api/private/logout", async (request, reply) => {
 const io = new Server(fastify.server, {
 			cors: { origin: "*" }
 		});
-setupGameServer(io);
+setupGameServer(io, users);
 
 fastify.setNotFoundHandler((request: FastifyRequest, reply: FastifyReply) => {
 	return reply.sendFile("index.html");
