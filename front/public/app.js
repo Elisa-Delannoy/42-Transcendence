@@ -370,6 +370,22 @@ var init_gameRenderer = __esm({
           }
         }
       }
+      drawReconnection() {
+        this.drawCanvas();
+        this.ctx.font = "30px Arial";
+        this.ctx.fillStyle = "white";
+        this.ctx.textAlign = "center";
+        const text = "A player has been disconnected,\nwaiting for reconnection...";
+        const lines = text.split("\n");
+        const lineHeight = 24;
+        lines.forEach((line, i) => {
+          this.ctx.fillText(
+            line,
+            this.canvas.width / 2,
+            this.canvas.height / 2 + i * lineHeight
+          );
+        });
+      }
       drawGameOver(state) {
         this.ctx.fillStyle = "black";
         this.canvas.height = this.canvas.height / 2;
@@ -4040,6 +4056,9 @@ var init_gameNetwork = __esm({
         this.socket.on("startCountdown", () => {
           this.onCountdownCallback?.();
         });
+        this.socket.on("disconnection", () => {
+          this.onDisconnectionCallback?.();
+        });
         this.socket.on("gameOver", () => {
           this.onGameOverCallback?.();
           console.log("Game over, closing socket...");
@@ -4058,6 +4077,9 @@ var init_gameNetwork = __esm({
       onPredraw(cb) {
         this.onPredrawCallback = cb;
       }
+      onDisconnection(cb) {
+        this.onDisconnectionCallback = cb;
+      }
       startGame() {
         this.socket.emit("startGame");
       }
@@ -4071,6 +4093,7 @@ var init_gameNetwork = __esm({
         this.onGameOverCallback = cb;
       }
       disconnect() {
+        this.socket.emit("disconnection");
         this.socket.disconnect();
       }
     };
@@ -4149,7 +4172,6 @@ async function initPongMatch(params) {
   });
   const { playerId } = res;
   const type = resType.type;
-  console.log("type :", type);
   const serverUrl = window.location.host;
   let input1 = "stop";
   let input2 = "stop";
@@ -4167,10 +4189,14 @@ async function initPongMatch(params) {
   net.join(Number(gameID), Number(playerId));
   net.onCountdown(() => {
     let countdown = 4;
-    const interval = setInterval(() => {
+    let interval = setInterval(() => {
       if (!currentGame || !renderer)
         return;
       updatePseudo();
+      if (currentGame.getCurrentState().status !== "countdown") {
+        clearInterval(interval);
+        return;
+      }
       renderer.drawCountdown(currentGame.getCurrentState(), countdown);
       countdown--;
       if (countdown < 0) {
@@ -4242,11 +4268,14 @@ async function initPongMatch(params) {
         pseudoP2.innerText = currentGame.getCurrentState().pseudo.player2;
     }
   }
+  net.onDisconnection(() => {
+    if (renderer)
+      renderer.drawReconnection();
+  });
   net.onGameOver(() => {
     if (!currentGame || !renderer)
       return;
     renderer.drawGameOver(currentGame.getCurrentState());
-    console.log("type :", type);
     if (currentGame.isLocalMode() || type == "AI") {
       replayBtn?.addEventListener("click", async () => {
         navigateTo(`/gamelocal`);

@@ -66,12 +66,14 @@ export function setupGameServer(io: Server, users: Users) {
 				if (game!.sockets.player2 === socket.id)
 					game!.sockets.player2 = null;
 
-				if (game.status == "playing")
-					game.status = "disconnected";
+				game.status = "disconnected";
+				io.to(`game-${gameId}`).emit("state", serializeForClient(game.state, game.status));
+				io.to(`game-${game.id}`).emit("disconnection", serializeForClient(game.state, game.status));
 
 				if (!game.disconnectTimer) {
 					game.disconnectTimer = setTimeout(() => {
 						console.log("Timeout disconnected game : ", gameId);
+						io.to(`game-${game.id}`).emit("noReconnection");
 						games_map.delete(gameId);
 					}, 5 * 60 * 1000);
 				}
@@ -132,8 +134,10 @@ function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number,
 		game.status = "countdown";
 		socket.emit("assignRole", "player1");
 
+		io.to(`game-${gameId}`).emit("state", serializeForClient(game.state, game.status));
+		
 		//countdown starting
-		io.to(`game-${gameId}`).emit("startCountdown");
+		io.to(`game-${gameId}`).emit("startCountdown", serializeForClient(game.state, game.status));
 		//predraw canvas without score to avoid empty screen before countdown
 		socket.emit("predraw", serializeForClient(game.state, game.status));
 	}
@@ -181,7 +185,8 @@ async function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gam
 	if ((game.sockets.player1 && game.idPlayer2 == -1) 
 		|| (game.sockets.player1 && game.sockets.player2 && (game.status === "waiting" || game.status === "disconnected"))) {
 		game.status = "countdown";
-		io.to(`game-${gameId}`).emit("startCountdown");
+		io.to(`game-${gameId}`).emit("state", serializeForClient(game.state, game.status));
+		io.to(`game-${gameId}`).emit("startCountdown", serializeForClient(game.state, game.status));
 	}
 
 	//predraw canvas without score to avoid empty screen before countdown

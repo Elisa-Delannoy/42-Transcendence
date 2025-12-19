@@ -18,6 +18,8 @@ export class GameNetwork {
 
 	private onCountdownCallback?: () => void;
 
+	private onDisconnectionCallback?: () => void;
+
 	private onRoleCallback?: (role: "player1" | "player2") => void;
 
 	constructor(serverUrl: string, gameId: number) {
@@ -43,6 +45,10 @@ export class GameNetwork {
 			this.onCountdownCallback?.();
 		});
 
+		this.socket.on("disconnection", () => {
+			this.onDisconnectionCallback?.();
+		});
+
 		this.socket.on("gameOver", () => {
 			this.onGameOverCallback?.();
 			console.log("Game over, closing socket...");
@@ -66,6 +72,10 @@ export class GameNetwork {
 		this.onPredrawCallback = cb;
 	}
 
+	onDisconnection(cb: () => void) {
+		this.onDisconnectionCallback = cb;
+	}
+
 	startGame() {
 		this.socket.emit("startGame");
 	}
@@ -83,6 +93,7 @@ export class GameNetwork {
 	}
 
 	disconnect() {
+		this.socket.emit("disconnection");
 		this.socket.disconnect();
 	}
 }

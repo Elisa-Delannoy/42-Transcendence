@@ -30,7 +30,6 @@ export async function initPongMatch(params?: any) {
 
 	const { playerId } = res;
 	const type = resType.type;
-	console.log("type :", type);
 
 	const serverUrl = window.location.host;
 	let input1: "up" | "down" | "stop" = "stop";
@@ -61,10 +60,15 @@ export async function initPongMatch(params?: any) {
 
 	net.onCountdown(() => {
 		let countdown = 4;
-		const interval = setInterval(() => {
+		let interval = setInterval(() => {
 			if (!currentGame || !renderer)
 				return;
 			updatePseudo();
+			if (currentGame.getCurrentState().status !== "countdown")
+			{
+				clearInterval(interval);
+				return;
+			}
 			renderer.drawCountdown(currentGame.getCurrentState(), countdown);
 			countdown--;
 			if (countdown < 0) {
@@ -163,11 +167,15 @@ export async function initPongMatch(params?: any) {
 		}
 	}
 
+	net.onDisconnection(() => {
+		if (renderer)
+			renderer.drawReconnection();
+	});
+
 	net.onGameOver(() => {
 		if (!currentGame || !renderer)
 			return;
 		renderer.drawGameOver(currentGame.getCurrentState());
-		console.log("type :", type);
 		if (currentGame.isLocalMode() || type == "AI")
 		{
 			replayBtn?.addEventListener("click", async () => {

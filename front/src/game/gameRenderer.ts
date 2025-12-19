@@ -41,6 +41,25 @@ export class GameRenderer {
 		}
 	}
 
+	public drawReconnection() {
+		this.drawCanvas();
+		this.ctx.font = "30px Arial";
+		this.ctx.fillStyle = "white";
+		this.ctx.textAlign = "center";
+		const text = "A player has been disconnected,\nwaiting for reconnection...";
+
+		const lines = text.split("\n");
+		const lineHeight = 24;
+
+		lines.forEach((line, i) => {
+			this.ctx.fillText(
+				line,
+				this.canvas.width / 2,
+				this.canvas.height / 2 + (i * lineHeight)
+			);
+		});
+	}
+
 	public drawGameOver(state: GameState) {
 		this.ctx.fillStyle = "black";
 		this.canvas.height = this.canvas.height / 2;
@@ -73,7 +92,6 @@ export class GameRenderer {
 			}
 		}
 		document.getElementById("buttons")?.classList.remove("hidden");
-
 	}
 
 	public draw(state: GameState, drawScore: boolean) {
