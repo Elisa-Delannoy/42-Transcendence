@@ -4189,14 +4189,10 @@ async function initPongMatch(params) {
   net.join(Number(gameID), Number(playerId));
   net.onCountdown(() => {
     let countdown = 4;
-    let interval = setInterval(() => {
+    interval = setInterval(() => {
       if (!currentGame || !renderer)
         return;
       updatePseudo();
-      if (currentGame.getCurrentState().status !== "countdown") {
-        clearInterval(interval);
-        return;
-      }
       renderer.drawCountdown(currentGame.getCurrentState(), countdown);
       countdown--;
       if (countdown < 0) {
@@ -4271,6 +4267,7 @@ async function initPongMatch(params) {
   net.onDisconnection(() => {
     if (renderer)
       renderer.drawReconnection();
+    clearInterval(interval);
   });
   net.onGameOver(() => {
     if (!currentGame || !renderer)
@@ -4293,10 +4290,11 @@ async function initPongMatch(params) {
 function stopGame() {
   net?.disconnect();
   net = null;
+  clearInterval(interval);
   renderer = null;
   currentGame = null;
 }
-var renderer, net, currentGame;
+var renderer, net, currentGame, interval;
 var init_p_pongmatch = __esm({
   "front/src/views/p_pongmatch.ts"() {
     "use strict";

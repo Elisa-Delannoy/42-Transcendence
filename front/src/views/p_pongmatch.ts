@@ -6,6 +6,7 @@ import { GameInstance } from "../game/gameInstance";
 let renderer: GameRenderer | null = null;
 let net: GameNetwork | null = null;
 let currentGame: GameInstance | null = null;
+let interval: NodeJS.Timeout;
 
 export function PongMatchView(params?: any): string {
 	loadHeader();
@@ -60,15 +61,10 @@ export async function initPongMatch(params?: any) {
 
 	net.onCountdown(() => {
 		let countdown = 4;
-		let interval = setInterval(() => {
+		interval = setInterval(() => {
 			if (!currentGame || !renderer)
 				return;
 			updatePseudo();
-			if (currentGame.getCurrentState().status !== "countdown")
-			{
-				clearInterval(interval);
-				return;
-			}
 			renderer.drawCountdown(currentGame.getCurrentState(), countdown);
 			countdown--;
 			if (countdown < 0) {
@@ -170,6 +166,7 @@ export async function initPongMatch(params?: any) {
 	net.onDisconnection(() => {
 		if (renderer)
 			renderer.drawReconnection();
+		clearInterval(interval);
 	});
 
 	net.onGameOver(() => {
@@ -198,6 +195,7 @@ export function stopGame()
 {
 	net?.disconnect();
 	net = null;
+	clearInterval(interval);
 	renderer = null;
 	currentGame = null;
 }
