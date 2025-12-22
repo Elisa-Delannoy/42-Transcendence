@@ -7,7 +7,6 @@ import { GameLocalView, GameLocalinit} from "./views/p_gamelocal";
 import { PongMatchView, initPongMatch, stopGame} from "./views/p_pongmatch";
 import { homeView, initHomePage } from "./views/p_homelogin";
 import { ProfileView, initProfile} from "./views/p_profile";
-import { UpdateInfoView, initUpdateInfo } from "./views/p_updateinfo";
 import { TournamentView} from "./views/p_tournament";
 import { initLogout } from "./views/logout";
 import { fromTwos } from "ethers";
@@ -18,6 +17,9 @@ import { request } from "http";
 import { userInfo } from "os";
 import { initTowfa, towfaView } from "./views/twofa";
 import { UpdateEmailView, initUpdateEmail } from "./views/p_updateemail";
+import { UpdateUsernameView, initUpdateUsername } from "./views/p_updateusername";
+import { UpdatePasswordView, initUpdatePassword } from "./views/p_updatepassword";
+import { UpdateAvatarView, initUpdateAvatar } from "./views/p_updateavatar";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -30,8 +32,10 @@ const routes = [
   { path: "/dashboard", view: DashboardView, init: initDashboard },
   { path: "/friends", view: FriendsView, init: initFriends },
   { path: "/profile", view: ProfileView, init: initProfile},
-  { path: "/updateinfo", view: UpdateInfoView, init: initUpdateInfo},
   { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
+  { path: "/updateusername", view: UpdateUsernameView, init: initUpdateUsername },
+  { path: "/updatepassword", view: UpdatePasswordView, init: initUpdatePassword },
+  { path: "/updateavatar", view: UpdateAvatarView, init: initUpdateAvatar },
   { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit},
   { path: "/gamelocal", view: GameLocalView, init: GameLocalinit},
   { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
