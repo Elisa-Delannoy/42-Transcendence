@@ -50,6 +50,7 @@ export class ServerGame {
 			width,
 			height,
 			aiLastUpdate: 0,
+			aiTargetY: null,
 			inputs: {
 				player1: "stop",
 				player2: "stop"

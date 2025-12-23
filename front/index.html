@@ -56,7 +56,7 @@
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 		</header>
-		<form id="login-form" class="flex flex-col rounded-lg text-center bg-white ring-4 ring-amber-300 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 h-80 mx-auto">
+		<form id="login-form" class="flex flex-col rounded-lg text-center bg-white ring-4 ring-amber-300 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 min-h-80 mx-auto">
 	 		<h1 class="mt-4 text-amber-900 dark:text-white font-bold text-xl">Welcome Back</h1>
 			<div class="flex flex-col mx-10">
 				<div class="items-start text-start">
@@ -74,6 +74,14 @@
 			</div>
 			<button type="submit" class="btn mx-auto w-40 justify-end">Log in</button>
 			<a class="mt-1 text-amber-900 dark:text-white hover:underline text-sm" href="/register" data-link>Create account ?</a>
+			<div class="flex items-center gap-2 mx-10 my-2 text-sm text-gray-500">
+				<hr class="flex-1 border-gray-300" />
+				<span>or</span>
+				<hr class="flex-1 border-gray-300" />
+			</div>
+			<button type="button" id="google-login-btn" class="flex items-center justify-center mx-auto w-60 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-black/30">
+				<img src="/src/image/google-icon.svg" class="h-10" />
+			</button>
 		</form>
 	</template>
 		

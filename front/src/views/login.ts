@@ -1,6 +1,5 @@
 import { navigateTo} from "../router";
 
-let require2FA = false;
 
 export function LoginView(): string {
 	return (document.getElementById("loginhtml") as HTMLFormElement).innerHTML;
@@ -25,6 +24,12 @@ export async function initLogin()
 	if (success == 1)
 		navigateTo("/home");
     });
+
+	// Google OAuth
+	const googleBtn = document.getElementById("google-login-btn");
+	googleBtn?.addEventListener("click", () => {
+		window.location.href = "/api/oauth/google";
+	});
 }
 
 export async function login(username: string, password: string, form: HTMLFormElement): Promise<number> {

@@ -20,6 +20,7 @@ import { UpdateEmailView, initUpdateEmail } from "./views/p_updateemail";
 import { UpdateUsernameView, initUpdateUsername } from "./views/p_updateusername";
 import { UpdatePasswordView, initUpdatePassword } from "./views/p_updatepassword";
 import { UpdateAvatarView, initUpdateAvatar } from "./views/p_updateavatar";
+import { initOAuthCallback } from "./views/oauth_callback";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -41,7 +42,7 @@ const routes = [
   { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
   { path: "/tournament", view: TournamentView},
   { path: "/error", view: ErrorView, init:initError},
-
+  { path: "/oauth/callback", init: initOAuthCallback },
 ];
 
 let currentRoute: any = null;

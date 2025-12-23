@@ -1,11 +1,9 @@
 import { ethers } from "ethers";
-import * as dotenv from "dotenv";
 
 // if "module": "ESNext", can use : import dotenv from "dotenv";
 
 
 // Prepare env variables
-dotenv.config();
 const PRIVATE_KEY = process.env.PRIVATE_KEY!;
 const RPC_URL = process.env.RPC_URL!; // Fuji Testnet RPC
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!;

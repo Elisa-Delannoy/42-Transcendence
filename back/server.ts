@@ -30,7 +30,8 @@ import { dashboardInfo } from "./routes/dashboard/dashboard";
 import { request } from "http";
 import { navigateTo } from "../front/src/router";
 import { checkTwoFA, disableTwoFA, enableTwoFA, setupTwoFA } from "./routes/twofa/twofa";
-
+import { oauthStatus } from "./routes/login/oauth.status";
+import { registerGoogle, callbackGoogle } from "./routes/login/oauth.google";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -105,6 +106,18 @@ fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply)
 
 fastify.get("/api/checkLogin", async (request, reply) => {
 	return tokenOK(request, reply);
+});
+
+fastify.get("/api/auth/status", async (request: FastifyRequest, reply: FastifyReply) => {
+	return oauthStatus(request, reply);
+});
+
+fastify.get("/api/oauth/google", async (request: FastifyRequest, reply: FastifyReply) => {
+	return await registerGoogle(request, reply);
+});
+
+fastify.get("/api/oauth/google/callback", async (request: FastifyRequest, reply: FastifyReply) => {
+	return await callbackGoogle(request, reply);
 });
 
 fastify.post("/api/register", async (request, reply) => {

@@ -49,6 +49,10 @@ async function initLogin() {
     if (success == 1)
       navigateTo("/home");
   });
+  const googleBtn = document.getElementById("google-login-btn");
+  googleBtn?.addEventListener("click", () => {
+    window.location.href = "/api/oauth/google";
+  });
 }
 async function login(username, password, form) {
   try {
@@ -4986,6 +4990,29 @@ var init_p_updateavatar = __esm({
   }
 });
 
+// front/src/views/oauth_callback.ts
+async function initOAuthCallback() {
+  const res = await fetch("/api/auth/status", {
+    credentials: "include"
+  });
+  if (!res.ok) {
+    navigateTo("/login");
+    return;
+  }
+  const data = await res.json();
+  if (data.twofa) {
+    navigateTo("/twofa");
+  } else {
+    navigateTo("/home");
+  }
+}
+var init_oauth_callback = __esm({
+  "front/src/views/oauth_callback.ts"() {
+    "use strict";
+    init_router();
+  }
+});
+
 // front/src/router.ts
 function navigateTo(url2) {
   const state = { from: window.location.pathname };
@@ -5142,6 +5169,7 @@ var init_router = __esm({
     init_p_updateusername();
     init_p_updatepassword();
     init_p_updateavatar();
+    init_oauth_callback();
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
@@ -5161,7 +5189,8 @@ var init_router = __esm({
       { path: "/gamelocal", view: GameLocalView, init: GameLocalinit },
       { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
       { path: "/tournament", view: TournamentView },
-      { path: "/error", view: ErrorView, init: initError }
+      { path: "/error", view: ErrorView, init: initError },
+      { path: "/oauth/callback", init: initOAuthCallback }
     ];
     currentRoute = null;
   }

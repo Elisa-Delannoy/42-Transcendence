@@ -23,6 +23,7 @@ export interface GameState {
 	width: number;
 	height: number;
 	aiLastUpdate: number;
+	aiTargetY: number | null;
 	inputs: {
 		player1: "up" | "down" | "stop",
 		player2: "up" | "down" | "stop"
