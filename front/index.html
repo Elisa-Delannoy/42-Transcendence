@@ -215,36 +215,69 @@
 		</div>
 	</template>
 	
+
+
 	<template id="friendshtml">
+
+	<div class="min-h-screen flex flex-col">
+
 		<div id="header-container"></div>
 		<div id ="search" class="relative flex flex-col w-1/4 mx-auto justify-center mt-2">
 			<input type="text" id="searchInput" placeholder="🔍 Search..." class="border border-amber-600/50 backdrop-blur-sm rounded-md outline-none focus:ring-2 focus:ring-amber-600/50 focus:border-amber-600/50">
 			<ul id ="members" class="my-2 absolute z-10 w-full top-full mx-auto bg-amber-600/50 rounded-lg"></ul>
 		</div>
 
-		<div id="no-friend" class="hidden">
+	<div class="flex-1 flex flex-col justify-between overflow-y-auto mt-4">
+    
+		<div class="flex flex-row items-start gap-4">
+			<section class="bg-amber-100/80 mt-10 ml-15 mr-15 w-[50%] flex flex-col ring-2 ring-amber-400 items-center rounded-lg  p-4 relative">
+				<h1 class="font-bold text-xl text-stone-100 absolute -top-4 left-4 bg-amber-900 px-2 rounded">My friends</h1>
+				<!-- <div id="game-list" class="w-[90%] h-[90%] px-1 overflow-y-auto scrollbar-none mb-2 ring-2
+					bg-amber-50 rounded-lg ring-amber-200 shadow-lg">
+				</div> -->
+				<div id="no-friend" class="hidden">
+				</div>
+				<div id="friends" class="hidden">
+					<h1>Your friends:</h1>
+					<ul class="list-disc pl-5">
+					</ul>
+				</div>
+			</section>
+			<section class="bg-amber-100/80 mt-10 mr-15 ml-15 w-[50%] flex flex-col ring-2 ring-amber-400 items-center rounded-lg  p-4 relative">
+				<h1 class="font-bold text-xl text-stone-100 absolute -top-4 left-4 bg-amber-900 px-2 rounded">Pending invitations</h1>
+				<!-- <div id="game-list" class="w-[90%] h-[90%] px-1 overflow-y-auto scrollbar-none mb-2 ring-2
+					bg-amber-50 rounded-lg ring-amber-200 shadow-lg">
+				</div> -->
+				<div id="no-pending" class="hidden flex justify-end p-4">
+				</div>
+				<div id="pending" class="hidden flex  flex-col items-end p-4">
+					<h1>Pending friends:</h1>
+					<ul class="list-disc pl-5">
+					</ul>
+				</div>
+			</section>
 		</div>
-		<div id="friends" class="hidden">
-			<h1>Your friends:</h1>
-			<ul class="list-disc pl-5">
-			</ul>
+
+	</div>
+		<div class="flex flex-row items-start gap-4">
+			<section class="bg-amber-100/80 w-full ml-15 mr-15 mb-10 flex flex-col ring-2 ring-amber-400 items-center rounded-lg  p-4 relative">
+				<h1 class="font-bold text-xl text-stone-100 absolute -top-4 left-4 bg-amber-900 px-2 rounded">Friends suggestion</h1>
+				<!-- <div id="game-list" class="w-[90%] h-[90%] px-1 overflow-y-auto scrollbar-none mb-2 ring-2
+					bg-amber-50 rounded-lg ring-amber-200 shadow-lg">
+				</div> -->
+				<div id="no-opponent" class="hidden flex flex-col items-center p-4 gap-4">
+					<h1 id="no opponent text" class="text-2xl text-center">Click below to begin a party and meet new users !</h1>
+					<a href="/gameonline" data-link class="btn w-48 text-center">1 VS 1</a>
+				</div>
+				<div id="opponent" class="hidden flex flex-col p-4">
+					<h1>Players you played with and may know:</h1>
+					<ul class="list-disc pl-5">
+					</ul>
+				</div>
+			</section>
 		</div>
-		<div id="no-pending" class="hidden flex justify-end p-4">
-		</div>
-		<div id="pending" class="hidden flex  flex-col items-end p-4">
-			<h1>Pending friends:</h1>
-			<ul class="list-disc pl-5">
-			</ul>
-		</div>
-		<div id="no-opponent" class="hidden flex p-4">
-			<h1 id="no opponent text" class="text-2xl">Click below to begin a party and meet new users !</h1>
-			<a href="/gameonline" data-link class="btn w-48">1 VS 1</a>
-		</div>
-		<div id="opponent" class="hidden flex flex-col p-4">
-			<h1>Players you played with and may know:</h1>
-			<ul class="list-disc pl-5">
-			</ul>
-		</div>
+
+	</div>
 	</template>
 
 	<template id="list-search">
@@ -638,7 +671,7 @@
 	<template id="dashboardhtml">
 		<div id="header-container"></div>
 		<div class="flex flex-row">
-			<section class="bg-amber-100/80 mt-5 ml-2 w-[50%] h-[80vh] flex flex-col ring-2 ring-amber-400 items-center rounded-lg">
+			<section class="bg-amber-100/80 mt-5 ml-2 w-[50%]z h-[80vh] flex flex-col ring-2 ring-amber-400 items-center rounded-lg">
 				<h1 class="font-bold text-xl mb-1 text-amber-900">History - 20 last games :</h1>
 				<div id="game-list" class="w-[90%] h-[90%] px-1 overflow-y-auto scrollbar-none mb-2 ring-2
 					bg-amber-50 rounded-lg ring-amber-200 shadow-lg">
