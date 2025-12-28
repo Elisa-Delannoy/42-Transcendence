@@ -4577,36 +4577,31 @@ async function initFriends() {
   }
 }
 async function myFriends(acceptedFriends) {
-  const divNoFriend = document.getElementById("no-friend");
-  const divFriend = document.getElementById("friends");
+  const container = document.getElementById("friend-list");
+  if (!container)
+    return;
   if (acceptedFriends.length === 0) {
-    divNoFriend.textContent = "No friends yet";
-    divFriend.classList.add("hidden");
-    divNoFriend.classList.remove("hidden");
-  } else {
-    divFriend.classList.remove("hidden");
-    divNoFriend.classList.add("hidden");
-    const ul = divFriend.querySelector("ul");
-    acceptedFriends.forEach(async (friend) => {
-      const status = document.createElement("span");
-      status.className = "absolute w-4 h-4 rounded-full border-2 border-white";
-      displayStatus(friend, status);
-      const li = document.createElement("li");
-      li.className = "flex items-center gap-3";
-      const span = document.createElement("span");
-      span.textContent = friend.pseudo + " friend since: " + friend.friendship_date;
-      const img = document.createElement("img");
-      img.src = friend.avatar;
-      img.alt = `${friend.pseudo}'s avatar`;
-      img.width = 64;
-      const button = toDeleteFriend(friend.id);
-      li.appendChild(img);
-      li.appendChild(status);
-      li.appendChild(span);
-      li.appendChild(button);
-      ul?.appendChild(li);
-    });
+    container.innerHTML = `<p class="text-xl italic text-center text-amber-800">No friend yet</p>`;
+    return;
   }
+  acceptedFriends.forEach(async (friend) => {
+    const template = document.getElementById("myfriends");
+    const item = document.createElement("div");
+    item.classList.add("dash");
+    const clone = template.content.cloneNode(true);
+    const avatar = clone.getElementById("avatar");
+    const pseudo = clone.getElementById("pseudo");
+    const date = clone.getElementById("date-friendship");
+    const status = clone.getElementById("f_status");
+    pseudo.textContent = friend.pseudo;
+    avatar.src = friend.avatar;
+    avatar.alt = `${friend.pseudo}'s avatar`;
+    date.textContent = "friend since " + new Date(friend.friendship_date).toLocaleDateString();
+    displayStatus(friend, status);
+    toDeleteFriend(friend.id, clone);
+    item.appendChild(clone);
+    container.appendChild(item);
+  });
 }
 function debounce(fn, delay) {
   let timeout;

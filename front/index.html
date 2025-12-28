@@ -223,27 +223,18 @@
 
 		<div id="header-container"></div>
 		<div id ="search" class="relative flex flex-col w-1/4 mx-auto justify-center mt-2">
-			<input type="text" id="searchInput" placeholder="🔍 Search..." class="border border-amber-600/50 backdrop-blur-sm rounded-md outline-none focus:ring-2 focus:ring-amber-600/50 focus:border-amber-600/50">
+			<input type="text" id="searchInput" placeholder="🔍 Search..." class="text-lg border border-amber-600/50 backdrop-blur-sm rounded-md outline-none focus:ring-2 focus:ring-amber-600/50 focus:border-amber-600/50">
 			<ul id ="members" class="my-2 absolute z-10 w-full top-full mx-auto bg-amber-600/50 rounded-lg"></ul>
 		</div>
 
-	<div class="flex-1 flex flex-col justify-between overflow-y-auto mt-4">
-    
+	<div class="flex-1 flex flex-col justify-between overflow-y-auto mt-4">	
 		<div class="flex flex-row items-start gap-4">
-			<section class="bg-amber-100/80 mt-10 ml-15 mr-15 w-[50%] flex flex-col ring-2 ring-amber-400 items-center rounded-lg  p-4 relative">
+			<section class="bg-amber-100/80 mt-10 ml-15 mr-15 w-[50%] flex flex-col ring-2 ring-amber-400 items-center rounded-lg p-4 relative">
 				<h1 class="font-bold text-xl text-stone-100 absolute -top-4 left-4 bg-amber-900 px-2 rounded">My friends</h1>
-				<!-- <div id="game-list" class="w-[90%] h-[90%] px-1 overflow-y-auto scrollbar-none mb-2 ring-2
-					bg-amber-50 rounded-lg ring-amber-200 shadow-lg">
-				</div> -->
-				<div id="no-friend" class="hidden">
-				</div>
-				<div id="friends" class="hidden">
-					<h1>Your friends:</h1>
-					<ul class="list-disc pl-5">
-					</ul>
+				<div id="friend-list" class="w-[90%] max-h-[75%] px-1 overflow-y-auto scrollbar-none mb-2">
 				</div>
 			</section>
-			<section class="bg-amber-100/80 mt-10 mr-15 ml-15 w-[50%] flex flex-col ring-2 ring-amber-400 items-center rounded-lg  p-4 relative">
+			<section class="bg-amber-100/80 mt-10 mr-15 ml-15 w-[50%] flex flex-col ring-2 ring-amber-400 items-center rounded-lg p-4 relative  z-[-1]">
 				<h1 class="font-bold text-xl text-stone-100 absolute -top-4 left-4 bg-amber-900 px-2 rounded">Pending invitations</h1>
 				<!-- <div id="game-list" class="w-[90%] h-[90%] px-1 overflow-y-auto scrollbar-none mb-2 ring-2
 					bg-amber-50 rounded-lg ring-amber-200 shadow-lg">
@@ -288,6 +279,18 @@
 			</div>
 			<button id="addordelete" class="bg-amber-700 my-auto px-2 ml-2 text-white rounded cursor-pointer"></button>
 		</li>
+	</template>
+
+	<template id="myfriends">
+		<div class="relative flex flex-row items-center m-2 hover:bg-amber-600/20 rounded-sm">
+			<div class="flex flex-row items-center gap-3">
+				<img id="avatar" class="w-16 h-16 rounded-full my-auto object-cover" src="" alt="avatar"></img>
+				<p id="pseudo" class="text-2xl text-amber-800 font-semibold"></p>
+				<span id="f_status" class="absolute top-1 left-1 w-4 h-4 rounded-full border-2 border-white"></span>
+				<button id="addordelete" class="bg-amber-700 px-4 py-2 text-white rounded cursor-pointer text-lg"></button>
+			</div>
+			<p id="date-friendship" class="ml-2 italic text-sm text-gray-600"></p>
+		</div>
 	</template>
 
 	<template id="profilehtml">
@@ -671,8 +674,7 @@
 	<template id="dashboardhtml">
 		<div id="header-container"></div>
 		<div class="flex flex-row">
-			<section class="bg-amber-100/80 mt-5 ml-2 w-[50%]z h-[80vh] flex flex-col ring-2 ring-amber-400 items-center rounded-lg">
-				<h1 class="font-bold text-xl mb-1 text-amber-900">History - 20 last games :</h1>
+			<section class="bg-amber-100/80 mt-5 ml-2 w-[50%] h-[80vh] flex flex-col ring-2 ring-amber-400 items-center rounded-lg">	<h1 class="font-bold text-xl mb-1 text-amber-900">History - 20 last games :</h1>
 				<div id="game-list" class="w-[90%] h-[90%] px-1 overflow-y-auto scrollbar-none mb-2 ring-2
 					bg-amber-50 rounded-lg ring-amber-200 shadow-lg">
 				</div>

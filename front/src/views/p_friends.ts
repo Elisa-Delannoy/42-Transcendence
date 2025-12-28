@@ -8,7 +8,7 @@ import { IFriendsAndNot } from "../../../back/routes/friends/friends";
 import { linearBuckets } from "prom-client";
 
 export function FriendsView(): string {
-	loadHeader();
+    loadHeader();
 	return (document.getElementById("friendshtml") as HTMLTemplateElement).innerHTML;
 }
 
@@ -31,38 +31,35 @@ export async function initFriends() {
 }
 
 async function myFriends(acceptedFriends: IMyFriends[]) {
-	const divNoFriend = document.getElementById("no-friend") as HTMLElement;
-	const divFriend = document.getElementById("friends") as HTMLElement;
-	if (acceptedFriends.length === 0) {
-		divNoFriend.textContent = "No friends yet";
-		divFriend.classList.add("hidden");
-		divNoFriend.classList.remove("hidden");
-	}
-	else {
-		divFriend.classList.remove("hidden");
-		divNoFriend.classList.add("hidden");
-		const ul = divFriend.querySelector("ul");
-		acceptedFriends.forEach(async (friend: IMyFriends) => {
+	// const listFriends = (document.getElementById("friends") as HTMLUListElement | null);
+	const container = document.getElementById("friend-list") as HTMLDivElement;
+	// console.log("list = ", acceptedFriends, "container", container);
+	
+	if (!container)
+		return;
 
-			const status = document.createElement("span") as HTMLImageElement;
-			status.className ="absolute w-4 h-4 rounded-full border-2 border-white";
-			displayStatus(friend, status);
-			const li = document.createElement("li");
-			li.className = "flex items-center gap-3";
-			const span = document.createElement("span");
-			span.textContent = friend.pseudo + " friend since: " + friend.friendship_date;
-			const img = document.createElement("img");
-			img.src =  friend.avatar;
-			img.alt = `${friend.pseudo}'s avatar`;
-			img.width = 64;
-			const button: HTMLButtonElement = toDeleteFriend(friend.id);
-			li.appendChild(img);
-			li.appendChild(status);
-			li.appendChild(span);
-			li.appendChild(button);
-			ul?.appendChild(li);
-		});
+	if (acceptedFriends.length === 0) {
+		container.innerHTML = `<p class="text-xl italic text-center text-amber-800">No friend yet</p>`;
+		return;
 	}
+	acceptedFriends.forEach(async (friend: IMyFriends) => {
+		const template = document.getElementById("myfriends") as HTMLTemplateElement;
+		const item = document.createElement("div") as HTMLDivElement;
+		item.classList.add("dash");
+		const clone = template.content.cloneNode(true) as DocumentFragment;
+		const avatar = clone.getElementById("avatar") as HTMLImageElement;
+		const pseudo = clone.getElementById("pseudo") as HTMLParagraphElement;
+		const date = clone.getElementById("date-friendship") as HTMLParagraphElement;
+		const status = clone.getElementById("f_status") as HTMLImageElement;
+		pseudo.textContent = friend.pseudo;
+  		avatar.src =  friend.avatar;
+		avatar.alt = `${friend.pseudo}'s avatar`;
+		date.textContent = "friend since " + new Date(friend.friendship_date).toLocaleDateString();		
+		displayStatus(friend, status);
+		toDeleteFriend(friend.id, clone);
+		item.appendChild(clone);
+		container.appendChild(item);
+	});
 }
 
 function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
