@@ -7,6 +7,7 @@ import { GameLocalView, GameLocalinit} from "./views/p_gamelocal";
 import { PongMatchView, initPongMatch, stopGame} from "./views/p_pongmatch";
 import { homeView, initHomePage } from "./views/p_homelogin";
 import { ProfileView, initProfile} from "./views/p_profile";
+import { BracketsView, initBrackets} from "./views/p_brackets";
 import { TournamentView} from "./views/p_tournament";
 import { initLogout } from "./views/logout";
 import { fromTwos } from "ethers";
@@ -40,6 +41,7 @@ const routes = [
   { path: "/gamelocal", view: GameLocalView, init: GameLocalinit},
   { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
   { path: "/tournament", view: TournamentView},
+  { path: "/brackets/:id", view: BracketsView, init: initBrackets},
   { path: "/error", view: ErrorView, init:initError},
 
 ];
@@ -146,7 +148,7 @@ export function router() {
 	if (!match) {
 		navigateTo("/error");
 		return;
-		}
+	}
 
 	const { route, params } = match;
 	if (route.view)

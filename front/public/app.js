@@ -4447,6 +4447,20 @@ var init_p_profile = __esm({
   }
 });
 
+// front/src/views/p_brackets.ts
+function BracketsView() {
+  loadHeader();
+  return document.getElementById("bracketshtml").innerHTML;
+}
+function initBrackets() {
+}
+var init_p_brackets = __esm({
+  "front/src/views/p_brackets.ts"() {
+    "use strict";
+    init_router();
+  }
+});
+
 // front/src/views/p_tournament.ts
 function TournamentView() {
   loadHeader();
@@ -4465,9 +4479,20 @@ function generateRandomRanking() {
   return ranking;
 }
 function initTournamentPage() {
+  const createTournamentBtn = document.getElementById("create-tournament");
+  const joinTournamentBtn = document.getElementById("join-tournament");
   const createBtn = document.getElementById("create-test");
   const showBtn = document.getElementById("show-onchain");
   const backBtn = document.getElementById("back-to-home");
+  createTournamentBtn?.addEventListener("click", async () => {
+    const { tournamentId } = await genericFetch("/api/private/tournament/create", {
+      method: "POST"
+    });
+    navigateTo(`/brackets/${tournamentId}`);
+  });
+  joinTournamentBtn?.addEventListener("click", async () => {
+    loadTournaments();
+  });
   createBtn?.addEventListener("click", async () => {
     await testTournamentDB();
   });
@@ -4476,6 +4501,42 @@ function initTournamentPage() {
   });
   backBtn?.addEventListener("click", () => {
     navigateTo("/home");
+  });
+}
+async function loadTournaments() {
+  const { tournaments } = await genericFetch("/api/private/tournament/list");
+  renderTournamentList(tournaments);
+}
+function renderTournamentList(tournaments) {
+  const container = document.getElementById("tournament-list");
+  if (!container) return;
+  if (tournaments.length === 0) {
+    container.innerHTML = "<p>Aucun tournoi disponible.</p>";
+    return;
+  }
+  container.innerHTML = tournaments.map((tournament) => `
+	<div class="tournament-item">
+		<p>Tournament #${tournament.id}</p>
+		<button data-tournament-id="${tournament.id}" class="join-tournament-btn btn w-32">Rejoindre</button>
+	</div>
+	`).join("");
+  document.querySelectorAll(".join-tournament-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.tournamentId;
+      try {
+        const res = await genericFetch("/api/private/tournament/join", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tournamentId: id
+          })
+        });
+        console.log("Saved data:", res);
+      } catch (err) {
+        console.error("Error saving game:", err);
+      }
+      navigateTo(`/brackets/${id}`);
+    });
   });
 }
 async function testTournamentDB() {
@@ -4489,12 +4550,12 @@ async function testTournamentDB() {
     const dbPanel = document.getElementById("db-panel");
     if (dbPanel) {
       dbPanel.innerHTML = `
-        <div class="p-2 border-b">
-          <p class="text-green-700 font-bold">\u2705 Tournament Created!</p>
-          <p><strong>Ranking:</strong> ${testRanking.join(", ")}</p>
-          <p class="text-gray-600 text-sm">(Now stored in database)</p>
-        </div>
-      `;
+				<div class="p-2 border-b">
+					<p class="text-green-700 font-bold">\u2705 Tournament Created!</p>
+					<p><strong>Ranking:</strong> ${testRanking.join(", ")}</p>
+					<p class="text-gray-600 text-sm">(Now stored in database)</p>
+				</div>
+			`;
     }
     console.log("Tournament response:", data);
   } catch (err) {
@@ -4508,22 +4569,22 @@ async function showDBOnChain() {
     const chainPanel = document.getElementById("chain-panel");
     if (!dbPanel || !chainPanel) return;
     dbPanel.innerHTML = data.map((t) => `
-      <div class="p-2 border-b">
-        <p><strong>ID:</strong> ${t.tournamentId}</p>
-        <p><strong>Ranking:</strong> ${t.ranking.join(", ")}</p>
-        <p><strong>On Chain:</strong>
-          <span class="${t.onChain ? "text-green-600" : "text-red-600"}">
-            ${t.onChain ? "\u2705 YES" : "\u274C NO"}
-          </span>
-        </p>
-      </div>
-    `).join("");
+			<div class="p-2 border-b">
+				<p><strong>ID:</strong> ${t.tournamentId}</p>
+				<p><strong>Ranking:</strong> ${t.ranking.join(", ")}</p>
+				<p><strong>On Chain:</strong>
+					<span class="${t.onChain ? "text-green-600" : "text-red-600"}">
+						${t.onChain ? "\u2705 YES" : "\u274C NO"}
+					</span>
+				</p>
+			</div>
+		`).join("");
     chainPanel.innerHTML = data.map((t) => `
-      <div class="p-2 border-b">
-        <p><strong>ID:</strong> ${t.tournamentId}</p>
-        ${t.onChain ? `<p><strong>Blockchain Ranking:</strong> ${t.blockchainRanking.join(", ")}</p>` : `<p class="text-red-600"><strong>Not On Chain \u274C</strong></p>`}
-      </div>
-    `).join("");
+			<div class="p-2 border-b">
+				<p><strong>ID:</strong> ${t.tournamentId}</p>
+				${t.onChain ? `<p><strong>Blockchain Ranking:</strong> ${t.blockchainRanking.join(", ")}</p>` : `<p class="text-red-600"><strong>Not On Chain \u274C</strong></p>`}
+			</div>
+		`).join("");
   } catch (err) {
     console.error("Error loading DB/Blockchain comparison:", err);
   }
@@ -5133,6 +5194,7 @@ var init_router = __esm({
     init_p_pongmatch();
     init_p_homelogin();
     init_p_profile();
+    init_p_brackets();
     init_p_tournament();
     init_logout();
     init_p_friends();
@@ -5161,6 +5223,7 @@ var init_router = __esm({
       { path: "/gamelocal", view: GameLocalView, init: GameLocalinit },
       { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
       { path: "/tournament", view: TournamentView },
+      { path: "/brackets/:id", view: BracketsView, init: initBrackets },
       { path: "/error", view: ErrorView, init: initError }
     ];
     currentRoute = null;

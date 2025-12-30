@@ -612,10 +612,99 @@
 			</div>
 		</div>
 		<div class="flex flex-col items-center mt-6 gap-3">
+			<button id="create-tournament" class="btn mx-auto w-48">Create Tournament</button>
+			<button id="join-tournament" class="btn mx-auto w-48">Join Tournament</button>
+			<div id="tournament-list"></div>
 			<button id="create-test" class="btn mx-auto w-48">Create Test Tournament</button>
 			<button id="show-onchain" class="btn mx-auto w-48">Show DB vs Blockchain</button>
 			<button id="back-to-home" class="btn mx-auto w-48" data-link href="/home">Back to Home</button>
 		</div>  
+	</template>
+
+	<template id="errorhtml">
+	<div class="flex flex-col items-center justify-center h-screen">
+		<h1 class="text-4xl font-bold text-red-600">404 - Invalid page</h1>
+		<p class="mt-4">This page does not exist.</p>
+		<a href="/" data-link class="mt-6 text-blue-500 underline">Go back</a>
+	</div>
+	</template>
+
+
+	<template id="bracketshtml">
+		<div id="header-container"></div>
+		<h1 class="text-3xl font-bold text-center mt-6">Brackets</h1>
+		<div class="tournament">
+			<div class="flex gap-16 p-10">
+				<!-- Round 1 -->
+				<div class="flex flex-col justify-around gap-8">
+					<div class="w-[180px] rounded-md border border-neutral-600 bg-neutral-900">
+						<div class="p-2.5 text-center border-b border-neutral-700 font-bold text-white" id="player1">
+							Player 1
+						</div>
+						<div class="p-2.5 text-center font-bold text-white" id="player2">
+							Player 2
+						</div>
+					</div>
+
+					<div class="w-[180px] rounded-md border border-neutral-600 bg-neutral-900">
+						<div class="p-2.5 text-center border-b border-neutral-700 font-bold text-white">
+							Player 3
+						</div>
+						<div class="p-2.5 text-center font-bold text-white">
+							Player 4
+						</div>
+					</div>
+
+					<div class="w-[180px] rounded-md border border-neutral-600 bg-neutral-900">
+						<div class="p-2.5 text-center border-b border-neutral-700 font-bold text-white">
+							Player 5
+						</div>
+						<div class="p-2.5 text-center font-bold text-white">
+							Player 6
+						</div>
+					</div>
+
+					<div class="w-[180px] rounded-md border border-neutral-600 bg-neutral-900">
+						<div class="p-2.5 text-center border-b border-neutral-700 font-bold text-white">
+							Player 7
+						</div>
+						<div class="p-2.5 text-center font-bold text-white">
+							Player 8
+						</div>
+					</div>
+				</div>
+
+				<!-- Round 2 -->
+				<div class="flex flex-col justify-around">
+					<div class="w-[180px] rounded-md border border-neutral-600 bg-neutral-900">
+						<div class="p-2.5 text-center border-b border-neutral-700 font-bold text-white">
+							Winner Match 1
+						</div>
+						<div class="p-2.5 text-center font-bold text-white">
+							Winner Match 2
+						</div>
+					</div>
+
+					<div class="w-[180px] rounded-md border border-neutral-600 bg-neutral-900">
+						<div class="p-2.5 text-center border-b border-neutral-700 font-bold text-white">
+							Winner Match 3
+						</div>
+						<div class="p-2.5 text-center font-bold text-white">
+							Winner Match 4
+						</div>
+					</div>
+				</div>
+
+				<!-- Final -->
+				<div class="flex flex-col justify-center">
+					<div class="w-[180px] rounded-md border border-neutral-600 bg-neutral-800 font-bold">
+						<div class="p-2.5 text-center font-bold text-white">
+							Champion
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</template>
 
 	<template id="errorhtml">
