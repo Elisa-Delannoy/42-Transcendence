@@ -31,13 +31,9 @@ export async function initFriends() {
 }
 
 async function myFriends(acceptedFriends: IMyFriends[]) {
-	// const listFriends = (document.getElementById("friends") as HTMLUListElement | null);
 	const container = document.getElementById("friend-list") as HTMLDivElement;
-	// console.log("list = ", acceptedFriends, "container", container);
-	
 	if (!container)
 		return;
-
 	if (acceptedFriends.length === 0) {
 		container.innerHTML = `<p class="text-xl italic text-center text-amber-800">No friend yet</p>`;
 		return;
@@ -144,15 +140,16 @@ function toAddFriend(id: number, li: DocumentFragment)
 	})
 }
 
-function toAcceptFriend(friend: IMyFriends): HTMLButtonElement {
-	const button = document.createElement("button") as HTMLButtonElement;
+function toAcceptFriend(friend: IMyFriends,li: DocumentFragment ) {
+	const button = li.getElementById("addordelete") as HTMLButtonElement;
 	if (friend.asked_by !== friend.id) {
-		// button.textContent = "Pending invitation";
-		button.disabled = true
+		// button.textContent = "Delete invitation";
+		toDeleteFriend(friend.id, li);
 		return button;
 	}
 	button.textContent = "Accept invitation";
-	button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
+	button.classList.add("hover:bg-amber-800");
+	// button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
 	button.addEventListener("click", async () => {
 		try {
 			await genericFetch("/api/private/friend/accept", {
@@ -169,7 +166,6 @@ function toAcceptFriend(friend: IMyFriends): HTMLButtonElement {
 			button.disabled = false;
 		}
 	})
-	return button;
 }
 
 function toDeleteFriend(id: number, li: DocumentFragment) {
@@ -195,54 +191,56 @@ function toDeleteFriend(id: number, li: DocumentFragment) {
 }
 
 function pendingFr(pendingFriends: IMyFriends[]) {
-	const divNoPending = document.getElementById("no-pending") as HTMLElement;
-	const divPending = document.getElementById("pending") as HTMLElement;
+
+	const container = document.getElementById("pending-list") as HTMLDivElement;
+	if (!container)
+		return;
 	if (pendingFriends.length === 0) {
-		divNoPending.textContent = "No pending friends";
-		divPending.classList.add("hidden");
-		divNoPending.classList.remove("hidden");
+		container.innerHTML = `<p class="text-xl italic text-center text-amber-800">No pending invitation</p>`;
+		return;
 	}
-	else {
-		divPending.classList.remove("hidden");
-		divNoPending.classList.add("hidden");
-		const ul = divPending.querySelector("ul");
-		pendingFriends.forEach(async (friend: IMyFriends) => {
-			const li = document.createElement("li");
-			li.textContent = friend.pseudo + ", requested since: " + friend.friendship_date;
-			const img = document.createElement("img");
-			img.src =  friend.avatar;
-			img.alt = `${friend.pseudo}'s avatar`;
-			img.width = 64;
-			const button = toAcceptFriend(friend);
-			li.appendChild(img);
-			li.appendChild(button);
-			ul?.appendChild(li);
-		});
-	}
+	pendingFriends.forEach(async (friend: IMyFriends) => {
+		const template = document.getElementById("myfriends") as HTMLTemplateElement;
+		const item = document.createElement("div") as HTMLDivElement;
+		item.classList.add("dash");
+		const clone = template.content.cloneNode(true) as DocumentFragment;
+		const avatar = clone.getElementById("avatar") as HTMLImageElement;
+		const pseudo = clone.getElementById("pseudo") as HTMLParagraphElement;
+		const date = clone.getElementById("date-friendship") as HTMLParagraphElement;
+		pseudo.textContent = friend.pseudo;
+  		avatar.src =  friend.avatar;
+		avatar.alt = `${friend.pseudo}'s avatar`;
+		date.textContent = "Pending since " + new Date(friend.friendship_date).toLocaleDateString();		
+		toAcceptFriend(friend, clone);
+		item.appendChild(clone);
+		container.appendChild(item);
+	});
 }
 
 function youMayKnow(opponent: {id: number, pseudo: string, avatar: string}[]) {
 	const divNoOpponent = document.getElementById("no-opponent") as HTMLElement;
 	const divOpponent = document.getElementById("opponent") as HTMLElement;
 	if (opponent.length === 0) {
-		divOpponent.classList.add("hidden");
 		divNoOpponent.classList.remove("hidden");
+		return;
 	}
-	else {
-		divOpponent.classList.remove("hidden");
-		divNoOpponent.classList.add("hidden");
-		const ul = divOpponent.querySelector("ul");
-		opponent.forEach(async (players: {id: number, pseudo: string, avatar: string}) => {
-			const li = document.createElement("li");
-			li.textContent = players.pseudo;
-			const img = document.createElement("img");
-			img.src =  players.avatar;
-			img.alt = `${players.pseudo}'s avatar`;
-			img.width = 64;
-			const button = toAddFriend(players.id);
-			li.appendChild(img);
-			li.appendChild(button);
-			ul?.appendChild(li);
-		});
-	}
+	const container = document.getElementById("opponent-list") as HTMLDivElement;
+	opponent.forEach(async (user: {id: number, pseudo: string, avatar: string}) => {
+		const template = document.getElementById("myfriends") as HTMLTemplateElement;
+		const item = document.createElement("div") as HTMLDivElement;
+		item.classList.add("dash");
+		const clone = template.content.cloneNode(true) as DocumentFragment;
+		const avatar = clone.getElementById("avatar") as HTMLImageElement;
+		const pseudo = clone.getElementById("pseudo") as HTMLParagraphElement;
+		// const date = clone.getElementById("date-friendship") as HTMLParagraphElement;
+		// const status = clone.getElementById("f_status") as HTMLImageElement;
+		pseudo.textContent = user.pseudo;
+  		avatar.src =  user.avatar;
+		avatar.alt = `${user.pseudo}'s avatar`;
+		// date.textContent = "friend since " + new Date(friend.friendship_date).toLocaleDateString();		
+		// displayStatus(friend, status);
+		toAddFriend(user.id, clone);
+		item.appendChild(clone);
+		container.appendChild(item);
+	});
 }

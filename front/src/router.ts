@@ -131,7 +131,7 @@ export function displayStatus(info: any, status: HTMLImageElement): void {
 			break;
 		case "busy": status.classList.add("bg-red-500");
 			break;
-		case "offline": status.classList.add("bg-white");
+		case "offline": status.classList.add("bg-gray-900");
 	}
 	status.title = info.web_status;
 }

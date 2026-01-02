@@ -4680,14 +4680,14 @@ function toAddFriend(id, li) {
     }
   });
 }
-function toAcceptFriend(friend) {
-  const button = document.createElement("button");
+function toAcceptFriend(friend, li) {
+  const button = li.getElementById("addordelete");
   if (friend.asked_by !== friend.id) {
-    button.disabled = true;
+    toDeleteFriend(friend.id, li);
     return button;
   }
   button.textContent = "Accept invitation";
-  button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
+  button.classList.add("hover:bg-amber-800");
   button.addEventListener("click", async () => {
     try {
       await genericFetch("/api/private/friend/accept", {
@@ -4703,7 +4703,6 @@ function toAcceptFriend(friend) {
       button.disabled = false;
     }
   });
-  return button;
 }
 function toDeleteFriend(id, li) {
   const button = li.getElementById("addordelete");
@@ -4726,53 +4725,52 @@ function toDeleteFriend(id, li) {
   });
 }
 function pendingFr(pendingFriends) {
-  const divNoPending = document.getElementById("no-pending");
-  const divPending = document.getElementById("pending");
+  const container = document.getElementById("pending-list");
+  if (!container)
+    return;
   if (pendingFriends.length === 0) {
-    divNoPending.textContent = "No pending friends";
-    divPending.classList.add("hidden");
-    divNoPending.classList.remove("hidden");
-  } else {
-    divPending.classList.remove("hidden");
-    divNoPending.classList.add("hidden");
-    const ul = divPending.querySelector("ul");
-    pendingFriends.forEach(async (friend) => {
-      const li = document.createElement("li");
-      li.textContent = friend.pseudo + ", requested since: " + friend.friendship_date;
-      const img = document.createElement("img");
-      img.src = friend.avatar;
-      img.alt = `${friend.pseudo}'s avatar`;
-      img.width = 64;
-      const button = toAcceptFriend(friend);
-      li.appendChild(img);
-      li.appendChild(button);
-      ul?.appendChild(li);
-    });
+    container.innerHTML = `<p class="text-xl italic text-center text-amber-800">No pending invitation</p>`;
+    return;
   }
+  pendingFriends.forEach(async (friend) => {
+    const template = document.getElementById("myfriends");
+    const item = document.createElement("div");
+    item.classList.add("dash");
+    const clone = template.content.cloneNode(true);
+    const avatar = clone.getElementById("avatar");
+    const pseudo = clone.getElementById("pseudo");
+    const date = clone.getElementById("date-friendship");
+    pseudo.textContent = friend.pseudo;
+    avatar.src = friend.avatar;
+    avatar.alt = `${friend.pseudo}'s avatar`;
+    date.textContent = "Pending since " + new Date(friend.friendship_date).toLocaleDateString();
+    toAcceptFriend(friend, clone);
+    item.appendChild(clone);
+    container.appendChild(item);
+  });
 }
 function youMayKnow(opponent) {
   const divNoOpponent = document.getElementById("no-opponent");
   const divOpponent = document.getElementById("opponent");
   if (opponent.length === 0) {
-    divOpponent.classList.add("hidden");
     divNoOpponent.classList.remove("hidden");
-  } else {
-    divOpponent.classList.remove("hidden");
-    divNoOpponent.classList.add("hidden");
-    const ul = divOpponent.querySelector("ul");
-    opponent.forEach(async (players) => {
-      const li = document.createElement("li");
-      li.textContent = players.pseudo;
-      const img = document.createElement("img");
-      img.src = players.avatar;
-      img.alt = `${players.pseudo}'s avatar`;
-      img.width = 64;
-      const button = toAddFriend(players.id);
-      li.appendChild(img);
-      li.appendChild(button);
-      ul?.appendChild(li);
-    });
+    return;
   }
+  const container = document.getElementById("opponent-list");
+  opponent.forEach(async (user) => {
+    const template = document.getElementById("myfriends");
+    const item = document.createElement("div");
+    item.classList.add("dash");
+    const clone = template.content.cloneNode(true);
+    const avatar = clone.getElementById("avatar");
+    const pseudo = clone.getElementById("pseudo");
+    pseudo.textContent = user.pseudo;
+    avatar.src = user.avatar;
+    avatar.alt = `${user.pseudo}'s avatar`;
+    toAddFriend(user.id, clone);
+    item.appendChild(clone);
+    container.appendChild(item);
+  });
 }
 var init_p_friends = __esm({
   "front/src/views/p_friends.ts"() {
@@ -5085,7 +5083,7 @@ function displayStatus(info, status) {
       status.classList.add("bg-red-500");
       break;
     case "offline":
-      status.classList.add("bg-white");
+      status.classList.add("bg-gray-900");
   }
   status.title = info.web_status;
 }
