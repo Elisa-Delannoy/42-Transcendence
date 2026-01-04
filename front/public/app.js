@@ -4447,17 +4447,97 @@ var init_p_profile = __esm({
   }
 });
 
+// front/src/tournament/tournamentNetwork.ts
+var TournamentNetwork;
+var init_tournamentNetwork = __esm({
+  "front/src/tournament/tournamentNetwork.ts"() {
+    "use strict";
+    init_esm5();
+    TournamentNetwork = class {
+      constructor(serverUrl, tournamentId) {
+        this.socket = lookup2(serverUrl, { transports: ["websocket"] });
+        this.socket.on("connect", () => {
+          this.socket.emit("joinTournament", tournamentId);
+        });
+        this.socket.on("tournamentPlayersUpdate", (idPlayers) => {
+          this.onStateCallback?.(idPlayers);
+        });
+        this.socket.on("disconnection", () => {
+          this.onDisconnectionCallback?.();
+        });
+      }
+      onState(cb) {
+        this.onStateCallback = cb;
+      }
+      onDisconnection(cb) {
+        this.onDisconnectionCallback = cb;
+      }
+      startGame() {
+        this.socket.emit("startGame");
+      }
+      join(gameId, playerId) {
+        this.socket.emit("joinTournament", gameId, playerId);
+      }
+      disconnect() {
+        this.socket.emit("disconnection");
+        this.socket.disconnect();
+      }
+    };
+  }
+});
+
 // front/src/views/p_brackets.ts
 function BracketsView() {
   loadHeader();
   return document.getElementById("bracketshtml").innerHTML;
 }
-function initBrackets() {
+async function initBrackets(params) {
+  const tournamentID = params?.id;
+  const pseudoP1 = document.getElementById("player1-name");
+  const pseudoP2 = document.getElementById("player2-name");
+  const pseudoP3 = document.getElementById("player3-name");
+  const pseudoP4 = document.getElementById("player4-name");
+  const pseudoP5 = document.getElementById("player5-name");
+  const pseudoP6 = document.getElementById("player6-name");
+  const pseudoP7 = document.getElementById("player7-name");
+  const pseudoP8 = document.getElementById("player8-name");
+  const pseudos = [
+    pseudoP1,
+    pseudoP2,
+    pseudoP3,
+    pseudoP4,
+    pseudoP5,
+    pseudoP6,
+    pseudoP7,
+    pseudoP8
+  ];
+  const id = await genericFetch("/api/private/game/playerinfo");
+  const serverUrl = window.location.host;
+  net2 = new TournamentNetwork(serverUrl, Number(tournamentID));
+  net2.join(Number(tournamentID), Number(id));
+  net2.onState((idPlayers) => {
+    updateBrackets(idPlayers);
+  });
+  async function updateBrackets(idPlayers) {
+    for (let i = 0; i < 8; i++) {
+      const el = pseudos[i];
+      const playerId = Number(idPlayers[i]);
+      if (!el) continue;
+      if (playerId === 1) {
+        el.innerText = "En attente...";
+      } else {
+        el.innerText = `Player ${playerId}`;
+      }
+    }
+  }
 }
+var net2;
 var init_p_brackets = __esm({
   "front/src/views/p_brackets.ts"() {
     "use strict";
     init_router();
+    init_tournamentNetwork();
+    net2 = null;
   }
 });
 

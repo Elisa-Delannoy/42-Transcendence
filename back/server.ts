@@ -30,7 +30,7 @@ import { dashboardInfo } from "./routes/dashboard/dashboard";
 import { request } from "http";
 import { navigateTo } from "../front/src/router";
 import { checkTwoFA, disableTwoFA, enableTwoFA, setupTwoFA } from "./routes/twofa/twofa";
-import { createTournament, displayTournamentList, joinTournament } from "./routes/tournament/tournamentInstance";
+import { createTournament, displayTournamentList, getIdPlayers, joinTournament } from "./routes/tournament/tournamentInstance";
 
 
 export const db = new ManageDB("./back/DB/database.db");
@@ -241,6 +241,13 @@ fastify.post("/api/private/tournament/join", async (request, reply) => {
 	const id = Number(tournamentId);
 	joinTournament(playerId, id);
 	reply.send({ message: "Player joined tournament" });
+});
+
+fastify.post("/api/private/tournament/players", async (request, reply) => {
+	const { tournamentID } = request.body as any;
+	const id = Number(tournamentID);
+	const idPlayers = getIdPlayers(id);
+	return { idPlayers };
 });
 
 fastify.post("/api/private/tournament/add", (req, reply) => {

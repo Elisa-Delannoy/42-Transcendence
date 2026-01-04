@@ -3,6 +3,7 @@ import { applyInput, GameState, resetBall } from "./gameEngine";
 import { ServerGame, games_map, endGame } from "../routes/game/serverGame";
 import { gameInfo } from "../server";
 import { Users } from "../DB/users";
+import { tournaments_map } from "../routes/tournament/tournamentInstance";
 
 export function setupGameServer(io: Server, users: Users) {
 	io.on("connection", (socket) => {
@@ -78,6 +79,22 @@ export function setupGameServer(io: Server, users: Users) {
 					}, 5 * 60 * 1000);
 				}
 			});
+		});
+
+
+		socket.on("joinTournament", async (tournamentId: number, playerId: number) => {
+			let tournament = tournaments_map.get(tournamentId);
+			
+			if (!tournament)
+				return;
+
+			// join room
+			socket.join(`tournament-${tournamentId}`);
+
+			io.to(`tournament-${tournamentId}`).emit(
+				"tournamentPlayersUpdate",
+				tournament.idPlayers
+			);
 		});
 	});
 }

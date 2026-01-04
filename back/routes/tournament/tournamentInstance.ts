@@ -42,7 +42,9 @@ export function joinTournament(playerId: number, gameId: number)
 	const tournament = tournaments_map.get(gameId);
 	if (tournament)
 	{
-		for (let i = 2; i < 9; i++)
+		if (tournament.idPlayers.includes(playerId))
+			return;
+		for (let i = 0; i < 9; i++)
 		{
 			if (tournament.idPlayers[i] == 1)
 			{
@@ -52,4 +54,9 @@ export function joinTournament(playerId: number, gameId: number)
 		}
 		console.log("This tournament is full.");
 	}
+}
+
+export function getIdPlayers(tournamentId: number) {
+	const tournament = tournaments_map.get(tournamentId);
+	return tournament?.idPlayers;
 }
