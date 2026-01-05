@@ -310,7 +310,7 @@
 					<option value="offline">⚫ offline </option>
 				</select>
 				<div class="flex flex-col">
-					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-8">
+					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-6">
 						<img class="bg-blue-700 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/email.png" alt="">
 						<div>
 							<h1 class="ml-2 font-bold">Email</h1>
@@ -320,7 +320,7 @@
 							<img class="invert p-0.5 bg-blue-600 rounded-md" src="src/image/crayon.png" alt="crayon">
 						</a>
 					</div>
-					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-8">
+					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-6">
 						<img class="bg-blue-700 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/email.png" alt="">
 						<div>
 							<h1 class="ml-2 font-bold">Password</h1>
@@ -330,22 +330,32 @@
 							<img class="invert p-0.5 bg-blue-600 rounded-md" src="src/image/crayon.png" alt="crayon">
 						</a>
 					</div>
-					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-8">
+					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-6">
 						<img class="bg-blue-700 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/euro.png" alt="">
 						<div>
 							<h1 class="ml-2 font-bold">Money</h1>
 							<p id="profile-money" class="ml-2"></p>
 						</div>
 					</div>
-					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 mb-4 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-8">
+					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-6">
 						<img class="bg-blue-700 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/coupe.png" alt="">
 						<div>
 							<h1 class="ml-2 font-bold">Elo</h1>
 							<p id="profile-elo" class="ml-2"></p>
 						</div>
 					</div>
+					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 mb-2 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-6">
+						<img class="bg-blue-700 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/coupe.png" alt="">
+						<div>
+							<h1 class="ml-2 font-bold">Two-Factor Authentication</h1>
+							<p id="2FA-status" class="ml-2"></p>
+						</div>
+						<a class="size-6 mt-4 ml-auto justify-end mr-5 object-contain" href="/updatepassword">
+							<img class="invert p-0.5 bg-blue-600 rounded-md" src="src/image/crayon.png" alt="crayon">
+						</a>
+					</div>
 					<!-- Two-Factor Management Section -->
-					<div id="twofa-container" class="flex flex-col items-center mt-6">
+					<!-- <div id="twofa-container" class="flex flex-col items-center mt-6">
 						<p id="twofa-status" class="font-bold text-amber-900 mb-2">2FA Status</p>
 						<img id="twofa-qr" class="hidden w-40 h-40 mb-2 border-2 border-amber-900 rounded-lg" alt="2FA QR Code">
 						<div class="flex gap-4">
@@ -368,7 +378,7 @@
 							class="mt-2 bg-blue-500 text-white px-3 py-1 rounded">
 							Verify Code
 						</button>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</main>
