@@ -21,6 +21,7 @@ import { UpdateUsernameView, initUpdateUsername } from "./views/p_updateusername
 import { UpdatePasswordView, initUpdatePassword } from "./views/p_updatepassword";
 import { UpdateAvatarView, initUpdateAvatar } from "./views/p_updateavatar";
 import { initOAuthCallback } from "./views/oauth_callback";
+import { InitTermsOfService, TermsOfServiceView } from "./views/terms_of_service";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -29,6 +30,7 @@ const routes = [
   { path: "/logout", init: initLogout},
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/registerok", view: RegisterValidView},
+  { path: "/termsofservice", view: TermsOfServiceView, init: InitTermsOfService},
   { path: "/home", view: homeView, init: initHomePage},
   { path: "/dashboard", view: DashboardView, init: initDashboard },
   { path: "/friends", view: FriendsView, init: initFriends },
