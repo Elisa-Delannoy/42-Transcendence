@@ -12,6 +12,7 @@ export class TournamentInstance {
 	arr_index: number[];
 	index: number;
 	private io?: Server;
+	disconnectTimer: NodeJS.Timeout | null;
 
 	constructor(id: number, io?: Server)
 	{
@@ -22,6 +23,7 @@ export class TournamentInstance {
 		this.io = io;
 		this.arr_index = [0, 2, 1, 3];
 		this.index = 0;
+		this.disconnectTimer = null;
 	}
 
 	setIo(io: Server) {

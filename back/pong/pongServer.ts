@@ -3,7 +3,7 @@ import { applyInput, GameState, resetBall } from "./gameEngine";
 import { ServerGame, games_map, endGame } from "../routes/game/serverGame";
 import { gameInfo } from "../server";
 import { Users } from "../DB/users";
-import { tournaments_map } from "../routes/tournament/tournamentInstance";
+import { TournamentInstance, tournaments_map } from "../routes/tournament/tournamentInstance";
 
 export function setupGameServer(io: Server, users: Users) {
 	io.on("connection", (socket) => {
@@ -94,35 +94,12 @@ export function setupGameServer(io: Server, users: Users) {
 			// join room
 			socket.join(`tournament-${tournamentId}`);
 
-			console.log("id : ", playerId);
-			console.log("id players : ", tournament.idPlayers);
-			console.log("pseudo : ", pseudo.pseudo);
+			if (tournament.disconnectTimer) {
+				clearTimeout(tournament.disconnectTimer);
+				tournament.disconnectTimer = null;
+			}
 
-			if (playerId === tournament.idPlayers[0])
-			{
-				tournament.sockets.player1 = socket.id;
-				tournament.pseudoPlayers[0] = pseudo.pseudo;
-			}
-			else if (playerId === tournament.idPlayers[1])
-			{
-				tournament.sockets.player2 = socket.id;
-				tournament.pseudoPlayers[1] = pseudo.pseudo;
-			}
-			else if (playerId === tournament.idPlayers[2])
-			{
-				tournament.sockets.player3 = socket.id;
-				tournament.pseudoPlayers[2] = pseudo.pseudo;
-			}
-			else if (playerId === tournament.idPlayers[3])
-			{
-				tournament.sockets.player4 = socket.id;
-				tournament.pseudoPlayers[3] = pseudo.pseudo;
-			}
-			else
-			{
-				console.log("oupsi");
-				return;
-			}
+			fillSocketTournament(playerId, tournament, socket, pseudo);
 
 			io.to(`tournament-${tournamentId}`).emit("tournamentPlayersUpdate", tournament.idPlayers, tournament.pseudoPlayers);
 
@@ -133,17 +110,16 @@ export function setupGameServer(io: Server, users: Users) {
 
 				console.log("Client disconnected:", socket.id);
 
-				if (tournament.sockets.player1 === socket.id)
-					tournament.sockets.player1 = null;
+				removeSocketTournament(tournament, socket, pseudo);
+				io.to(`tournament-${tournamentId}`).emit("tournamentPlayersUpdate", tournament.idPlayers, tournament.pseudoPlayers);
 
-				if (tournament.sockets.player2 === socket.id)
-					tournament.sockets.player2 = null;
-
-				if (tournament.sockets.player3 === socket.id)
-					tournament.sockets.player3 = null;
-
-				if (tournament.sockets.player4 === socket.id)
-					tournament.sockets.player4 = null;
+				if (!tournament.disconnectTimer) {
+					tournament.disconnectTimer = setTimeout(() => {
+						console.log("Timeout disconnected game : ", tournamentId);
+						io.to(`tournament-${tournament.id}`).emit("noReconnection");
+						tournaments_map.delete(tournamentId);
+					}, 5 * 60 * 1000);
+				}
 
 			});
 		});
@@ -269,4 +245,54 @@ function getPlayer(game: ServerGame, socket: Socket) {
 		return "player2";
 
 	return null;
+}
+
+function fillSocketTournament(playerId: Number, tournament: TournamentInstance, socket: Socket, pseudo: any)
+{
+	if (playerId === tournament.idPlayers[0])
+	{
+		tournament.sockets.player1 = socket.id;
+		tournament.pseudoPlayers[0] = pseudo.pseudo;
+	}
+	else if (playerId === tournament.idPlayers[1])
+	{
+		tournament.sockets.player2 = socket.id;
+		tournament.pseudoPlayers[1] = pseudo.pseudo;
+	}
+	else if (playerId === tournament.idPlayers[2])
+	{
+		tournament.sockets.player3 = socket.id;
+		tournament.pseudoPlayers[2] = pseudo.pseudo;
+	}
+	else if (playerId === tournament.idPlayers[3])
+	{
+		tournament.sockets.player4 = socket.id;
+		tournament.pseudoPlayers[3] = pseudo.pseudo;
+	}
+	else
+	{
+		console.log("oupsi");
+		return;
+	}
+}
+
+function removeSocketTournament(tournament: TournamentInstance, socket: Socket, pseudo: any)
+{
+	if (tournament.sockets.player1 === socket.id)
+		tournament.sockets.player1 = null;
+
+	if (tournament.sockets.player2 === socket.id)
+		tournament.sockets.player2 = null;
+
+	if (tournament.sockets.player3 === socket.id)
+		tournament.sockets.player3 = null;
+
+	if (tournament.sockets.player4 === socket.id)
+		tournament.sockets.player4 = null;
+
+	for (let i = 0; i < 4; i++)
+	{
+		if (tournament.pseudoPlayers[i] == pseudo.pseudo)
+			tournament.pseudoPlayers[i] = "Waiting for player..."
+	}
 }
