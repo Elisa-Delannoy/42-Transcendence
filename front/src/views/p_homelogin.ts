@@ -31,6 +31,10 @@ function smoothScrollTo(targetY: number, duration: number) {
 }
 
 export async function initHomePage() {
+    console.log("dans home");
+    await new Promise(resolve => setTimeout(resolve, 50));
+    const { initSocket } = await import("../socket/socket");
+    initSocket();
 	const btn = document.getElementById("scroll-button") as HTMLButtonElement;
 	const target = document.getElementById("gamepage") as HTMLImageElement;
     btn.addEventListener("click", () => {

@@ -22,12 +22,20 @@ export class GameNetwork {
 
 	private onRoleCallback?: (role: "player1" | "player2") => void;
 
-	constructor(serverUrl: string, gameId: number) {
-		this.socket = io(serverUrl, { transports: ["websocket"] });
+	// constructor(serverUrl: string, gameId: number) {
+	// 	this.socket = io(serverUrl, { transports: ["websocket"] });
 
-		this.socket.on("connect", () => {
+
+		constructor(serverUrl: string, gameId: number) {
+			const { globalSocket } = require("../socket/socket");
+			if (!globalSocket)
+				throw new Error("globalSocket n'est pas initialisé !");
+			this.socket = globalSocket;
+	
+
+		// this.socket.on("connect", () => {
 			this.socket.emit("joinGame", gameId);
-		});
+		// });
 
 		this.socket.on("assignRole", (role: "player1" | "player2") => {
 			this.onRoleCallback?.(role);
@@ -52,7 +60,7 @@ export class GameNetwork {
 		this.socket.on("gameOver", () => {
 			this.onGameOverCallback?.();
 			console.log("Game over, closing socket...");
-			this.socket.close();
+			// this.socket.close();
 		});
 	}
 
@@ -94,6 +102,6 @@ export class GameNetwork {
 
 	disconnect() {
 		this.socket.emit("disconnection");
-		this.socket.disconnect();
+		// this.socket.disconnect();
 	}
 }

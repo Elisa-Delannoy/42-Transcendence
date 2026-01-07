@@ -31,6 +31,7 @@ export async function manageLogin(pseudo: string, password: string, reply: Fasti
 		if (info.twofa_enabled === 0)
 		{
 			const jwtoken = createJWT(info.user_id);
+			console.log(new Date().toISOString(), "token créé");
 			users.updateStatus(info.user_id, "online");
 			const allFriends = await friends.getMyFriends(info.user_id);
 			notification(allFriends, info.user_id);

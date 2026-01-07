@@ -32,6 +32,7 @@ import { navigateTo } from "../front/src/router";
 import { checkTwoFA, disableTwoFA, enableTwoFA, setupTwoFA } from "./routes/twofa/twofa";
 import { oauthStatus } from "./routes/login/oauth.status";
 import { registerGoogle, callbackGoogle } from "./routes/login/oauth.google";
+import { createWebSocket } from "./middleware/socket";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -249,7 +250,8 @@ fastify.get("/api/private/logout", async (request, reply) => {
 const io = new Server(fastify.server, {
 			cors: { origin: "*" }
 		});
-setupGameServer(io, users);
+createWebSocket(io, users);
+// setupGameServer(io, users);
 
 fastify.setNotFoundHandler((request: FastifyRequest, reply: FastifyReply) => {
 	return reply.sendFile("index.html");
@@ -283,15 +285,15 @@ const start = async () => {
 		await users.CreateUserIA();
 		await users.CreateUserGuest();
 
-		// const hashedPasswor= await bcrypt.hash("42", 12);
-		// let hashedPassword = await bcrypt.hash("a", 12);
-		// users.addUser("a", "e@g.c", hashedPassword);
-		// users.addUser("new", "e@g.c", hashedPassword);
-		// users.addUser("ok", "e@g.c", hashedPassword);
-		// users.addUser("b", "e@g.c", hashedPassword);
-		// users.addUser("c", "e@g.c", hashedPassword);
-		// users.addUser("d", "e@g.c", hashedPassword);
-		// users.addUser("42", "42", hashedPasswor);
+		const hashedPasswor= await bcrypt.hash("42", 12);
+		let hashedPassword = await bcrypt.hash("a", 12);
+		users.addUser("a", "e@g.c", hashedPassword);
+		users.addUser("new", "e@g.c", hashedPassword);
+		users.addUser("ok", "e@g.c", hashedPassword);
+		users.addUser("b", "e@g.c", hashedPassword);
+		users.addUser("c", "e@g.c", hashedPassword);
+		users.addUser("d", "e@g.c", hashedPassword);
+		users.addUser("42", "42", hashedPasswor);
 		// friends.addFriendship(5, 6);
 		// friends.addFriendship(4, 5);
 	} catch (err) {
