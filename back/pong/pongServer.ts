@@ -3,7 +3,8 @@ import { applyInput, GameState, resetBall } from "./gameEngine";
 import { ServerGame, games_map, endGame } from "../routes/game/serverGame";
 import { gameInfo } from "../server";
 import { Users } from "../DB/users";
-import { TournamentInstance, tournaments_map } from "../routes/tournament/tournamentInstance";
+import { serverTournament, tournaments_map } from "../routes/tournament/serverTournament";
+import { TournamentState } from "../../front/src/tournament/tournamentNetwork";
 
 export function setupGameServer(io: Server, users: Users) {
 	io.on("connection", (socket) => {
@@ -37,7 +38,7 @@ export function setupGameServer(io: Server, users: Users) {
 				if (!game)
 					return;
 				game.status = "playing";
-				socket.emit("state", serializeForClient(game.state, game.status));
+				socket.emit("state", updateStateGame(game.state, game.status));
 			});
 
 			// Input
@@ -68,8 +69,8 @@ export function setupGameServer(io: Server, users: Users) {
 					game!.sockets.player2 = null;
 
 				game.status = "disconnected";
-				io.to(`game-${gameId}`).emit("state", serializeForClient(game.state, game.status));
-				io.to(`game-${game.id}`).emit("disconnection", serializeForClient(game.state, game.status));
+				io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status));
+				io.to(`game-${game.id}`).emit("disconnection", updateStateGame(game.state, game.status));
 
 				if (!game.disconnectTimer) {
 					game.disconnectTimer = setTimeout(() => {
@@ -99,9 +100,13 @@ export function setupGameServer(io: Server, users: Users) {
 				tournament.disconnectTimer = null;
 			}
 
-			fillSocketTournament(playerId, tournament, socket, pseudo);
+			fillSocketTournament(playerId, tournament, socket, pseudo.pseudo);
 
-			io.to(`tournament-${tournamentId}`).emit("tournamentPlayersUpdate", tournament.idPlayers, tournament.pseudoPlayers);
+			io.to(`tournament-${tournamentId}`).emit("tournamentPlayersUpdate", updateStateTournament(tournament.state));
+			if (playerId == tournament.idPlayers[0])
+			{
+				io.to(`tournament-${tournamentId}`).emit("isCreator", playerId);
+			}
 
 			socket.on("disconnect", () => {
 				let tournament = tournaments_map.get(tournamentId);
@@ -110,9 +115,11 @@ export function setupGameServer(io: Server, users: Users) {
 
 				console.log("Client disconnected:", socket.id);
 
-				removeSocketTournament(tournament, socket, pseudo);
-				io.to(`tournament-${tournamentId}`).emit("tournamentPlayersUpdate", tournament.idPlayers, tournament.pseudoPlayers);
+				removeSocketTournament(tournament, socket);
 
+				io.to(`tournament-${tournamentId}`).emit("tournamentPlayersUpdate", updateStateTournament(tournament.state));
+
+				//disconnect player from tournament after 5 minutes
 				if (!tournament.disconnectTimer) {
 					tournament.disconnectTimer = setTimeout(() => {
 						console.log("Timeout disconnected game : ", tournamentId);
@@ -122,8 +129,24 @@ export function setupGameServer(io: Server, users: Users) {
 				}
 
 			});
+
+			socket.on("startTournament", () => {
+				let tournament = tournaments_map.get(tournamentId);
+				if (!tournament)
+					return;
+				tournament.state.status = "playing";
+				socket.emit("state", updateStateTournament(tournament.state));
+			});
 		});
 	});
+}
+
+function updateStateTournament(state: TournamentState)
+{
+	return {
+		status: state.status,
+		pseudo: { player1: state.pseudo.player1, player2: state.pseudo.player2, player3: state.pseudo.player3, player4: state.pseudo.player4 }
+	};
 }
 
 export function checkForWinner(game: ServerGame, io: Server)
@@ -151,7 +174,7 @@ export function checkForWinner(game: ServerGame, io: Server)
 	}
 }
 
-export function serializeForClient(state: GameState, status: "waiting" | "playing" | "finished" | "countdown" | "disconnected") {
+export function updateStateGame(state: GameState, status: "waiting" | "playing" | "finished" | "countdown" | "disconnected") {
 	return {
 		ball: { x: state.ball.x, y: state.ball.y },
 		paddles: state.paddles,
@@ -178,12 +201,12 @@ function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number,
 		game.status = "countdown";
 		socket.emit("assignRole", "player1");
 
-		io.to(`game-${gameId}`).emit("state", serializeForClient(game.state, game.status));
+		io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status));
 		
 		//countdown starting
-		io.to(`game-${gameId}`).emit("startCountdown", serializeForClient(game.state, game.status));
+		io.to(`game-${gameId}`).emit("startCountdown", updateStateGame(game.state, game.status));
 		//predraw canvas without score to avoid empty screen before countdown
-		socket.emit("predraw", serializeForClient(game.state, game.status));
+		socket.emit("predraw", updateStateGame(game.state, game.status));
 	}
 	else
 	{
@@ -207,7 +230,7 @@ async function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gam
 		role = "player2";
 		game.sockets.player2 = socket.id;
 		game.state.pseudo.player2 = pseudo;
-		io.to(`game-${gameId}`).emit("state", serializeForClient(game.state, game.status));
+		io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status));
 	}
 	else
 	{
@@ -229,12 +252,12 @@ async function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gam
 	if ((game.sockets.player1 && game.idPlayer2 == -1) 
 		|| (game.sockets.player1 && game.sockets.player2 && (game.status === "waiting" || game.status === "disconnected"))) {
 		game.status = "countdown";
-		io.to(`game-${gameId}`).emit("state", serializeForClient(game.state, game.status));
-		io.to(`game-${gameId}`).emit("startCountdown", serializeForClient(game.state, game.status));
+		io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status));
+		io.to(`game-${gameId}`).emit("startCountdown", updateStateGame(game.state, game.status));
 	}
 
 	//predraw canvas without score to avoid empty screen before countdown
-	socket.emit("predraw", serializeForClient(game.state, game.status));
+	socket.emit("predraw", updateStateGame(game.state, game.status));
 }
 
 function getPlayer(game: ServerGame, socket: Socket) {
@@ -247,52 +270,57 @@ function getPlayer(game: ServerGame, socket: Socket) {
 	return null;
 }
 
-function fillSocketTournament(playerId: Number, tournament: TournamentInstance, socket: Socket, pseudo: any)
+function fillSocketTournament(playerId: Number, tournament: serverTournament, socket: Socket, pseudo: string)
 {
 	if (playerId === tournament.idPlayers[0])
 	{
 		tournament.sockets.player1 = socket.id;
-		tournament.pseudoPlayers[0] = pseudo.pseudo;
+		tournament.state.pseudo.player1 = pseudo;
 	}
 	else if (playerId === tournament.idPlayers[1])
 	{
 		tournament.sockets.player2 = socket.id;
-		tournament.pseudoPlayers[1] = pseudo.pseudo;
+		tournament.state.pseudo.player2 = pseudo;
 	}
 	else if (playerId === tournament.idPlayers[2])
 	{
 		tournament.sockets.player3 = socket.id;
-		tournament.pseudoPlayers[2] = pseudo.pseudo;
+		tournament.state.pseudo.player3 = pseudo;
 	}
 	else if (playerId === tournament.idPlayers[3])
 	{
 		tournament.sockets.player4 = socket.id;
-		tournament.pseudoPlayers[3] = pseudo.pseudo;
+		tournament.state.pseudo.player4 = pseudo;
 	}
 	else
 	{
-		console.log("oupsi");
 		return;
 	}
 }
 
-function removeSocketTournament(tournament: TournamentInstance, socket: Socket, pseudo: any)
+function removeSocketTournament(tournament: serverTournament, socket: Socket)
 {
 	if (tournament.sockets.player1 === socket.id)
+	{
 		tournament.sockets.player1 = null;
+		tournament.state.pseudo.player1 = "Waiting for reconnection...";
+	}
 
 	if (tournament.sockets.player2 === socket.id)
+	{
 		tournament.sockets.player2 = null;
+		tournament.state.pseudo.player2 = "Waiting for reconnection...";
+	}
 
 	if (tournament.sockets.player3 === socket.id)
+	{
 		tournament.sockets.player3 = null;
+		tournament.state.pseudo.player3 = "Waiting for reconnection...";
+	}
 
 	if (tournament.sockets.player4 === socket.id)
-		tournament.sockets.player4 = null;
-
-	for (let i = 0; i < 4; i++)
 	{
-		if (tournament.pseudoPlayers[i] == pseudo.pseudo)
-			tournament.pseudoPlayers[i] = "Waiting for player..."
+		tournament.sockets.player4 = null;
+		tournament.state.pseudo.player4 = "Waiting for reconnection...";
 	}
 }

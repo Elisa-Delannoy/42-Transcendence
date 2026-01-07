@@ -30,7 +30,7 @@ import { dashboardInfo } from "./routes/dashboard/dashboard";
 import { request } from "http";
 import { navigateTo } from "../front/src/router";
 import { checkTwoFA, disableTwoFA, enableTwoFA, setupTwoFA } from "./routes/twofa/twofa";
-import { createTournament, displayTournamentList, getIdPlayers, joinTournament } from "./routes/tournament/tournamentInstance";
+import { createTournament, displayTournamentList, getIdPlayers, joinTournament } from "./routes/tournament/serverTournament";
 
 
 export const db = new ManageDB("./back/DB/database.db");

@@ -4447,6 +4447,28 @@ var init_p_profile = __esm({
   }
 });
 
+// front/src/tournament/tournamentInstance.ts
+var TournamentInstance;
+var init_tournamentInstance = __esm({
+  "front/src/tournament/tournamentInstance.ts"() {
+    "use strict";
+    TournamentInstance = class {
+      constructor() {
+        this.currentState = {
+          status: "waiting",
+          pseudo: { player1: "", player2: "", player3: "", player4: "" }
+        };
+      }
+      applyServerState(state) {
+        this.currentState = { ...this.currentState, ...state };
+      }
+      getCurrentState() {
+        return this.currentState;
+      }
+    };
+  }
+});
+
 // front/src/tournament/tournamentNetwork.ts
 var TournamentNetwork;
 var init_tournamentNetwork = __esm({
@@ -4459,8 +4481,11 @@ var init_tournamentNetwork = __esm({
         this.socket.on("connect", () => {
           this.socket.emit("joinTournament", tournamentId);
         });
-        this.socket.on("tournamentPlayersUpdate", (idPlayers, pseudoPlayers) => {
-          this.onStateCallback?.(idPlayers, pseudoPlayers);
+        this.socket.on("tournamentPlayersUpdate", (state) => {
+          this.onStateCallback?.(state);
+        });
+        this.socket.on("isCreator", (playerId) => {
+          this.onCreatorCallback?.(playerId);
         });
         this.socket.on("disconnection", () => {
           this.onDisconnectionCallback?.();
@@ -4469,11 +4494,14 @@ var init_tournamentNetwork = __esm({
       onState(cb) {
         this.onStateCallback = cb;
       }
+      onCreator(cb) {
+        this.onCreatorCallback = cb;
+      }
       onDisconnection(cb) {
         this.onDisconnectionCallback = cb;
       }
-      startGame() {
-        this.socket.emit("startGame");
+      startTournament() {
+        this.socket.emit("startTournament");
       }
       join(gameId, playerId) {
         this.socket.emit("joinTournament", gameId, playerId);
@@ -4493,6 +4521,7 @@ function BracketsView() {
 }
 async function initBrackets(params) {
   const tournamentID = params?.id;
+  const startTournamentButton = document.getElementById("start-button");
   const pseudoP1 = document.getElementById("player1-name");
   const pseudoP2 = document.getElementById("player2-name");
   const pseudoP3 = document.getElementById("player3-name");
@@ -4505,15 +4534,27 @@ async function initBrackets(params) {
   ];
   const id = await genericFetch("/api/private/game/playerinfo");
   const serverUrl = window.location.host;
+  currentTournament = new TournamentInstance();
   net2 = new TournamentNetwork(serverUrl, Number(tournamentID));
   net2.join(Number(tournamentID), Number(id.playerId));
-  net2.onState((idPlayers, pseudoPlayers) => {
-    updateBrackets(idPlayers, pseudoPlayers);
+  net2.onState((state) => {
+    if (!currentTournament)
+      return;
+    currentTournament.applyServerState(state);
+    updatePseudo();
+  });
+  net2.onCreator((playerId) => {
+    if (playerId == id.playerId) {
+      startTournamentButton?.classList.remove("hidden");
+      startTournamentButton?.addEventListener("click", async () => {
+        console.log("Starting tournament!");
+        net2?.startTournament();
+      });
+    }
   });
   async function updateBrackets(idPlayers, pseudoPlayers) {
     for (let i = 0; i < 4; i++) {
       const pseudo = pseudos[i];
-      console.log("pseudo front : ", pseudoPlayers[i]);
       const playerId = Number(idPlayers[i]);
       if (!pseudo) continue;
       if (playerId === 1) {
@@ -4523,18 +4564,32 @@ async function initBrackets(params) {
       }
     }
   }
+  function updatePseudo() {
+    if (currentTournament) {
+      if (pseudoP1)
+        pseudoP1.innerText = currentTournament.getCurrentState().pseudo.player1;
+      if (pseudoP2)
+        pseudoP2.innerText = currentTournament.getCurrentState().pseudo.player2;
+      if (pseudoP3)
+        pseudoP3.innerText = currentTournament.getCurrentState().pseudo.player3;
+      if (pseudoP4)
+        pseudoP4.innerText = currentTournament.getCurrentState().pseudo.player4;
+    }
+  }
 }
 function stopTournament() {
   net2?.disconnect();
   net2 = null;
 }
-var net2;
+var net2, currentTournament;
 var init_p_brackets = __esm({
   "front/src/views/p_brackets.ts"() {
     "use strict";
     init_router();
+    init_tournamentInstance();
     init_tournamentNetwork();
     net2 = null;
+    currentTournament = null;
   }
 });
 

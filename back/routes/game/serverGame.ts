@@ -2,7 +2,7 @@ export const games_map = new Map<number, ServerGame>();
 import { GameInfo } from "../../DB/gameinfo";
 import { GameState, updateBall, updatePaddles } from "../../pong/gameEngine";
 import { simulateAI } from "../../pong/simulateAI";
-import { checkForWinner, serializeForClient } from "../../pong/pongServer";
+import { checkForWinner, updateStateGame } from "../../pong/pongServer";
 import { Server } from "socket.io";
 
 const TICK_RATE = 16;
@@ -72,7 +72,7 @@ export class ServerGame {
 				simulateAI(this.state as any, deltaTime);
 
 			updatePaddles(this.state, deltaTime);
-			this.io.to(`game-${this.id}`).emit("state", serializeForClient(this.state, this.status));
+			this.io.to(`game-${this.id}`).emit("state", updateStateGame(this.state, this.status));
 
 			checkForWinner(this, this.io);
 		}
