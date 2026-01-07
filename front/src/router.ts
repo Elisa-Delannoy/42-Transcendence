@@ -178,7 +178,7 @@ export function initRouter() {
   router();
 }
 
-function popState() {
+export function popState() {
 	const path = window.location.pathname;
 	const publicPath = ["/", "/login", "/register", "/logout"];
 	const toIsPrivate = !publicPath.includes(path);

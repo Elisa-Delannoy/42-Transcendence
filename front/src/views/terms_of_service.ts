@@ -1,3 +1,4 @@
+import { popState } from "../router";
 
 export function TermsOfServiceView(): string
 {
@@ -6,5 +7,9 @@ export function TermsOfServiceView(): string
 
 export function InitTermsOfService()
 {
-
+	const btn = document.getElementById("go-back") as HTMLButtonElement;
+	btn.addEventListener("click", () => {
+		popState();
+		console.log("test");
+	})
 }
