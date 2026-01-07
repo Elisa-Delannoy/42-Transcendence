@@ -22,6 +22,7 @@ import { UpdatePasswordView, initUpdatePassword } from "./views/p_updatepassword
 import { UpdateAvatarView, initUpdateAvatar } from "./views/p_updateavatar";
 import { initOAuthCallback } from "./views/oauth_callback";
 import { InitTermsOfService, TermsOfServiceView } from "./views/terms_of_service";
+import { InitPrivacyPolicy, PriavacyPolicyView } from "./views/privacypolicy";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -31,6 +32,7 @@ const routes = [
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/registerok", view: RegisterValidView},
   { path: "/termsofservice", view: TermsOfServiceView, init: InitTermsOfService},
+  { path: "/privacypolicy", view: PriavacyPolicyView, init: InitPrivacyPolicy},
   { path: "/home", view: homeView, init: initHomePage},
   { path: "/dashboard", view: DashboardView, init: initDashboard },
   { path: "/friends", view: FriendsView, init: initFriends },
@@ -54,6 +56,7 @@ export function navigateTo(url: string) {
 	const state = { from: window.location.pathname };
 	history.pushState(state, "", url);
 	currentPath = url;
+	window.scrollTo(0, 0);
 	router();
 }
 
