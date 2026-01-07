@@ -59,12 +59,20 @@
 
 
 @layer utilities {
-  .scrollbar-none::-webkit-scrollbar {
-    display: none;
-  }
+	.scrollbar-none::-webkit-scrollbar {
+    	display: none;
+  	}
 
-  .scrollbar-none {
-    scrollbar-width: none; /* Firefox */
-  }
+	.scrollbar-none {
+    	scrollbar-width: none; /* Firefox */
+	}
+
+	.scrollbar-custom {
+		scrollbar-width: thin; /* Firefox */ 
+		scrollbar-color: #d97706 #fef3c700; /* thumb / track amber-100/80 */
+	}
+  
+	.scrollbar-custom::-webkit-scrollbar {
+		width: 10px;
+	} 
 }
-

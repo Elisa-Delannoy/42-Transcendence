@@ -1,18 +1,19 @@
-import { navigateTo} from "../router";
+import { loadHeader, navigateTo} from "../router";
 
 
 export function LoginView(): string {
+	loadHeader();
 	return (document.getElementById("loginhtml") as HTMLFormElement).innerHTML;
 }
 
 export async function initLogin()
 {
-	const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
-	if (res.ok)
-	{
-		navigateTo("/home");
-		return;
-	}
+	// const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
+	// if (res.ok)
+	// {
+	// 	navigateTo("/home");
+	// 	return;
+	// }
 	const form = document.getElementById("login-form") as HTMLFormElement;
 	form.addEventListener("submit", async (e) => {
 		e.preventDefault();
@@ -56,7 +57,7 @@ export async function login(username: string, password: string, form: HTMLFormEl
 			return 2;
 		return 1;
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 		return 0;     
 	}
 }

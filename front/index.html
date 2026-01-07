@@ -12,12 +12,14 @@
 	<img src="/src/image/bg-croissant-black.jpg" 
 		alt="bgcroissant"
 		class="absolute -z-10 hidden dark:block object-cover w-full h-screen">
+	<header id="header-container" ></header>
 	<main id="app"></main>
 
 	<script type="module" src="/public/app.js"></script>
 	</body>
 
-	<template id="html">
+
+	<template id="headernotconnect">
 		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 			<a href="/" data-link class="block dark:hidden ml-4">
 				<img src="/src/image/croissant-white.png" alt="croissantw"
@@ -28,6 +30,50 @@
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 		</header>
+	</template>
+
+	<template id="headerconnect">
+		<header id="header" class="relative z-9999 flex w-full pb-2 justify-between h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+			<div class="flex items-center space-x-4">
+			<a href="/home" data-link class="block dark:hidden ml-4">
+				<img src="/src/image/croissant-white.png" alt="croissantw"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			<a href="/home" data-link class="hidden dark:block ml-4">
+				<img src="/src/image/croissant-black.png" alt="croissantd"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			</div>
+
+			<!-- Menu Deroulent -->
+			<div class="mr-10 flex items-center">
+				<a href="/friends" id="notification" data-link class="hidden ml-4">
+				<img src="/src/image/notification.png" alt="notification"
+				class="w-16 duration-200 hover:-translate-y-1 rounded-full mt-3">
+				</a>
+				<input type="checkbox" id="burger" class="peer hidden">
+				<label for="burger" class="cursor-pointer select-none">
+				<div class="flex flex-row">
+					<h1 class="mr-6 text-2xl my-auto" id="pseudo-header"></h1>
+					<div>
+						<span id="status" class="absolute w-4 h-4 rounded-full border-2 border-white"></span>
+						<img class="rounded-full w-20 h-20" id="header-avatar" src="" alt="Your avatar" width="70"/>
+					</div>
+				</div>
+				</label>
+				<nav class="absolute top-28 right-0 bg-white/90 dark:bg-gray-800/90 shadow-lg w-48 rounded-lg p-4 
+						hidden flex-col space-y-3 text-lg font-medium mr-6
+						peer-checked:flex md:hidden duration-300">
+					<a href="/profile" data-link class="hover:text-amber-700 mx-auto w-36">Profile</a>
+					<a href="/dashboard" data-link class="hover:text-amber-700 mx-auto w-36">Dashboard</a>
+					<a href="/friends" data-link class="hover:text-amber-700 mx-auto w-36">Friends</a>
+					<a href="/logout" data-link class="hover:text-amber-700 mx-auto w-36">Logout</a>
+				</nav>
+			</div>
+		</header>
+	</template>
+
+	<template id="html">
 		<main class="flex mx-auto flex-col mt-[10vh] grow">
 			<h1 class="text-4xl md:text-7xl font-bold mx-auto 
 				bg-linear-to-r from-amber-800 via-amber-600 to-orange-500 
@@ -45,17 +91,8 @@
 		</main>
 	</template>
 
+	
 	<template id="loginhtml">
-		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="/src/image/croissant-white.png" alt="croissantw"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="/src/image/croissant-black.png" alt="croissantd"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-		</header>
 		<form id="login-form" class="flex flex-col rounded-lg text-center bg-white ring-4 ring-amber-300 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 min-h-80 mx-auto">
 	 		<h1 class="mt-4 text-amber-900 dark:text-white font-bold text-xl">Welcome Back</h1>
 			<div class="flex flex-col mx-10">
@@ -86,16 +123,6 @@
 	</template>
 		
 	<template id="twofahtml">
-		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="/src/image/croissant-white.png" alt="croissantw"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="/src/image/croissant-black.png" alt="croissantd"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-		</header>
 		<form id="twofa-form" class="flex flex-col rounded-lg text-center bg-white ring-4 ring-amber-300 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 h-52 mx-auto">
 			<div class="mx-10">
 				<h2 class="text-2xl font-bold text-amber-900 dark:text-white my-3">Two-Factor Authentication</h2>		
@@ -107,16 +134,6 @@
 	</template>
 
 	<template id="registerhtml">
-		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="/src/image/croissant-white.png" alt="croissantw"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="/src/image/croissant-black.png" alt="croissantd"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-		</header>
 		<div class="register-container flex flex-col">
 			<form id="register-form" class="flex flex-col rounded-lg text-center ring-4 ring-amber-300 bg-white dark:bg-black/20 backdrop-blur-lg shadow-lg mt-20 w-100 h-128 mx-auto">
 				<h1 class="mt-4 text-amber-900 dark:text-white font-bold text-xl">Registration<br> <span class="opacity-50 text-lg font-normal">Create your account to get started</span></h1>
@@ -174,16 +191,6 @@
 	</template>
 
 	<template id="registerok">
-		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="/src/image/croissant-white.png" alt="croissantw"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="/src/image/croissant-black.png" alt="croissantd"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-		</header>
 		<div class="flex flex-col justify-center">
 			<h1 class="text-amber-600 mt-40 text-2xl text-center mx-auto block">You have been register Successfully !</h1>
 			<a href="/login" data-link class="btn mx-auto mt-20 w-48">Login</a>
@@ -641,7 +648,6 @@
 
 	<template id="homehtml">
 		<div class="w-full h-screen">
-			<header id="header-container"></header>
 			<main class="w-[60%] ml-[5%] mt-40 text-center">
 				<h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mx-auto
 						bg-linear-to-r from-amber-800 via-amber-600 to-orange-500 
@@ -685,38 +691,36 @@
 	</template>
 	
 	<template id="friendshtml">
-
-	<div id="header-container"></div>
-	<div class="flex flex-col h-[87vh]">
-		<div id ="search" class="relative flex flex-col w-1/4 mx-auto justify-center h-[5%]">
+	<div class="flex flex-col h-[calc(100vh-112px)]">
+		<div id ="search" class="relative flex flex-col w-1/4 mx-auto pt-2 justify-center h-[5%]">
 			<input type="text" id="searchInput" placeholder="🔍 Search..." class="text-lg border border-amber-600/50 backdrop-blur-sm rounded-md outline-none focus:ring-2 focus:ring-amber-600/50 focus:border-amber-600/50">
 			<ul id ="members" class="absolute z-50 w-full top-full mx-auto bg-amber-600 rounded-lg"></ul>
 		</div>
-		<div class="flex flex-row items-start h-full">
-			<div class="w-[50%] h-[98%]">
-				<h1 class="relative z-20 font-bold text-xl ml-20 w-32 text-stone-100 bg-amber-900 px-3 rounded">My friends</h1>
-				<section class="bg-amber-100/80 -mt-4 mx-15 flex flex-col ring-2 ring-amber-400 items-center rounded-lg p-4">
-					<div id="friend-list" class="w-[90%] px-1 overflow-y-auto scrollbar-none mb-2">
+		<div class="flex flex-row pt-3 items-start h-[95%]">
+			<div class="w-[50%] h-full">
+				<h1 class="relative z-20 font-bold text-l ml-20 w-28 text-stone-100 bg-amber-900 pl-4 rounded">My friends</h1>
+				<section class="max-h-[97%] bg-amber-100/80 -mt-4 mx-15 flex flex-col ring-2 ring-amber-400 items-center rounded-lg p-4">
+					<div id="friend-list" class="w-[95%] px-1 scrollbar-custom overflow-y-auto mb-2">
 					</div>
 				</section>
 			</div>
-			<div class="flex flex-col w-[50%] h-[98%]">
-				<div class="h-[75%]">
-					<h1 class="relative z-20 font-bold text-xl ml-20 w-52 text-stone-100 bg-amber-900 px-3 rounded">Pending invitations</h1>
-					<section class="bg-amber-100/80 -mt-4 mx-15 flex flex-col ring-2 ring-amber-400 items-center rounded-lg p-4">
-						<div id="pending-list" class="w-[90%] px-1 overflow-y-auto scrollbar-none mb-2">
+			<div class="flex flex-col w-[50%] h-full justify-between">
+				<div class="max-h-[65%]">
+					<h1 class="relative z-20 font-bold text-l ml-8 w-44 text-stone-100 bg-amber-900 pl-4 rounded">Pending invitations</h1>
+					<section class="h-full bg-amber-100/80 ml-2 mr-15 -mt-4 flex flex-col ring-2 ring-amber-400 items-center rounded-lg p-2 z-10">
+						<div id="pending-list" class="w-[95%] px-1 scrollbar-custom overflow-y-auto mb-2">
 						</div>
 					</section>
 				</div>
-				<div class="h-[25%]">
-					<h1 class="relative z-20 font-bold text-xl ml-20 w-96 text-stone-100 bg-amber-900 px-3 rounded">Users you played with and may know</h1>
-					<section class="bg-amber-100/80 -mt-4 mx-15 flex flex-col ring-2 ring-amber-400 items-center rounded-lg relative">
-						<div id="no-opponent" class="hidden items-center">
-							<h1 id="no opponent text" class="mt-4 text-xl text-center font-semibold">Click below to begin a party and meet new users !</h1>
-							<a href="/gameonline" data-link class="btn mt-2 w-24 text-center mb-1">1 VS 1</a>
+				<div class="h-[30%]">
+					<h1 class="relative z-20 font-bold text-l ml-8 w-76 text-stone-100 bg-amber-900 px-3 rounded">Users you played with and may know</h1>
+					<section class="h-[90%] -mt-4 bg-amber-100/80 ml-2 mr-15 flex flex-col ring-2 ring-amber-400 items-center rounded-lg relative">
+						<div id="no-opponent" class="flex flex-col hidden items-center">
+							<h1 id="no opponent text" class="mt-6 text-xl text-center font-semibold text-amber-800">Click below to begin a party and meet new users</h1>
+							<a href="/gameonline" data-link class="btn mt-2 ml-3 w-20 text-center">1 VS 1</a>
 						</div>
-						<div id="opponent" class=" w-full mt-2">
-							<div id="opponent-list" class=" grid grid-cols-1 sm:grid-cols-2 gap-4 w-[100%] px-1 overflow-y-auto scrollbar-none mb-2">
+						<div id="opponent" class="h-full w-full pt-2">
+							<div id="opponent-list" class="h-full grid grid-cols-1 sm:grid-cols-2 w-full scrollbar-custom overflow-y-auto">
 							</div>
 						</div>
 					</section>
@@ -738,23 +742,22 @@
 	</template>
 
 	<template id="myfriends">
-		<div class="flex items-center m-2 justify-between w-full hover:bg-amber-600/20 rounded-sm">
+		<div class="flex items-center justify-between w-full hover:bg-amber-600/20 rounded-sm">
 			<div class="flex flex-row items-center gap-3">
 				<div>
-					<span id="f_status" class="absolute w-4 h-4 rounded-full border-2 border-white"></span>
+					<span id="f_status" class="absolute w-4 h-4 rounded-full"></span>
 					<img id="avatar" class="w-16 h-16 rounded-full my-auto" src="" alt="avatar"></img>
 				</div>
-				<p id="pseudo" class="text-2xl text-amber-800 font-semibold"></p>
+				<p id="pseudo" class="text-l text-amber-800 font-semibold"></p>
 			</div>
-			<div class="flex items-center flex-row">
-				<p id="date-friendship" class="mr-2 italic text-sm text-gray-600"></p>
-				<button id="addordelete" class="bg-amber-700 px-4 py-2 text-white rounded cursor-pointer text-lg"></button>
+			<div class="flex items-center flex-col">
+				<button id="addordelete" class="bg-amber-700 px-2 py-2 text-white rounded cursor-pointer text-sm"></button>
+				<p id="date-friendship" class="mt-4 mr-4 italic text-xs text-gray-600"></p>
 			</div>
 		</div>
 	</template>
 
 	<template id="profilehtml">
-		<div id="header-container"></div>
 		<main class="flex">
 			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
 						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
@@ -827,7 +830,6 @@
 	</template>
 
 	<template id="update-email-html">
-		<div id="header-container"></div>
 		<main class="flex">
 			<div class="bg-[linear-linear(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
 						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
@@ -880,7 +882,6 @@
 	</template>
 
 	<template id="update-username-html">
-		<div id="header-container"></div>
 		<main class="flex">
 			<div class="bg-[linear-linear(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
 						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
@@ -933,7 +934,6 @@
 	</template>
 
 	<template id="update-password-html">
-		<div id="header-container"></div>
 		<main class="flex">
 			<div class="bg-[linear-linear(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
 						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
@@ -993,7 +993,6 @@
 	</template>
 
 	<template id="update-avatar-html">
-		<div id="header-container"></div>
 		<main class="flex">
 			<div class="bg-[linear-linear(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
 						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
@@ -1039,7 +1038,6 @@
 	</template>
 
 	<template id="gamelocalhtml">
-		<div id="header-container"></div>
 		<h1>Local Game</h1>
 		<div class="game-buttons flex justify-center">
 			<button class="btn mx-auto w-32" id="pvp">Player VS Player</button>
@@ -1048,7 +1046,6 @@
 	</template>
 
 	<template id="gameonlinehtml">
-		<div id="header-container"></div>
 		<h1>Online games</h1>
 		<div class="game-buttons flex justify-center">
 			<button class="btn mx-auto w-32" id="create-onlinegame">Create game</button>
@@ -1058,7 +1055,6 @@
 	</template>
 
 	<template id="pongmatchhtml">
-		<div id="header-container"></div>
 		<h1>Quick game</h1>
 
 		<div class="game-container">
@@ -1088,7 +1084,6 @@
 	</template>
 
 	<template id="tournamenthtml">
-		<div id="header-container"></div>
 		<h1 class="text-3xl font-bold text-center mt-6">Tournament Overview</h1>
 		<div class="grid grid-cols-2 gap-4 mt-8 px-6">
 			<div>
@@ -1117,7 +1112,6 @@
 
 
 	<template id="dashboardhtml">
-		<div id="header-container"></div>
 		<div class="flex flex-row">
 			<section class="bg-amber-100/80 mt-5 ml-2 w-[50%] h-[80vh] flex flex-col ring-2 ring-amber-400 items-center rounded-lg">	<h1 class="font-bold text-xl mb-1 text-amber-900">History - 20 last games :</h1>
 				<div id="game-list" class="w-[90%] h-[90%] px-1 overflow-y-auto scrollbar-none mb-2 ring-2

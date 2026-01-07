@@ -276,13 +276,22 @@ const start = async () => {
 		// await friends.deleteFriendTable();
 		await users.createUserTable();
 		// await users.migrateUsersTable();
+		
 		await friends.createFriendTable();
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();
 		await users.CreateUserIA();
 		await users.CreateUserGuest();
-		const hashedPassword = await bcrypt.hash("42", 12);
-		users.addUser("42", "42", hashedPassword);
+
+		// const hashedPasswor= await bcrypt.hash("42", 12);
+		// let hashedPassword = await bcrypt.hash("a", 12);
+		// users.addUser("a", "e@g.c", hashedPassword);
+		// users.addUser("new", "e@g.c", hashedPassword);
+		// users.addUser("ok", "e@g.c", hashedPassword);
+		// users.addUser("b", "e@g.c", hashedPassword);
+		// users.addUser("c", "e@g.c", hashedPassword);
+		// users.addUser("d", "e@g.c", hashedPassword);
+		// users.addUser("42", "42", hashedPasswor);
 		// friends.addFriendship(5, 6);
 		// friends.addFriendship(4, 5);
 	} catch (err) {

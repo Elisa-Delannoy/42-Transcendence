@@ -13,6 +13,7 @@ var __export = (target, all) => {
 
 // front/src/views/home.ts
 function View() {
+  loadHeader();
   return document.getElementById("html").innerHTML;
 }
 async function init() {
@@ -30,14 +31,10 @@ var init_home = __esm({
 
 // front/src/views/login.ts
 function LoginView() {
+  loadHeader();
   return document.getElementById("loginhtml").innerHTML;
 }
 async function initLogin() {
-  const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
-  if (res.ok) {
-    navigateTo("/home");
-    return;
-  }
   const form = document.getElementById("login-form");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -77,7 +74,6 @@ async function login(username, password, form) {
       return 2;
     return 1;
   } catch (err) {
-    console.error(err);
     return 0;
   }
 }
@@ -173,6 +169,7 @@ var init_p_dashboard = __esm({
 
 // front/src/views/register.ts
 function RegisterView() {
+  loadHeader();
   return document.getElementById("registerhtml").innerHTML;
 }
 async function initRegister() {
@@ -238,6 +235,7 @@ function RegisterValidView() {
 var init_register = __esm({
   "front/src/views/register.ts"() {
     "use strict";
+    init_router();
     init_router();
   }
 });
@@ -4518,7 +4516,7 @@ async function myFriends(acceptedFriends) {
   if (!container)
     return;
   if (acceptedFriends.length === 0) {
-    container.innerHTML = `<p class="text-xl italic text-center text-amber-800">No friend yet</p>`;
+    container.innerHTML = `<p class="text-l italic text-center text-amber-800">No friend yet</p>`;
     return;
   }
   acceptedFriends.forEach(async (friend) => {
@@ -4623,7 +4621,7 @@ function toAcceptFriend(friend, li) {
     toDeleteFriend(friend.id, li);
     return button;
   }
-  button.textContent = "Accept invitation";
+  button.textContent = "Accept";
   button.classList.add("hover:bg-amber-800");
   button.addEventListener("click", async () => {
     try {
@@ -4666,7 +4664,7 @@ function pendingFr(pendingFriends) {
   if (!container)
     return;
   if (pendingFriends.length === 0) {
-    container.innerHTML = `<p class="text-xl italic text-center text-amber-800">No pending invitation</p>`;
+    container.innerHTML = `<p class="text-l italic text-center text-amber-800">No pending invitation</p>`;
     return;
   }
   pendingFriends.forEach(async (friend) => {
@@ -4680,13 +4678,14 @@ function pendingFr(pendingFriends) {
     pseudo.textContent = friend.pseudo;
     avatar.src = friend.avatar;
     avatar.alt = `${friend.pseudo}'s avatar`;
-    date.textContent = "Pending since " + new Date(friend.friendship_date).toLocaleDateString();
+    date.textContent = "pending since " + new Date(friend.friendship_date).toLocaleDateString();
     toAcceptFriend(friend, clone);
     item.appendChild(clone);
     container.appendChild(item);
   });
 }
 function youMayKnow(opponent) {
+  console.log(opponent, opponent.length);
   const divNoOpponent = document.getElementById("no-opponent");
   const divOpponent = document.getElementById("opponent");
   if (opponent.length === 0) {
@@ -4730,6 +4729,7 @@ var init_error = __esm({
 
 // front/src/views/twofa.ts
 function towfaView() {
+  loadHeader();
   return document.getElementById("twofahtml").innerHTML;
 }
 async function initTowfa() {
@@ -4995,33 +4995,42 @@ function matchRoute(pathname) {
   return null;
 }
 async function loadHeader() {
-  const response = await fetch("/header.html");
-  const html = await response.text();
+  const result = await getPseudoHeader3();
   const container = document.getElementById("header-container");
-  if (container) {
-    container.innerHTML = html;
-    getPseudoHeader3();
-  }
+  container.innerHTML = "";
+  const templateID = result.logged ? "headerconnect" : "headernotconnect";
+  const template = document.getElementById(templateID);
+  const clone = template.content.cloneNode(true);
+  container.appendChild(clone);
+  if (result.logged)
+    displayPseudoHeader(result);
 }
 async function getPseudoHeader3() {
   try {
-    const result = await genericFetch("/api/private/getpseudoAvStatus", {
+    const res = await fetch("/api/private/getpseudoAvStatus", {
       method: "POST",
       credentials: "include"
     });
-    document.getElementById("pseudo-header").textContent = result.pseudo;
-    const avatar = document.getElementById("header-avatar");
-    const status = document.getElementById("status");
-    avatar.src = result.avatar + "?ts" + Date.now();
-    displayStatus(result, status);
-    const notification = document.getElementById("notification");
-    notification.classList.add("hidden");
-    if (result.notif === true) {
-      notification.classList.remove("hidden");
-    }
+    if (!res.ok)
+      return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false };
+    const result = await res.json();
+    return { logged: true, ...result };
   } catch (err) {
-    console.error(err);
+    return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false };
   }
+}
+function displayPseudoHeader(result) {
+  console.log("test :", result);
+  document.getElementById("pseudo-header").textContent = result.pseudo;
+  const avatar = document.getElementById("header-avatar");
+  const status = document.getElementById("status");
+  avatar.src = result.avatar + "?ts" + Date.now();
+  displayStatus(result, status);
+  const notification = document.getElementById("notification");
+  notification.classList.add("hidden");
+  if (result.notif === true)
+    notification.classList.remove("hidden");
+  return true;
 }
 function displayStatus(info, status) {
   switch (info.web_status) {
@@ -5047,6 +5056,7 @@ function router() {
     return;
   }
   const { route, params } = match;
+  document.querySelector("#header-container").innerHTML;
   if (route.view)
     document.querySelector("#app").innerHTML = route.view(params);
   route.init?.(params);
@@ -5076,15 +5086,15 @@ function popState() {
   const toIsPrivate = !publicPath.includes(path);
   const fromIsPrivate = !publicPath.includes(currentPath);
   if (!history.state.from && fromIsPrivate) {
-    history.replaceState({ from: "/homelogin" }, "", "/homelogin");
-    currentPath = "/homelogin";
+    history.replaceState({ from: "/home" }, "", "/home");
+    currentPath = "/home";
     navigateTo("/logout");
   } else if (!history.state.from && !fromIsPrivate) {
     history.replaceState({ from: "/" }, "", "/");
     currentPath = "/";
   } else if (!toIsPrivate && fromIsPrivate) {
-    history.replaceState({ from: "/homelogin" }, "", "/homelogin");
-    currentPath = "/homelogin";
+    history.replaceState({ from: "/home" }, "", "/home");
+    currentPath = "/home";
   } else
     currentPath = path;
   router();

@@ -1,6 +1,7 @@
-import { navigateTo } from "../router";
+import { loadHeader, navigateTo } from "../router";
 
 export function View(): string {
+	loadHeader();
   return (document.getElementById("html") as HTMLTemplateElement).innerHTML;
 }
 

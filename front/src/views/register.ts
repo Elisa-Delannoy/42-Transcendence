@@ -1,8 +1,10 @@
 import { register } from "module";
 import { navigateTo } from "../router";
+import { loadHeader } from "../router";
 
 
 export function RegisterView(): string {
+	loadHeader();
 	return (document.getElementById("registerhtml") as HTMLTemplateElement).innerHTML;
 }
 
