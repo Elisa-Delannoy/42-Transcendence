@@ -126,9 +126,11 @@ export async function getPseudoHeader(): Promise <PseudoHeaderResponse> {
 			method: "POST",
 			credentials: "include",
 		})
-		if (!res.ok)
-			return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false }
 		const result = await res.json();
+		//if (!res.ok)
+		if (!result.logged)
+			return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false }
+		//const result = await res.json();
 		return {logged: true, ...result};
 	} catch(err) {
 		return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false }

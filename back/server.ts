@@ -106,7 +106,10 @@ fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply)
 // })
 
 fastify.get("/api/checkLogin", async (request, reply) => {
-	return tokenOK(request, reply);
+	//return tokenOK(request, reply);
+	const user = await tokenOK(request, reply);
+	if (!user) return reply.code(200).send({ loggedIn: false });
+	reply.send({ loggedIn: true, user: {id: user.user_id, name: user.pseudo }});
 });
 
 fastify.get("/api/auth/status", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -144,7 +147,10 @@ fastify.post("/api/private/2fa/disable", async (request: FastifyRequest, reply: 
 });
 
 fastify.post("/api/private/getpseudoAvStatus", async (request: FastifyRequest, reply: FastifyReply) => {
-	return { pseudo: request.user?.pseudo, avatar: request.user?.avatar, web_status: request.user?.status, notif: globalThis.notif }
+	if (!request.user)
+		return { logged: false };
+	return {logged: true, pseudo: request.user.pseudo, avatar: request.user.avatar, web_status: request.user.status, notif: globalThis.notif};
+	//return { pseudo: request.user?.pseudo, avatar: request.user?.avatar, web_status: request.user?.status, notif: globalThis.notif }
 });
 
 fastify.post("/api/private/profile", async (request: FastifyRequest, reply: FastifyReply) => {

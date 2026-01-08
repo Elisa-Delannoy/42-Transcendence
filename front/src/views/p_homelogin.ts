@@ -1,6 +1,7 @@
 import { genericFetch, getPseudoHeader, loadHeader } from "../router";
 import { IMyFriends } from "../../../back/DB/friend";
 import { AsyncLocalStorage } from "async_hooks";
+import { navigateTo } from "../router";
 
 export function homeView(): string {
 	loadHeader();
@@ -31,6 +32,14 @@ function smoothScrollTo(targetY: number, duration: number) {
 }
 
 export async function initHomePage() {
+    const res = await fetch("/api/checkLogin", {
+        credentials: "include"
+      });
+      const data = await res.json();   
+      if (!data.loggedIn) {
+        navigateTo("/login");
+        return;
+    }
 	const btn = document.getElementById("scroll-button") as HTMLButtonElement;
 	const target = document.getElementById("gamepage") as HTMLImageElement;
     btn.addEventListener("click", () => {
