@@ -4039,11 +4039,8 @@ var init_gameNetwork = __esm({
     "use strict";
     init_esm5();
     GameNetwork = class {
-      constructor(serverUrl, gameId) {
+      constructor(serverUrl) {
         this.socket = lookup2(serverUrl, { transports: ["websocket"] });
-        this.socket.on("connect", () => {
-          this.socket.emit("joinGame", gameId);
-        });
         this.socket.on("assignRole", (role) => {
           this.onRoleCallback?.(role);
         });
@@ -4086,8 +4083,8 @@ var init_gameNetwork = __esm({
       sendInput(direction, player) {
         this.socket.emit("input", { direction, player });
       }
-      join(gameId, playerId) {
-        this.socket.emit("joinGame", gameId, playerId);
+      join(gameId, playerId, tournamentId) {
+        this.socket.emit("joinGame", gameId, playerId, tournamentId);
       }
       onGameOver(cb) {
         this.onGameOverCallback = cb;
@@ -4158,6 +4155,8 @@ function PongMatchView(params) {
 }
 async function initPongMatch(params) {
   const gameID = params?.id;
+  const paramUrl = new URLSearchParams(window.location.search);
+  const tournamentId = paramUrl.get("tournamentId");
   const replayBtn = document.getElementById("replay-btn");
   const dashboardBtn = document.getElementById("dashboard-btn");
   const pseudoP1 = document.getElementById("player1-name");
@@ -4167,11 +4166,13 @@ async function initPongMatch(params) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      gameId: gameID
+      gameId: gameID,
+      tournamentId
     })
   });
   const { playerId } = res;
   const type = resType.type;
+  console.log("type before : ", type);
   const serverUrl = window.location.host;
   let input1 = "stop";
   let input2 = "stop";
@@ -4181,12 +4182,12 @@ async function initPongMatch(params) {
   if (type == "Local") {
     currentGame.enableLocalMode();
   }
-  net = new GameNetwork(serverUrl, Number(gameID));
+  net = new GameNetwork(serverUrl);
   net.onRole((role) => {
     if (net)
       currentGame?.setNetwork(net, role);
   });
-  net.join(Number(gameID), Number(playerId));
+  net.join(Number(gameID), Number(playerId), Number(tournamentId));
   net.onCountdown(() => {
     let countdown = 4;
     interval = setInterval(() => {
@@ -4273,7 +4274,11 @@ async function initPongMatch(params) {
     if (!currentGame || !renderer)
       return;
     renderer.drawGameOver(currentGame.getCurrentState());
-    if (currentGame.isLocalMode() || type == "AI") {
+    console.log("type : ", type);
+    if (type == "Tournament") {
+      console.log("going back to previous page");
+      history.back();
+    } else if (currentGame.isLocalMode() || type == "AI") {
       replayBtn?.addEventListener("click", async () => {
         navigateTo(`/gamelocal`);
       });
@@ -4478,11 +4483,8 @@ var init_tournamentNetwork = __esm({
     "use strict";
     init_esm5();
     TournamentNetwork = class {
-      constructor(serverUrl, tournamentId) {
+      constructor(serverUrl) {
         this.socket = lookup2(serverUrl, { transports: ["websocket"] });
-        this.socket.on("connect", () => {
-          this.socket.emit("joinTournament", tournamentId);
-        });
         this.socket.on("state", (state) => {
           this.onStateCallback?.(state);
         });
@@ -4541,7 +4543,7 @@ async function initBrackets(params) {
   const id = await genericFetch("/api/private/game/playerinfo");
   const serverUrl = window.location.host;
   currentTournament = new TournamentInstance();
-  net2 = new TournamentNetwork(serverUrl, Number(tournamentID));
+  net2 = new TournamentNetwork(serverUrl);
   net2.join(Number(tournamentID), Number(id.playerId));
   net2.onState((state) => {
     if (!currentTournament)
@@ -4553,7 +4555,6 @@ async function initBrackets(params) {
     if (playerId == id.playerId) {
       startTournamentButton?.classList.remove("hidden");
       startTournamentButton?.addEventListener("click", async () => {
-        console.log("Starting tournament!");
         net2?.startTournament();
         startTournamentButton?.classList.add("hidden");
         playButton?.classList.remove("hidden");
@@ -4563,6 +4564,15 @@ async function initBrackets(params) {
   net2.onDisplayStartButton(() => {
     startTournamentButton?.classList.add("hidden");
     playButton?.classList.remove("hidden");
+    playButton?.addEventListener("click", async () => {
+      const vsAI = true;
+      const { gameId } = await genericFetch("/api/private/tournament/game/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ vsAI, type: "Tournament", tournamentID })
+      });
+      navigateTo(`/pongmatch/${gameId}?tournamentId=${tournamentID}`);
+    });
   });
   function updatePseudo() {
     if (currentTournament) {

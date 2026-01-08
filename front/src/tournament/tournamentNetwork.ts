@@ -14,12 +14,8 @@ export class TournamentNetwork {
 	private onDisconnectionCallback?: () => void;
 	private onDisplayStartButtonCallback?: () => void;
 
-	constructor(serverUrl: string, tournamentId: number) {
+	constructor(serverUrl: string) {
 		this.socket = io(serverUrl, { transports: ["websocket"] });
-
-		this.socket.on("connect", () => {
-			this.socket.emit("joinTournament", tournamentId);
-		});
 
 		this.socket.on("state", (state: TournamentState) => {
 			this.onStateCallback?.(state);

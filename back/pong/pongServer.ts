@@ -10,9 +10,17 @@ export function setupGameServer(io: Server, users: Users) {
 	io.on("connection", (socket) => {
 		console.log("Client connected:", socket.id);
 
-		socket.on("joinGame", async (gameId: number, playerId: number) => {
-			let game = games_map.get(gameId);
-			
+		socket.on("joinGame", async (gameId: number, playerId: number, tournamentId: number) => {
+			let tournament = tournaments_map.get(tournamentId);
+			let game;
+			if (tournament)
+			{
+				game = tournament.games.get(gameId);
+			}
+			else
+			{
+				game = games_map.get(gameId);
+			}
 			if (!game)
 				return;
 
@@ -34,7 +42,16 @@ export function setupGameServer(io: Server, users: Users) {
 
 			//after countdown, match is starting
 			socket.on("startGame", () => {
-				const game = games_map.get(gameId);
+				let tournament = tournaments_map.get(tournamentId);
+				let game;
+				if (tournament)
+				{
+					game = tournament.games.get(gameId);
+				}
+				else
+				{
+					game = games_map.get(gameId);
+				}
 				if (!game)
 					return;
 				game.status = "playing";
@@ -43,7 +60,16 @@ export function setupGameServer(io: Server, users: Users) {
 
 			// Input
 			socket.on("input", ({ direction, player }: { direction: "up" | "down" | "stop", player?: "player1" | "player2" }) => {
-				const game = games_map.get(gameId);
+				let tournament = tournaments_map.get(tournamentId);
+				let game;
+				if (tournament)
+				{
+					game = tournament.games.get(gameId);
+				}
+				else
+				{
+					game = games_map.get(gameId);
+				}
 				if (!game)
 					return;
 
@@ -56,7 +82,16 @@ export function setupGameServer(io: Server, users: Users) {
 
 			// Disconnect
 			socket.on("disconnect", () => {
-				const game = games_map.get(gameId);
+				let tournament = tournaments_map.get(tournamentId);
+				let game;
+				if (tournament)
+				{
+					game = tournament.games.get(gameId);
+				}
+				else
+				{
+					game = games_map.get(gameId);
+				}
 				if (!game)
 					return;
 

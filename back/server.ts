@@ -30,7 +30,7 @@ import { dashboardInfo } from "./routes/dashboard/dashboard";
 import { request } from "http";
 import { navigateTo } from "../front/src/router";
 import { checkTwoFA, disableTwoFA, enableTwoFA, setupTwoFA } from "./routes/twofa/twofa";
-import { createTournament, displayTournamentList, getIdPlayers, joinTournament } from "./routes/tournament/serverTournament";
+import { createTournament, createTournamentGame, displayTournamentList, getIdPlayers, getTournamentGameType, joinTournament } from "./routes/tournament/serverTournament";
 
 
 export const db = new ManageDB("./back/DB/database.db");
@@ -217,8 +217,16 @@ fastify.get("/api/private/game/playerinfo", async (request, reply) => {
 });
 
 fastify.post("/api/private/game/type", async (request, reply) => {
-	const { gameId } = request.body as { gameId: number };
-	const type = getGameType(Number(gameId));
+	const { gameId, tournamentId } = request.body as { gameId: number, tournamentId: number };
+	let type;
+	if (tournamentId)
+	{
+		type = getTournamentGameType(Number(tournamentId), Number(gameId));
+	}
+	else
+	{
+		type = getGameType(Number(gameId));
+	}
 	reply.send({ type });
 });
 
@@ -248,6 +256,20 @@ fastify.post("/api/private/tournament/players", async (request, reply) => {
 	const id = Number(tournamentID);
 	const idPlayers = getIdPlayers(id);
 	return { idPlayers };
+});
+
+fastify.post("/api/private/tournament/game/create", async (request, reply) => {
+	const { localMode, type, tournamentID } = request.body as { localMode: boolean, type: "Local" | "AI" | "Online" | "Tournament", tournamentID: number };
+	const playerId = request.user?.user_id as any;
+	const { vsAI } = request.body as { vsAI: boolean };
+	let gameId: number;
+	console.log(`vsAI is: ${vsAI}`);
+	if (vsAI) {
+		gameId = createTournamentGame(Number(playerId), localMode, type, { vsAI: true }, Number(tournamentID));
+	} else {
+		gameId = createTournamentGame(Number(playerId), localMode, type, { vsAI: false }, Number(tournamentID));
+	}
+	reply.send({ gameId });
 });
 
 fastify.post("/api/private/tournament/add", (req, reply) => {

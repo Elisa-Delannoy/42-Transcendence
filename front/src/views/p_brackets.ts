@@ -28,7 +28,7 @@ export async function initBrackets(params?: any) {
 
 	currentTournament = new TournamentInstance();
 
-	net = new TournamentNetwork(serverUrl, Number(tournamentID));
+	net = new TournamentNetwork(serverUrl);
 
 	net.join(Number(tournamentID), Number(id.playerId));
 
@@ -44,7 +44,6 @@ export async function initBrackets(params?: any) {
 		{
 			startTournamentButton?.classList.remove("hidden");
 			startTournamentButton?.addEventListener("click", async () => {
-				console.log("Starting tournament!");
 				net?.startTournament();
 				startTournamentButton?.classList.add("hidden");
 				playButton?.classList.remove("hidden");
@@ -55,6 +54,15 @@ export async function initBrackets(params?: any) {
 	net.onDisplayStartButton(() => {
 		startTournamentButton?.classList.add("hidden");
 		playButton?.classList.remove("hidden");
+		playButton?.addEventListener("click", async () => {
+				const vsAI = true;
+				const { gameId } = await genericFetch("/api/private/tournament/game/create", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ vsAI, type: "Tournament", tournamentID })
+				});
+				navigateTo(`/pongmatch/${gameId}?tournamentId=${tournamentID}`);
+			});
 	});
 
 	function updatePseudo() {

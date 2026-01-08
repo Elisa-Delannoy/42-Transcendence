@@ -100,6 +100,7 @@ export function createGame(PlayerId: number,  isLocal: boolean, type: "Local" | 
 	if (options.vsAI)
 	{
 		game.idPlayer2 = -1;
+		if (game.type != "Tournament")
 		game.type = "AI";
 	}
 	games_map.set(gameId, game);

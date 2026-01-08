@@ -77,9 +77,22 @@ export async function displayTournamentList()
 	return list;
 }
 
-export function joinTournament(playerId: number, gameId: number)
+export function getTournamentGameType(tournamentId: number, gameId: number)
 {
-	const tournament = tournaments_map.get(gameId);
+	const tournament = tournaments_map.get(tournamentId);
+	let res: string | null = null;
+	if (tournament)
+	{
+		const game = tournament.games.get(gameId);
+		if (game)
+			res = game.type;
+	}
+	return res;
+}
+
+export function joinTournament(playerId: number, tournamentId: number)
+{
+	const tournament = tournaments_map.get(tournamentId);
 	if (tournament)
 	{
 		if (tournament.idPlayers.includes(playerId))
@@ -96,6 +109,31 @@ export function joinTournament(playerId: number, gameId: number)
 		}
 		console.log("This tournament is full.");
 	}
+}
+
+export function createTournamentGame(PlayerId: number,  isLocal: boolean, type: "Local" | "AI" | "Online" | "Tournament", options: { vsAI: boolean }, tournamentID: number): number 
+{
+	const tournament = tournaments_map.get(tournamentID);
+	if (tournament)
+	{
+		let id: number = tournamentID * 1000;
+		while (tournament.games.has(id))
+			id++;
+		const gameId = id;
+		const game = new ServerGame(gameId, isLocal);
+		game.idPlayer1 = PlayerId;
+		game.type = type;
+		if (options.vsAI)
+		{
+			game.idPlayer2 = -1;
+			if (game.type != "Tournament")
+				game.type = "AI";
+		}
+		tournament.games.set(gameId, game);
+		return gameId;
+	}
+	else
+		return -1;
 }
 
 export function getIdPlayers(tournamentId: number) {

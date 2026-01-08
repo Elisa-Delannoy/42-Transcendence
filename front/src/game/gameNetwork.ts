@@ -22,12 +22,8 @@ export class GameNetwork {
 
 	private onRoleCallback?: (role: "player1" | "player2") => void;
 
-	constructor(serverUrl: string, gameId: number) {
+	constructor(serverUrl: string) {
 		this.socket = io(serverUrl, { transports: ["websocket"] });
-
-		this.socket.on("connect", () => {
-			this.socket.emit("joinGame", gameId);
-		});
 
 		this.socket.on("assignRole", (role: "player1" | "player2") => {
 			this.onRoleCallback?.(role);
@@ -84,8 +80,8 @@ export class GameNetwork {
 		this.socket.emit("input", { direction, player });
 	}
 
-	join(gameId: number, playerId: number) {
-		this.socket.emit("joinGame", gameId, playerId);
+	join(gameId: number, playerId: number, tournamentId: number) {
+		this.socket.emit("joinGame", gameId, playerId, tournamentId);
 	}
 
 	onGameOver(cb: () => void) {

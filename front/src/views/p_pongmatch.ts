@@ -15,6 +15,8 @@ export function PongMatchView(params?: any): string {
 
 export async function initPongMatch(params?: any) {
 	const gameID: string = params?.id;
+	const paramUrl = new URLSearchParams(window.location.search);
+	const tournamentId = paramUrl.get("tournamentId");
 	const replayBtn = document.getElementById("replay-btn");
 	const dashboardBtn = document.getElementById("dashboard-btn");
 	const pseudoP1 = document.getElementById("player1-name");
@@ -25,12 +27,14 @@ export async function initPongMatch(params?: any) {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({
-			gameId: gameID
+			gameId: gameID,
+			tournamentId: tournamentId
 		})
 	});
 
 	const { playerId } = res;
 	const type = resType.type;
+	console.log("type before : ", type);
 
 	const serverUrl = window.location.host;
 	let input1: "up" | "down" | "stop" = "stop";
@@ -48,7 +52,7 @@ export async function initPongMatch(params?: any) {
 		currentGame.enableLocalMode();
 	}
 	// 3. Connect to server
-	net = new GameNetwork(serverUrl, Number(gameID));
+	net = new GameNetwork(serverUrl);
 
 	//4. set role (player 1 or 2)
 	net.onRole((role) => {
@@ -57,7 +61,7 @@ export async function initPongMatch(params?: any) {
 	});
 
 	// 5. Join game room
-	net.join(Number(gameID), Number(playerId));
+	net.join(Number(gameID), Number(playerId), Number(tournamentId));
 
 	net.onCountdown(() => {
 		let countdown = 4;
@@ -173,7 +177,13 @@ export async function initPongMatch(params?: any) {
 		if (!currentGame || !renderer)
 			return;
 		renderer.drawGameOver(currentGame.getCurrentState());
-		if (currentGame.isLocalMode() || type == "AI")
+		console.log("type : ", type);
+		if (type == "Tournament")
+		{
+			console.log("going back to previous page");
+			history.back();
+		}
+		else if (currentGame.isLocalMode() || type == "AI")
 		{
 			replayBtn?.addEventListener("click", async () => {
 				navigateTo(`/gamelocal`);
