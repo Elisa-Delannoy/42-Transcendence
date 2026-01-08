@@ -153,3 +153,40 @@ export async function getUpdateStatus(request: FastifyRequest, reply: FastifyRep
 	const updatedUser = await users.updateStatus(request.user!.user_id, status);
 	return reply.status(200).send({ message: "new status", status: updatedUser.status});
 }
+
+// delete user:
+// user need to turn 2fa off, confirm 'DELETE', confirm password
+// -> change pseudo -> deleted_{time}
+// -> change email -> default
+// -> change avatar -> default
+// => user cannot login, 
+export async function deleteUser(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
+	try {
+		const { confirmUser, password } = request.body as any;
+		const id = request.user?.user_id as any;
+		const user = await users.getIDUser(id);
+
+		if (!user)
+			return reply.code(404).send({ message: "User not found!" });
+		if (user.twofa_enabled)
+			return reply.code(400).send({ message: "2FA must be disabled first" });
+		if (confirmUser.toString() !== ("DELETE " + user.pseudo).toString())
+			return reply.code(400).send({ message: "Please confirm the account deletion by writing \"DELETE username\" !" });
+		const isMatch = await bcrypt.compare(password, user.password);
+		if (!isMatch) {
+			return reply.code(400).send({ message: "Wrong password. Please try again!" });
+		}
+
+		const deleted = "deteled_" + (new Date()).getTime().toString()
+		await users.updateUsername(id, deleted);
+		await users.updatePassword(id, "__DELETED_USER__")
+		await users.updateEmail(id, deleted + "@delete.d")
+		await users.updateAvatar(id, "/files/0.png")
+
+		return reply.code(200).send({ message: "Username deleted successfully" });
+
+	} catch (error) {
+    	fastify.log.error(error)
+    	return reply.code(500).send({message: "Internal Server Error"});
+	}
+}

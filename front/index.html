@@ -917,31 +917,77 @@
 					<img class="ring-4 ring-amber-900 rounded-full shadow-xl" id="profile-avatar" src="" alt="Your avatar" width="150">
 				</a>
 				<div class="flex flex-col mt-6">
+
 					<!-- Change Username -->
-					<div class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
+					<div id="update-username" class="flex flex-col ">
+						<button
+							type="button"
+							id="toggle-username"
+							class="hidden btn w-40 mx-auto py-2 block">
+							Update Username
+						</button>
+
+						<div id="update-username-section" class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
 								w-80 ring-1 ring-amber-900 rounded-lg mt-6 p-3">
-						<h2 class="font-bold mb-2 text-center">Change Username</h2>
-						<form id="change-username-form" class="flex flex-col gap-2">
-							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">New Username</h2>
-							<input
-								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
-								type="text"
-								name="new-username"
-								placeholder="new_user_name"
-								required />
-							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">Confirm Password</h2>
-							<input
-								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
-								type="password"
-								name="password"
-								placeholder="••••••••••••"
-								required />
-							<button
-								type="submit" 
-								class="btn w-40 mx-auto mt-20 block">
-								Update Username
-							</button>
-						</form>
+							<h2 class="font-bold mb-2 text-center">Change Username</h2>
+							<form id="change-username-form" class="flex flex-col gap-2">
+								<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">New Username</h2>
+								<input
+									class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+									type="text"
+									name="new-username"
+									placeholder="new_user_name"
+									required />
+								<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">Confirm Password</h2>
+								<input
+									class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+									type="password"
+									name="password"
+									placeholder="••••••••••••"
+									required />
+								<button
+									type="submit" 
+									class="btn w-40 mx-auto mt-20 block">
+									Update Username
+								</button>
+							</form>
+						</div>
+					</div>
+
+					<!-- Delete User -->
+					<div id="delete-user" class="flex flex-col">
+						<button
+							type="button"
+							id="toggle-delete"
+							class="btn w-40 mx-auto block bg-red-600 px-4 py-2 text-white">
+							Delete Account
+						</button>
+
+						<div id="delete-user-section" class="hidden flex flex-col shadow-sm text-red-600 bg-red-300/20
+								w-80 ring-1 ring-red-900 rounded-lg mt-6 p-3">
+							<h2 class="font-bold mb-2 text-center">Delete Account</h2>
+							<form id="delete-user-form" class="flex flex-col gap-2">
+								<h2 class="text-sm text-red-600 dark:text-white mt-3 mb-0.5">Write "DELETE" + "your username"</h2>
+								<input
+									class="rounded-md px-2 py-1 ring-1 ring-red-400"
+									type="text"
+									name="confirm-username"
+									placeholder="DELETE username"
+									required />
+								<h2 class="text-sm text-red-600 dark:text-white mt-3 mb-0.5">Confirm Password</h2>
+								<input
+									class="rounded-md px-2 py-1 ring-1 ring-red-400"
+									type="password"
+									name="password"
+									placeholder="••••••••••••"
+									required />
+								<button
+									type="submit" 
+									class="btn w-40 mx-auto mt-20 block bg-red-600 text-white">
+									Delete Account
+								</button>
+							</form>
+						</div>
 					</div>
 				</div>
 				<div>

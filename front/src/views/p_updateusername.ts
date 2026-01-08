@@ -16,7 +16,35 @@ export async function initUpdateUsername() {
 	(document.getElementById("profile-pseudo") as HTMLElement).textContent = profile.pseudo;
 
 
-  // form change username
+  // toggle logic
+  const usernameBtn = document.getElementById("toggle-username")
+  const deleteBtn = document.getElementById("toggle-delete")
+
+  const usernameSection = document.getElementById("update-username-section")
+  const deleteSection = document.getElementById("delete-user-section")
+
+  const showUsernameSection = () => {
+    usernameBtn?.classList.add('hidden')
+    deleteBtn?.classList.remove('hidden')
+    usernameSection?.classList.remove('hidden')
+    deleteSection?.classList.add('hidden')
+  }
+
+  const showDeleteSection = () => {
+    usernameBtn?.classList.remove('hidden')
+    deleteBtn?.classList.add('hidden')
+    deleteSection?.classList.remove('hidden')
+    usernameSection?.classList.add('hidden')
+  }
+  
+  deleteBtn?.addEventListener('click', showDeleteSection)
+  usernameBtn?.addEventListener('click', showUsernameSection)
+
+  await updateUsername()
+  await deleteUser()
+}
+
+async function updateUsername() {
   const formUsername = document.getElementById("change-username-form") as HTMLFormElement;
   formUsername.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -38,4 +66,28 @@ export async function initUpdateUsername() {
       alert(err.message);
     }
   });
+}
+
+async function deleteUser() {
+  const formDelete = document.getElementById("delete-user-form") as HTMLFormElement;
+  formDelete.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const confirmUser = formDelete["confirm-username"].value;
+    const password = formDelete["password"].value;
+
+    try {
+      await genericFetch("/api/private/updateinfo/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ confirmUser, password })
+      });
+
+      alert("Account deleted successfully!");
+      navigateTo("/logout");
+
+    } catch (err: any) {
+      alert(err.message);
+    }
+  })
 }

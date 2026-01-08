@@ -20,7 +20,7 @@ import multipart from "@fastify/multipart"
 import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always";
 import * as tournamentService from "./routes/tournament/tournament.service";
 import { getProfile } from "./routes/profile/profile";
-import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus } from "./routes/profile/getUpdate";
+import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus, deleteUser } from "./routes/profile/getUpdate";
 import { logout } from "./routes/logout/logout";
 import { setupGameServer } from "./pong/pongServer";
 import { Friends } from "./DB/friend";
@@ -173,6 +173,10 @@ fastify.post("/api/private/updateinfo/password", async (request: FastifyRequest,
 
 fastify.post("/api/private/updateinfo/uploads", async (request, reply) => {
 	await getUploadAvatar(request, reply);
+});
+
+fastify.post("/api/private/updateinfo/delete", async (request, reply) => {
+	await deleteUser(fastify, request, reply);
 });
 
 fastify.post("/api/private/friend", async (request: FastifyRequest, reply: FastifyReply) => {
