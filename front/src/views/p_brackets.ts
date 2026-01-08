@@ -39,7 +39,7 @@ export async function initBrackets(params?: any) {
 		updatePseudo();
 	});
 
-	net.onCreator((playerId: number) => {
+	net.onTournamentHost((playerId: number) => {
 		if (playerId == id.playerId)
 		{
 			startTournamentButton?.classList.remove("hidden");
@@ -51,7 +51,7 @@ export async function initBrackets(params?: any) {
 		}
 	});
 
-	net.onDisplayStartButton(() => {
+	net.onStartTournamentGame(() => {
 		startTournamentButton?.classList.add("hidden");
 		playButton?.classList.remove("hidden");
 		playButton?.addEventListener("click", async () => {

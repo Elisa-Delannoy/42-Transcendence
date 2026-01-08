@@ -4172,7 +4172,6 @@ async function initPongMatch(params) {
   });
   const { playerId } = res;
   const type = resType.type;
-  console.log("type before : ", type);
   const serverUrl = window.location.host;
   let input1 = "stop";
   let input2 = "stop";
@@ -4274,10 +4273,15 @@ async function initPongMatch(params) {
     if (!currentGame || !renderer)
       return;
     renderer.drawGameOver(currentGame.getCurrentState());
-    console.log("type : ", type);
     if (type == "Tournament") {
-      console.log("going back to previous page");
-      history.back();
+      let countdown = 3;
+      interval = setInterval(() => {
+        countdown--;
+        if (countdown < 0) {
+          clearInterval(interval);
+          history.back();
+        }
+      }, 1e3);
     } else if (currentGame.isLocalMode() || type == "AI") {
       replayBtn?.addEventListener("click", async () => {
         navigateTo(`/gamelocal`);
@@ -4488,11 +4492,11 @@ var init_tournamentNetwork = __esm({
         this.socket.on("state", (state) => {
           this.onStateCallback?.(state);
         });
-        this.socket.on("isCreator", (playerId) => {
-          this.onCreatorCallback?.(playerId);
+        this.socket.on("hostTournament", (playerId) => {
+          this.onTournamentHostCallback?.(playerId);
         });
-        this.socket.on("displayStartButton", () => {
-          this.onDisplayStartButtonCallback?.();
+        this.socket.on("startTournamentGame", () => {
+          this.onStartTournamentGameCallback?.();
         });
         this.socket.on("disconnection", () => {
           this.onDisconnectionCallback?.();
@@ -4501,14 +4505,14 @@ var init_tournamentNetwork = __esm({
       onState(cb) {
         this.onStateCallback = cb;
       }
-      onCreator(cb) {
-        this.onCreatorCallback = cb;
+      onTournamentHost(cb) {
+        this.onTournamentHostCallback = cb;
       }
       onDisconnection(cb) {
         this.onDisconnectionCallback = cb;
       }
-      onDisplayStartButton(cb) {
-        this.onDisplayStartButtonCallback = cb;
+      onStartTournamentGame(cb) {
+        this.onStartTournamentGameCallback = cb;
       }
       startTournament() {
         this.socket.emit("startTournament");
@@ -4551,7 +4555,7 @@ async function initBrackets(params) {
     currentTournament.applyServerState(state);
     updatePseudo();
   });
-  net2.onCreator((playerId) => {
+  net2.onTournamentHost((playerId) => {
     if (playerId == id.playerId) {
       startTournamentButton?.classList.remove("hidden");
       startTournamentButton?.addEventListener("click", async () => {
@@ -4561,7 +4565,7 @@ async function initBrackets(params) {
       });
     }
   });
-  net2.onDisplayStartButton(() => {
+  net2.onStartTournamentGame(() => {
     startTournamentButton?.classList.add("hidden");
     playButton?.classList.remove("hidden");
     playButton?.addEventListener("click", async () => {

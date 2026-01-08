@@ -3,7 +3,7 @@ import { Server } from "socket.io";
 import { ServerGame } from "../game/serverGame";
 
 interface TournamentState {
-	status: "waiting" | "playing" | "finished";
+	status: "waiting" | "semifinal" | "final" | "finished";
 	pseudo: { player1: string; player2: string; player3: string; player4: string };
 	finalists: { player1: string; player2: string };
 	champion: { player: string };

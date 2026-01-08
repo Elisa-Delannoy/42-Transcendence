@@ -137,10 +137,12 @@ export function setupGameServer(io: Server, users: Users) {
 
 			fillSocketTournament(playerId, tournament, socket, pseudo.pseudo);
 
+			updateBrackets(tournament);
 			io.to(`tournament-${tournamentId}`).emit("state", updateStateTournament(tournament.state));
 			if (playerId == tournament.idPlayers[0])
 			{
-				io.to(`tournament-${tournamentId}`).emit("isCreator", playerId);
+				if (tournament.state.status === "waiting")
+					io.to(`tournament-${tournamentId}`).emit("hostTournament", playerId);
 			}
 
 			socket.on("disconnect", () => {
@@ -169,20 +171,58 @@ export function setupGameServer(io: Server, users: Users) {
 				let tournament = tournaments_map.get(tournamentId);
 				if (!tournament)
 					return;
-				tournament.state.status = "playing";
+				tournament.state.status = "semifinal";
 				if (tournament.idPlayers[0] === 1)
-					tournament.state.pseudo.player1 = "IA";
+					tournament.state.pseudo.player1 = "AI";
 				if (tournament.idPlayers[1] === 1)
-					tournament.state.pseudo.player2 = "IA";
+					tournament.state.pseudo.player2 = "AI";
 				if (tournament.idPlayers[2] === 1)
-					tournament.state.pseudo.player3 = "IA";
+					tournament.state.pseudo.player3 = "AI";
 				if (tournament.idPlayers[3] === 1)
-					tournament.state.pseudo.player4 = "IA";
+					tournament.state.pseudo.player4 = "AI";
 				io.to(`tournament-${tournamentId}`).emit("state", updateStateTournament(tournament.state));
-				io.to(`tournament-${tournamentId}`).emit("displayStartButton");
+				io.to(`tournament-${tournamentId}`).emit("startTournamentGame");
 			});
 		});
 	});
+}
+
+function updateBrackets(tournament: serverTournament)
+{
+	const id = tournament.id;
+	let gameId = id * 1000;
+	if (tournament.state.status == "semifinal")
+	{
+		const game1 = tournament.games.get(gameId);
+		if (!game1)
+		{
+			console.log("Problem getting game1");
+			return;
+		}
+		tournament.state.finalists.player1 = game1.winner;
+
+		const game2 = tournament.games.get(gameId + 1);
+		if (!game2)
+		{
+			console.log("Problem getting game2");
+			return;
+		}
+		tournament.state.finalists.player2 = game2.winner;
+
+		tournament.state.status = "final";
+	}
+	if (tournament.state.status == "final")
+	{
+		const game3 = tournament.games.get(gameId + 2);
+		if (!game3)
+		{
+			console.log("Problem getting game3");
+			return;
+		}
+
+		tournament.state.champion.player = game3.winner;
+		tournament.state.status = "finished";
+	}
 }
 
 function updateStateTournament(state: TournamentState)
@@ -209,10 +249,12 @@ export function checkForWinner(game: ServerGame, io: Server)
 		game.duration = Math.round(duration * 10) / 10;
 		if (game.state.score.player1 > game.state.score.player2)
 		{
+			game.winner = game.state.pseudo.player1;
 			endGame(game.idPlayer1, game.idPlayer2, game.state.score.player1, game.state.score.player2, game.duration , game.id, gameInfo, game.type);
 		}
 		else
 		{
+			game.winner = game.state.pseudo.player2;
 			endGame(game.idPlayer2, game.idPlayer1, game.state.score.player2, game.state.score.player1, game.duration , game.id, gameInfo, game.type);
 		}
 		io.to(`game-${game.id}`).emit("gameOver");

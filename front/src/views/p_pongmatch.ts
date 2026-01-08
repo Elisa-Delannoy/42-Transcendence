@@ -34,7 +34,6 @@ export async function initPongMatch(params?: any) {
 
 	const { playerId } = res;
 	const type = resType.type;
-	console.log("type before : ", type);
 
 	const serverUrl = window.location.host;
 	let input1: "up" | "down" | "stop" = "stop";
@@ -177,11 +176,16 @@ export async function initPongMatch(params?: any) {
 		if (!currentGame || !renderer)
 			return;
 		renderer.drawGameOver(currentGame.getCurrentState());
-		console.log("type : ", type);
 		if (type == "Tournament")
 		{
-			console.log("going back to previous page");
-			history.back();
+			let countdown = 3;
+			interval = setInterval(() => {
+			countdown--;
+			if (countdown < 0) {
+				clearInterval(interval);
+				history.back();
+			}
+			}, 1000);
 		}
 		else if (currentGame.isLocalMode() || type == "AI")
 		{
