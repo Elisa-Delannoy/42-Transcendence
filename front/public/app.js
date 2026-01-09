@@ -4123,13 +4123,10 @@ __export(socket_exports, {
   initSocket: () => initSocket
 });
 function initSocket() {
-  const token = localStorage.getItem("token");
-  if (!token)
-    return;
-  console.log((/* @__PURE__ */ new Date()).toISOString(), "dans init socket, token socket=", token, "URL socket =", window.location.origin);
   globalSocket = lookup2(window.location.origin, {
     transports: ["websocket"],
-    query: { token }
+    withCredentials: true
+    // query: { token }
   });
   globalSocket.on("connect_error", (err) => {
     console.log("CONNECT ERROR:", err.message);
@@ -4158,19 +4155,11 @@ var init_gameNetwork = __esm({
   "front/src/game/gameNetwork.ts"() {
     "use strict";
     GameNetwork = class {
-<<<<<<< HEAD
       constructor(serverUrl) {
-        this.socket = lookup2(serverUrl, { transports: ["websocket"] });
-=======
-      // constructor(serverUrl: string, gameId: number) {
-      // 	this.socket = io(serverUrl, { transports: ["websocket"] });
-      constructor(serverUrl, gameId) {
         const { globalSocket: globalSocket2 } = (init_socket3(), __toCommonJS(socket_exports));
         if (!globalSocket2)
           throw new Error("globalSocket n'est pas initialis\xE9 !");
         this.socket = globalSocket2;
-        this.socket.emit("joinGame", gameId);
->>>>>>> elisa
         this.socket.on("assignRole", (role) => {
           this.onRoleCallback?.(role);
         });
@@ -4468,6 +4457,9 @@ function smoothScrollTo(targetY, duration) {
 }
 async function initHomePage() {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> elisa
   const res = await fetch("/api/checkLogin", {
     credentials: "include"
   });
@@ -4476,7 +4468,10 @@ async function initHomePage() {
     navigateTo("/login");
     return;
   }
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> elisa
   const { initSocket: initSocket2 } = await Promise.resolve().then(() => (init_socket3(), socket_exports));
   initSocket2();
 >>>>>>> main
@@ -4879,6 +4874,7 @@ var init_logout = __esm({
         method: "GET",
         credentials: "include"
       });
+      localStorage.removeItem("token");
       navigateTo("/login");
     };
   }
@@ -5356,6 +5352,9 @@ var init_p_updateavatar = __esm({
 });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> elisa
 // front/src/views/p_update2fa.ts
 function Update2faView() {
   loadHeader();
@@ -5444,10 +5443,13 @@ var init_p_update2fa = __esm({
   }
 });
 
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 >>>>>>> main
+=======
+>>>>>>> elisa
 // front/src/views/oauth_callback.ts
 async function initOAuthCallback() {
   const res = await fetch("/api/auth/status", {
@@ -5506,9 +5508,12 @@ var init_privacypolicy = __esm({
 });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> elisa
 >>>>>>> main
+=======
+>>>>>>> elisa
 // front/src/router.ts
 function navigateTo(url2) {
   const state = { from: window.location.pathname };
@@ -5550,6 +5555,7 @@ function matchRoute(pathname) {
   return null;
 }
 async function loadHeader() {
+<<<<<<< HEAD
   const result = await getPseudoHeader3();
   const container = document.getElementById("header-container");
   container.innerHTML = "";
@@ -5558,14 +5564,37 @@ async function loadHeader() {
   const clone = template.content.cloneNode(true);
   container.appendChild(clone);
   if (result.logged)
+=======
+  const token = localStorage.getItem("token");
+  let isLogged;
+  let result = null;
+  if (!token)
+    isLogged = false;
+  else {
+    isLogged = true;
+    result = await getPseudoHeader3();
+  }
+  const container = document.getElementById("header-container");
+  container.innerHTML = "";
+  const templateID = isLogged ? "headerconnect" : "headernotconnect";
+  const template = document.getElementById(templateID);
+  const clone = template.content.cloneNode(true);
+  container.appendChild(clone);
+  if (isLogged && result)
+>>>>>>> elisa
     displayPseudoHeader(result);
 }
 async function getPseudoHeader3() {
   try {
+<<<<<<< HEAD
+=======
+    console.log("dans header");
+>>>>>>> elisa
     const res = await fetch("/api/private/getpseudoAvStatus", {
       method: "POST",
       credentials: "include"
     });
+<<<<<<< HEAD
     const result = await res.json();
     if (!result.logged)
       return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false };
@@ -5580,6 +5609,19 @@ function displayPseudoHeader(result) {
 =======
 <<<<<<< HEAD
 =======
+=======
+    console.log("res", res);
+    const result = await res.json();
+    console.log("result", result);
+    if (!result.logged)
+      return { pseudo: "", avatar: "", web_status: "", notif: false };
+    return { logged: true, ...result };
+  } catch (err) {
+    console.log("errror", err);
+    return { pseudo: "", avatar: "", web_status: "", notif: false };
+  }
+}
+>>>>>>> elisa
 function displayPseudoHeader(result) {
 >>>>>>> main
   document.getElementById("pseudo-header").textContent = result.pseudo;
@@ -5594,9 +5636,12 @@ function displayPseudoHeader(result) {
   return true;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> elisa
 >>>>>>> main
+=======
+>>>>>>> elisa
 function displayStatus(info, status) {
   switch (info.web_status) {
     case "online":
@@ -5688,6 +5733,7 @@ var init_router = __esm({
     init_p_updatepassword();
     init_p_updateavatar();
 <<<<<<< HEAD
+<<<<<<< HEAD
     init_p_update2fa();
     init_oauth_callback();
     init_terms_of_service();
@@ -5700,6 +5746,12 @@ var init_router = __esm({
     init_privacypolicy();
 >>>>>>> elisa
 >>>>>>> main
+=======
+    init_p_update2fa();
+    init_oauth_callback();
+    init_terms_of_service();
+    init_privacypolicy();
+>>>>>>> elisa
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
@@ -5707,6 +5759,7 @@ var init_router = __esm({
       { path: "/logout", init: initLogout },
       { path: "/register", view: RegisterView, init: initRegister },
       { path: "/registerok", view: RegisterValidView },
+<<<<<<< HEAD
 <<<<<<< HEAD
       { path: "/termsofservice", view: TermsOfServiceView, init: InitTermsOfService },
       { path: "/privacypolicy", view: PriavacyPolicyView, init: InitPrivacyPolicy },
@@ -5717,6 +5770,10 @@ var init_router = __esm({
       { path: "/privacypolicy", view: PriavacyPolicyView, init: InitPrivacyPolicy },
 >>>>>>> elisa
 >>>>>>> main
+=======
+      { path: "/termsofservice", view: TermsOfServiceView, init: InitTermsOfService },
+      { path: "/privacypolicy", view: PriavacyPolicyView, init: InitPrivacyPolicy },
+>>>>>>> elisa
       { path: "/home", view: homeView, init: initHomePage },
       { path: "/dashboard", view: DashboardView, init: initDashboard },
       { path: "/friends", view: FriendsView, init: initFriends },

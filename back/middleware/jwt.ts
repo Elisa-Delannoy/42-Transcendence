@@ -7,14 +7,14 @@ import { IsDeepStrictEqualOptions } from "util";
 import { io } from "socket.io-client";
 
 dotenv.config({ path: "./back/.env" });
-const secretkey: string = process.env.SECRETKEY as string;
+export const secretkey: string = process.env.SECRETKEY as string;
 const TEMP_JWT_SECRET = process.env.TEMP_JWT_SECRET!;
 
 if (!secretkey)
 	throw new Error("SECRETKEY is missing in .env");
 
-export const createJWT = (id: number): string => {
-	return jwt.sign({ id }, secretkey, { expiresIn: "1h", algorithm: "HS256" });
+export const createJWT = (id: number, pseudo: string, avatar: string): string => {
+	return jwt.sign({ id, pseudo, avatar}, secretkey, { expiresIn: "1h", algorithm: "HS256" });
 }
 
 export const checkAuth = async (token: string): Promise< IUsers | Error> => {
@@ -36,12 +36,12 @@ export const checkAuth = async (token: string): Promise< IUsers | Error> => {
 export const tokenOK = async (request: FastifyRequest, reply: FastifyReply): Promise< IUsers | null> => {
 	const token = request.cookies.token;
 	if (!token) {
-		//reply.code(401).send({ error: "Unauthorized: token is missing"});
+		// reply.code(401).send({ error: "Unauthorized: token is missing"});
 		return null
 	}
 	const user_loged = await checkAuth(token);
 	if (user_loged instanceof Error) {
-		//reply.code(401).send({ error: user_loged.name });
+		// reply.code(401).send({ error: user_loged.name });
 		return null
 	}
 	//reply.code(200);

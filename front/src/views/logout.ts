@@ -5,5 +5,6 @@ export const initLogout = async() => {
 		method: "GET",
 		credentials: "include"
 		});
+	localStorage.removeItem("token");
 	navigateTo("/login");
 }

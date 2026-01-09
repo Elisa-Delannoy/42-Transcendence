@@ -9,7 +9,6 @@ import { IUsers } from "../../DB/users";
 import { notification } from "../friends/friends";
 
 export interface PseudoHeaderResponse {
-	logged : boolean;
 	pseudo: string;
 	avatar: string;
 	web_status: string;
@@ -30,7 +29,7 @@ export async function manageLogin(pseudo: string, password: string, reply: Fasti
 			};
 		if (info.twofa_enabled === 0)
 		{
-			const jwtoken = createJWT(info.user_id);
+			const jwtoken = createJWT(info.user_id, info.pseudo, info.avatar);
 			users.updateStatus(info.user_id, "online");
 			const allFriends = await friends.getMyFriends(info.user_id);
 			notification(allFriends, info.user_id);
