@@ -21,6 +21,11 @@ import { UpdateEmailView, initUpdateEmail } from "./views/p_updateemail";
 import { UpdateUsernameView, initUpdateUsername } from "./views/p_updateusername";
 import { UpdatePasswordView, initUpdatePassword } from "./views/p_updatepassword";
 import { UpdateAvatarView, initUpdateAvatar } from "./views/p_updateavatar";
+import { Update2faView, initUpdate2fa } from "./views/p_update2fa";
+import { initOAuthCallback } from "./views/oauth_callback";
+import { InitTermsOfService, TermsOfServiceView } from "./views/terms_of_service";
+import { InitPrivacyPolicy, PriavacyPolicyView } from "./views/privacypolicy";
+import { PseudoHeaderResponse } from "../../back/routes/login/login";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -29,6 +34,8 @@ const routes = [
   { path: "/logout", init: initLogout},
   { path: "/register", view: RegisterView, init: initRegister},
   { path: "/registerok", view: RegisterValidView},
+  { path: "/termsofservice", view: TermsOfServiceView, init: InitTermsOfService},
+  { path: "/privacypolicy", view: PriavacyPolicyView, init: InitPrivacyPolicy},
   { path: "/home", view: homeView, init: initHomePage},
   { path: "/dashboard", view: DashboardView, init: initDashboard },
   { path: "/friends", view: FriendsView, init: initFriends },
@@ -37,13 +44,14 @@ const routes = [
   { path: "/updateusername", view: UpdateUsernameView, init: initUpdateUsername },
   { path: "/updatepassword", view: UpdatePasswordView, init: initUpdatePassword },
   { path: "/updateavatar", view: UpdateAvatarView, init: initUpdateAvatar },
+  { path: "/update2fa", view:Update2faView, init:initUpdate2fa },
   { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit},
   { path: "/gamelocal", view: GameLocalView, init: GameLocalinit},
   { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
   { path: "/tournament", view: TournamentView},
   { path: "/brackets/:id", view: BracketsView, init: initBrackets, cleanup: stopTournament},
   { path: "/error", view: ErrorView, init:initError},
-
+  { path: "/oauth/callback", init: initOAuthCallback },
 ];
 
 let currentRoute: any = null;
@@ -53,6 +61,7 @@ export function navigateTo(url: string) {
 	const state = { from: window.location.pathname };
 	history.pushState(state, "", url);
 	currentPath = url;
+	window.scrollTo(0, 0);
 	router();
 }
 
@@ -93,23 +102,45 @@ function matchRoute(pathname: string) {
 }
 
 export async function loadHeader() {
-	const response = await fetch('/header.html');
-	const html = await response.text();
-	const container = document.getElementById('header-container');
-	if (container) {
-		container.innerHTML = html;		
-		getPseudoHeader();
+
+	// const response = await fetch('/header.html');
+	// const html = await response.text();
+	// const container = document.getElementById('header-container');
+	// if (container) {
+	// 	container.innerHTML = html;	
+	// 	getPseudoHeader();
+	// }
+	// const logged = await isLogged();
+	const result = await getPseudoHeader();
+	const container = document.getElementById("header-container");
+	container!.innerHTML = "";
+	const templateID = result.logged ? "headerconnect" : "headernotconnect";
+	const template = document.getElementById(templateID) as HTMLTemplateElement
+	const clone = template.content.cloneNode(true);
+	container!.appendChild(clone);
+	if (result.logged)
+		displayPseudoHeader(result);
+}
+
+export async function getPseudoHeader(): Promise <PseudoHeaderResponse> {
+	try {
+		const res = await fetch("/api/private/getpseudoAvStatus", {
+			method: "POST",
+			credentials: "include",
+		})
+		const result = await res.json();
+		//if (!res.ok)
+		if (!result.logged)
+			return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false }
+		//const result = await res.json();
+		return {logged: true, ...result};
+	} catch(err) {
+		return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false }
 	}
 }
 
-export async function getPseudoHeader()
-{
-  try {
-	const result = await genericFetch("/api/private/getpseudoAvStatus", {
-		method: "POST",
-		credentials: "include"
-	});
-	
+export function displayPseudoHeader(result: PseudoHeaderResponse) {
+	console.log("test :", result);
 	document.getElementById("pseudo-header")!.textContent = result.pseudo;
 	const avatar = document.getElementById("header-avatar") as HTMLImageElement;
 	const status = document.getElementById("status") as HTMLImageElement;
@@ -117,12 +148,9 @@ export async function getPseudoHeader()
 	displayStatus(result, status);
 	const notification = document.getElementById("notification") as HTMLImageElement;
 	notification.classList.add("hidden");
-	if (result.notif === true) {
+	if (result.notif === true)
 		notification.classList.remove("hidden");
-	}
-	} catch (err) {
-		console.error(err);
-	}
+	return true;
 }
 
 export function displayStatus(info: any, status: HTMLImageElement): void {
@@ -132,7 +160,7 @@ export function displayStatus(info: any, status: HTMLImageElement): void {
 			break;
 		case "busy": status.classList.add("bg-red-500");
 			break;
-		case "offline": status.classList.add("bg-white");
+		case "offline": status.classList.add("bg-gray-900");
 	}
 	status.title = info.web_status;
 }
@@ -151,6 +179,7 @@ export function router() {
 	}
 
 	const { route, params } = match;
+	document.querySelector("#header-container")!.innerHTML
 	if (route.view)
 		document.querySelector("#app")!.innerHTML = route.view(params);
 	route.init?.(params);
@@ -177,15 +206,15 @@ export function initRouter() {
   router();
 }
 
-function popState() {
+export function popState() {
 	const path = window.location.pathname;
 	const publicPath = ["/", "/login", "/register", "/logout"];
 	const toIsPrivate = !publicPath.includes(path);
 	const fromIsPrivate = !publicPath.includes(currentPath);
 	if (!history.state.from && fromIsPrivate)
 	{
-		history.replaceState({ from: "/homelogin" }, "", "/homelogin");
-		currentPath = "/homelogin";
+		history.replaceState({ from: "/home" }, "", "/home");
+		currentPath = "/home";
 		navigateTo("/logout");
 	}
 	else if (!history.state.from && !fromIsPrivate)
@@ -195,8 +224,8 @@ function popState() {
 	}
 	else if (!toIsPrivate && fromIsPrivate)
 	{
-		history.replaceState( { from: "/homelogin" }, "", "/homelogin");
-		currentPath = "/homelogin";
+		history.replaceState( { from: "/home" }, "", "/home");
+		currentPath = "/home";
 	}
 	else
 		currentPath = path;

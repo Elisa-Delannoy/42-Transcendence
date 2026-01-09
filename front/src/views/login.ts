@@ -1,19 +1,26 @@
-import { navigateTo} from "../router";
+import { loadHeader, navigateTo} from "../router";
 
-let require2FA = false;
 
 export function LoginView(): string {
+	loadHeader();
 	return (document.getElementById("loginhtml") as HTMLFormElement).innerHTML;
 }
 
 export async function initLogin()
 {
+	// const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
+	// if (res.ok)
+	// {
+	// 	navigateTo("/home");
+	// 	return;
+	// }
 	const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
-	if (res.ok)
-	{
-		navigateTo("/home");
+	const data = await res.json();
+
+    if (data.loggedIn) {
+        navigateTo("/home");
 		return;
-	}
+    }
 	const form = document.getElementById("login-form") as HTMLFormElement;
 	form.addEventListener("submit", async (e) => {
 		e.preventDefault();
@@ -25,6 +32,12 @@ export async function initLogin()
 	if (success == 1)
 		navigateTo("/home");
     });
+
+	// Google OAuth
+	const googleBtn = document.getElementById("google-login-btn");
+	googleBtn?.addEventListener("click", () => {
+		window.location.href = "/api/oauth/google";
+	});
 }
 
 export async function login(username: string, password: string, form: HTMLFormElement): Promise<number> {
@@ -51,7 +64,7 @@ export async function login(username: string, password: string, form: HTMLFormEl
 			return 2;
 		return 1;
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 		return 0;     
 	}
 }

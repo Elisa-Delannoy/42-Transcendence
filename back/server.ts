@@ -20,7 +20,7 @@ import multipart from "@fastify/multipart"
 import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always";
 import * as tournamentService from "./routes/tournament/tournament.service";
 import { getProfile } from "./routes/profile/profile";
-import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus } from "./routes/profile/getUpdate";
+import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus, deleteUser } from "./routes/profile/getUpdate";
 import { logout } from "./routes/logout/logout";
 import { setupGameServer } from "./pong/pongServer";
 import { Friends } from "./DB/friend";
@@ -32,6 +32,9 @@ import { navigateTo } from "../front/src/router";
 import { checkTwoFA, disableTwoFA, enableTwoFA, setupTwoFA } from "./routes/twofa/twofa";
 import { createTournament, createTournamentGame, displayTournamentList, getIdPlayers, getTournamentGameType, joinTournament, joinTournamentGame } from "./routes/tournament/serverTournament";
 
+import { oauthStatus } from "./routes/login/oauth.status";
+import { registerGoogle, callbackGoogle } from "./routes/login/oauth.google";
+import { UpdatePasswordView } from "../front/src/views/p_updatepassword";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -105,7 +108,22 @@ fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply)
 // })
 
 fastify.get("/api/checkLogin", async (request, reply) => {
-	return tokenOK(request, reply);
+	//return tokenOK(request, reply);
+	const user = await tokenOK(request, reply);
+	if (!user) return reply.code(200).send({ loggedIn: false });
+	reply.send({ loggedIn: true, user: {id: user.user_id, name: user.pseudo }});
+});
+
+fastify.get("/api/auth/status", async (request: FastifyRequest, reply: FastifyReply) => {
+	return oauthStatus(request, reply);
+});
+
+fastify.get("/api/oauth/google", async (request: FastifyRequest, reply: FastifyReply) => {
+	return await registerGoogle(request, reply);
+});
+
+fastify.get("/api/oauth/google/callback", async (request: FastifyRequest, reply: FastifyReply) => {
+	return await callbackGoogle(request, reply);
 });
 
 fastify.post("/api/register", async (request, reply) => {
@@ -131,7 +149,10 @@ fastify.post("/api/private/2fa/disable", async (request: FastifyRequest, reply: 
 });
 
 fastify.post("/api/private/getpseudoAvStatus", async (request: FastifyRequest, reply: FastifyReply) => {
-	return { pseudo: request.user?.pseudo, avatar: request.user?.avatar, web_status: request.user?.status, notif: globalThis.notif }
+	if (!request.user)
+		return { logged: false };
+	return {logged: true, pseudo: request.user.pseudo, avatar: request.user.avatar, web_status: request.user.status, notif: globalThis.notif};
+	//return { pseudo: request.user?.pseudo, avatar: request.user?.avatar, web_status: request.user?.status, notif: globalThis.notif }
 });
 
 fastify.post("/api/private/profile", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -160,6 +181,10 @@ fastify.post("/api/private/updateinfo/password", async (request: FastifyRequest,
 
 fastify.post("/api/private/updateinfo/uploads", async (request, reply) => {
 	await getUploadAvatar(request, reply);
+});
+
+fastify.post("/api/private/updateinfo/delete", async (request, reply) => {
+	await deleteUser(fastify, request, reply);
 });
 
 fastify.post("/api/private/friend", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -322,12 +347,22 @@ const start = async () => {
 		// await friends.deleteFriendTable();
 		await users.createUserTable();
 		// await users.migrateUsersTable();
+		
 		await friends.createFriendTable();
 		await gameInfo.createGameInfoTable();
 		await tournament.createTournamentTable();
 		await users.CreateUserIA();
 		await users.CreateUserGuest();
-		// const hashedPassword = await bcrypt.hash("42", 12);
+		// const hashedPasswor= await bcrypt.hash("42", 12);
+		// let hashedPassword = await bcrypt.hash("a", 12);
+		// users.addUser("a", "e@g.c", hashedPassword);
+		// users.addUser("new", "e@g.c", hashedPassword);
+		// users.addUser("ok", "e@g.c", hashedPassword);
+		// users.addUser("b", "e@g.c", hashedPassword);
+		// users.addUser("c", "e@g.c", hashedPassword);
+		// users.addUser("d", "e@g.c", hashedPassword);
+		// users.addUser("42", "42", hashedPasswor);
+		const hashedPassword = await bcrypt.hash("42", 12);
 		// users.addUser("42", "42", hashedPassword);
 		// friends.addFriendship(5, 6);
 		// friends.addFriendship(4, 5);

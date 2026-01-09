@@ -1,10 +1,10 @@
 import { METHODS } from "http";
-import { genericFetch, navigateTo } from "../router";
+import { genericFetch, loadHeader, navigateTo } from "../router";
 import { Result } from "ethers";
-
 
 export function towfaView()
 {
+	loadHeader();
 	return (document.getElementById("twofahtml") as HTMLTemplateElement).innerHTML;
 }
 

@@ -8,16 +8,18 @@
 	<body>
 	<img src="/src/image/bg-croissant-white.jpg" 
 		alt="bgcroissant"
-		class="absolute block dark:hidden -z-10 object-cover w-full h-screen">
+		class="fixed inset-0 block dark:hidden -z-10 object-cover w-full h-screen">
 	<img src="/src/image/bg-croissant-black.jpg" 
 		alt="bgcroissant"
-		class="absolute -z-10 hidden dark:block object-cover w-full h-screen">
+		class="fixed inset-0 -z-10 hidden dark:block object-cover w-full h-screen">
+	<header id="header-container" ></header>
 	<main id="app"></main>
 
 	<script type="module" src="/public/app.js"></script>
 	</body>
 
-	<template id="html">
+
+	<template id="headernotconnect">
 		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 			<a href="/" data-link class="block dark:hidden ml-4">
 				<img src="/src/image/croissant-white.png" alt="croissantw"
@@ -28,6 +30,50 @@
 					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 		</header>
+	</template>
+
+	<template id="headerconnect">
+		<header id="header" class="relative z-9999 flex w-full pb-2 justify-between h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
+			<div class="flex items-center space-x-4">
+			<a href="/home" data-link class="block dark:hidden ml-4">
+				<img src="/src/image/croissant-white.png" alt="croissantw"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			<a href="/home" data-link class="hidden dark:block ml-4">
+				<img src="/src/image/croissant-black.png" alt="croissantd"
+				class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+			</a>
+			</div>
+
+			<!-- Menu Deroulent -->
+			<div class="mr-10 flex items-center">
+				<a href="/friends" id="notification" data-link class="hidden ml-4">
+				<img src="/src/image/notification.png" alt="notification"
+				class="w-16 duration-200 hover:-translate-y-1 rounded-full mt-3">
+				</a>
+				<input type="checkbox" id="burger" class="peer hidden">
+				<label for="burger" class="cursor-pointer select-none">
+				<div class="flex flex-row">
+					<h1 class="mr-6 text-2xl my-auto" id="pseudo-header"></h1>
+					<div>
+						<span id="status" class="absolute w-4 h-4 rounded-full border-2 border-white"></span>
+						<img class="rounded-full w-20 h-20" id="header-avatar" src="" alt="Your avatar" width="70"/>
+					</div>
+				</div>
+				</label>
+				<nav class="absolute top-28 right-0 bg-white/90 dark:bg-gray-800/90 shadow-lg w-48 rounded-lg p-4 
+						hidden flex-col space-y-3 text-lg font-medium mr-6
+						peer-checked:flex md:hidden duration-300">
+					<a href="/profile" data-link class="hover:text-amber-700 mx-auto w-36">Profile</a>
+					<a href="/dashboard" data-link class="hover:text-amber-700 mx-auto w-36">Dashboard</a>
+					<a href="/friends" data-link class="hover:text-amber-700 mx-auto w-36">Friends</a>
+					<a href="/logout" data-link class="hover:text-amber-700 mx-auto w-36">Logout</a>
+				</nav>
+			</div>
+		</header>
+	</template>
+
+	<template id="html">
 		<main class="flex mx-auto flex-col mt-[10vh] grow">
 			<h1 class="text-4xl md:text-7xl font-bold mx-auto 
 				bg-linear-to-r from-amber-800 via-amber-600 to-orange-500 
@@ -45,18 +91,9 @@
 		</main>
 	</template>
 
+	
 	<template id="loginhtml">
-		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="/src/image/croissant-white.png" alt="croissantw"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="/src/image/croissant-black.png" alt="croissantd"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-		</header>
-		<form id="login-form" class="flex flex-col rounded-lg text-center bg-white ring-4 ring-amber-300 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 h-80 mx-auto">
+		<form id="login-form" class="flex flex-col rounded-lg text-center bg-white ring-4 ring-amber-300 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 min-h-80 mx-auto">
 	 		<h1 class="mt-4 text-amber-900 dark:text-white font-bold text-xl">Welcome Back</h1>
 			<div class="flex flex-col mx-10">
 				<div class="items-start text-start">
@@ -74,20 +111,18 @@
 			</div>
 			<button type="submit" class="btn mx-auto w-40 justify-end">Log in</button>
 			<a class="mt-1 text-amber-900 dark:text-white hover:underline text-sm" href="/register" data-link>Create account ?</a>
+			<div class="flex items-center gap-2 mx-10 my-2 text-sm text-gray-500">
+				<hr class="flex-1 border-gray-300" />
+				<span>or</span>
+				<hr class="flex-1 border-gray-300" />
+			</div>
+			<button type="button" id="google-login-btn" class="flex items-center justify-center mx-auto w-60 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-black/30">
+				<img src="/src/image/google-icon.svg" class="h-10" />
+			</button>
 		</form>
 	</template>
 		
 	<template id="twofahtml">
-		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="/src/image/croissant-white.png" alt="croissantw"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="/src/image/croissant-black.png" alt="croissantd"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-		</header>
 		<form id="twofa-form" class="flex flex-col rounded-lg text-center bg-white ring-4 ring-amber-300 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 h-52 mx-auto">
 			<div class="mx-10">
 				<h2 class="text-2xl font-bold text-amber-900 dark:text-white my-3">Two-Factor Authentication</h2>		
@@ -99,18 +134,8 @@
 	</template>
 
 	<template id="registerhtml">
-		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="/src/image/croissant-white.png" alt="croissantw"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="/src/image/croissant-black.png" alt="croissantd"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-		</header>
 		<div class="register-container flex flex-col">
-			<form id="register-form" class="flex flex-col rounded-lg text-center ring-4 ring-amber-300 bg-white dark:bg-black/20 backdrop-blur-lg shadow-lg mt-20 w-100 h-120 mx-auto">
+			<form id="register-form" class="flex flex-col rounded-lg text-center ring-4 ring-amber-300 bg-white dark:bg-black/20 backdrop-blur-lg shadow-lg mt-20 w-100 h-128 mx-auto">
 				<h1 class="mt-4 text-amber-900 dark:text-white font-bold text-xl">Registration<br> <span class="opacity-50 text-lg font-normal">Create your account to get started</span></h1>
 				<div class="flex flex-col mx-10">
 					<div class="items-start text-start">
@@ -137,6 +162,21 @@
 							type="password" name="confirm-password" placeholder="••••••••" required />
 						<p class="text-red-600 text-xs mt-1 text-left block" id="confirm-password-message"> </p>
 					</div>
+					<div class="items-start text-start">
+						<input
+							type="checkbox" id="accept-terms" name="accept-terms" required class="mt-3"
+						/>
+						<label for="accept-terms" class="text-xs text-gray-700">
+							I agree to the
+							<a href="/termsofservice" target="_top" data-link class="text-amber-600 underline hover:text-amber-800">
+								Terms of Service
+							</a>.
+							and the
+							<a href="/privacypolicy" target="_top" data-link class="text-amber-600 underline hover:text-amber-800">
+								Privacy Policy
+							</a>
+						</label>
+					</div>
 				</div>
 				<button class="btn mx-auto w-40 justify-end" type="submit">Register</button>
 				<a class="mt-1 text-amber-900 dark:text-white hover:underline text-sm" href="/login" data-link>Already registered ?</a>
@@ -151,25 +191,463 @@
 	</template>
 
 	<template id="registerok">
-		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
-			<a href="/" data-link class="block dark:hidden ml-4">
-				<img src="/src/image/croissant-white.png" alt="croissantw"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-			<a href="/" data-link class="hidden dark:block ml-4">
-				<img src="/src/image/croissant-black.png" alt="croissantd"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
-			</a>
-		</header>
 		<div class="flex flex-col justify-center">
 			<h1 class="text-amber-600 mt-40 text-2xl text-center mx-auto block">You have been register Successfully !</h1>
 			<a href="/login" data-link class="btn mx-auto mt-20 w-48">Login</a>
 		</div>
 	</template>
 
+	<template id="terms-of-service">
+		<div class="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-yellow-50">
+			<header class="bg-linear-to-r from-amber-600 to-amber-500 text-white">
+				<div class="max-w-4xl mx-auto px-6 py-16">
+					<div class="flex items-center gap-6">
+						<div class="w-24 h-24 rounded-full overflow-hidden border-4 border-amber-100 shadow-lg">
+							<img
+								src="/src/image/croissant-white.png"
+								alt="Croissant"
+								class="w-full h-full object-cover"
+							/>
+						</div>
+						<div>
+							<h1 class="text-4xl font-bold mb-2">Terms of Service</h1>
+							<p class="text-amber-100">Last updated: January 5, 2026</p>
+						</div>
+					</div>
+				</div>
+			</header>
+			<main class="max-w-4xl mx-auto px-6 py-6">
+				<div class="bg-white rounded-2xl shadow-xl border border-amber-200 overflow-hidden">
+					<div class="h-2 bg-linear-to-r from-amber-400 via-orange-400 to-yellow-400"></div>
+					
+					<div class="p-8 md:p-12 space-y-8">
+						<section class="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg">
+						<p class="text-gray-700 leading-relaxed">
+							Welcome! By accessing our service, you agree to comply with these terms of service.
+							Please read them carefully before continuing.
+						</p>
+						</section>
+
+						
+						<section>
+						<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+							<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">1</span>
+							Acceptance of the Terms
+						</h2>
+						<div class="pl-11 space-y-3 text-gray-700">
+							<p>
+							By using our platform, you acknowledge that you have read, understood, and accepted all
+							of these terms of service as well as our privacy policy.
+							</p>
+							<p>
+							If you do not accept these terms, please do not use our services.
+							</p>
+						</div>
+						</section>
+
+						
+						<section>
+						<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+							<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">2</span>
+							Use of the Service
+						</h2>
+						<div class="pl-11 space-y-4 text-gray-700">
+							<p>You agree to:</p>
+							<ul class="space-y-2 list-none">
+							<li class="flex items-start gap-3">
+								<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+								<span>Provide accurate and up-to-date information during registration</span>
+							</li>
+							<li class="flex items-start gap-3">
+								<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+								<span>Maintain the confidentiality of your login credentials</span>
+							</li>
+							<li class="flex items-start gap-3">
+								<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+								<span>Use the service only for lawful and compliant purposes</span>
+							</li>
+							<li class="flex items-start gap-3">
+								<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+								<span>Not attempt to gain unauthorized access to our systems</span>
+							</li>
+							</ul>
+						</div>
+						</section>
+
+						
+						<section>
+						<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+							<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">3</span>
+							Intellectual Property
+						</h2>
+						<div class="pl-11 space-y-3 text-gray-700">
+							<p>
+							All content available on this platform, including but not limited to texts, images,
+							graphics, logos, and software, is protected by intellectual property laws.
+							</p>
+							<p>
+							Any unauthorized reproduction, distribution, or use is strictly prohibited.
+							</p>
+						</div>
+						</section>
+
+						
+						<section>
+						<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+							<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">4</span>
+							Limitation of Liability
+						</h2>
+						<div class="pl-11 space-y-3 text-gray-700">
+							<p>
+							The service is provided "as is" without any warranty of any kind. We cannot guarantee that
+							the service will be uninterrupted, secure, or error-free.
+							</p>
+							<p>
+							We disclaim any liability for direct, indirect, incidental, or consequential damages
+							resulting from the use or inability to use our services.
+							</p>
+						</div>
+						</section>
+
+						
+						<section>
+						<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+							<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">5</span>
+							Changes to the Terms
+						</h2>
+						<div class="pl-11 space-y-3 text-gray-700">
+							<p>
+							We reserve the right to modify these terms at any time. Changes will take effect as soon
+							as they are published on this page.
+							</p>
+							<p>
+							It is your responsibility to review these terms regularly to stay informed of any
+							updates.
+							</p>
+						</div>
+						</section>
+
+						
+						<section>
+						<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+							<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">6</span>
+							Termination
+						</h2>
+						<div class="pl-11 space-y-3 text-gray-700">
+							<p>
+							We may suspend or terminate your access to the service at any time, with or without notice,
+							in case of a violation of these terms.
+							</p>
+							<p>
+							You may also stop using the service at any time by deleting your account.
+							</p>
+						</div>
+						</section>
+
+						
+						<section>
+						<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+							<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">7</span>
+							Applicable Law
+						</h2>
+						<div class="pl-11 space-y-3 text-gray-700">
+							<p>
+							These terms are governed by French law. Any dispute relating to their interpretation or
+							execution falls under the exclusive jurisdiction of French courts.
+							</p>
+						</div>
+						</section>
+
+						<section class="bg-linear-to-r from-amber-100 to-orange-100 p-6 rounded-lg border border-amber-300">
+						<h2 class="text-2xl font-bold text-amber-900 mb-4">Contact</h2>
+						<p class="text-gray-700 mb-4">
+							For any questions regarding these terms of service, please feel free to contact us:
+						</p>
+						<div class="space-y-2 text-gray-700">
+							<p><strong class="text-amber-800">Email:</strong> legal@example.com</p>
+							<p><strong class="text-amber-800">Phone:</strong> +33 1 23 45 67 89</p>
+							<p><strong class="text-amber-800">Address:</strong> 123 Bakery Street, 75001 Paris, France</p>
+						</div>
+						</section>
+					</div>
+					<div class="h-2 bg-linear-to-r from-yellow-400 via-orange-400 to-amber-400"></div>
+				</div>
+				<footer class="text-center">
+					<div class="flex justify-center mb-6">
+						<button id="go-back" class="btn w-20 mr-4">
+							← Back
+						</button>
+						<a href="/privacypolicy" data-link target="_top" class="px-6 py-3.5 mt-10 bg-linear-to-r from-amber-500 to-orange-500 text-center text-white font-semibold rounded-full shadow-lg hover:shadow-xl hover:from-amber-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105">
+							Privacy Policy →
+						</a>
+					</div>
+					<p class="text-sm text-gray-600">
+						© 2026 All rights reserved. Made with ❤️ and croissants 🥐
+					</p>
+				</footer>
+			</main>
+		</div>
+	</template>
+
+	<template id="privacy-policy">
+		<div class="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-yellow-50">
+			<header class="bg-linear-to-r from-amber-600 to-amber-500 text-white">
+				<div class="max-w-4xl mx-auto px-6 py-16">
+					<div class="flex items-center gap-6">
+						<div class="w-24 h-24 rounded-full overflow-hidden border-4 border-amber-100 shadow-lg">
+							<img
+								src="/src/image/croissant-white.png"
+								alt="Croissant"
+								class="w-full h-full object-cover"
+							/>
+						</div>
+						<div>
+							<h1 class="text-4xl font-bold mb-2">Privacy Policy</h1>
+							<p class="text-amber-100">Last updated: January 5, 2026</p>
+						</div>
+					</div>
+				</div>
+			</header>
+			<main class="max-w-4xl mx-auto px-6 py-6">
+				<div class="bg-white rounded-2xl shadow-xl border border-amber-200 overflow-hidden">
+					<div class="h-2 bg-linear-to-r from-amber-400 via-orange-400 to-yellow-400"></div>
+					
+					<div class="p-8 md:p-12 space-y-8">
+						<section class="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg">
+						<p class="text-gray-700 leading-relaxed">
+							We place great importance on protecting your personal data. This policy explains how we collect,
+							use, and protect your information.
+						</p>
+						</section>
+
+						<section>
+							<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+								<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">1</span>
+								Collected Information
+							</h2>
+							<div class="pl-11 space-y-4 text-gray-700">
+								<p>We collect the following types of information:</p>
+								<ul class="space-y-2 list-none">
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span><strong>Identification information:</strong> name, email address, phone number</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span><strong>Connection data:</strong> IP address, browser type, visited pages</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span><strong>Usage data:</strong> interactions with our service, preferences</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span><strong>Cookies:</strong> data stored to improve your experience</span>
+								</li>
+								</ul>
+							</div>
+						</section>
+
+						<section>
+							<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+								<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">2</span>
+								Data Usage
+							</h2>
+							<div class="pl-11 space-y-4 text-gray-700">
+								<p>We use your information to:</p>
+								<ul class="space-y-2 list-none">
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span>Provide and improve our services</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span>Personalize your user experience</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span>Communicate with you regarding your account and our services</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span>Analyze service usage to optimize it</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span>Ensure security and prevent fraud</span>
+								</li>
+								</ul>
+							</div>
+						</section>
+						
+						<section>
+							<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+								<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">3</span>
+								Data Sharing
+							</h2>
+							<div class="pl-11 space-y-3 text-gray-700">
+								<p>
+								We never sell your personal data. We may share your information only in the following cases:
+								</p>
+								<ul class="space-y-2 list-none">
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span>With service providers who help us operate our platform</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span>When required by law or to protect our legal rights</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span>In the event of a merger, acquisition, or asset sale</span>
+								</li>
+								</ul>
+							</div>
+						</section>
+
+						<section>
+							<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+								<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">4</span>
+								Data Protection
+							</h2>
+							<div class="pl-11 space-y-3 text-gray-700">
+								<p>
+								We implement appropriate technical and organizational security measures to protect your data
+								from unauthorized access, loss, or alteration.
+								</p>
+								<p>
+								This includes encryption of sensitive data, use of secure connections (HTTPS),
+								and strict access controls.
+								</p>
+							</div>
+						</section>
+
+						<section>
+							<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+								<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">5</span>
+								Your Rights
+							</h2>
+							<div class="pl-11 space-y-4 text-gray-700">
+								<p>In accordance with the GDPR, you have the following rights:</p>
+								<ul class="space-y-2 list-none">
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span><strong>Right of access:</strong> obtain a copy of your personal data</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span><strong>Right to rectification:</strong> correct inaccurate data</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span><strong>Right to erasure:</strong> request deletion of your data</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span><strong>Right to data portability:</strong> receive your data in a structured format</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="w-2 h-2 bg-amber-500 rounded-full mt-2"></span>
+									<span><strong>Right to object:</strong> object to the processing of your data</span>
+								</li>
+								</ul>
+							</div>
+						</section>
+
+						<section>
+							<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+								<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">6</span>
+								Cookies and Similar Technologies
+							</h2>
+							<div class="pl-11 space-y-3 text-gray-700">
+								<p>
+								Our site uses cookies to improve your experience. You can configure your browser to refuse cookies,
+								but this may limit some features of the service.
+								</p>
+								<p>
+								We use essential, analytical, and preference cookies. You can manage your cookie preferences at any time.
+								</p>
+							</div>
+						</section>
+
+						<section>
+							<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+								<span class="w-8 h-8 linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">7</span>
+								Data Retention
+							</h2>
+							<div class="pl-11 space-y-3 text-gray-700">
+								<p>
+								We retain your personal data only as long as necessary for the purposes described in this policy
+								or as required by law.
+								</p>
+								<p>
+								Once your data is no longer necessary, it is securely deleted or anonymized.
+								</p>
+							</div>
+						</section>
+
+						<section>
+							<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+								<span class="w-8 h-8 linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">8</span>
+								International Transfers
+							</h2>
+							<div class="pl-11 space-y-3 text-gray-700">
+								<p>
+								Your data may be transferred to and stored in countries outside the European Union.
+								In such cases, we ensure that appropriate safeguards are in place.
+								</p>
+							</div>
+						</section>
+
+						<section>
+							<h2 class="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-3">
+								<span class="w-8 h-8 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white">9</span>
+								Policy Changes
+							</h2>
+							<div class="pl-11 space-y-3 text-gray-700">
+								<p>
+								We may update this privacy policy periodically. We will notify you of any significant changes
+								by email or through a notification on our service.
+								</p>
+							</div>
+						</section>
+
+						<section class="bg-linear-to-r from-amber-100 to-orange-100 p-6 rounded-lg border border-amber-300">
+						<h2 class="text-2xl font-bold text-amber-900 mb-4">Contact</h2>
+						<p class="text-gray-700 mb-4">
+							For any questions regarding this privacy policy or to exercise your rights:
+						</p>
+						<div class="space-y-2 text-gray-700">
+							<p><strong class="text-amber-800">Email:</strong> legal@example.com</p>
+							<p><strong class="text-amber-800">Phone:</strong> +33 1 23 45 67 89</p>
+							<p><strong class="text-amber-800">DPO:</strong> dpo@example.com</p>
+							<p><strong class="text-amber-800">Address:</strong> 123 Bakery Street, 75001 Paris, France</p>
+						</div>
+						</section>
+					</div>
+					<div class="h-2 bg-linear-to-r from-yellow-400 via-orange-400 to-amber-400"></div>
+				</div>
+				<footer class="text-center">
+					<div class="flex justify-center mb-6">
+						<a href="/termsofservice" data-link target="_top" class="px-6 py-3.5 mt-10 bg-linear-to-r from-amber-500 to-orange-500 text-center text-white font-semibold rounded-full shadow-lg hover:shadow-xl hover:from-amber-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105">
+							← Terms of Service
+						</a>
+						<button id="go-back" class="btn w-20 ml-4">
+							← Back
+						</button>
+					</div>
+					<p class="text-sm text-gray-600">
+						© 2026 All rights reserved. Made with ❤️ and croissants 🥐
+					</p>
+				</footer>
+			</main>
+		</div>
+	</template>
+
+
 	<template id="homehtml">
 		<div class="w-full h-screen">
-			<header id="header-container"></header>
 			<main class="w-[60%] ml-[5%] mt-40 text-center">
 				<h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mx-auto
 						bg-linear-to-r from-amber-800 via-amber-600 to-orange-500 
@@ -183,6 +661,11 @@
 					your avatar in the top-right corner.</p>
 				<button class="btn w-40 mx-auto mt-20 block" id="scroll-button">Start playing !</button>
 			</main>
+			<footer class="absolute bottom-4 w-full text-center text-sm opacity-60 space-x-4">
+				<a href="/termsofservice" data-link class="hover:underline">Terms of Service</a>
+				<span>|</span>
+				<a href="/privacypolicy" data-link class="hover:underline">Privacy Policy</a>
+			</footer>
 		</div>
 		<div id="gamepage">
 			<img src="/src/image/gamepage.jpg"
@@ -208,35 +691,44 @@
 	</template>
 	
 	<template id="friendshtml">
-		<div id="header-container"></div>
-		<div id ="search" class="relative flex flex-col w-1/4 mx-auto justify-center mt-2">
-			<input type="text" id="searchInput" placeholder="🔍Search...">
-			<ul id ="members" class="my-2 absolute z-10 w-full top-full mx-auto bg-amber-600/50 rounded-lg"></ul>
+	<div class="flex flex-col h-[calc(100vh-112px)]">
+		<div id ="search" class="relative flex flex-col w-1/4 mx-auto pt-2 justify-center h-[5%]">
+			<input type="text" id="searchInput" placeholder="🔍 Search..." class="text-lg border border-amber-600/50 backdrop-blur-sm rounded-md outline-none focus:ring-2 focus:ring-amber-600/50 focus:border-amber-600/50">
+			<ul id ="members" class="absolute z-50 w-full top-full mx-auto bg-amber-600 rounded-lg"></ul>
 		</div>
+		<div class="flex flex-row pt-3 items-start h-[95%]">
+			<div class="w-[50%] h-full">
+				<h1 class="relative z-20 font-bold text-l ml-20 w-28 text-stone-100 bg-amber-900 pl-4 rounded">My friends</h1>
+				<section class="max-h-[97%] bg-amber-100/80 -mt-4 mx-15 flex flex-col ring-2 ring-amber-400 items-center rounded-lg p-4">
+					<div id="friend-list" class="w-[95%] px-1 scrollbar-custom overflow-y-auto mb-2">
+					</div>
+				</section>
+			</div>
+			<div class="flex flex-col w-[50%] h-full justify-between">
+				<div class="max-h-[65%]">
+					<h1 class="relative z-20 font-bold text-l ml-8 w-44 text-stone-100 bg-amber-900 pl-4 rounded">Pending invitations</h1>
+					<section class="h-full bg-amber-100/80 ml-2 mr-15 -mt-4 flex flex-col ring-2 ring-amber-400 items-center rounded-lg p-2 z-10">
+						<div id="pending-list" class="w-[95%] px-1 scrollbar-custom overflow-y-auto mb-2">
+						</div>
+					</section>
+				</div>
+				<div class="h-[30%]">
+					<h1 class="relative z-20 font-bold text-l ml-8 w-76 text-stone-100 bg-amber-900 px-3 rounded">Users you played with and may know</h1>
+					<section class="h-[90%] -mt-4 bg-amber-100/80 ml-2 mr-15 flex flex-col ring-2 ring-amber-400 items-center rounded-lg relative">
+						<div id="no-opponent" class="flex flex-col hidden items-center">
+							<h1 id="no opponent text" class="mt-6 text-xl text-center font-semibold text-amber-800">Click below to begin a party and meet new users</h1>
+							<a href="/gameonline" data-link class="btn mt-2 ml-3 w-20 text-center">1 VS 1</a>
+						</div>
+						<div id="opponent" class="h-full w-full pt-2">
+							<div id="opponent-list" class="h-full grid grid-cols-1 sm:grid-cols-2 w-full scrollbar-custom overflow-y-auto">
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
 
-		<div id="no-friend" class="hidden">
 		</div>
-		<div id="friends" class="hidden">
-			<h1>Your friends:</h1>
-			<ul class="list-disc pl-5">
-			</ul>
-		</div>
-		<div id="no-pending" class="hidden flex justify-end p-4">
-		</div>
-		<div id="pending" class="hidden flex  flex-col items-end p-4">
-			<h1>Pending friends:</h1>
-			<ul class="list-disc pl-5">
-			</ul>
-		</div>
-		<div id="no-opponent" class="hidden flex p-4">
-			<h1 id="no opponent text" class="text-2xl">Click below to begin a party and meet new users !</h1>
-			<a href="/gameonline" data-link class="btn w-48">1 VS 1</a>
-		</div>
-		<div id="opponent" class="hidden flex flex-col p-4">
-			<h1>Players you played with and may know:</h1>
-			<ul class="list-disc pl-5">
-			</ul>
-		</div>
+	</div>
 	</template>
 
 	<template id="list-search">
@@ -249,8 +741,26 @@
 		</li>
 	</template>
 
+	<template id="myfriends">
+		<div class="flex items-center justify-between w-full hover:bg-amber-600/20 rounded-sm">
+			<div class="flex flex-row items-center gap-3">
+				<div>
+					<span id="f_status" class="absolute w-4 h-4 rounded-full"></span>
+					<img id="avatar" class="w-16 h-16 rounded-full my-auto" src="" alt="avatar"></img>
+				</div>
+				<p id="pseudo" class="text-l text-amber-800 font-semibold"></p>
+			</div>
+			<div class="flex items-center flex-col">
+				<button id="addordelete" class="bg-amber-700 px-2 py-2 text-white rounded cursor-pointer text-sm"></button>
+				<p id="date-friendship" class="mt-4 mr-4 italic text-xs text-gray-600"></p>
+			</div>
+		</div>
+	</template>
+
 	<template id="profilehtml">
-		<div id="header-container"></div>
+		<div>
+			<br>
+		</div>
 		<main class="flex">
 			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
 						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
@@ -270,10 +780,10 @@
 					class="inline-block text-amber-900 mt-4 rounded-md shadow-sm ring-2 bg-amber-500/20 ring-amber-400 sm:text-sm">
 					<option value="online">🟢 online </option>
 					<option value="busy">🔴 busy </option>
-					<option value="offline">⚪ offline </option>
+					<option value="offline">⚫ offline </option>
 				</select>
-				<div class="flex flex-col">
-					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-8">
+				<div class="flex flex-col mt-6">
+					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-6">
 						<img class="bg-blue-700 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/email.png" alt="">
 						<div>
 							<h1 class="ml-2 font-bold">Email</h1>
@@ -283,8 +793,8 @@
 							<img class="invert p-0.5 bg-blue-600 rounded-md" src="src/image/crayon.png" alt="crayon">
 						</a>
 					</div>
-					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-8">
-						<img class="bg-blue-700 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/email.png" alt="">
+					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-6">
+						<img class="bg-blue-700 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/password.png" alt="">
 						<div>
 							<h1 class="ml-2 font-bold">Password</h1>
 							<p class="ml-2">••••••••••••</p>
@@ -293,54 +803,47 @@
 							<img class="invert p-0.5 bg-blue-600 rounded-md" src="src/image/crayon.png" alt="crayon">
 						</a>
 					</div>
-					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-8">
+					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-6">
 						<img class="bg-blue-700 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/euro.png" alt="">
 						<div>
 							<h1 class="ml-2 font-bold">Money</h1>
 							<p id="profile-money" class="ml-2"></p>
 						</div>
 					</div>
-					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 mb-4 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-8">
+					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-6">
 						<img class="bg-blue-700 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/coupe.png" alt="">
 						<div>
 							<h1 class="ml-2 font-bold">Elo</h1>
 							<p id="profile-elo" class="ml-2"></p>
 						</div>
 					</div>
-					<!-- Two-Factor Management Section -->
-					<div id="twofa-container" class="flex flex-col items-center mt-6">
-						<p id="twofa-status" class="font-bold text-amber-900 mb-2">2FA Status</p>
-						<img id="twofa-qr" class="hidden w-40 h-40 mb-2 border-2 border-amber-900 rounded-lg" alt="2FA QR Code">
-						<div class="flex gap-4">
-							<button id="twofa-enable-btn" class="btn bg-green-500 text-white px-4 py-2 rounded hidden">
-								Enable 2FA
-							</button>
-							<button id="twofa-disable-btn" class="btn bg-red-500 text-white px-4 py-2 rounded hidden">
-								Disable 2FA
-							</button>
+					<div class="flex items-start shadow-sm text-amber-900 bg-amber-300/20 w-80 mb-2 ring-1 h-16 pt-1 ring-amber-900 rounded-lg mt-6">
+						<img class="bg-blue-700 shadow-sm my-1 px-1 rounded-lg size-12 invert ml-2 items-start" src="/src/image/authentification-a-deux-facteurs.png" alt="">
+						<div>
+							<h1 class="ml-2 font-bold">Two-Factor Authentication</h1>
+							<p id="twofa-status" class="ml-2"></p>
 						</div>
+						<a class="size-6 mt-4 ml-auto justify-end mr-5 object-contain" href="/update2fa">
+							<img class="invert p-0.5 bg-blue-600 rounded-md" src="src/image/crayon.png" alt="crayon">
+						</a>
 					</div>
-					<div id="twofa-verify-container" class="flex flex-col items-center mt-4 hidden">
-						<input
-							id="twofa-code-input"
-							maxlength="6"
-							placeholder="Enter 6-digit code"
-							class="border px-2 py-1 rounded w-32 text-center"
-						/>
-						<button id="twofa-verify-btn"
-							class="mt-2 bg-blue-500 text-white px-3 py-1 rounded">
-							Verify Code
-						</button>
-					</div>
+				</div>
+				<div>
+					<br>
 				</div>
 			</div>
 		</main>
+		<div>
+			<br>
+		</div>
 	</template>
 
 	<template id="update-email-html">
-		<div id="header-container"></div>
+		<div>
+			<br>
+		</div>
 		<main class="flex">
-			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
+			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)]
 						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
 						mx-auto shadow-2xl items-center">
 				<div class="flex flex-row w-100 mt-3 justify-between">
@@ -359,7 +862,7 @@
 					<!-- Change Email -->
 					<div class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
 								w-80 ring-1 ring-amber-900 rounded-lg mt-6 p-3">
-						<h2 class="font-bold mb-2">Change Email</h2>
+						<h2 class="font-bold mb-2 text-center">Change Email</h2>
 						<form id="change-email-form" class="flex flex-col gap-2">
 							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">New Email</h2>
 							<input
@@ -388,12 +891,17 @@
 				</div>
 			</div>
 		</main>
+		<div>
+			<br>
+		</div>
 	</template>
 
 	<template id="update-username-html">
-		<div id="header-container"></div>
+		<div>
+			<br>
+		</div>
 		<main class="flex">
-			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
+			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)]
 						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
 						mx-auto shadow-2xl items-center">
 				<div class="flex flex-row w-100 mt-3 justify-between">
@@ -409,31 +917,77 @@
 					<img class="ring-4 ring-amber-900 rounded-full shadow-xl" id="profile-avatar" src="" alt="Your avatar" width="150">
 				</a>
 				<div class="flex flex-col mt-6">
+
 					<!-- Change Username -->
-					<div class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
+					<div id="update-username" class="flex flex-col ">
+						<button
+							type="button"
+							id="toggle-username"
+							class="hidden btn w-40 mx-auto py-2 block">
+							Update Username
+						</button>
+
+						<div id="update-username-section" class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
 								w-80 ring-1 ring-amber-900 rounded-lg mt-6 p-3">
-						<h2 class="font-bold mb-2">Change Username</h2>
-						<form id="change-username-form" class="flex flex-col gap-2">
-							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">New Username</h2>
-							<input
-								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
-								type="text"
-								name="new-username"
-								placeholder="new_user_name"
-								required />
-							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">Confirm Password</h2>
-							<input
-								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
-								type="password"
-								name="password"
-								placeholder="••••••••••••"
-								required />
-							<button
-								type="submit" 
-								class="btn w-40 mx-auto mt-20 block">
-								Update Username
-							</button>
-						</form>
+							<h2 class="font-bold mb-2 text-center">Change Username</h2>
+							<form id="change-username-form" class="flex flex-col gap-2">
+								<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">New Username</h2>
+								<input
+									class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+									type="text"
+									name="new-username"
+									placeholder="new_user_name"
+									required />
+								<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">Confirm Password</h2>
+								<input
+									class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+									type="password"
+									name="password"
+									placeholder="••••••••••••"
+									required />
+								<button
+									type="submit" 
+									class="btn w-40 mx-auto mt-20 block">
+									Update Username
+								</button>
+							</form>
+						</div>
+					</div>
+
+					<!-- Delete User -->
+					<div id="delete-user" class="flex flex-col">
+						<button
+							type="button"
+							id="toggle-delete"
+							class="btn w-40 mx-auto block bg-red-600 px-4 py-2 text-white">
+							Delete Account
+						</button>
+
+						<div id="delete-user-section" class="hidden flex flex-col shadow-sm text-red-600 bg-red-300/20
+								w-80 ring-1 ring-red-900 rounded-lg mt-6 p-3">
+							<h2 class="font-bold mb-2 text-center">Delete Account</h2>
+							<form id="delete-user-form" class="flex flex-col gap-2">
+								<h2 class="text-sm text-red-600 dark:text-white mt-3 mb-0.5">Write "DELETE" + "your username"</h2>
+								<input
+									class="rounded-md px-2 py-1 ring-1 ring-red-400"
+									type="text"
+									name="confirm-username"
+									placeholder="DELETE username"
+									required />
+								<h2 class="text-sm text-red-600 dark:text-white mt-3 mb-0.5">Confirm Password</h2>
+								<input
+									class="rounded-md px-2 py-1 ring-1 ring-red-400"
+									type="password"
+									name="password"
+									placeholder="••••••••••••"
+									required />
+								<button
+									type="submit" 
+									class="btn w-40 mx-auto mt-20 block bg-red-600 text-white">
+									Delete Account
+								</button>
+							</form>
+						</div>
 					</div>
 				</div>
 				<div>
@@ -441,10 +995,15 @@
 				</div>
 			</div>
 		</main>
+		<div>
+			<br>
+		</div>
 	</template>
 
 	<template id="update-password-html">
-		<div id="header-container"></div>
+		<div>
+			<br>
+		</div>
 		<main class="flex">
 			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
 						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
@@ -465,7 +1024,7 @@
 					<!-- Change Password -->
 					<div class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
 								w-80 ring-1 ring-amber-900 rounded-lg mt-6 p-3">
-						<h2 class="font-bold mb-2">Change Password</h2>
+						<h2 class="font-bold mb-2 text-center">Change Password</h2>
 						<form id="change-password-form" class="flex flex-col gap-2">
 							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">Old Password</h2>
 							<input
@@ -501,10 +1060,15 @@
 				</div>
 			</div>
 		</main>
+		<div>
+			<br>
+		</div>
 	</template>
 
 	<template id="update-avatar-html">
-		<div id="header-container"></div>
+		<div>
+			<br>
+		</div>
 		<main class="flex">
 			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
 						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
@@ -525,7 +1089,7 @@
 					<!-- Change Avatar -->
 					<div class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
 								w-80 ring-1 ring-amber-900 rounded-lg mt-6 p-3">
-						<h2 class="font-bold mb-2">Change Avatar</h2>
+						<h2 class="font-bold mb-2 text-center">Change Avatar</h2>
 						<form id="upload_avatar" method="POST" enctype="multipart/form-data" class="flex flex-col gap-2">
 							<h2 class="text-sm text-amber-900 dark:text-white mt-3 mb-0.5">New Avatar</h2>
 							<input
@@ -547,10 +1111,75 @@
 				</div>
 			</div>
 		</main>
+		<div>
+			<br>
+		</div>
+	</template>
+
+	<template id="update-2fa-html">
+		<div>
+			<br>
+		</div>
+		<main class="flex">
+			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
+						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
+						mx-auto shadow-2xl items-center">
+				<div class="flex flex-row w-100 mt-3 justify-between">
+					<div class="w-5"></div>
+					<h1 class="text-3xl mx-auto font-bold text-amber-900
+						drop-shadow-lg" id="profile-pseudo">
+					</h1>
+					<a class="size-6 mt-2 justify-end mr-5 object-contain" href="/profile">
+						<img class="invert ring-1 p-0.5 ring-blue-950 rounded-md" src="src/image/back.png" alt="back">
+					</a>
+				</div>
+				<a class="mt-2 object-contain">
+					<img class="ring-4 ring-amber-900 rounded-full shadow-xl" id="profile-avatar" src="" alt="Your avatar" width="150">
+				</a>
+				<div class="flex flex-col mt-6">
+					<!-- Update 2FA -->
+					<div class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
+								w-80 ring-1 ring-amber-900 rounded-lg mt-6 p-3">
+						<h2 class="font-bold mb-2 text-center">Two-Factor Authentication</h2>
+						<!-- Two-Factor Management Section -->
+						<div id="twofa-container" class="flex flex-col items-center mt-6">
+							<p id="twofa-status" class="font-bold text-amber-900 mb-2">2FA Status</p>
+							<img id="twofa-qr" class="hidden w-40 h-40 mb-2 border-2 border-amber-900 rounded-lg" alt="2FA QR Code">
+							<div class="flex gap-4">
+								<button id="twofa-enable-btn" class="btn bg-green-500 text-white px-4 py-2 rounded hidden">
+									Enable 2FA
+								</button>
+								<button id="twofa-disable-btn" class="btn bg-red-500 text-white px-4 py-2 rounded hidden">
+									Disable 2FA
+								</button>
+							</div>
+						</div>
+						<div id="twofa-verify-container" class="flex flex-col items-center mt-4 hidden">
+							<input
+								id="twofa-code-input"
+								maxlength="6"
+								placeholder="Enter 6-digit code"
+								class="border px-2 py-1 rounded w-32 text-center"
+							/>
+							<button id="twofa-verify-btn"
+								class="mt-2 bg-blue-500 text-white px-3 py-1 rounded">
+								Verify Code
+							</button>
+						</div>
+
+					</div>
+				</div>
+				<div>
+					<br>
+				</div>
+			</div>
+		</main>
+		<div>
+			<br>
+		</div>
 	</template>
 
 	<template id="gamelocalhtml">
-		<div id="header-container"></div>
 		<h1>Local Game</h1>
 		<div class="game-buttons flex justify-center">
 			<button class="btn mx-auto w-32" id="pvp">Player VS Player</button>
@@ -559,7 +1188,6 @@
 	</template>
 
 	<template id="gameonlinehtml">
-		<div id="header-container"></div>
 		<h1>Online games</h1>
 		<div class="game-buttons flex justify-center">
 			<button class="btn mx-auto w-32" id="create-onlinegame">Create game</button>
@@ -569,7 +1197,6 @@
 	</template>
 
 	<template id="pongmatchhtml">
-		<div id="header-container"></div>
 		<h1>Quick game</h1>
 
 		<div class="game-container">
@@ -599,7 +1226,6 @@
 	</template>
 
 	<template id="tournamenthtml">
-		<div id="header-container"></div>
 		<h1 class="text-3xl font-bold text-center mt-6">Tournament Overview</h1>
 		<div class="grid grid-cols-2 gap-4 mt-8 px-6">
 			<div>
@@ -693,26 +1319,44 @@
 
 
 	<template id="dashboardhtml">
-		<div id="header-container"></div>
 		<div class="flex flex-row">
-			<section class="bg-amber-100/80 mt-5 ml-2 w-[50%] h-[80vh] flex flex-col ring-2 ring-amber-400 items-center rounded-lg">
-				<h1 class="font-bold text-xl mb-1 text-amber-900">History - 20 last games :</h1>
+			<section class="bg-amber-100/80 mt-5 ml-2 w-[50%] h-[80vh] flex flex-col ring-2 ring-amber-400 items-center rounded-lg">	<h1 class="font-bold text-xl mb-1 text-amber-900">History - 20 last games :</h1>
 				<div id="game-list" class="w-[90%] h-[90%] px-1 overflow-y-auto scrollbar-none mb-2 ring-2
 					bg-amber-50 rounded-lg ring-amber-200 shadow-lg">
 				</div>
 			</section>
-			<section class="flex flex-row ml-2 w-[50%]">
-				<div class="flex flex-col w-[50%] h-[95%] mx-4 text-center mt-4">
-					<p class="stat">Games Wins <br><span class="text-6xl" id="win"></span></p>
-					<p class="stat">Games Losses <br><span class="text-6xl" id="loose"></span></p>
-					<p class="stat">Winrate <br><span class="text-6xl" id="winrate"></span></p>
-				</div>
-				<div class="flex flex-col w-[50%] h-[95%] mx-4 text-center mt-4">
-					<p class="stat">Points Scored <br><span class="text-6xl" id="scored"></span></p>
-					<p class="stat">Points Taken <br><span class="text-6xl" id="taken"></span></p>
-					<p class="stat">Ratio <br><span class="text-6xl" id="ratio"></span></p>
-				</div>
-			</section>
+			<div class="w-[50%] ml-2">
+				<section class="flex flex-row items-center ring-4 ring-amber-400 bg-amber-50 mt-5 mx-8 h-[30%] rounded-2xl">
+						<img id="rank-img" class="size-40 rounded-full mx-4 border-2 w-[23%]" src="" alt="icone-rank">
+						<div class="w-[37%] mx-2">
+							<p class="text-4xl text-amber-900 pb">My Rank: <br></p>
+							<p class="" id="rank-player"></p>
+						</div>
+						<div class="w-[40%] mx-2">
+							<p class="text-4xl text-center text-amber-900">My Elo: <span class="font-bold text-4xl" id="elo-player"></span> LP</p>
+							<div class="w-full h-3 mt-5 bg-gray-200 rounded-full overflow-hidden">
+								<div
+									id="progress-fill"
+									class="h-full w-0 rounded-full
+									transition-all duration-700 ease-out">
+								</div>
+							</div>
+							<p class="text-xl text-center text-amber-900">Next rank: <span class="font-bold text-xl" id="elo-next"></span> LP</p>
+						</div>
+				</section>
+				<section class="flex flex-row h-[70%]">
+					<div class="flex flex-col w-[50%] h-[95%] mx-4 text-center mt-4">
+						<p class="stat">Games Wins <br><span class="text-6xl" id="win"></span></p>
+						<p class="stat">Games Losses <br><span class="text-6xl" id="loose"></span></p>
+						<p class="stat">Winrate <br><span class="text-6xl" id="winrate"></span></p>
+					</div>
+					<div class="flex flex-col w-[50%] h-[95%] mx-4 text-center mt-4">
+						<p class="stat">Points Scored <br><span class="text-6xl" id="scored"></span></p>
+						<p class="stat">Points Taken <br><span class="text-6xl" id="taken"></span></p>
+						<p class="stat">Ratio <br><span class="text-6xl" id="ratio"></span></p>
+					</div>
+				</section>
+			</div>
 		</div>				
 	</template>
 

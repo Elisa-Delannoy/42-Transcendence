@@ -1,17 +1,25 @@
 import { register } from "module";
 import { navigateTo } from "../router";
+import { loadHeader } from "../router";
 
 
 export function RegisterView(): string {
+	loadHeader();
 	return (document.getElementById("registerhtml") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initRegister() {
 	const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
-	if (res.ok)
-	{
-		navigateTo("/home");
-	}
+	const data = await res.json();
+
+    if (data.loggedIn) {
+        navigateTo("/home");
+		return;
+    }
+	// if (res.ok)
+	// {
+	// 	navigateTo("/home");
+	// }
 	const form = document.getElementById("register-form") as HTMLFormElement;
 
 	form.addEventListener("submit", async (e) => 

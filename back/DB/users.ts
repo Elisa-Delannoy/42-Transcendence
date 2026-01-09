@@ -191,6 +191,14 @@ export class Users
 			return infos[0];
 	}
 
+	async getEloFromID(id: number) : Promise<number>
+	{
+		const result = await this._db.query(`SELECT elo FROM Users WHERE user_id = ?`, [id]);
+		console.log(result[0].elo);
+		return result[0].elo as number;
+		
+	}
+
 	async updateEmail(id: number, newEmail: string): Promise<IUsers>
 	{
 		if (!newEmail || newEmail.trim() === '') {
@@ -225,6 +233,39 @@ export class Users
 		await this._db.execute(`UPDATE Users SET status = ? WHERE user_id = ?`, [status, id]);
 		const updatedUser = await this.getIDUser(id);
 		return updatedUser;
+	}
+
+	calculateElo(eloOpponent: number, eloPlayer: number, playerScore: number, opponentScore: number): number
+	{
+		const expected = 1 / (1 + Math.pow(10, (eloOpponent - eloPlayer) / 400));
+
+		const score = playerScore > opponentScore ? 1 : 0;
+
+		const diff = Math.abs(playerScore - opponentScore);
+		let multiplier = 1;
+		if (diff <= 1)
+			multiplier = 0.8;
+		else if (diff <= 4)
+			multiplier = 1.0;
+		else if (diff <= 7)
+			multiplier = 1.2;
+		else
+			multiplier = 1.5;
+		const eloChange = Math.round(32 * multiplier * (score - expected));
+		return eloChange;
+	}
+
+	async updateElo(id_win: number, id_loose: number, score_win: number, score_loose: number)
+	{
+		const eloWin: number = await this.getEloFromID(id_win);
+		const eloLoose: number = await this.getEloFromID(id_loose);
+		await this._db.execute(`UPDATE Users SET elo = elo + ? WHERE user_id = ?`, [this.calculateElo(eloLoose, eloWin, score_win, score_loose) , id_win]);
+		await this._db.execute(`UPDATE Users SET elo = elo + ? WHERE user_id = ?`, [this.calculateElo(eloWin, eloLoose, score_loose, score_win) , id_loose]);
+	}
+
+	async addElo(id: number)
+	{
+		await this._db.execute(`UPDATE Users SET elo = elo + ? WHERE user_id = ?`, [416 , id]);
 	}
 
 	async searchMember(pseudo: string, id: number): Promise<IUsers[]> {

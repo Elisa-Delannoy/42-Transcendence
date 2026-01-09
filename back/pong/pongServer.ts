@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { applyInput, GameState, resetBall } from "./gameEngine";
 import { ServerGame, games_map, endGame } from "../routes/game/serverGame";
-import { gameInfo } from "../server";
+import { gameInfo, users } from "../server";
 import { Users } from "../DB/users";
 import { serverTournament, tournaments_map } from "../routes/tournament/serverTournament";
 import { TournamentState } from "../../front/src/tournament/tournamentNetwork";
@@ -334,7 +334,7 @@ function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number,
 	{
 		game.sockets.player1 = socket.id;
 		game.sockets.player2 = socket.id;
-		game.idPlayer2 = 1;
+		game.idPlayer2 = 0;
 		game.state.pseudo.player1 = pseudo;
 		game.state.pseudo.player2 = "Guest";
 		if (game.status !== "disconnected")

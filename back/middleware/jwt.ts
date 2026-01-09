@@ -36,15 +36,15 @@ export const checkAuth = async (token: string, reply: FastifyReply): Promise< IU
 export const tokenOK = async (request: FastifyRequest, reply: FastifyReply): Promise< IUsers | null> => {
 	const token = request.cookies.token;
 	if (!token) {
-		reply.code(401).send({ error: "Unauthorized: token is missing"});
+		//reply.code(401).send({ error: "Unauthorized: token is missing"});
 		return null
 	}
 	const user_loged = await checkAuth(token, reply);
 	if (user_loged instanceof Error) {
-		reply.code(401).send({ error: user_loged.name });
+		//reply.code(401).send({ error: user_loged.name });
 		return null
 	}
-	reply.code(200);
+	//reply.code(200);
 	return user_loged;
 }
 
