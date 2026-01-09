@@ -1,5 +1,7 @@
 var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
 };
@@ -10,6 +12,15 @@ var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // front/src/views/home.ts
 function View() {
@@ -50,8 +61,9 @@ async function initLogin() {
     const success = await login(username, password, form);
     if (success == 2)
       navigateTo("/twofa");
-    if (success == 1)
+    if (success == 1) {
       navigateTo("/home");
+    }
   });
   const googleBtn = document.getElementById("google-login-btn");
   googleBtn?.addEventListener("click", () => {
@@ -77,6 +89,7 @@ async function login(username, password, form) {
       }
       return 0;
     }
+    localStorage.setItem("token", result.token);
     if (result.ok && result.twofa === true)
       return 2;
     return 1;
@@ -4103,15 +4116,61 @@ var init_esm5 = __esm({
   }
 });
 
+// front/src/socket/socket.ts
+var socket_exports = {};
+__export(socket_exports, {
+  globalSocket: () => globalSocket,
+  initSocket: () => initSocket
+});
+function initSocket() {
+  const token = localStorage.getItem("token");
+  if (!token)
+    return;
+  console.log((/* @__PURE__ */ new Date()).toISOString(), "dans init socket, token socket=", token, "URL socket =", window.location.origin);
+  globalSocket = lookup2(window.location.origin, {
+    transports: ["websocket"],
+    query: { token }
+  });
+  globalSocket.on("connect_error", (err) => {
+    console.log("CONNECT ERROR:", err.message);
+  });
+  console.log("Socket attempting connection...");
+  globalSocket.on("connect", () => console.log("CONNECTED!"));
+  globalSocket.on("connect_error", (err) => console.log("CONNECT ERROR:", err));
+  globalSocket.on("error", (err) => console.log("ERROR:", err));
+  console.log((/* @__PURE__ */ new Date()).toISOString(), "globalsocket s ocket=", globalSocket);
+  setTimeout(() => {
+    console.log("Final socket state:", globalSocket);
+  }, 500);
+}
+var globalSocket;
+var init_socket3 = __esm({
+  "front/src/socket/socket.ts"() {
+    "use strict";
+    init_esm5();
+    globalSocket = null;
+  }
+});
+
 // front/src/game/gameNetwork.ts
 var GameNetwork;
 var init_gameNetwork = __esm({
   "front/src/game/gameNetwork.ts"() {
     "use strict";
-    init_esm5();
     GameNetwork = class {
+<<<<<<< HEAD
       constructor(serverUrl) {
         this.socket = lookup2(serverUrl, { transports: ["websocket"] });
+=======
+      // constructor(serverUrl: string, gameId: number) {
+      // 	this.socket = io(serverUrl, { transports: ["websocket"] });
+      constructor(serverUrl, gameId) {
+        const { globalSocket: globalSocket2 } = (init_socket3(), __toCommonJS(socket_exports));
+        if (!globalSocket2)
+          throw new Error("globalSocket n'est pas initialis\xE9 !");
+        this.socket = globalSocket2;
+        this.socket.emit("joinGame", gameId);
+>>>>>>> elisa
         this.socket.on("assignRole", (role) => {
           this.onRoleCallback?.(role);
         });
@@ -4130,7 +4189,6 @@ var init_gameNetwork = __esm({
         this.socket.on("gameOver", () => {
           this.onGameOverCallback?.();
           console.log("Game over, closing socket...");
-          this.socket.close();
         });
       }
       onRole(cb) {
@@ -4162,7 +4220,6 @@ var init_gameNetwork = __esm({
       }
       disconnect() {
         this.socket.emit("disconnection");
-        this.socket.disconnect();
       }
     };
   }
@@ -4410,6 +4467,7 @@ function smoothScrollTo(targetY, duration) {
   requestAnimationFrame(animation);
 }
 async function initHomePage() {
+<<<<<<< HEAD
   const res = await fetch("/api/checkLogin", {
     credentials: "include"
   });
@@ -4418,6 +4476,10 @@ async function initHomePage() {
     navigateTo("/login");
     return;
   }
+=======
+  const { initSocket: initSocket2 } = await Promise.resolve().then(() => (init_socket3(), socket_exports));
+  initSocket2();
+>>>>>>> main
   const btn = document.getElementById("scroll-button");
   const target = document.getElementById("gamepage");
   btn.addEventListener("click", () => {
@@ -5293,6 +5355,7 @@ var init_p_updateavatar = __esm({
   }
 });
 
+<<<<<<< HEAD
 // front/src/views/p_update2fa.ts
 function Update2faView() {
   loadHeader();
@@ -5381,6 +5444,10 @@ var init_p_update2fa = __esm({
   }
 });
 
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> main
 // front/src/views/oauth_callback.ts
 async function initOAuthCallback() {
   const res = await fetch("/api/auth/status", {
@@ -5438,6 +5505,10 @@ var init_privacypolicy = __esm({
   }
 });
 
+<<<<<<< HEAD
+=======
+>>>>>>> elisa
+>>>>>>> main
 // front/src/router.ts
 function navigateTo(url2) {
   const state = { from: window.location.pathname };
@@ -5503,8 +5574,14 @@ async function getPseudoHeader3() {
     return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false };
   }
 }
+<<<<<<< HEAD
 function displayPseudoHeader(result) {
   console.log("test :", result);
+=======
+<<<<<<< HEAD
+=======
+function displayPseudoHeader(result) {
+>>>>>>> main
   document.getElementById("pseudo-header").textContent = result.pseudo;
   const avatar = document.getElementById("header-avatar");
   const status = document.getElementById("status");
@@ -5516,6 +5593,10 @@ function displayPseudoHeader(result) {
     notification.classList.remove("hidden");
   return true;
 }
+<<<<<<< HEAD
+=======
+>>>>>>> elisa
+>>>>>>> main
 function displayStatus(info, status) {
   switch (info.web_status) {
     case "online":
@@ -5606,10 +5687,19 @@ var init_router = __esm({
     init_p_updateusername();
     init_p_updatepassword();
     init_p_updateavatar();
+<<<<<<< HEAD
     init_p_update2fa();
     init_oauth_callback();
     init_terms_of_service();
     init_privacypolicy();
+=======
+<<<<<<< HEAD
+=======
+    init_oauth_callback();
+    init_terms_of_service();
+    init_privacypolicy();
+>>>>>>> elisa
+>>>>>>> main
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
@@ -5617,8 +5707,16 @@ var init_router = __esm({
       { path: "/logout", init: initLogout },
       { path: "/register", view: RegisterView, init: initRegister },
       { path: "/registerok", view: RegisterValidView },
+<<<<<<< HEAD
       { path: "/termsofservice", view: TermsOfServiceView, init: InitTermsOfService },
       { path: "/privacypolicy", view: PriavacyPolicyView, init: InitPrivacyPolicy },
+=======
+<<<<<<< HEAD
+=======
+      { path: "/termsofservice", view: TermsOfServiceView, init: InitTermsOfService },
+      { path: "/privacypolicy", view: PriavacyPolicyView, init: InitPrivacyPolicy },
+>>>>>>> elisa
+>>>>>>> main
       { path: "/home", view: homeView, init: initHomePage },
       { path: "/dashboard", view: DashboardView, init: initDashboard },
       { path: "/friends", view: FriendsView, init: initFriends },

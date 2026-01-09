@@ -137,21 +137,26 @@ export async function initDashboard()
 			container.appendChild(item);
 		}
 		
-		const winrate = document.getElementById("winrate") as HTMLSpanElement;
-		const win = document.getElementById("win") as HTMLSpanElement;
-		const loose = document.getElementById("loose") as HTMLSpanElement;
+		
+		if (dashboards.WinLoose.win > 0 && dashboards.WinLoose.loose > 0)
+		{
+			const winrate = document.getElementById("winrate") as HTMLSpanElement;
+			const win = document.getElementById("win") as HTMLSpanElement;
+			const loose = document.getElementById("loose") as HTMLSpanElement;
+			winrate.textContent = winrateCalcul(dashboards.WinLoose.win, dashboards.WinLoose.loose)  + "%";
+			win.textContent = dashboards.WinLoose.win.toString();
+			loose.textContent = dashboards.WinLoose.loose.toString();
+		}
 
-		winrate.textContent = winrateCalcul(dashboards.WinLoose.win, dashboards.WinLoose.loose)  + "%";
-		win.textContent = dashboards.WinLoose.win.toString();
-		loose.textContent = dashboards.WinLoose.loose.toString();
-
-		const taken = document.getElementById("taken") as HTMLSpanElement;
-		const scored = document.getElementById("scored") as HTMLSpanElement;
-		const ratio = document.getElementById("ratio") as HTMLSpanElement;
-
-		ratio.textContent = winrateCalcul(dashboards.TotalScore.scored, dashboards.TotalScore.taken) + "%";
-		taken.textContent = dashboards.TotalScore.taken.toString();
-		scored.textContent = dashboards.TotalScore.scored.toString();
+		if (dashboards.TotalScore.scored > 0 && dashboards.TotalScore.taken > 0)
+		{
+			const taken = document.getElementById("taken") as HTMLSpanElement;
+			const scored = document.getElementById("scored") as HTMLSpanElement;
+			const ratio = document.getElementById("ratio") as HTMLSpanElement;
+			ratio.textContent = winrateCalcul(dashboards.TotalScore.scored, dashboards.TotalScore.taken) + "%";
+			taken.textContent = dashboards.TotalScore.taken.toString();
+			scored.textContent = dashboards.TotalScore.scored.toString();
+		}
 
 		const rankinfo: RankInfo = getRankInfo(dashboards.Elo);
 		(document.getElementById("rank-img") as HTMLImageElement).src = rankinfo.src;

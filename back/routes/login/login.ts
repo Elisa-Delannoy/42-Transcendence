@@ -34,7 +34,8 @@ export async function manageLogin(pseudo: string, password: string, reply: Fasti
 			users.updateStatus(info.user_id, "online");
 			const allFriends = await friends.getMyFriends(info.user_id);
 			notification(allFriends, info.user_id);
-			reply.setCookie("token", jwtoken, options).status(200).send({ twofa:false, ok:true, message: "Login successful"})
+			reply.setCookie("token", jwtoken, options).status(200).send({ twofa:false, ok:true, token: jwtoken, message: "Login successful"})
+			/*ajouter token: jwtoken pour que  ca fonctionne */
 		}
 		const tempToken: string = createTemp2FAToken(info.user_id);
 		reply.setCookie("tempToken", tempToken, options).status(200).send({ twofa:true, ok:true, message: "Login successful"})

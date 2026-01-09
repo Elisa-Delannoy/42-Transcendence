@@ -526,6 +526,9 @@
   .h-52 {
     height: calc(var(--spacing) * 52);
   }
+  .h-120 {
+    height: calc(var(--spacing) * 120);
+  }
   .h-128 {
     height: calc(var(--spacing) * 128);
   }

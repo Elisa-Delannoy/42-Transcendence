@@ -26,11 +26,12 @@ export async function initLogin()
 		e.preventDefault();
 		const username = (document.getElementById("username") as HTMLInputElement).value;
 		const password = (document.getElementById("password") as HTMLInputElement).value;
-	const success = await login(username, password, form)
-   	if (success == 2)
-		navigateTo("/twofa");
-	if (success == 1)
-		navigateTo("/home");
+		const success = await login(username, password, form)
+   		if (success == 2)
+			navigateTo("/twofa");
+		if (success == 1) {
+			navigateTo("/home");
+		}
     });
 
 	// Google OAuth
@@ -60,6 +61,8 @@ export async function login(username: string, password: string, form: HTMLFormEl
 			}
 			return 0;
 		}
+		localStorage.setItem("token", result.token);
+		/*ajouter localstorage pour que cela fonctionne*/
 		if (result.ok && result.twofa === true)
 			return 2;
 		return 1;

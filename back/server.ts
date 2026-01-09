@@ -35,6 +35,7 @@ import { createTournament, createTournamentGame, displayTournamentList, getIdPla
 import { oauthStatus } from "./routes/login/oauth.status";
 import { registerGoogle, callbackGoogle } from "./routes/login/oauth.google";
 import { UpdatePasswordView } from "../front/src/views/p_updatepassword";
+import { createWebSocket } from "./middleware/socket";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -321,6 +322,7 @@ fastify.get("/api/private/logout", async (request, reply) => {
 const io = new Server(fastify.server, {
 			cors: { origin: "*" }
 		});
+createWebSocket(io);
 setupGameServer(io, users);
 
 fastify.setNotFoundHandler((request: FastifyRequest, reply: FastifyReply) => {

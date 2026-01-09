@@ -140,7 +140,6 @@ export async function getPseudoHeader(): Promise <PseudoHeaderResponse> {
 }
 
 export function displayPseudoHeader(result: PseudoHeaderResponse) {
-	console.log("test :", result);
 	document.getElementById("pseudo-header")!.textContent = result.pseudo;
 	const avatar = document.getElementById("header-avatar") as HTMLImageElement;
 	const status = document.getElementById("status") as HTMLImageElement;

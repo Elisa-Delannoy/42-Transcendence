@@ -647,7 +647,7 @@
 
 
 	<template id="homehtml">
-		<div class="w-full h-screen">
+		<div class="w-full h-[calc(100vh-112px)]">
 			<main class="w-[60%] ml-[5%] mt-40 text-center">
 				<h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mx-auto
 						bg-linear-to-r from-amber-800 via-amber-600 to-orange-500 
@@ -661,13 +661,13 @@
 					your avatar in the top-right corner.</p>
 				<button class="btn w-40 mx-auto mt-20 block" id="scroll-button">Start playing !</button>
 			</main>
-			<footer class="absolute bottom-4 w-full text-center text-sm opacity-60 space-x-4">
+			<footer class="absolute bottom-4 w-full text-center text-sm opacity-60">
 				<a href="/termsofservice" data-link class="hover:underline">Terms of Service</a>
 				<span>|</span>
 				<a href="/privacypolicy" data-link class="hover:underline">Privacy Policy</a>
 			</footer>
 		</div>
-		<div id="gamepage">
+		<div id="gamepage" class="-mt-40">
 			<img src="/src/image/gamepage.jpg"
 				alt="gamepage"
 				class="absolute block dark:hidden -z-10 object-cover w-full h-screen">

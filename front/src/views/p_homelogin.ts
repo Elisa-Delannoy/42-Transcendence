@@ -40,6 +40,8 @@ export async function initHomePage() {
         navigateTo("/login");
         return;
     }
+    const { initSocket } = await import("../socket/socket");
+    initSocket();
 	const btn = document.getElementById("scroll-button") as HTMLButtonElement;
 	const target = document.getElementById("gamepage") as HTMLImageElement;
     btn.addEventListener("click", () => {
@@ -47,5 +49,3 @@ export async function initHomePage() {
         smoothScrollTo(targetY, 1000);
     });
 }
-
-

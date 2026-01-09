@@ -4,6 +4,7 @@ import { users } from "../server";
 import { IUsers } from "../DB/users"
 import { FastifyRequest, FastifyReply } from "fastify";
 import { IsDeepStrictEqualOptions } from "util";
+import { io } from "socket.io-client";
 
 dotenv.config({ path: "./back/.env" });
 const secretkey: string = process.env.SECRETKEY as string;
@@ -16,7 +17,7 @@ export const createJWT = (id: number): string => {
 	return jwt.sign({ id }, secretkey, { expiresIn: "1h", algorithm: "HS256" });
 }
 
-export const checkAuth = async (token: string, reply: FastifyReply): Promise< IUsers | Error> => {
+export const checkAuth = async (token: string): Promise< IUsers | Error> => {
 	try {
 		const infoJWT = jwt.verify(token, secretkey) as { id : number };
 		const user = await users.getIDUser(infoJWT.id);
@@ -26,7 +27,6 @@ export const checkAuth = async (token: string, reply: FastifyReply): Promise< IU
 		if (err.name === "TokenExpiredError")
 		{
 			const id = jwt.decode(token) as { id : number }
-			// console.log("checkauth");
 			await users.updateStatus(id.id, "offline");
 		}
 		return err;
@@ -39,13 +39,22 @@ export const tokenOK = async (request: FastifyRequest, reply: FastifyReply): Pro
 		//reply.code(401).send({ error: "Unauthorized: token is missing"});
 		return null
 	}
-	const user_loged = await checkAuth(token, reply);
+	const user_loged = await checkAuth(token);
 	if (user_loged instanceof Error) {
 		//reply.code(401).send({ error: user_loged.name });
 		return null
 	}
 	//reply.code(200);
 	return user_loged;
+}
+
+export async function socketTokenOk(token: string): Promise <IUsers | null>{
+	if (!token)
+		return null;
+	const user_logged = await checkAuth(token);
+	if (user_logged instanceof Error)
+		return null;
+	return user_logged;
 }
 
 export function createTemp2FAToken( user_id: number)
