@@ -93,24 +93,26 @@ fastify.register(async function (instance) {
   });
 });
 
-// fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
-// 	if (request.url.startsWith("/api/private")) {
-// 		// console.log("in on request")
-// 		const user = await tokenOK(request, reply);
-// 		// console.log("in on request ", user);
-// 		if (!user)
-// 			return reply.code(401).send({ error: "Unauthorized on request" });
-// 		request.user! = user;
-// 	}
-// })
+fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
+	// if (request.url.startsWith("/api/private")) {
+	// 	// console.log("in on request")
+	// 	const user = await tokenOK(request, reply);
+	// 	// console.log("in on request ", user);
+	// 	if (!user)
+	// 		return reply.code(401).send({ error: "Unauthorized on request" });
+	// 	request.user! = user;
+	// }
+	const user = await tokenOK(request, reply);
+	request.user = user;
+})
 
 
 fastify.get("/api/checkLogin", async (request, reply) => {
-	const user = await tokenOK(request, reply);
-	if (user.user_id === null)
-		return reply.send({ loggedIn: false, error: user?.error });
-	request.user = user;
-	reply.send({ loggedIn: true, user: {id: user.user_id, pseudo: user.pseudo, avatar: user.avatar, status: user.status, notif: globalThis.notif }});
+
+	// const user = await tokenOK(request, reply);
+	if (!request.user || request.user.user_id === null)
+		return reply.send({ loggedIn: false, error: request.user?.error });
+	reply.send({ loggedIn: true, user: {id: request.user.user_id, pseudo: request.user.pseudo, avatar: request.user.avatar, status: request.user.status, notif: globalThis.notif }});
 });
 
 fastify.get("/api/auth/status", async (request: FastifyRequest, reply: FastifyReply) => {

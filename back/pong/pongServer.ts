@@ -25,7 +25,7 @@ export function setupGameServer(io: Server, socket: Socket) {
 
 			//add io (server) to game
 			game.setIo(io);
-			const pseudo = socket.data.pseudo;
+			const pseudo = socket.data.user.pseudo;
 			// join room
 			socket.join(`game-${gameId}`);
 
@@ -35,9 +35,9 @@ export function setupGameServer(io: Server, socket: Socket) {
 			}
 
 			if (game.isLocal === true)
-				initLocal(game, io, socket, gameId, pseudo.pseudo);
+				initLocal(game, io, socket, gameId, pseudo);
 			else
-				initRemoteAndAi(game, io, socket, gameId, playerId, pseudo.pseudo);
+				initRemoteAndAi(game, io, socket, gameId, playerId, pseudo);
 
 			//after countdown, match is starting
 			socket.on("startGame", () => {
