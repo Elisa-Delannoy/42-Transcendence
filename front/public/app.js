@@ -4127,13 +4127,9 @@ __export(socket_exports, {
   initSocket: () => initSocket
 });
 function initSocket() {
-  const token = localStorage.getItem("token");
-  if (!token)
-    return;
-  console.log((/* @__PURE__ */ new Date()).toISOString(), "dans init socket, token socket=", token, "URL socket =", window.location.origin);
   globalSocket = lookup2(window.location.origin, {
     transports: ["websocket"],
-    query: { token }
+    withCredentials: true
   });
   globalSocket.on("connect_error", (err) => {
     console.log("CONNECT ERROR:", err.message);
@@ -4872,6 +4868,7 @@ var init_logout = __esm({
         method: "GET",
         credentials: "include"
       });
+      localStorage.removeItem("token");
       navigateTo("/login");
     };
   }
@@ -5534,28 +5531,40 @@ function matchRoute(pathname) {
   return null;
 }
 async function loadHeader() {
-  const result = await getPseudoHeader3();
+  const token = localStorage.getItem("token");
+  let isLogged;
+  let result = null;
+  if (!token)
+    isLogged = false;
+  else {
+    isLogged = true;
+    result = await getPseudoHeader3();
+  }
   const container = document.getElementById("header-container");
   container.innerHTML = "";
-  const templateID = result.logged ? "headerconnect" : "headernotconnect";
+  const templateID = isLogged ? "headerconnect" : "headernotconnect";
   const template = document.getElementById(templateID);
   const clone = template.content.cloneNode(true);
   container.appendChild(clone);
-  if (result.logged)
+  if (isLogged && result)
     displayPseudoHeader(result);
 }
 async function getPseudoHeader3() {
   try {
+    console.log("dans header");
     const res = await fetch("/api/private/getpseudoAvStatus", {
       method: "POST",
       credentials: "include"
     });
+    console.log("res", res);
     const result = await res.json();
+    console.log("result", result);
     if (!result.logged)
-      return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false };
+      return { pseudo: "", avatar: "", web_status: "", notif: false };
     return { logged: true, ...result };
   } catch (err) {
-    return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false };
+    console.log("errror", err);
+    return { pseudo: "", avatar: "", web_status: "", notif: false };
   }
 }
 function displayPseudoHeader(result) {

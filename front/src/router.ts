@@ -111,31 +111,43 @@ export async function loadHeader() {
 	// 	getPseudoHeader();
 	// }
 	// const logged = await isLogged();
-	const result = await getPseudoHeader();
+	const token = localStorage.getItem("token");
+	let isLogged: boolean;
+	let result: PseudoHeaderResponse | null = null;
+    if (!token)
+		isLogged = false;
+	else {
+		isLogged = true;
+		result = await getPseudoHeader();
+	}
 	const container = document.getElementById("header-container");
 	container!.innerHTML = "";
-	const templateID = result.logged ? "headerconnect" : "headernotconnect";
+	const templateID = isLogged ? "headerconnect" : "headernotconnect";
 	const template = document.getElementById(templateID) as HTMLTemplateElement
 	const clone = template.content.cloneNode(true);
 	container!.appendChild(clone);
-	if (result.logged)
+	if (isLogged && result)
 		displayPseudoHeader(result);
 }
 
 export async function getPseudoHeader(): Promise <PseudoHeaderResponse> {
 	try {
+		console.log("dans header");
 		const res = await fetch("/api/private/getpseudoAvStatus", {
 			method: "POST",
 			credentials: "include",
 		})
+		console.log("res", res);
 		const result = await res.json();
+		console.log("result", result);
 		//if (!res.ok)
 		if (!result.logged)
-			return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false }
+			return { pseudo: "", avatar: "", web_status: "", notif: false }
 		//const result = await res.json();
 		return {logged: true, ...result};
 	} catch(err) {
-		return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false }
+		console.log("errror", err);
+		return {  pseudo: "", avatar: "", web_status: "", notif: false }
 	}
 }
 

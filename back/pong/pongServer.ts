@@ -6,9 +6,8 @@ import { Users } from "../DB/users";
 import { serverTournament, tournaments_map } from "../routes/tournament/serverTournament";
 import { TournamentState } from "../../front/src/tournament/tournamentNetwork";
 
-export function setupGameServer(io: Server, users: Users) {
-	io.on("connection", (socket) => {
-		console.log("Client connected:", socket.id);
+export function setupGameServer(io: Server, socket: Socket) {
+
 
 		socket.on("joinGame", async (gameId: number, playerId: number, tournamentId: number) => {
 			let tournament = tournaments_map.get(tournamentId);
@@ -26,7 +25,7 @@ export function setupGameServer(io: Server, users: Users) {
 
 			//add io (server) to game
 			game.setIo(io);
-			const pseudo = await users.getPseudoFromId(playerId);
+			const pseudo = socket.data.pseudo;
 			// join room
 			socket.join(`game-${gameId}`);
 
@@ -258,7 +257,6 @@ export function setupGameServer(io: Server, users: Users) {
 				}
 			});
 		});
-	});
 }
 
 function updateBrackets(tournament: serverTournament)

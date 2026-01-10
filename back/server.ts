@@ -96,8 +96,9 @@ fastify.register(async function (instance) {
 fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
 	if (request.url.startsWith("/api/private")) {
 		const user = await tokenOK(request, reply);
-		if (user !== null)
-			request.user = user;
+		if (!user)
+			return reply.code(401).send({ error: "Unauthorized" });
+		request.user = user
 	}
 })
 
@@ -320,10 +321,10 @@ fastify.get("/api/private/logout", async (request, reply) => {
 })
 
 const io = new Server(fastify.server, {
-			cors: { origin: "*" }
+			cors: { origin: "*", credentials: true}
 		});
 createWebSocket(io);
-setupGameServer(io, users);
+
 
 fastify.setNotFoundHandler((request: FastifyRequest, reply: FastifyReply) => {
 	return reply.sendFile("index.html");

@@ -9,7 +9,6 @@ import { IUsers } from "../../DB/users";
 import { notification } from "../friends/friends";
 
 export interface PseudoHeaderResponse {
-	logged : boolean;
 	pseudo: string;
 	avatar: string;
 	web_status: string;
@@ -30,12 +29,11 @@ export async function manageLogin(pseudo: string, password: string, reply: Fasti
 			};
 		if (info.twofa_enabled === 0)
 		{
-			const jwtoken = createJWT(info.user_id);
+			const jwtoken = createJWT(info.user_id, info.pseudo, info.avatar);
 			users.updateStatus(info.user_id, "online");
 			const allFriends = await friends.getMyFriends(info.user_id);
 			notification(allFriends, info.user_id);
-			reply.setCookie("token", jwtoken, options).status(200).send({ twofa:false, ok:true, token: jwtoken, message: "Login successful"})
-			/*ajouter token: jwtoken pour que  ca fonctionne */
+			reply.setCookie("token", jwtoken, options).status(200).send({ twofa:false, ok:true, message: "Login successful"})
 		}
 		const tempToken: string = createTemp2FAToken(info.user_id);
 		reply.setCookie("tempToken", tempToken, options).status(200).send({ twofa:true, ok:true, message: "Login successful"})

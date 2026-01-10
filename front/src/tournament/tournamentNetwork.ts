@@ -16,7 +16,11 @@ export class TournamentNetwork {
 	private onjoinTournamentGameCallback?: (ennemyId: number, gameId: number) => void;
 
 	constructor(serverUrl: string) {
-		this.socket = io(serverUrl, { transports: ["websocket"] });
+		const { globalSocket } = require("../socket/socket");
+		if (!globalSocket)
+			throw new Error("globalSocket uninitialized");
+		this.socket = globalSocket;
+
 
 		this.socket.on("state", (state: TournamentState) => {
 			this.onStateCallback?.(state);

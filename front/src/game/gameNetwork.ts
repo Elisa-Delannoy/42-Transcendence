@@ -25,7 +25,7 @@ export class GameNetwork {
 	constructor(serverUrl: string) {
 		const { globalSocket } = require("../socket/socket");
 		if (!globalSocket)
-			throw new Error("globalSocket n'est pas initialisé !");
+			throw new Error("globalSocket uninitialized");
 		this.socket = globalSocket;
 
 		this.socket.on("assignRole", (role: "player1" | "player2") => {
