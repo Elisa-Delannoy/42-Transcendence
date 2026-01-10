@@ -269,7 +269,7 @@ export class Users
 	}
 
 	async searchMember(pseudo: string, id: number): Promise<IUsers[]> {
-		const query = ` SELECT * FROM Users WHERE user_id != ? AND user_id > 0 AND LOWER(pseudo) LIKE LOWER(?) LIMIT 10`; /*faire un join pour status != friend ou voir pour mettre bouton supprimer si friend*/
+		const query = ` SELECT * FROM Users WHERE pseudo != 'inactive user' AND user_id != ? AND user_id > 0 AND LOWER(pseudo) LIKE LOWER(?) LIMIT 10`; /*faire un join pour status != friend ou voir pour mettre bouton supprimer si friend*/
 		const members = await this._db.query(query, [id, `${pseudo}%`])
 		return members;
 	}
