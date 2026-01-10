@@ -4,6 +4,7 @@
 		<meta charset="UTF-8" />
 		<title>Croiscendence</title>
 		<link href="/public/output.css" rel="stylesheet" />
+		<link rel="icon" type="image/x-icon" href="/src/image/favicon.ico">
 	</head>
 	<body>
 	<img src="/src/image/bg-croissant-white.jpg" 
@@ -965,7 +966,7 @@
 
 						<div id="delete-user-section" class="hidden flex flex-col shadow-sm text-red-600 bg-red-300/20
 								w-80 ring-1 ring-red-900 rounded-lg mt-6 p-3">
-							<h2 class="font-bold mb-2 text-center">Delete Account</h2>
+							<h2 class="font-bold mb-2 text-center">🚨  Delete Account</h2>
 							<form id="delete-user-form" class="flex flex-col gap-2">
 								<h2 class="text-sm text-red-600 dark:text-white mt-3 mb-0.5">Write "DELETE" + "your username"</h2>
 								<input
@@ -981,9 +982,14 @@
 									name="password"
 									placeholder="••••••••••••"
 									required />
+								<p class="text-sm text-red-600 dark:text-white mt-10 mb-0.5">
+									If your two‑factor authentication (2FA) is still turned on, you’ll need to <strong>switch it off</strong> first.
+									<br></br>
+									⚠️ Once your account is deleted, it’s <strong>gone for good</strong> and <strong>can’t be restored</strong>, so make sure you’re ready before continuing.
+								</p>
 								<button
 									type="submit" 
-									class="btn w-40 mx-auto mt-20 block bg-red-600 text-white">
+									class="btn w-40 mx-auto mt-5 block bg-red-600 text-white">
 									Delete Account
 								</button>
 							</form>

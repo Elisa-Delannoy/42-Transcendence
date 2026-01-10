@@ -177,10 +177,9 @@ export async function deleteUser(fastify: FastifyInstance, request: FastifyReque
 			return reply.code(400).send({ message: "Wrong password. Please try again!" });
 		}
 
-		const deleted = "deteled_" + (new Date()).getTime().toString()
-		await users.updateUsername(id, deleted);
-		await users.updatePassword(id, "__DELETED_USER__")
-		await users.updateEmail(id, deleted + "@delete.d")
+		await users.updateUsername(id, "inactive user");
+		await users.updatePassword(id, "__INACTIVE_USER__")
+		await users.updateEmail(id, "inactive@deleted.user")
 		await users.updateAvatar(id, "/files/0.png")
 
 		return reply.code(200).send({ message: "Username deleted successfully" });
