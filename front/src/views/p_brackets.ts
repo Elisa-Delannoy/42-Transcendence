@@ -21,80 +21,37 @@ export async function initBrackets(params?: any) {
 	const finalist2 = document.getElementById("finalist2");
 	const champion = document.getElementById("champion");
 
-	const id = await genericFetch("/api/private/game/playerinfo");
-
-	const serverUrl = window.location.host;
-
 	currentTournament = new TournamentInstance();
 
-	net = new TournamentNetwork(serverUrl);
+	net = new TournamentNetwork();
 
-	net.join(Number(tournamentID), Number(id.playerId));
+	net.join(Number(tournamentID));
 
 	net.onState((state: TournamentState) => {
 		if(!currentTournament)
 			return;
 		currentTournament.applyServerState(state);
 		updatePseudo();
-		console.log("currentTournament.getCurrentState().status : ", currentTournament.getCurrentState().status);
 		if (currentTournament.getCurrentState().status == "semifinal")
 			net?.SetupSemiFinal();
 		else if (currentTournament.getCurrentState().status == "final" && currentTournament.getCurrentState().finalists.player1 != "Winner 1" && currentTournament.getCurrentState().finalists.player2 != "Winner 2")
 			net?.SetupFinal();
 	});
 
-	net.onTournamentHost((playerId: number) => {
-		if (playerId == id.playerId)
-		{
-			startTournamentButton?.classList.remove("hidden");
-			startTournamentButton?.addEventListener("click", async () => {
-				net?.startTournament();
-				startTournamentButton?.classList.add("hidden");
-			});
-		}
-	});
-
-	net.onStartTournamentGame(async (ennemyId: number, gameId: number) => {
-		startTournamentButton?.classList.add("hidden");
-		let idGame;
-		console.log("start game : ");
-		if (Number(ennemyId) == 1)
-		{
-			const vsAI = true;
-			const id = await genericFetch("/api/private/tournament/game/create", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ vsAI, type: "Tournament", tournamentID, gameId: gameId })
-			});
-			idGame = Number(id.id);
-		}
-		else
-		{
-			const id = await genericFetch("/api/private/tournament/game/create", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ localMode: false, type: "Tournament", tournamentID, gameId: gameId })
-			});
-			idGame = Number(id.id);
-			console.log("id final : ", idGame);
-		}
-		navigateTo(`/pongmatch/${idGame}?tournamentId=${tournamentID}`);
-	});
-
-	net.onJoinTournamentGame(async (ennemyId: number, gameId: number) => {
-		console.log("join game : ");
-		const id = await genericFetch("/api/private/tournament/game/join", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				gameId: gameId,
-				tournamentID: tournamentID
-			})
+	net.onTournamentHost(() => {
+		startTournamentButton?.classList.remove("hidden");
+		startTournamentButton?.addEventListener("click", async () => {
+			net?.startTournament();
+			startTournamentButton?.classList.add("hidden");
 		});
-		const idGame = Number(id.id);
-		console.log("id final : ", idGame);
-		console.log("id final : ", id);
-		navigateTo(`/pongmatch/${idGame}?tournamentId=${tournamentID}`);
+	});
+
+	net.onStartTournamentGame((gameId: number) => {
+		navigateTo(`/pongmatch/${gameId}?tournamentId=${tournamentID}`);
+	});
+
+	net.onJoinTournamentGame(async (gameId: number) => {
+		navigateTo(`/pongmatch/${gameId}?tournamentId=${tournamentID}`);
 	});
 
 	function updatePseudo() {

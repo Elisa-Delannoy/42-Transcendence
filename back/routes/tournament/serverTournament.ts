@@ -113,22 +113,18 @@ export function joinTournament(playerId: number, tournamentId: number)
 	}
 }
 
-export function createTournamentGame(PlayerId: number,  isLocal: boolean, type: "Local" | "AI" | "Online" | "Tournament", options: { vsAI: boolean }, tournamentID: number, gameId: number): number 
+export function createTournamentGame(PlayerId: number, isLocal: boolean, type: "Local" | "AI" | "Online" | "Tournament", vsAI: boolean, tournamentID: number, gameId: number): number 
 {
 	const tournament = tournaments_map.get(tournamentID);
 	if (tournament)
 	{
 		let id: number = tournamentID * 1000;
 		id += gameId;
-		console.log("gameid back creation : ", id);
 		const game = new ServerGame(id, isLocal);
 		game.idPlayer1 = PlayerId;
-		console.log("game.idPlayer1 : ", game.idPlayer1);
 		game.type = type;
-		if (options.vsAI)
-		{
+		if (vsAI)
 			game.idPlayer2 = -1;
-		}
 		tournament.games.set(id, game);
 		return id;
 	}

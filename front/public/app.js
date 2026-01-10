@@ -4554,7 +4554,7 @@ var init_tournamentNetwork = __esm({
   "front/src/tournament/tournamentNetwork.ts"() {
     "use strict";
     TournamentNetwork = class {
-      constructor(serverUrl) {
+      constructor() {
         const { globalSocket: globalSocket2 } = (init_socket3(), __toCommonJS(socket_exports));
         if (!globalSocket2)
           throw new Error("globalSocket uninitialized");
@@ -4562,14 +4562,14 @@ var init_tournamentNetwork = __esm({
         this.socket.on("state", (state) => {
           this.onStateCallback?.(state);
         });
-        this.socket.on("hostTournament", (playerId) => {
-          this.onTournamentHostCallback?.(playerId);
+        this.socket.on("hostTournament", () => {
+          this.onTournamentHostCallback?.();
         });
-        this.socket.on("startTournamentGame", (ennemyId, gameId) => {
-          this.onStartTournamentGameCallback?.(ennemyId, gameId);
+        this.socket.on("startTournamentGame", (gameId) => {
+          this.onStartTournamentGameCallback?.(gameId);
         });
-        this.socket.on("joinTournamentGame", (ennemyId, gameId) => {
-          this.onjoinTournamentGameCallback?.(ennemyId, gameId);
+        this.socket.on("joinTournamentGame", (gameId) => {
+          this.onjoinTournamentGameCallback?.(gameId);
         });
         this.socket.on("disconnection", () => {
           this.onDisconnectionCallback?.();
@@ -4599,8 +4599,8 @@ var init_tournamentNetwork = __esm({
       startTournament() {
         this.socket.emit("startTournament");
       }
-      join(gameId, playerId) {
-        this.socket.emit("joinTournament", gameId, playerId);
+      join(tournamentId) {
+        this.socket.emit("joinTournament", tournamentId);
       }
       disconnect() {
         this.socket.emit("disconnection");
@@ -4624,68 +4624,31 @@ async function initBrackets(params) {
   const finalist1 = document.getElementById("finalist1");
   const finalist2 = document.getElementById("finalist2");
   const champion = document.getElementById("champion");
-  const id = await genericFetch("/api/private/game/playerinfo");
-  const serverUrl = window.location.host;
   currentTournament = new TournamentInstance();
-  net2 = new TournamentNetwork(serverUrl);
-  net2.join(Number(tournamentID), Number(id.playerId));
+  net2 = new TournamentNetwork();
+  net2.join(Number(tournamentID));
   net2.onState((state) => {
     if (!currentTournament)
       return;
     currentTournament.applyServerState(state);
     updatePseudo();
-    console.log("currentTournament.getCurrentState().status : ", currentTournament.getCurrentState().status);
     if (currentTournament.getCurrentState().status == "semifinal")
       net2?.SetupSemiFinal();
     else if (currentTournament.getCurrentState().status == "final" && currentTournament.getCurrentState().finalists.player1 != "Winner 1" && currentTournament.getCurrentState().finalists.player2 != "Winner 2")
       net2?.SetupFinal();
   });
-  net2.onTournamentHost((playerId) => {
-    if (playerId == id.playerId) {
-      startTournamentButton?.classList.remove("hidden");
-      startTournamentButton?.addEventListener("click", async () => {
-        net2?.startTournament();
-        startTournamentButton?.classList.add("hidden");
-      });
-    }
-  });
-  net2.onStartTournamentGame(async (ennemyId, gameId) => {
-    startTournamentButton?.classList.add("hidden");
-    let idGame;
-    console.log("start game : ");
-    if (Number(ennemyId) == 1) {
-      const vsAI = true;
-      const id2 = await genericFetch("/api/private/tournament/game/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vsAI, type: "Tournament", tournamentID, gameId })
-      });
-      idGame = Number(id2.id);
-    } else {
-      const id2 = await genericFetch("/api/private/tournament/game/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ localMode: false, type: "Tournament", tournamentID, gameId })
-      });
-      idGame = Number(id2.id);
-      console.log("id final : ", idGame);
-    }
-    navigateTo(`/pongmatch/${idGame}?tournamentId=${tournamentID}`);
-  });
-  net2.onJoinTournamentGame(async (ennemyId, gameId) => {
-    console.log("join game : ");
-    const id2 = await genericFetch("/api/private/tournament/game/join", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        gameId,
-        tournamentID
-      })
+  net2.onTournamentHost(() => {
+    startTournamentButton?.classList.remove("hidden");
+    startTournamentButton?.addEventListener("click", async () => {
+      net2?.startTournament();
+      startTournamentButton?.classList.add("hidden");
     });
-    const idGame = Number(id2.id);
-    console.log("id final : ", idGame);
-    console.log("id final : ", id2);
-    navigateTo(`/pongmatch/${idGame}?tournamentId=${tournamentID}`);
+  });
+  net2.onStartTournamentGame((gameId) => {
+    navigateTo(`/pongmatch/${gameId}?tournamentId=${tournamentID}`);
+  });
+  net2.onJoinTournamentGame(async (gameId) => {
+    navigateTo(`/pongmatch/${gameId}?tournamentId=${tournamentID}`);
   });
   function updatePseudo() {
     if (currentTournament) {

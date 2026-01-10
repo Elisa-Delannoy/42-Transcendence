@@ -42,8 +42,8 @@ export async function createWebSocket(io: Server) {
 			handleGameSocket(io, socket, gameId, playerId, tournamentId);
 		});
 
-		socket.on("joinTournament", async (tournamentId: number, playerId: number) => {
-			handleTournamentSocket(io, socket, tournaments_map, tournamentId, playerId);
+		socket.on("joinTournament", async (tournamentId: number) => {
+			handleTournamentSocket(io, socket, tournaments_map, tournamentId);
 		});
 
 

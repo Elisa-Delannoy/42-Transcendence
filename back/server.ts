@@ -284,29 +284,6 @@ fastify.post("/api/private/tournament/players", async (request, reply) => {
 	return { idPlayers };
 });
 
-fastify.post("/api/private/tournament/game/create", async (request, reply) => {
-	const { localMode, type, tournamentID, gameId } = request.body as { localMode: boolean, type: "Local" | "AI" | "Online" | "Tournament", tournamentID: number, gameId: number };
-	const playerId = request.user?.user_id as any;
-	const { vsAI } = request.body as { vsAI: boolean };
-	console.log(`vsAI is: ${vsAI}`);
-	let id;
-	if (vsAI) {
-		id = createTournamentGame(Number(playerId), localMode, type, { vsAI: true }, Number(tournamentID), Number(gameId));
-	} else {
-		id = createTournamentGame(Number(playerId), localMode, type, { vsAI: false }, Number(tournamentID), Number(gameId));
-	}
-	return { id };
-});
-
-fastify.post("/api/private/tournament/game/join", async (request, reply) => {
-	const { gameId, tournamentID } = request.body as { gameId: number, tournamentID: number };
-	const playerId = request.user?.user_id as any;
-	console.log("gameId join before: ", gameId);
-	const id = joinTournamentGame(playerId, Number(gameId), Number(tournamentID));
-	console.log("gameid join : ", id);
-	return { id };
-});
-
 fastify.post("/api/private/tournament/add", (req, reply) => {
 	return tournamentService.updateTournament(req, reply);
 });
