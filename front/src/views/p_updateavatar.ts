@@ -2,8 +2,7 @@ import { format } from "path";
 import { navigateTo, genericFetch, loadHeader } from "../router";
 
 export function UpdateAvatarView(): string {
-	loadHeader();
-	return (document.getElementById("update-avatar-html") as HTMLTemplateElement).innerHTML;
+	 	return (document.getElementById("update-avatar-html") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initUpdateAvatar() {

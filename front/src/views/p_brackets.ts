@@ -6,7 +6,6 @@ let net: TournamentNetwork | null = null;
 let currentTournament: TournamentInstance | null = null;
 
 export function BracketsView(): string {
-	loadHeader();
 	return (document.getElementById("bracketshtml") as HTMLTemplateElement).innerHTML;
 }
 

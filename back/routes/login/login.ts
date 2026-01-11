@@ -8,13 +8,6 @@ import { IMyFriends } from "../../DB/friend";
 import { IUsers } from "../../DB/users";
 import { notification } from "../friends/friends";
 
-export interface PseudoHeaderResponse {
-	pseudo: string;
-	avatar: string;
-	web_status: string;
-	notif: boolean;
-}
-
 export async function manageLogin(pseudo: string, password: string, reply: FastifyReply)
 {
 	try 

@@ -24,35 +24,21 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 
 // front/src/views/home.ts
 function View() {
-  loadHeader();
   return document.getElementById("html").innerHTML;
 }
 async function init() {
-  const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
-  const data = await res.json();
-  if (data.loggedIn) {
-    navigateTo("/home");
-  }
 }
 var init_home = __esm({
   "front/src/views/home.ts"() {
     "use strict";
-    init_router();
   }
 });
 
 // front/src/views/login.ts
 function LoginView() {
-  loadHeader();
   return document.getElementById("loginhtml").innerHTML;
 }
 async function initLogin() {
-  const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
-  const data = await res.json();
-  if (data.loggedIn) {
-    navigateTo("/home");
-    return;
-  }
   const form = document.getElementById("login-form");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -114,7 +100,6 @@ var init_login = __esm({
 
 // front/src/views/p_dashboard.ts
 function DashboardView() {
-  loadHeader();
   return document.getElementById("dashboardhtml").innerHTML;
 }
 function winrateCalcul(wins, losses) {
@@ -223,7 +208,6 @@ var ranks, rankColors, progressionColors;
 var init_p_dashboard = __esm({
   "front/src/views/p_dashboard.ts"() {
     "use strict";
-    init_router();
     ranks = [
       { min: 0, max: 400, src: "/src/image/rank1.png", type: "Wood" },
       { min: 400, max: 800, src: "/src/image/rank2.png", type: "Iron" },
@@ -253,33 +237,26 @@ var init_p_dashboard = __esm({
 
 // front/src/views/register.ts
 function RegisterView() {
-  loadHeader();
   return document.getElementById("registerhtml").innerHTML;
 }
 async function initRegister() {
-  const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
-  const data = await res.json();
-  if (data.loggedIn) {
-    navigateTo("/home");
-    return;
-  }
   const form = document.getElementById("register-form");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(form);
-    const data2 = {
+    const data = {
       username: formData.get("username"),
       email: formData.get("email"),
       password: formData.get("password"),
       confirm: formData.get("confirm-password")
     };
     try {
-      const res2 = await fetch("/api/register", {
+      const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data2)
+        body: JSON.stringify(data)
       });
-      const result = await res2.json();
+      const result = await res.json();
       if (result.ok == true)
         navigateTo("/registerok");
       else {
@@ -322,13 +299,11 @@ var init_register = __esm({
   "front/src/views/register.ts"() {
     "use strict";
     init_router();
-    init_router();
   }
 });
 
 // front/src/views/p_gameonline.ts
 function GameOnlineView() {
-  loadHeader();
   return document.getElementById("gameonlinehtml").innerHTML;
 }
 function GameOnlineinit() {
@@ -393,7 +368,6 @@ var init_p_gameonline = __esm({
 
 // front/src/views/p_gamelocal.ts
 function GameLocalView() {
-  loadHeader();
   return document.getElementById("gamelocalhtml").innerHTML;
 }
 function GameLocalinit() {
@@ -4161,7 +4135,7 @@ var init_gameNetwork = __esm({
       constructor(serverUrl) {
         const { globalSocket: globalSocket2 } = (init_socket3(), __toCommonJS(socket_exports));
         if (!globalSocket2)
-          throw new Error("globalSocket n'est pas initialis\xE9 !");
+          throw new Error("globalSocket uninitialized");
         this.socket = globalSocket2;
         this.socket.on("assignRole", (role) => {
           this.onRoleCallback?.(role);
@@ -4270,7 +4244,6 @@ var init_gameInstance = __esm({
 
 // front/src/views/p_pongmatch.ts
 function PongMatchView(params) {
-  loadHeader();
   return document.getElementById("pongmatchhtml").innerHTML;
 }
 async function initPongMatch(params) {
@@ -4440,7 +4413,6 @@ var init_p_pongmatch = __esm({
 
 // front/src/views/p_homelogin.ts
 function homeView() {
-  loadHeader();
   return document.getElementById("homehtml").innerHTML;
 }
 function smoothScrollTo(targetY, duration) {
@@ -4480,13 +4452,11 @@ var init_p_homelogin = __esm({
   "front/src/views/p_homelogin.ts"() {
     "use strict";
     init_router();
-    init_router();
   }
 });
 
 // front/src/views/p_profile.ts
 function ProfileView() {
-  loadHeader();
   return document.getElementById("profilehtml").innerHTML;
 }
 async function initProfile() {
@@ -4554,10 +4524,12 @@ var TournamentNetwork;
 var init_tournamentNetwork = __esm({
   "front/src/tournament/tournamentNetwork.ts"() {
     "use strict";
-    init_esm5();
     TournamentNetwork = class {
       constructor(serverUrl) {
-        this.socket = lookup2(serverUrl, { transports: ["websocket"] });
+        const { globalSocket: globalSocket2 } = (init_socket3(), __toCommonJS(socket_exports));
+        if (!globalSocket2)
+          throw new Error("globalSocket uninitialized");
+        this.socket = globalSocket2;
         this.socket.on("state", (state) => {
           this.onStateCallback?.(state);
         });
@@ -4611,7 +4583,6 @@ var init_tournamentNetwork = __esm({
 
 // front/src/views/p_brackets.ts
 function BracketsView() {
-  loadHeader();
   return document.getElementById("bracketshtml").innerHTML;
 }
 async function initBrackets(params) {
@@ -4724,7 +4695,6 @@ var init_p_brackets = __esm({
 
 // front/src/views/p_tournament.ts
 function TournamentView() {
-  loadHeader();
   const html = document.getElementById("tournamenthtml").innerHTML;
   setTimeout(() => initTournamentPage(), 0);
   return html;
@@ -4864,11 +4834,10 @@ var init_logout = __esm({
     "use strict";
     init_router();
     initLogout = async () => {
-      await fetch("/api/private/logout", {
+      await fetch("/api/logout", {
         method: "GET",
         credentials: "include"
       });
-      localStorage.removeItem("token");
       navigateTo("/login");
     };
   }
@@ -4876,7 +4845,6 @@ var init_logout = __esm({
 
 // front/src/views/p_friends.ts
 function FriendsView() {
-  loadHeader();
   return document.getElementById("friendshtml").innerHTML;
 }
 async function initFriends() {
@@ -5113,7 +5081,6 @@ var init_error = __esm({
 
 // front/src/views/twofa.ts
 function towfaView() {
-  loadHeader();
   return document.getElementById("twofahtml").innerHTML;
 }
 async function initTowfa() {
@@ -5145,7 +5112,6 @@ var init_twofa = __esm({
 
 // front/src/views/p_updateemail.ts
 function UpdateEmailView() {
-  loadHeader();
   return document.getElementById("update-email-html").innerHTML;
 }
 async function initUpdateEmail() {
@@ -5182,7 +5148,6 @@ var init_p_updateemail = __esm({
 
 // front/src/views/p_updateusername.ts
 function UpdateUsernameView() {
-  loadHeader();
   return document.getElementById("update-username-html").innerHTML;
 }
 async function initUpdateUsername() {
@@ -5260,7 +5225,6 @@ var init_p_updateusername = __esm({
 
 // front/src/views/p_updatepassword.ts
 function UpdatePasswordView() {
-  loadHeader();
   return document.getElementById("update-password-html").innerHTML;
 }
 async function initUpdatePassword() {
@@ -5298,7 +5262,6 @@ var init_p_updatepassword = __esm({
 
 // front/src/views/p_updateavatar.ts
 function UpdateAvatarView() {
-  loadHeader();
   return document.getElementById("update-avatar-html").innerHTML;
 }
 async function initUpdateAvatar() {
@@ -5347,7 +5310,6 @@ var init_p_updateavatar = __esm({
 
 // front/src/views/p_update2fa.ts
 function Update2faView() {
-  loadHeader();
   return document.getElementById("update-2fa-html").innerHTML;
 }
 async function initUpdate2fa() {
@@ -5496,7 +5458,26 @@ function navigateTo(url2) {
   history.pushState(state, "", url2);
   currentPath = url2;
   window.scrollTo(0, 0);
-  router();
+  router().catch((err) => console.error("Router error:", err));
+  ;
+}
+async function checkLogStatus() {
+  try {
+    const res = await fetch("/api/checkLogin", {
+      credentials: "include"
+    });
+    const result = await res.json();
+    if (result.error || !res.ok) {
+      if (result.error === "TokenExpiredError")
+        return { status: "expired", logged: false, user: null };
+      return { status: "error", logged: false, user: null };
+    }
+    if (result.loggedIn === true)
+      return { status: "logged", logged: true, user: { pseudo: result.pseudo, avatar: result.avatar, web_status: result.status, notif: result.notif } };
+    return { status: "not_logged", logged: false, user: null };
+  } catch {
+    return { status: "error", logged: false, user: null };
+  }
 }
 async function genericFetch(url2, options = {}) {
   const res = await fetch(url2, {
@@ -5504,15 +5485,6 @@ async function genericFetch(url2, options = {}) {
     credentials: "include"
   });
   const result = await res.json();
-  if (res.status === 401) {
-    if (result.error === "TokenExpiredError")
-      alert("Session expired, please login");
-    navigateTo("/logout");
-    throw new Error(result.error || result.message || "Unknown error");
-  }
-  if (!res.ok) {
-    throw new Error(result.error || result.message || "Unknown error");
-  }
   return result;
 }
 function matchRoute(pathname) {
@@ -5530,42 +5502,15 @@ function matchRoute(pathname) {
   }
   return null;
 }
-async function loadHeader() {
-  const token = localStorage.getItem("token");
-  let isLogged;
-  let result = null;
-  if (!token)
-    isLogged = false;
-  else {
-    isLogged = true;
-    result = await getPseudoHeader3();
-  }
+async function loadHeader15(auth) {
   const container = document.getElementById("header-container");
   container.innerHTML = "";
-  const templateID = isLogged ? "headerconnect" : "headernotconnect";
+  const templateID = auth.logged ? "headerconnect" : "headernotconnect";
   const template = document.getElementById(templateID);
   const clone = template.content.cloneNode(true);
   container.appendChild(clone);
-  if (isLogged && result)
-    displayPseudoHeader(result);
-}
-async function getPseudoHeader3() {
-  try {
-    console.log("dans header");
-    const res = await fetch("/api/private/getpseudoAvStatus", {
-      method: "POST",
-      credentials: "include"
-    });
-    console.log("res", res);
-    const result = await res.json();
-    console.log("result", result);
-    if (!result.logged)
-      return { pseudo: "", avatar: "", web_status: "", notif: false };
-    return { logged: true, ...result };
-  } catch (err) {
-    console.log("errror", err);
-    return { pseudo: "", avatar: "", web_status: "", notif: false };
-  }
+  if (auth.logged)
+    displayPseudoHeader(auth.user);
 }
 function displayPseudoHeader(result) {
   document.getElementById("pseudo-header").textContent = result.pseudo;
@@ -5592,7 +5537,7 @@ function displayStatus(info, status) {
   }
   status.title = info.web_status;
 }
-function router() {
+async function router() {
   if (currentRoute?.cleanup) {
     if (typeof currentRoute.cleanup === "function")
       currentRoute.cleanup();
@@ -5602,6 +5547,18 @@ function router() {
     navigateTo("/error");
     return;
   }
+  if (location.pathname !== "/logout") {
+    const auth = await checkLogStatus();
+    if (auth.status === "expired" || auth.status === "error") {
+      if (auth.status === "expired")
+        alert("Session expired, please login");
+      navigateTo("/logout");
+      return;
+    }
+    loadHeader15(auth);
+    if (publicPath.includes(location.pathname) && auth.logged)
+      navigateTo("/home");
+  }
   const { route, params } = match;
   document.querySelector("#header-container").innerHTML;
   if (route.view)
@@ -5609,7 +5566,7 @@ function router() {
   route.init?.(params);
   currentRoute = route;
 }
-function initRouter() {
+async function initRouter() {
   document.body.addEventListener("click", (e) => {
     const target = e.target;
     const link = target.closest("[data-link]");
@@ -5622,14 +5579,13 @@ function initRouter() {
     }
   });
   currentPath = window.location.pathname;
-  window.addEventListener("popstate", (event) => {
-    popState3();
+  window.addEventListener("popstate", async (event) => {
+    await popState3();
   });
-  router();
+  await router();
 }
-function popState3() {
+async function popState3() {
   const path = window.location.pathname;
-  const publicPath = ["/", "/login", "/register", "/logout"];
   const toIsPrivate = !publicPath.includes(path);
   const fromIsPrivate = !publicPath.includes(currentPath);
   if (!history.state.from && fromIsPrivate) {
@@ -5644,9 +5600,9 @@ function popState3() {
     currentPath = "/home";
   } else
     currentPath = path;
-  router();
+  await router();
 }
-var routes, currentRoute, currentPath;
+var routes, publicPath, currentRoute, currentPath;
 var init_router = __esm({
   "front/src/router.ts"() {
     "use strict";
@@ -5699,6 +5655,7 @@ var init_router = __esm({
       { path: "/error", view: ErrorView, init: initError },
       { path: "/oauth/callback", init: initOAuthCallback }
     ];
+    publicPath = ["/", "/login", "/register", "/logout"];
     currentRoute = null;
   }
 });

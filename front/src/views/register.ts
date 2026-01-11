@@ -4,18 +4,17 @@ import { loadHeader } from "../router";
 
 
 export function RegisterView(): string {
-	loadHeader();
-	return (document.getElementById("registerhtml") as HTMLTemplateElement).innerHTML;
+	 	return (document.getElementById("registerhtml") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initRegister() {
-	const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
-	const data = await res.json();
+	// const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
+	// const data = await res.json();
 
-    if (data.loggedIn) {
-        navigateTo("/home");
-		return;
-    }
+    // if (data.loggedIn) {
+    //     navigateTo("/home");
+	// 	return;
+    // }
 	// if (res.ok)
 	// {
 	// 	navigateTo("/home");

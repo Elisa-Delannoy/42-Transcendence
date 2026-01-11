@@ -1,7 +1,6 @@
 import { navigateTo, genericFetch, loadHeader } from "../router";
 
 export function GameOnlineView(): string {
-	loadHeader();
   	return (document.getElementById("gameonlinehtml") as HTMLTemplateElement).innerHTML;
 }
 

@@ -9,8 +9,7 @@ let currentGame: GameInstance | null = null;
 let interval: NodeJS.Timeout;
 
 export function PongMatchView(params?: any): string {
-	loadHeader();
-	return (document.getElementById("pongmatchhtml") as HTMLTemplateElement).innerHTML;
+	 	return (document.getElementById("pongmatchhtml") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initPongMatch(params?: any) {

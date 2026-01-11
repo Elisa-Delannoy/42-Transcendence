@@ -1,8 +1,7 @@
 import { navigateTo, genericFetch, loadHeader } from "../router";
 
 export function TournamentView(): string {
-	loadHeader();
-	const html = (document.getElementById("tournamenthtml") as HTMLTemplateElement).innerHTML;
+	 	const html = (document.getElementById("tournamenthtml") as HTMLTemplateElement).innerHTML;
 	setTimeout(() => initTournamentPage(), 0);
 	return html;
 }

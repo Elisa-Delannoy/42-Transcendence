@@ -94,26 +94,25 @@ fastify.register(async function (instance) {
 });
 
 fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
-	if (request.url.startsWith("/api/private")) {
-		const user = await tokenOK(request, reply);
-		if (!user)
-			return reply.code(401).send({ error: "Unauthorized" });
-		request.user = user
-	}
+	// if (request.url.startsWith("/api/private")) {
+	// 	// console.log("in on request")
+	// 	const user = await tokenOK(request, reply);
+	// 	// console.log("in on request ", user);
+	// 	if (!user)
+	// 		return reply.code(401).send({ error: "Unauthorized on request" });
+	// 	request.user! = user;
+	// }
+	const user = await tokenOK(request, reply);
+	request.user = user;
 })
 
-// fastify.get("/api/isLoggedIn", async (request: FastifyRequest, reply: FastifyReply) => {
-// 	const user = await tokenOK(request, reply);
-// 	if (user !== null)
-// 		return { logged: true };
-// 	return { logged: false };
-// })
 
 fastify.get("/api/checkLogin", async (request, reply) => {
-	//return tokenOK(request, reply);
-	const user = await tokenOK(request, reply);
-	if (!user) return reply.code(200).send({ loggedIn: false });
-	reply.send({ loggedIn: true, user: {id: user.user_id, name: user.pseudo }});
+
+	// const user = await tokenOK(request, reply);
+	if (!request.user || request.user.user_id === null)
+		return reply.send({ loggedIn: false, error: request.user?.error });
+	reply.send({ loggedIn: true, user: {id: request.user.user_id, pseudo: request.user.pseudo, avatar: request.user.avatar, status: request.user.status, notif: globalThis.notif }});
 });
 
 fastify.get("/api/auth/status", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -148,13 +147,6 @@ fastify.post("/api/private/2fa/enable", async (request: FastifyRequest, reply: F
 
 fastify.post("/api/private/2fa/disable", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await disableTwoFA(request, reply);
-});
-
-fastify.post("/api/private/getpseudoAvStatus", async (request: FastifyRequest, reply: FastifyReply) => {
-	if (!request.user)
-		return { logged: false };
-	return {logged: true, pseudo: request.user.pseudo, avatar: request.user.avatar, web_status: request.user.status, notif: globalThis.notif};
-	//return { pseudo: request.user?.pseudo, avatar: request.user?.avatar, web_status: request.user?.status, notif: globalThis.notif }
 });
 
 fastify.post("/api/private/profile", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -316,7 +308,7 @@ fastify.get("/api/private/tournament/all", (req, reply) => {
 	return tournamentService.getAllTournamentsDetailed(req, reply);
 });
 
-fastify.get("/api/private/logout", async (request, reply) => {
+fastify.get("/api/logout", async (request, reply) => {
 	return await logout(request, reply);
 })
 

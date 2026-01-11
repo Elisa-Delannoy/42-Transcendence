@@ -25,7 +25,7 @@ import { Update2faView, initUpdate2fa } from "./views/p_update2fa";
 import { initOAuthCallback } from "./views/oauth_callback";
 import { InitTermsOfService, TermsOfServiceView } from "./views/terms_of_service";
 import { InitPrivacyPolicy, PriavacyPolicyView } from "./views/privacypolicy";
-import { PseudoHeaderResponse } from "../../back/routes/login/login";
+import { IUsers } from "../../back/DB/users";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -54,15 +54,49 @@ const routes = [
   { path: "/oauth/callback", init: initOAuthCallback },
 ];
 
+const publicPath = ["/", "/login", "/register", "/logout"];
+
 let currentRoute: any = null;
-let currentPath: string
+let currentPath: string;
+
+export interface PseudoHeaderResponse {
+	pseudo: string;
+	avatar: string;
+	web_status: string;
+	notif: boolean;
+}
+
+export type LogStatusAndInfo = { 
+	status: "logged" | "expired" | "not_logged" | "error";
+	logged: boolean;
+	user: PseudoHeaderResponse | null;
+}
 
 export function navigateTo(url: string) {
 	const state = { from: window.location.pathname };
 	history.pushState(state, "", url);
 	currentPath = url;
 	window.scrollTo(0, 0);
-	router();
+	router().catch(err => console.error("Router error:", err));;
+}
+
+export async function checkLogStatus(): Promise<LogStatusAndInfo> {
+	try	{	
+		const res = await fetch("/api/checkLogin", {
+			credentials: "include"
+		})
+		const result = await res.json();
+ 		if (result.error || !res.ok) {
+			if (result.error === "TokenExpiredError")
+				return { status: "expired", logged: false, user: null };
+			return { status: "error", logged: false, user: null }			
+		}
+		if (result.loggedIn === true)
+			return { status: "logged", logged: true, user: { pseudo: result.pseudo, avatar: result.avatar, web_status: result.status, notif: result.notif} };
+		return { status: "not_logged", logged: false, user: null };
+	} catch {
+		return { status: "error", logged: false, user: null };
+	}
 }
 
 export async function genericFetch(url: string, options: RequestInit = {})
@@ -72,15 +106,15 @@ export async function genericFetch(url: string, options: RequestInit = {})
 	credentials: "include"
 })
 	const result = await res.json();
-	if (res.status === 401) {
-		if (result.error === "TokenExpiredError")
-			alert("Session expired, please login")
-		navigateTo("/logout");
-		throw new Error(result.error || result.message || "Unknown error");
-}
-	if (!res.ok){
-		throw new Error(result.error || result.message || "Unknown error");
-}
+// 	if (result.error) {
+// 		if (result.error === "TokenExpiredError")
+// 			alert("Session expired, please login")
+// 		navigateTo("/logout");
+// 		throw new Error(result.error || result.message || "Unknown error");
+// }
+// 	if (!res.ok){
+// 		throw new Error(result.error || result.message || "Unknown error");
+// }
 	return result;
 }
 
@@ -101,54 +135,16 @@ function matchRoute(pathname: string) {
 	return null;
 }
 
-export async function loadHeader() {
+export async function loadHeader(auth: LogStatusAndInfo) {
 
-	// const response = await fetch('/header.html');
-	// const html = await response.text();
-	// const container = document.getElementById('header-container');
-	// if (container) {
-	// 	container.innerHTML = html;	
-	// 	getPseudoHeader();
-	// }
-	// const logged = await isLogged();
-	const token = localStorage.getItem("token");
-	let isLogged: boolean;
-	let result: PseudoHeaderResponse | null = null;
-    if (!token)
-		isLogged = false;
-	else {
-		isLogged = true;
-		result = await getPseudoHeader();
-	}
 	const container = document.getElementById("header-container");
 	container!.innerHTML = "";
-	const templateID = isLogged ? "headerconnect" : "headernotconnect";
+	const templateID = auth.logged ? "headerconnect" : "headernotconnect";
 	const template = document.getElementById(templateID) as HTMLTemplateElement
 	const clone = template.content.cloneNode(true);
 	container!.appendChild(clone);
-	if (isLogged && result)
-		displayPseudoHeader(result);
-}
-
-export async function getPseudoHeader(): Promise <PseudoHeaderResponse> {
-	try {
-		console.log("dans header");
-		const res = await fetch("/api/private/getpseudoAvStatus", {
-			method: "POST",
-			credentials: "include",
-		})
-		console.log("res", res);
-		const result = await res.json();
-		console.log("result", result);
-		//if (!res.ok)
-		if (!result.logged)
-			return { pseudo: "", avatar: "", web_status: "", notif: false }
-		//const result = await res.json();
-		return {logged: true, ...result};
-	} catch(err) {
-		console.log("errror", err);
-		return {  pseudo: "", avatar: "", web_status: "", notif: false }
-	}
+	if (auth.logged)
+		displayPseudoHeader(auth.user!);
 }
 
 export function displayPseudoHeader(result: PseudoHeaderResponse) {
@@ -176,7 +172,7 @@ export function displayStatus(info: any, status: HTMLImageElement): void {
 	status.title = info.web_status;
 }
 
-export function router() {
+export async function router() {
 	//clean route who got cleanup function (game)
 	if (currentRoute?.cleanup)
 	{
@@ -188,6 +184,18 @@ export function router() {
 		navigateTo("/error");
 		return;
 	}
+	if (location.pathname !== "/logout") {
+		const auth: LogStatusAndInfo = await checkLogStatus();
+		if (auth.status === "expired" || auth.status === "error") {
+			if (auth.status === "expired")
+				alert("Session expired, please login")
+			navigateTo("/logout");
+			return;
+		}
+		loadHeader(auth);
+		if (publicPath.includes(location.pathname) && auth.logged)
+			navigateTo("/home");
+	}
 
 	const { route, params } = match;
 	document.querySelector("#header-container")!.innerHTML
@@ -197,29 +205,29 @@ export function router() {
 	currentRoute = route;
 }
 
-export function initRouter() {
+export async function initRouter() {
 	document.body.addEventListener("click", (e) => {
-    	const target = e.target as HTMLElement;
-    	const link = target.closest("[data-link]") as HTMLElement | null;
-    	if (link) {
-    		e.preventDefault();
-    		const url = (link as HTMLAnchorElement).getAttribute("href");
-    		if (url) {
-    			navigateTo(url);
-    		}
-    	}
+		const target = e.target as HTMLElement;
+		const link = target.closest("[data-link]") as HTMLElement | null;
+		if (link) {
+			e.preventDefault();
+			const url = (link as HTMLAnchorElement).getAttribute("href");
+			if (url) {
+				navigateTo(url);
+			}
+		}
   });
   	// history.replaceState({ from: "/" }, "", "/");
 	currentPath = window.location.pathname;
-  	window.addEventListener("popstate", (event) => {	
-		popState();
+  	window.addEventListener("popstate", async (event) => {	
+		await popState();
 	});
-  router();
+  await router();
 }
 
-export function popState() {
+export async function popState() {
 	const path = window.location.pathname;
-	const publicPath = ["/", "/login", "/register", "/logout"];
+	// const publicPath = ["/", "/login", "/register", "/logout"];
 	const toIsPrivate = !publicPath.includes(path);
 	const fromIsPrivate = !publicPath.includes(currentPath);
 	if (!history.state.from && fromIsPrivate)
@@ -229,7 +237,7 @@ export function popState() {
 		navigateTo("/logout");
 	}
 	else if (!history.state.from && !fromIsPrivate)
-    {
+	{
 		history.replaceState({ from: "/" }, "", "/");
 		currentPath = "/";
 	}
@@ -240,5 +248,5 @@ export function popState() {
 	}
 	else
 		currentPath = path;
-	router();
+	await router();
 }

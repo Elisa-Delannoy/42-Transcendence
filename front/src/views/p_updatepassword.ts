@@ -2,8 +2,7 @@ import { format } from "path";
 import { navigateTo, genericFetch, loadHeader } from "../router";
 
 export function UpdatePasswordView(): string {
-	loadHeader();
-	return (document.getElementById("update-password-html") as HTMLTemplateElement).innerHTML;
+	 	return (document.getElementById("update-password-html") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initUpdatePassword() {

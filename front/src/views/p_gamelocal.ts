@@ -1,7 +1,6 @@
 import { navigateTo, genericFetch, loadHeader } from "../router";
 
 export function GameLocalView(): string {
-	loadHeader();
 	return (document.getElementById("gamelocalhtml") as HTMLTemplateElement).innerHTML;
 }
 

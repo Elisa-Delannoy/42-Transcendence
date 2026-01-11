@@ -2,8 +2,7 @@ import { format } from "path";
 import { navigateTo, genericFetch, loadHeader } from "../router";
 
 export function Update2faView(): string {
-	loadHeader();
-	return (document.getElementById("update-2fa-html") as HTMLTemplateElement).innerHTML;
+	 	return (document.getElementById("update-2fa-html") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initUpdate2fa() {

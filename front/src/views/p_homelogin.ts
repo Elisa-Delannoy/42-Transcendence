@@ -4,8 +4,7 @@ import { AsyncLocalStorage } from "async_hooks";
 import { navigateTo } from "../router";
 
 export function homeView(): string {
-	loadHeader();
-	return (document.getElementById("homehtml") as HTMLTemplateElement).innerHTML;
+	 	return (document.getElementById("homehtml") as HTMLTemplateElement).innerHTML;
 }
 
 function smoothScrollTo(targetY: number, duration: number) {

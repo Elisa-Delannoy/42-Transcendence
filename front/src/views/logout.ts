@@ -1,10 +1,9 @@
 import { navigateTo } from "../router";
 
 export const initLogout = async() => {
-	await fetch("/api/private/logout", {
+	await fetch("/api/logout", {
 		method: "GET",
 		credentials: "include"
 		});
-	localStorage.removeItem("token");
 	navigateTo("/login");
 }

@@ -17,6 +17,6 @@ export async function logout(request: FastifyRequest, reply: FastifyReply) {
 			return { message: "is logged out" };
 	}
 		catch (err) {
-		console.log(err);
+		// console.log(err);
 	}
 };

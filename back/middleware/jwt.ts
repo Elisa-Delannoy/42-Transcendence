@@ -10,6 +10,16 @@ dotenv.config({ path: "./back/.env" });
 export const secretkey: string = process.env.SECRETKEY as string;
 const TEMP_JWT_SECRET = process.env.TEMP_JWT_SECRET!;
 
+export type UserJWT = { 
+	user_id: number;
+    pseudo: string;
+    avatar: string;
+    status: string;
+} | {
+    user_id: null;
+    error?: string;
+}
+
 if (!secretkey)
 	throw new Error("SECRETKEY is missing in .env");
 
@@ -33,19 +43,20 @@ export const checkAuth = async (token: string): Promise< IUsers | Error> => {
 	}
 }
 
-export const tokenOK = async (request: FastifyRequest, reply: FastifyReply): Promise< IUsers | null> => {
+export const tokenOK = async (request: FastifyRequest, reply: FastifyReply): Promise <UserJWT> => {
 	const token = request.cookies.token;
 	if (!token) {
 		// reply.code(401).send({ error: "Unauthorized: token is missing"});
-		return null
+		return { user_id: null };
 	}
 	const user_loged = await checkAuth(token);
 	if (user_loged instanceof Error) {
 		// reply.code(401).send({ error: user_loged.name });
-		return null
+		return { user_id: null, error: user_loged.name };
 	}
 	//reply.code(200);
-	return user_loged;
+	console.log("user_loged ", user_loged);
+	return { user_id: user_loged.user_id, pseudo: user_loged.pseudo, avatar: user_loged.avatar, status: user_loged.status };
 }
 
 export async function socketTokenOk(token: string): Promise <IUsers | null>{

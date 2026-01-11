@@ -6,7 +6,6 @@ import { IGameInfo } from "../../../back/DB/gameinfo";
 import { IDashBoard } from "../../../back/routes/dashboard/dashboard";
 
 export function DashboardView(): string {
-	loadHeader();
 	return (document.getElementById("dashboardhtml") as HTMLTemplateElement).innerHTML;
 }
 

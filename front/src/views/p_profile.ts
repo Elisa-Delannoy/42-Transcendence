@@ -2,8 +2,7 @@ import { IUsers } from "../../../back/DB/users";
 import { genericFetch, getPseudoHeader, loadHeader, navigateTo } from "../router";
 
 export function ProfileView(): string {
-	loadHeader();
-	return (document.getElementById("profilehtml") as HTMLTemplateElement).innerHTML;
+	 	return (document.getElementById("profilehtml") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initProfile() {

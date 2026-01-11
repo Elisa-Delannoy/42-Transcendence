@@ -8,7 +8,6 @@ import { IFriendsAndNot } from "../../../back/routes/friends/friends";
 import { linearBuckets } from "prom-client";
 
 export function FriendsView(): string {
-    loadHeader();
 	return (document.getElementById("friendshtml") as HTMLTemplateElement).innerHTML;
 }
 

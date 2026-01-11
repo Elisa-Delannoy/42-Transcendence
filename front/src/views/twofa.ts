@@ -4,8 +4,7 @@ import { Result } from "ethers";
 
 export function towfaView()
 {
-	loadHeader();
-	return (document.getElementById("twofahtml") as HTMLTemplateElement).innerHTML;
+	 	return (document.getElementById("twofahtml") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initTowfa()

@@ -2,7 +2,6 @@ import { loadHeader, navigateTo} from "../router";
 
 
 export function LoginView(): string {
-	loadHeader();
 	return (document.getElementById("loginhtml") as HTMLFormElement).innerHTML;
 }
 
@@ -14,13 +13,13 @@ export async function initLogin()
 	// 	navigateTo("/home");
 	// 	return;
 	// }
-	const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
-	const data = await res.json();
+	// const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
+	// const data = await res.json();
 
-    if (data.loggedIn) {
-        navigateTo("/home");
-		return;
-    }
+    // if (data.loggedIn) {
+    //     navigateTo("/home");
+	// 	return;
+    // }
 	const form = document.getElementById("login-form") as HTMLFormElement;
 	form.addEventListener("submit", async (e) => {
 		e.preventDefault();

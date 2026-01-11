@@ -2,8 +2,7 @@ import { format } from "path";
 import { navigateTo, genericFetch, loadHeader } from "../router";
 
 export function UpdateEmailView(): string {
-	loadHeader();
-	return (document.getElementById("update-email-html") as HTMLTemplateElement).innerHTML;
+	 	return (document.getElementById("update-email-html") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initUpdateEmail() {
