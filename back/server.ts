@@ -20,7 +20,7 @@ import multipart from "@fastify/multipart"
 import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always";
 import * as tournamentService from "./routes/tournament/tournament.service";
 import { getProfile } from "./routes/profile/profile";
-import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus, deleteUser } from "./routes/profile/getUpdate";
+import { getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus, deleteUser } from "./routes/profile/getUpdate";
 import { logout } from "./routes/logout/logout";
 import { Friends } from "./DB/friend";
 import { allMyFriendsAndOpponent, searchUser, addFriend, acceptFriend, deleteFriend } from "./routes/friends/friends";
@@ -140,11 +140,11 @@ fastify.post("/api/private/2fa/setup", async (request: FastifyRequest, reply: Fa
     return await setupTwoFA(request, reply);
 });
 
-fastify.post("/api/private/2fa/enable", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.put("/api/private/2fa/enable", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await enableTwoFA(request, reply);
 });
 
-fastify.post("/api/private/2fa/disable", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.put("/api/private/2fa/disable", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await disableTwoFA(request, reply);
 });
 
@@ -152,23 +152,19 @@ fastify.post("/api/private/profile", async (request: FastifyRequest, reply: Fast
 	return await getProfile(fastify, request, reply);
 });
 
-fastify.post("/api/private/updateinfo/status", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.put("/api/private/updateinfo/status", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await getUpdateStatus(request, reply);
 });
 
-fastify.post("/api/private/updateinfo", async (request: FastifyRequest, reply: FastifyReply) => {
-	return await getUpdateInfo(fastify, request, reply);
-});
-
-fastify.post("/api/private/updateinfo/username", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.put("/api/private/updateinfo/username", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await getUpdateUsername(fastify, request, reply);
 })
 
-fastify.post("/api/private/updateinfo/email", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.put("/api/private/updateinfo/email", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await getUpdateEmail(fastify, request, reply);
 })
 
-fastify.post("/api/private/updateinfo/password", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.put("/api/private/updateinfo/password", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await getUpdatePassword(fastify, request, reply);
 })
 
@@ -176,7 +172,7 @@ fastify.post("/api/private/updateinfo/uploads", async (request, reply) => {
 	await getUploadAvatar(request, reply);
 });
 
-fastify.post("/api/private/updateinfo/delete", async (request, reply) => {
+fastify.delete("/api/private/updateinfo/delete", async (request, reply) => {
 	await deleteUser(fastify, request, reply);
 });
 

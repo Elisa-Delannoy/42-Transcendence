@@ -7,18 +7,18 @@ import fs from "fs";
 import mime from "mime-types";
 import { checkPassword } from "../register/register";
 
-export async function getUpdateInfo(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
-	try {
-		const id = request.user?.user_id as any;
-		const profil = await users.getIDUser(id);
-		if (!profil)
-      		return reply.code(404).send({message: "User not found"});
-    	return profil;
-  	} catch (error) {
-    	fastify.log.error(error)
-    	return reply.code(500).send({message: "Internal Server Error"});
-  	}
-}
+// export async function getUpdateInfo(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
+// 	try {
+// 		const id = request.user?.user_id as any;
+// 		const profil = await users.getIDUser(id);
+// 		if (!profil)
+//       		return reply.code(404).send({message: "User not found"});
+//     	return profil;
+//   	} catch (error) {
+//     	fastify.log.error(error)
+//     	return reply.code(500).send({message: "Internal Server Error"});
+//   	}
+// }
 
 export async function getUpdateUsername(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
 	try {

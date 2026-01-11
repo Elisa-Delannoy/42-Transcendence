@@ -4418,7 +4418,7 @@ async function initProfile() {
     select.addEventListener("change", async (e) => {
       const status = e.target.value;
       await genericFetch("/api/private/updateinfo/status", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status })
       });
@@ -5037,8 +5037,9 @@ async function initUpdateEmail() {
     const newEmail = formEmail["new-email"].value;
     const password = formEmail["password"].value;
     try {
+      console.log("here");
       const response = await genericFetch("/api/private/updateinfo/email", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newEmail, password })
       });
@@ -5096,7 +5097,7 @@ async function updateUsername() {
     const password = formUsername["password"].value;
     try {
       const response = await genericFetch("/api/private/updateinfo/username", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newUsername, password })
       });
@@ -5115,7 +5116,7 @@ async function deleteUser() {
     const password = formDelete["password"].value;
     try {
       await genericFetch("/api/private/updateinfo/delete", {
-        method: "POST",
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ confirmUser, password })
       });
@@ -5152,7 +5153,7 @@ async function initUpdatePassword() {
     const confirm = formPassword["confirm-new-password"].value;
     try {
       const response = await genericFetch("/api/private/updateinfo/password", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ oldPw, newPw, confirm })
       });
@@ -5266,7 +5267,7 @@ async function initUpdate2fa() {
     }
     try {
       await genericFetch("/api/private/2fa/enable", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code })
       });
@@ -5284,7 +5285,7 @@ async function initUpdate2fa() {
   });
   twofaDisableBtn.addEventListener("click", async () => {
     try {
-      await genericFetch("/api/private/2fa/disable", { method: "POST" });
+      await genericFetch("/api/private/2fa/disable", { method: "PUT" });
       alert("2FA Disabled!");
       twofaDisableBtn.classList.add("hidden");
       twofaEnableBtn.classList.remove("hidden");
