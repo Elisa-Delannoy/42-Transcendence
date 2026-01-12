@@ -14,6 +14,5 @@ export async function initOAuthCallback() {
       navigateTo("/twofa");
     } else {
       navigateTo("/home");
-      // displayChat();
     }
   }

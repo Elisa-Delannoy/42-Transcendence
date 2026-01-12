@@ -4386,9 +4386,9 @@ var init_chatNetwork = __esm({
       disconnect() {
         this.socket.disconnect();
       }
-      requestHistory() {
-        this.socket.emit("requestHistory");
-      }
+      // requestHistory() {
+      // 	this.socket.emit("requestHistory");
+      // }
     };
   }
 });
@@ -4415,7 +4415,6 @@ async function displayChat() {
   chatnet.receiveError((error) => {
     displayError(error.error);
   });
-  chatnet.requestHistory();
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     chatnet.sendMessage(input.value);
@@ -4425,13 +4424,13 @@ async function displayChat() {
 function addMessageGeneral(data) {
   const box = document.getElementById("chat-box");
   const div = document.createElement("div");
-  div.className = "bg-gray-800 p-2 rounded-lg";
+  div.className = "bg-amber-100/90 p-2 rounded-lg break-words max-w-full";
   div.innerHTML = `
 		<div class="flex items-center justify-between">
-			<span class="font-semibold text-green-400">${data.pseudo}</span>
-			<span class="text-xs text-gray-400">${new Date(data.date).toLocaleTimeString()}</span>
+			<span class="font-semibold text-amber-950">${data.pseudo}</span>
+			<span class="text-xs text-gray-800">${new Date(data.date).toLocaleTimeString()}</span>
 		</div>
-		<div class="text-gray-200">${data.message}</div>
+		<div class="text-amber-900">${data.message}</div>
 	`;
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
@@ -4484,19 +4483,24 @@ async function initHomePage() {
     navigateTo("/login");
     return;
   }
+  if (!firstLogin) {
+    displayChat();
+    firstLogin = true;
+  }
   const btn = document.getElementById("scroll-button");
   const target = document.getElementById("gamepage");
   btn.addEventListener("click", () => {
     const targetY = target.getBoundingClientRect().top + window.scrollY;
     smoothScrollTo(targetY, 1e3);
   });
-  displayChat();
 }
+var firstLogin;
 var init_p_homelogin = __esm({
   "front/src/views/p_homelogin.ts"() {
     "use strict";
     init_router();
     init_p_chat();
+    firstLogin = false;
   }
 });
 
@@ -5049,7 +5053,6 @@ function pendingFr(pendingFriends) {
   });
 }
 function youMayKnow(opponent) {
-  console.log(opponent, opponent.length);
   const divNoOpponent = document.getElementById("no-opponent");
   const divOpponent = document.getElementById("opponent");
   if (opponent.length === 0) {

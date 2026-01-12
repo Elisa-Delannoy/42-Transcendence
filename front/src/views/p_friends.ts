@@ -217,8 +217,6 @@ function pendingFr(pendingFriends: IMyFriends[]) {
 }
 
 function youMayKnow(opponent: {id: number, pseudo: string, avatar: string}[]) {
-
-	console.log(opponent, opponent.length);
 	const divNoOpponent = document.getElementById("no-opponent") as HTMLElement;
 	const divOpponent = document.getElementById("opponent") as HTMLElement;
 	if (opponent.length === 0) {

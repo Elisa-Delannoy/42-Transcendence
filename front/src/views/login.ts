@@ -18,7 +18,6 @@ export async function initLogin()
 			navigateTo("/twofa");
 		if (success == 1) {
 			navigateTo("/home");
-			// displayChat();
 		}
     });
 

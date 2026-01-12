@@ -30,8 +30,8 @@ export async function displayChat() {
 			displayError(error.error);
 		})
 
-	chatnet.requestHistory();
-	
+	// chatnet.requestHistory();
+
 	form!.addEventListener("submit", (e) => {
 		e.preventDefault();
 
@@ -44,14 +44,14 @@ function addMessageGeneral(data: dataChat) {
 	const box = document.getElementById("chat-box");
 
 	const div = document.createElement("div");
-	div.className = "bg-gray-800 p-2 rounded-lg";
+	div.className = "bg-amber-100/90 p-2 rounded-lg break-words max-w-full";
 
 	div.innerHTML = `
 		<div class="flex items-center justify-between">
-			<span class="font-semibold text-green-400">${data.pseudo}</span>
-			<span class="text-xs text-gray-400">${new Date(data.date).toLocaleTimeString()}</span>
+			<span class="font-semibold text-amber-950">${data.pseudo}</span>
+			<span class="text-xs text-gray-800">${new Date(data.date).toLocaleTimeString()}</span>
 		</div>
-		<div class="text-gray-200">${data.message}</div>
+		<div class="text-amber-900">${data.message}</div>
 	`;
 
 	box!.appendChild(div);

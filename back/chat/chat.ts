@@ -29,10 +29,10 @@ export async function handleGeneralChatSocket(io: Server, socket: Socket) {
 	}
 	})
 
-	socket.on("requestHistory", async () => {
-    const history = await generalChat.displayHistoryMessage();
-    socket.emit("chatHistory", history);
-	});
+	// socket.on("requestHistory", async () => {
+    // const history = await generalChat.displayHistoryMessage();
+    // socket.emit("chatHistory", history);
+	// });
 
 }
 

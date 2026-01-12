@@ -27,6 +27,5 @@ export async function initTowfa()
 			return;
 		}
 		navigateTo("/home");
-		// displayChat();
 	});
 }

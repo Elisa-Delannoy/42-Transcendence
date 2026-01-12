@@ -38,8 +38,8 @@ export class chatNetwork {
 		this.socket.disconnect();
 	}
 
-	requestHistory() {
-		this.socket.emit("requestHistory");
-	}
+	// requestHistory() {
+	// 	this.socket.emit("requestHistory");
+	// }
 
 }

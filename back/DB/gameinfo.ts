@@ -140,11 +140,22 @@ export class GameInfo
 	}
 
 	async getRecentPlayerNotFriend(id: number): Promise<{ id: number, pseudo: string, avatar: string }[]> {
-		const query = `SELECT u.pseudo, u.avatar,
+		const query = `SELECT pseudo, avatar, id
+			FROM (
+				SELECT u.pseudo, u.avatar,
 				CASE
 					WHEN gi.winner_id = ? THEN gi.loser_id
 					ELSE gi.winner_id
-				END AS id
+				END AS id,
+				gi.date_game,
+				ROW_NUMBER() OVER(
+					PARTITION BY
+						CASE
+							WHEN gi.winner_id = ? THEN gi.loser_id
+							ELSE gi.winner_id
+						END
+					ORDER BY gi.date_game DESC
+				) AS row_number
 			FROM game_info AS gi
 			JOIN Users AS u ON u.user_id = 
 				CASE
@@ -157,8 +168,10 @@ export class GameInfo
 				OR (f.user_id1 = u.user_id AND f.user_id2 = ?)
 			WHERE
 				(gi.winner_id = ? OR gi.loser_id = ?) 
-				AND f.user_id1 IS NULL 
-			ORDER BY gi.date_game DESC
+				AND f.user_id1 IS NULL
+			) temp
+			WHERE row_number = 1
+			ORDER BY date_game DESC
 			LIMIT 20`
 			const players = await this._db.query(query, [id, id, id, id, id, id]);
 			return players;

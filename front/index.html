@@ -15,7 +15,7 @@
 		class="fixed inset-0 -z-10 hidden dark:block object-cover w-full h-screen">
 	<header id="header-container" ></header>
 	<main id="app"></main>
-	<div id="chat-container"></div>
+	<div id="chat-container" class="fixed bottom-5 right-5 flex flex-col items-end"></div>
 
 	<script type="module" src="/public/app.js"></script>
 	</body>
@@ -657,7 +657,7 @@
 						hover:bg-linear-to-r hover:from-orange-500 hover:via-amber-800 hover:to-amber-600
 						animate-pulse w-fit">Welcome in Croiscendence</h1>
 				<p class="mt-10 text-base md:text-lg lg:text-xl opacity-50
-          				 max-w-md mx-auto">
+		  				 max-w-md mx-auto">
 					You can start playing by clicking the button below,
 					and view your profile information by clicking 
 					your avatar in the top-right corner.</p>
@@ -1400,31 +1400,26 @@
 		</div>
 	</template>
 
-	<template id="chat-template" class="fixed bottom-5 right-5">
-	    <!-- Petit bouton -->
-    	<div id="chat-bar"
-	         class="bg-gray-800 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center">
-	        General Chat
-    	</div>
-
-    	<!-- Fenêtre du chat -->
-    	<div id="chat-window"
-	         class="hidden flex-col w-80 h-96 bg-gray-900 rounded-xl shadow-lg mt-3 overflow-hidden border border-gray-700">
+	<template id="chat-template" >
+		
+		<div id="chat-window" class="hidden flex-col w-80 h-96 bg-amber-800 rounded-xl overflow-hidden border border-amber-100">
 	
-	        <!-- Messages -->
-	        <div id="chat-box" class="flex-1 p-3 overflow-y-auto space-y-2 text-white"></div>
+			<div id="chat-box" class="flex-1 p-3 overflow-y-auto space-y-2 text-white"></div>
+			<form id="chat-form" class="flex border-t border-amber-100">
+				<input id="chat-input"
+					   type="text"
+					   placeholder="Write your message…"
+					   class="flex-1 bg-amber-800 text-white px-3 py-2 outline-none"
+					   autocomplete="off" />
+				<button class="bg-amber-800 px-4 text-white">Send</button>
+			</form>
+		</div>
+		<div id="chat-bar" class="bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center">
+			General Chat
+		</div>
 
-	        <!-- Formulaire -->
-	        <form id="chat-form" class="flex border-t border-gray-700">
-	            <input id="chat-input"
-	                   type="text"
-	                   placeholder="Write your message…"
-	                   class="flex-1 bg-gray-800 text-white px-3 py-2 outline-none"
-	                   autocomplete="off" />
-	            <button class="bg-green-600 px-4 text-white">Send</button>
-	        </form>
-    	</div>
 	</div>
 	</template>
 
+	
 </html>
