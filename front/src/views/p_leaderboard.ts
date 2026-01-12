@@ -3,7 +3,6 @@ import { genericFetch, loadHeader } from "../router"
 
 export function LeaderboardView(): string
 {
-	loadHeader();
 	return((document.getElementById("leaderboard") as HTMLTemplateElement).innerHTML)
 }
 

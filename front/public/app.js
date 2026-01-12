@@ -13,18 +13,9 @@ var __export = (target, all) => {
 
 // front/src/views/home.ts
 function View() {
-  loadHeader();
   return document.getElementById("html").innerHTML;
 }
 async function init() {
-<<<<<<< HEAD
-=======
-  const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
-  const data = await res.json();
-  if (data.loggedIn) {
-    navigateTo("/home");
-  }
->>>>>>> noah
 }
 var init_home = __esm({
   "front/src/views/home.ts"() {
@@ -34,19 +25,9 @@ var init_home = __esm({
 
 // front/src/views/login.ts
 function LoginView() {
-  loadHeader();
   return document.getElementById("loginhtml").innerHTML;
 }
 async function initLogin() {
-<<<<<<< HEAD
-=======
-  const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
-  const data = await res.json();
-  if (data.loggedIn) {
-    navigateTo("/home");
-    return;
-  }
->>>>>>> noah
   const form = document.getElementById("login-form");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -216,10 +197,6 @@ var ranks, rankColors, progressionColors;
 var init_p_dashboard = __esm({
   "front/src/views/p_dashboard.ts"() {
     "use strict";
-<<<<<<< HEAD
-=======
-    init_router();
->>>>>>> noah
     ranks = [
       { min: 0, max: 400, src: "/src/image/rank1.png", type: "Wood" },
       { min: 400, max: 800, src: "/src/image/rank2.png", type: "Iron" },
@@ -249,24 +226,14 @@ var init_p_dashboard = __esm({
 
 // front/src/views/register.ts
 function RegisterView() {
-  loadHeader();
   return document.getElementById("registerhtml").innerHTML;
 }
 async function initRegister() {
-<<<<<<< HEAD
-=======
-  const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include" });
-  const data = await res.json();
-  if (data.loggedIn) {
-    navigateTo("/home");
-    return;
-  }
->>>>>>> noah
   const form = document.getElementById("register-form");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(form);
-    const data2 = {
+    const data = {
       username: formData.get("username"),
       email: formData.get("email"),
       password: formData.get("password"),
@@ -276,7 +243,7 @@ async function initRegister() {
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data2)
+        body: JSON.stringify(data)
       });
       const result = await res.json();
       if (result.ok == true)
@@ -320,7 +287,6 @@ function RegisterValidView() {
 var init_register = __esm({
   "front/src/views/register.ts"() {
     "use strict";
-    init_router();
     init_router();
   }
 });
@@ -4125,7 +4091,6 @@ var init_gameNetwork = __esm({
     "use strict";
     init_esm5();
     GameNetwork = class {
-<<<<<<< HEAD
       constructor() {
         const serverUrl = window.location.host;
         this.socket = lookup2(serverUrl, {
@@ -4133,13 +4098,6 @@ var init_gameNetwork = __esm({
           withCredentials: true
         });
         ;
-=======
-      constructor(serverUrl) {
-        const { globalSocket: globalSocket2 } = (init_socket3(), __toCommonJS(socket_exports));
-        if (!globalSocket2)
-          throw new Error("globalSocket n'est pas initialis\xE9 !");
-        this.socket = globalSocket2;
->>>>>>> noah
         this.socket.on("assignRole", (role) => {
           this.onRoleCallback?.(role);
         });
@@ -4428,11 +4386,6 @@ async function initHomePage() {
     navigateTo("/login");
     return;
   }
-<<<<<<< HEAD
-=======
-  const { initSocket: initSocket2 } = await Promise.resolve().then(() => (init_socket3(), socket_exports));
-  initSocket2();
->>>>>>> noah
   const btn = document.getElementById("scroll-button");
   const target = document.getElementById("gamepage");
   btn.addEventListener("click", () => {
@@ -4443,7 +4396,6 @@ async function initHomePage() {
 var init_p_homelogin = __esm({
   "front/src/views/p_homelogin.ts"() {
     "use strict";
-    init_router();
     init_router();
   }
 });
@@ -5039,7 +4991,6 @@ var init_error = __esm({
 
 // front/src/views/twofa.ts
 function towfaView() {
-  loadHeader();
   return document.getElementById("twofahtml").innerHTML;
 }
 async function initTowfa() {
@@ -5165,11 +5116,7 @@ async function deleteUser() {
     const password = formDelete["password"].value;
     try {
       await genericFetch("/api/private/updateinfo/delete", {
-<<<<<<< HEAD
         method: "DELETE",
-=======
-        method: "POST",
->>>>>>> noah
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ confirmUser, password })
       });
@@ -5274,10 +5221,6 @@ var init_p_updateavatar = __esm({
 
 // front/src/views/p_update2fa.ts
 function Update2faView() {
-<<<<<<< HEAD
-=======
-  loadHeader();
->>>>>>> noah
   return document.getElementById("update-2fa-html").innerHTML;
 }
 async function initUpdate2fa() {
@@ -5324,11 +5267,7 @@ async function initUpdate2fa() {
     }
     try {
       await genericFetch("/api/private/2fa/enable", {
-<<<<<<< HEAD
         method: "PUT",
-=======
-        method: "POST",
->>>>>>> noah
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code })
       });
@@ -5346,11 +5285,7 @@ async function initUpdate2fa() {
   });
   twofaDisableBtn.addEventListener("click", async () => {
     try {
-<<<<<<< HEAD
       await genericFetch("/api/private/2fa/disable", { method: "PUT" });
-=======
-      await genericFetch("/api/private/2fa/disable", { method: "POST" });
->>>>>>> noah
       alert("2FA Disabled!");
       twofaDisableBtn.classList.add("hidden");
       twofaEnableBtn.classList.remove("hidden");
@@ -5428,11 +5363,8 @@ var init_privacypolicy = __esm({
   }
 });
 
-<<<<<<< HEAD
-=======
 // front/src/views/p_leaderboard.ts
 function LeaderboardView() {
-  loadHeader();
   return document.getElementById("leaderboard").innerHTML;
 }
 async function InitLeaderboard() {
@@ -5476,7 +5408,6 @@ var init_p_leaderboard = __esm({
   }
 });
 
->>>>>>> noah
 // front/src/router.ts
 function navigateTo(url2) {
   const state = { from: window.location.pathname };
@@ -5527,8 +5458,7 @@ function matchRoute(pathname) {
   }
   return null;
 }
-<<<<<<< HEAD
-async function loadHeader15(auth) {
+async function loadHeader16(auth) {
   const container = document.getElementById("header-container");
   container.innerHTML = "";
   const templateID = auth.logged ? "headerconnect" : "headernotconnect";
@@ -5538,33 +5468,6 @@ async function loadHeader15(auth) {
   if (auth.logged)
     displayPseudoHeader(auth.user);
 }
-=======
-async function loadHeader() {
-  const result = await getPseudoHeader3();
-  const container = document.getElementById("header-container");
-  container.innerHTML = "";
-  const templateID = result.logged ? "headerconnect" : "headernotconnect";
-  const template = document.getElementById(templateID);
-  const clone = template.content.cloneNode(true);
-  container.appendChild(clone);
-  if (result.logged)
-    displayPseudoHeader(result);
-}
-async function getPseudoHeader3() {
-  try {
-    const res = await fetch("/api/private/getpseudoAvStatus", {
-      method: "POST",
-      credentials: "include"
-    });
-    const result = await res.json();
-    if (!result.logged)
-      return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false };
-    return { logged: true, ...result };
-  } catch (err) {
-    return { logged: false, pseudo: "", avatar: "", web_status: "", notif: false };
-  }
-}
->>>>>>> noah
 function displayPseudoHeader(result) {
   document.getElementById("pseudo-header").textContent = result.pseudo;
   const avatar = document.getElementById("header-avatar");
@@ -5608,7 +5511,7 @@ async function router() {
       navigateTo("/logout");
       return;
     }
-    loadHeader15(auth);
+    loadHeader16(auth);
     if (publicPath.includes(location.pathname) && auth.logged)
       navigateTo("/home");
   }
@@ -5682,10 +5585,7 @@ var init_router = __esm({
     init_oauth_callback();
     init_terms_of_service();
     init_privacypolicy();
-<<<<<<< HEAD
-=======
     init_p_leaderboard();
->>>>>>> noah
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
