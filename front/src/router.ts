@@ -94,7 +94,7 @@ export async function checkLogStatus(): Promise<LogStatusAndInfo> {
 			return { status: "error", logged: false, user: null }			
 		}
 		if (result.loggedIn === true)
-			return { status: "logged", logged: true, user: { pseudo: result.pseudo, avatar: result.avatar, web_status: result.status, notif: result.notif} };
+			return { status: "logged", logged: true, user: { pseudo: result.user.pseudo, avatar: result.user.avatar, web_status: result.user.status, notif: result.user.notif} };
 		return { status: "not_logged", logged: false, user: null };
 	} catch {
 		return { status: "error", logged: false, user: null };

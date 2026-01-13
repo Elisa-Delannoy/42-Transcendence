@@ -5533,7 +5533,7 @@ async function checkLogStatus() {
       return { status: "error", logged: false, user: null };
     }
     if (result.loggedIn === true)
-      return { status: "logged", logged: true, user: { pseudo: result.pseudo, avatar: result.avatar, web_status: result.status, notif: result.notif } };
+      return { status: "logged", logged: true, user: { pseudo: result.user.pseudo, avatar: result.user.avatar, web_status: result.user.status, notif: result.user.notif } };
     return { status: "not_logged", logged: false, user: null };
   } catch {
     return { status: "error", logged: false, user: null };
@@ -5571,7 +5571,6 @@ async function loadHeader15(auth) {
   container.appendChild(clone);
   if (auth.logged)
     displayPseudoHeader(auth.user);
-  await loadFooter();
 }
 function displayPseudoHeader(result) {
   document.getElementById("pseudo-header").textContent = result.pseudo;
@@ -5664,14 +5663,6 @@ async function popState3() {
   } else
     currentPath = path;
   await router();
-}
-async function loadFooter() {
-  const container = document.getElementById("footer-container");
-  container.innerHTML = "";
-  const templateID = document.getElementById("homehtml") ? "footer-noshow" : "footer-show";
-  const template = document.getElementById(templateID);
-  const clone = template.content.cloneNode(true);
-  container.appendChild(clone);
 }
 var routes, publicPath, currentRoute, currentPath;
 var init_router = __esm({
