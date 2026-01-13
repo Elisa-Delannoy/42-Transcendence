@@ -28,7 +28,7 @@ export class GameNetwork {
 		this.socket = io(serverUrl, {
 			transports: ["websocket"],
 			withCredentials: true,
-		});;
+		});
 
 		this.socket.on("assignRole", (role: "player1" | "player2") => {
 			this.onRoleCallback?.(role);

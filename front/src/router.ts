@@ -183,6 +183,7 @@ export async function router() {
 	}
 	const match = matchRoute(location.pathname);
 	if (!match) {
+
 		navigateTo("/error");
 		return;
 	}
@@ -197,6 +198,8 @@ export async function router() {
 		loadHeader(auth);
 		if (publicPath.includes(location.pathname) && auth.logged)
 			navigateTo("/home");
+		if (!publicPath.includes(location.pathname) && !auth.logged)
+			navigateTo("/");
 	}
 
 	const { route, params } = match;

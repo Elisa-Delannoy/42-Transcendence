@@ -12,6 +12,8 @@ import { notification } from "../friends/friends";
 export async function setupTwoFA(request: FastifyRequest, reply: FastifyReply) {
     try {
         const userId = request.user!.user_id;
+        if (userId === null)
+            return;
         const secret = speakeasy.generateSecret({ length: 20, name: `Transcendence:${userId}` });
         if (!secret.otpauth_url) {
             throw new Error("Failed to generate OTP Auth URL");
@@ -34,7 +36,8 @@ export async function enableTwoFA(request: FastifyRequest, reply: FastifyReply) 
     try {
         const userId = request.user!.user_id;
         const { code } = request.body as { code: string };
-
+        if (userId === null)
+            return;
         // Retrieve user's stored secret
         const user = await users.getIDUser(userId);
         if (!user.twofa_secret) {
@@ -66,6 +69,8 @@ export async function enableTwoFA(request: FastifyRequest, reply: FastifyReply) 
 export async function disableTwoFA(request: FastifyRequest, reply: FastifyReply) {
     try {
         const userId = request.user!.user_id;
+        if (userId === null)
+            return;
         await users.setTwoFA(userId, null, false);
         return reply.send({ ok: true, message: "2FA disabled successfully." });
     } catch (err) {

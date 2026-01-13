@@ -6,6 +6,7 @@ import  * as cookie from "cookie";
 import { handleGameSocket } from "../pong/pongServer";
 import { handleTournamentSocket } from "../pong/tournamentServer";
 import { tournaments_map } from "../routes/tournament/serverTournament";
+import { handleGeneralChatSocket } from "../chat/chat";
 
 export async function createWebSocket(io: Server) {
 	io.use((socket, next) => {
@@ -37,16 +38,12 @@ export async function createWebSocket(io: Server) {
   }
 });
 
+
 	io.on("connection", async (socket) => {
 		handleGameSocket(io, socket);
 		handleTournamentSocket(io, socket);
+		handleGeneralChatSocket(io, socket);
 
-		// const raw = socket.handshake.query.token;
-		// const token: string = Array.isArray(raw) ? raw[0] : raw ?? "";
-		// const user: IUsers | null = await socketTokenOk(token);
-		// if (!user)
-		// 	return socket.disconnect();
-		// socket.data.user = user.user_id;
 		console.log(new Date().toISOString(),"dans creat", " ", " ", socket.id, socket.data.user);
 	})
 }

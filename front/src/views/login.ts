@@ -1,4 +1,5 @@
 import { loadHeader, navigateTo} from "../router";
+import { displayChat } from "./p_chat";
 
 
 export function LoginView(): string {
@@ -7,19 +8,6 @@ export function LoginView(): string {
 
 export async function initLogin()
 {
-	// const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
-	// if (res.ok)
-	// {
-	// 	navigateTo("/home");
-	// 	return;
-	// }
-	// const res = await fetch("/api/checkLogin", { method: "GET", credentials: "include"});
-	// const data = await res.json();
-
-    // if (data.loggedIn) {
-    //     navigateTo("/home");
-	// 	return;
-    // }
 	const form = document.getElementById("login-form") as HTMLFormElement;
 	form.addEventListener("submit", async (e) => {
 		e.preventDefault();
