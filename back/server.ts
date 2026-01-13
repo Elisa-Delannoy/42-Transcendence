@@ -303,6 +303,7 @@ const start = async () => {
 		// await gameInfo.deleteGameInfoTable();
 		// await friends.deleteFriendTable();
 		await users.createUserTable();
+		await generalChat.createChatTable();
 		// await users.migrateUsersTable();
 		
 		await friends.createFriendTable();

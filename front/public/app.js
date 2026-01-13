@@ -64,7 +64,6 @@ async function login(username, password, form) {
       }
       return 0;
     }
-    localStorage.setItem("token", result.token);
     if (result.ok && result.twofa === true)
       return 2;
     return 1;
@@ -5563,7 +5562,7 @@ function matchRoute(pathname) {
   }
   return null;
 }
-async function loadHeader16(auth) {
+async function loadHeader15(auth) {
   const container = document.getElementById("header-container");
   container.innerHTML = "";
   const templateID = auth.logged ? "headerconnect" : "headernotconnect";
@@ -5572,6 +5571,7 @@ async function loadHeader16(auth) {
   container.appendChild(clone);
   if (auth.logged)
     displayPseudoHeader(auth.user);
+  await loadFooter();
 }
 function displayPseudoHeader(result) {
   document.getElementById("pseudo-header").textContent = result.pseudo;
@@ -5616,7 +5616,7 @@ async function router() {
       navigateTo("/logout");
       return;
     }
-    loadHeader16(auth);
+    loadHeader15(auth);
     if (publicPath.includes(location.pathname) && auth.logged)
       navigateTo("/home");
     if (!publicPath.includes(location.pathname) && !auth.logged)
@@ -5664,6 +5664,14 @@ async function popState3() {
   } else
     currentPath = path;
   await router();
+}
+async function loadFooter() {
+  const container = document.getElementById("footer-container");
+  container.innerHTML = "";
+  const templateID = document.getElementById("homehtml") ? "footer-noshow" : "footer-show";
+  const template = document.getElementById(templateID);
+  const clone = template.content.cloneNode(true);
+  container.appendChild(clone);
 }
 var routes, publicPath, currentRoute, currentPath;
 var init_router = __esm({

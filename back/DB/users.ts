@@ -45,7 +45,7 @@ export class Users
 		`);
 	}
 
-	async addUser(pseudo:string, email: string, password: string, elo:number):Promise<void>
+	async addUser(pseudo:string, email: string, password: string, elo:number=500):Promise<void>
 	{
 		const query = `
 			INSERT INTO Users (pseudo, email, password, avatar, status, creation_date, modification_date, money, twofa_secret, twofa_enabled, elo)
