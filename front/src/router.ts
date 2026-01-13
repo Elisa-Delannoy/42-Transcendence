@@ -57,7 +57,7 @@ const routes = [
   { path: "/oauth/callback", init: initOAuthCallback },
 ];
 
-const publicPath = ["/", "/login", "/register", "/logout"];
+const publicPath = ["/", "/login", "/register", "/logout", "/registerok", "/termsofservice", "/privacypolicy"];
 
 let currentRoute: any = null;
 let currentPath: string;
