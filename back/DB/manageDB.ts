@@ -71,7 +71,7 @@ export class ManageDB
 		{
 			if (!this._db)
 				return reject(new Error("Database not connected"));
-			this._db.all(query, parameters,(error, rows: IUsers[]) =>
+			this._db.all(query, parameters,(error, rows: any[]) =>
 			{
 				if (error)
 					reject(error);
@@ -92,16 +92,5 @@ export class ManageDB
 			});
 		});
 	}
-	/*TEST POUR DELETE UNE TABLE DE FACON GENERIQUE - A REVOIR ET SI OK SUPP DANS USER*/
-
-	// async deleteUserTable(table: string, db: ManageDB) {
-	// if (!/^[a-zA-Z0-9_]+$/.test(table)) {
-	// 	throw new Error("Nom de table invalide");
-	// }
-
-	// const query = `DROP TABLE IF EXISTS ${table}`;
-	// await db.execute(query);
-// }
-
 }
 

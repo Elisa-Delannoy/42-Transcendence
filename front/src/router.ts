@@ -26,6 +26,7 @@ import { initOAuthCallback } from "./views/oauth_callback";
 import { InitTermsOfService, TermsOfServiceView } from "./views/terms_of_service";
 import { InitPrivacyPolicy, PriavacyPolicyView } from "./views/privacypolicy";
 import { IUsers } from "../../back/DB/users";
+import { InitLeaderboard, LeaderboardView } from "./views/p_leaderboard";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -40,6 +41,7 @@ const routes = [
   { path: "/dashboard", view: DashboardView, init: initDashboard },
   { path: "/friends", view: FriendsView, init: initFriends },
   { path: "/profile", view: ProfileView, init: initProfile},
+  { path: "/leaderboard", view: LeaderboardView, init: InitLeaderboard},
   { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
   { path: "/updateusername", view: UpdateUsernameView, init: initUpdateUsername },
   { path: "/updatepassword", view: UpdatePasswordView, init: initUpdatePassword },
@@ -181,6 +183,7 @@ export async function router() {
 	}
 	const match = matchRoute(location.pathname);
 	if (!match) {
+
 		navigateTo("/error");
 		return;
 	}
@@ -195,6 +198,8 @@ export async function router() {
 		loadHeader(auth);
 		if (publicPath.includes(location.pathname) && auth.logged)
 			navigateTo("/home");
+		if (!publicPath.includes(location.pathname) && !auth.logged)
+			navigateTo("/");
 	}
 
 	const { route, params } = match;

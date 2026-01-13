@@ -68,7 +68,7 @@ export async function initUpdate2fa() {
 
 		try {
 			await genericFetch("/api/private/2fa/enable", {
-				method: "POST",
+				method: "PUT",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ code })
 			});
@@ -94,7 +94,7 @@ export async function initUpdate2fa() {
 	// --- Disable 2FA ---
 	twofaDisableBtn.addEventListener("click", async () => {
 		try {
-			await genericFetch("/api/private/2fa/disable", { method: "POST" });
+			await genericFetch("/api/private/2fa/disable", { method: "PUT" });
 
 			alert("2FA Disabled!");
 

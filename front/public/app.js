@@ -4097,7 +4097,6 @@ var init_gameNetwork = __esm({
           transports: ["websocket"],
           withCredentials: true
         });
-        ;
         this.socket.on("assignRole", (role) => {
           this.onRoleCallback?.(role);
         });
@@ -4358,6 +4357,104 @@ var init_p_pongmatch = __esm({
   }
 });
 
+// front/src/chat/chatNetwork.ts
+var chatNetwork;
+var init_chatNetwork = __esm({
+  "front/src/chat/chatNetwork.ts"() {
+    "use strict";
+    init_esm5();
+    chatNetwork = class {
+      constructor() {
+        const serverUrl = window.location.host;
+        this.socket = lookup2(serverUrl, {
+          transports: ["websocket"],
+          withCredentials: true
+        });
+      }
+      sendMessage(message) {
+        this.socket.emit("generalChatMessage", message);
+      }
+      receiveMessage(callback) {
+        this.socket.on("generalChatMessage", callback);
+      }
+      receiveHistory(callback) {
+        this.socket.on("chatHistory", callback);
+      }
+      receiveError(callback) {
+        this.socket.on("chatError", callback);
+      }
+      disconnect() {
+        this.socket.disconnect();
+      }
+      // requestHistory() {
+      // 	this.socket.emit("requestHistory");
+      // }
+    };
+  }
+});
+
+// front/src/views/p_chat.ts
+async function displayChat() {
+  const template = document.getElementById("chat-template");
+  const clone = template.content.cloneNode(true);
+  document.getElementById("chat-container").appendChild(clone);
+  const chatBar = document.getElementById("chat-bar");
+  const chatWindow = document.getElementById("chat-window");
+  chatBar.addEventListener("click", () => {
+    chatWindow.classList.toggle("hidden");
+    chatWindow.classList.toggle("flex");
+  });
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("chat-input");
+  chatnet.receiveHistory((messages) => {
+    messages.forEach((msg) => addMessageGeneral(msg));
+  });
+  chatnet.receiveMessage((data) => {
+    addMessageGeneral(data);
+  });
+  chatnet.receiveError((error) => {
+    displayError(error.error);
+  });
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    chatnet.sendMessage(input.value);
+    input.value = "";
+  });
+}
+function addMessageGeneral(data) {
+  const box = document.getElementById("chat-box");
+  const div = document.createElement("div");
+  div.className = "bg-amber-100/90 p-2 rounded-lg break-words max-w-full";
+  div.innerHTML = `
+		<div class="flex items-center justify-between">
+			<span class="font-semibold text-amber-950">${data.pseudo}</span>
+			<span class="text-xs text-gray-800">${new Date(data.date).toLocaleTimeString()}</span>
+		</div>
+		<div class="text-amber-900">${data.message}</div>
+	`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+function displayError(message) {
+  const input = document.getElementById("chat-input");
+  const oldPlaceholder = input.placeholder;
+  input.style.border = "2px solid red";
+  input.placeholder = message;
+  setTimeout(() => {
+    input.classList.remove("input-error");
+    input.placeholder = oldPlaceholder;
+    input.style.border = "";
+  }, 1500);
+}
+var chatnet;
+var init_p_chat = __esm({
+  "front/src/views/p_chat.ts"() {
+    "use strict";
+    init_chatNetwork();
+    chatnet = new chatNetwork();
+  }
+});
+
 // front/src/views/p_homelogin.ts
 function homeView() {
   return document.getElementById("homehtml").innerHTML;
@@ -4386,6 +4483,10 @@ async function initHomePage() {
     navigateTo("/login");
     return;
   }
+  if (!firstLogin) {
+    displayChat();
+    firstLogin = true;
+  }
   const btn = document.getElementById("scroll-button");
   const target = document.getElementById("gamepage");
   btn.addEventListener("click", () => {
@@ -4393,10 +4494,13 @@ async function initHomePage() {
     smoothScrollTo(targetY, 1e3);
   });
 }
+var firstLogin;
 var init_p_homelogin = __esm({
   "front/src/views/p_homelogin.ts"() {
     "use strict";
     init_router();
+    init_p_chat();
+    firstLogin = false;
   }
 });
 
@@ -4418,7 +4522,7 @@ async function initProfile() {
     select.addEventListener("change", async (e) => {
       const status = e.target.value;
       await genericFetch("/api/private/updateinfo/status", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status })
       });
@@ -4743,11 +4847,13 @@ var init_logout = __esm({
   "front/src/views/logout.ts"() {
     "use strict";
     init_router();
+    init_p_chat();
     initLogout = async () => {
       await fetch("/api/logout", {
         method: "GET",
         credentials: "include"
       });
+      chatnet.disconnect();
       navigateTo("/login");
     };
   }
@@ -4947,7 +5053,6 @@ function pendingFr(pendingFriends) {
   });
 }
 function youMayKnow(opponent) {
-  console.log(opponent, opponent.length);
   const divNoOpponent = document.getElementById("no-opponent");
   const divOpponent = document.getElementById("opponent");
   if (opponent.length === 0) {
@@ -5037,8 +5142,9 @@ async function initUpdateEmail() {
     const newEmail = formEmail["new-email"].value;
     const password = formEmail["password"].value;
     try {
+      console.log("here");
       const response = await genericFetch("/api/private/updateinfo/email", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newEmail, password })
       });
@@ -5096,7 +5202,7 @@ async function updateUsername() {
     const password = formUsername["password"].value;
     try {
       const response = await genericFetch("/api/private/updateinfo/username", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newUsername, password })
       });
@@ -5115,7 +5221,7 @@ async function deleteUser() {
     const password = formDelete["password"].value;
     try {
       await genericFetch("/api/private/updateinfo/delete", {
-        method: "POST",
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ confirmUser, password })
       });
@@ -5152,7 +5258,7 @@ async function initUpdatePassword() {
     const confirm = formPassword["confirm-new-password"].value;
     try {
       const response = await genericFetch("/api/private/updateinfo/password", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ oldPw, newPw, confirm })
       });
@@ -5266,7 +5372,7 @@ async function initUpdate2fa() {
     }
     try {
       await genericFetch("/api/private/2fa/enable", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code })
       });
@@ -5284,7 +5390,7 @@ async function initUpdate2fa() {
   });
   twofaDisableBtn.addEventListener("click", async () => {
     try {
-      await genericFetch("/api/private/2fa/disable", { method: "POST" });
+      await genericFetch("/api/private/2fa/disable", { method: "PUT" });
       alert("2FA Disabled!");
       twofaDisableBtn.classList.add("hidden");
       twofaEnableBtn.classList.remove("hidden");
@@ -5362,6 +5468,51 @@ var init_privacypolicy = __esm({
   }
 });
 
+// front/src/views/p_leaderboard.ts
+function LeaderboardView() {
+  return document.getElementById("leaderboard").innerHTML;
+}
+async function InitLeaderboard() {
+  const leaderboard = await genericFetch("/api/private/leaderboard", {
+    method: "GET"
+  });
+  const container = document.getElementById("leaderboard-l");
+  console.log(leaderboard);
+  if (leaderboard.InfoUsers.length > 0) {
+    document.getElementById("avatar-1").src = leaderboard.InfoUsers[0].avatar;
+    document.getElementById("pseudo-1").textContent = leaderboard.InfoUsers[0].pseudo;
+    document.getElementById("elo-1").textContent = leaderboard.InfoUsers[0].elo.toString();
+  }
+  if (leaderboard.InfoUsers.length > 1) {
+    document.getElementById("avatar-2").src = leaderboard.InfoUsers[1].avatar;
+    document.getElementById("pseudo-2").textContent = leaderboard.InfoUsers[1].pseudo;
+    document.getElementById("elo-2").textContent = leaderboard.InfoUsers[1].elo.toString();
+  }
+  if (leaderboard.InfoUsers.length > 2) {
+    document.getElementById("avatar-3").src = leaderboard.InfoUsers[2].avatar;
+    document.getElementById("pseudo-3").textContent = leaderboard.InfoUsers[2].pseudo;
+    document.getElementById("elo-3").textContent = leaderboard.InfoUsers[2].elo.toString();
+  }
+  for (let i = 3; i < 50; i++) {
+    const template = document.getElementById("leaderboard-list");
+    const li = template.content.cloneNode(true);
+    if (i < leaderboard.InfoUsers.length) {
+      li.getElementById("avatar").src = leaderboard.InfoUsers[i].avatar;
+      li.getElementById("pseudo").textContent = leaderboard.InfoUsers[i].pseudo;
+      li.getElementById("elo").textContent = leaderboard.InfoUsers[i].elo.toString();
+    }
+    li.getElementById("position").textContent = "#" + (i + 1).toString();
+    container.appendChild(li);
+  }
+  console.log(leaderboard);
+}
+var init_p_leaderboard = __esm({
+  "front/src/views/p_leaderboard.ts"() {
+    "use strict";
+    init_router();
+  }
+});
+
 // front/src/router.ts
 function navigateTo(url2) {
   const state = { from: window.location.pathname };
@@ -5412,7 +5563,7 @@ function matchRoute(pathname) {
   }
   return null;
 }
-async function loadHeader15(auth) {
+async function loadHeader16(auth) {
   const container = document.getElementById("header-container");
   container.innerHTML = "";
   const templateID = auth.logged ? "headerconnect" : "headernotconnect";
@@ -5465,9 +5616,11 @@ async function router() {
       navigateTo("/logout");
       return;
     }
-    loadHeader15(auth);
+    loadHeader16(auth);
     if (publicPath.includes(location.pathname) && auth.logged)
       navigateTo("/home");
+    if (!publicPath.includes(location.pathname) && !auth.logged)
+      navigateTo("/");
   }
   const { route, params } = match;
   document.querySelector("#header-container").innerHTML;
@@ -5539,6 +5692,7 @@ var init_router = __esm({
     init_oauth_callback();
     init_terms_of_service();
     init_privacypolicy();
+    init_p_leaderboard();
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
@@ -5552,6 +5706,7 @@ var init_router = __esm({
       { path: "/dashboard", view: DashboardView, init: initDashboard },
       { path: "/friends", view: FriendsView, init: initFriends },
       { path: "/profile", view: ProfileView, init: initProfile },
+      { path: "/leaderboard", view: LeaderboardView, init: InitLeaderboard },
       { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
       { path: "/updateusername", view: UpdateUsernameView, init: initUpdateUsername },
       { path: "/updatepassword", view: UpdatePasswordView, init: initUpdatePassword },

@@ -53,7 +53,7 @@ async function updateUsername() {
 
     try {
       const response = await genericFetch("/api/private/updateinfo/username", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ newUsername, password })
       });
@@ -77,7 +77,7 @@ async function deleteUser() {
 
     try {
       await genericFetch("/api/private/updateinfo/delete", {
-        method: "POST",
+        method: "DELETE",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ confirmUser, password })
       });

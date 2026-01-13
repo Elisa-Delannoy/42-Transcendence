@@ -39,25 +39,25 @@
 
 @layer components {
 	.Wood {
-		@apply mx-auto w-auto text-orange-900 bg-linear-to-br from-orange-800 via-amber-700 to-yellow-800 font-medium text-5xl hover:-translate-0.5 duration-300 mt-2 px-2 py-2 border-2 border-amber-700 rounded-4xl shadow-xl;
+		@apply mx-auto w-auto text-center text-orange-900 bg-linear-to-br from-orange-800 via-amber-700 to-yellow-800 font-medium text-5xl hover:-translate-0.5 duration-300 mt-2 px-2 py-2 border-2 border-amber-700 rounded-4xl shadow-xl;
 	}
 }
 
 @layer components {
 	.Iron {
-		@apply mx-auto w-auto text-neutral-900 bg-linear-to-br from-neutral-700 via-neutral-500 to-neutral-800 font-medium text-5xl hover:-translate-0.5 duration-300 mt-2 px-2 py-2 border-2 border-neutral-500 rounded-4xl shadow-xl;
+		@apply mx-auto w-auto text-center text-neutral-900 bg-linear-to-br from-neutral-700 via-neutral-500 to-neutral-800 font-medium text-5xl hover:-translate-0.5 duration-300 mt-2 px-2 py-2 border-2 border-neutral-500 rounded-4xl shadow-xl;
 	}
 }
 
 @layer components {
 	.Bronze {
-		@apply mx-auto w-auto text-amber-900 bg-linear-to-br from-yellow-700 via-amber-600 to-orange-700 font-medium text-5xl hover:-translate-0.5 duration-300 mt-2 px-2 py-2 border-2 border-amber-600 rounded-4xl shadow-xl;
+		@apply mx-auto w-auto text-center text-amber-900 bg-linear-to-br from-yellow-700 via-amber-600 to-orange-700 font-medium text-5xl hover:-translate-0.5 duration-300 mt-2 px-2 py-2 border-2 border-amber-600 rounded-4xl shadow-xl;
 	}
 }
 
 @layer components {
 	.Silver {
-		@apply mx-auto w-auto text-gray-900 bg-linear-to-br from-gray-200 via-white to-gray-300 font-medium text-5xl hover:-translate-0.5 duration-300 mt-2 px-2 py-2 border-2 border-white rounded-4xl shadow-xl;
+		@apply mx-auto w-auto text-center text-gray-900 bg-linear-to-br from-gray-200 via-white to-gray-300 font-medium text-5xl hover:-translate-0.5 duration-300 mt-2 px-2 py-2 border-2 border-white rounded-4xl shadow-xl;
 	}
 }
 
@@ -69,7 +69,7 @@
 
 @layer components {
 	.Champion {
-		@apply mx-auto w-auto text-purple-900 bg-linear-to-br from-purple-600 via-violet-500 to-fuchsia-600 font-medium text-5xl hover:-translate-0.5 duration-300 mt-2 px-2 py-2 border-2 border-violet-500 rounded-4xl shadow-xl;
+		@apply mx-auto w-auto text-center text-purple-900 bg-linear-to-br from-purple-600 via-violet-500 to-fuchsia-600 font-medium text-5xl hover:-translate-0.5 duration-300 mt-2 px-2 py-2 border-2 border-violet-500 rounded-4xl shadow-xl;
 	}
 }
 

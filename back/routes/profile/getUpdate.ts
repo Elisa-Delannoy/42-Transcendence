@@ -7,18 +7,18 @@ import fs from "fs";
 import mime from "mime-types";
 import { checkPassword } from "../register/register";
 
-export async function getUpdateInfo(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
-	try {
-		const id = request.user?.user_id as any;
-		const profil = await users.getIDUser(id);
-		if (!profil)
-      		return reply.code(404).send({message: "User not found"});
-    	return profil;
-  	} catch (error) {
-    	fastify.log.error(error)
-    	return reply.code(500).send({message: "Internal Server Error"});
-  	}
-}
+// export async function getUpdateInfo(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
+// 	try {
+// 		const id = request.user?.user_id as any;
+// 		const profil = await users.getIDUser(id);
+// 		if (!profil)
+//       		return reply.code(404).send({message: "User not found"});
+//     	return profil;
+//   	} catch (error) {
+//     	fastify.log.error(error)
+//     	return reply.code(500).send({message: "Internal Server Error"});
+//   	}
+// }
 
 export async function getUpdateUsername(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
 	try {
@@ -140,8 +140,10 @@ export async function getUploadAvatar(request: FastifyRequest, reply: FastifyRep
 		await fs.promises.unlink(avatar_path);
 		return reply.status(413).send({ error: "File too large (max 2MB)" });
 	}
-	await users.updateAvatar(request.user!.user_id, "/files/" + avatar_name);
-	return reply.status(200).send({ message: "Upload succes", filename: avatar_name})
+	if (request.user!.user_id !== null) {
+		await users.updateAvatar(request.user!.user_id, "/files/" + avatar_name);
+		return reply.status(200).send({ message: "Upload succes", filename: avatar_name})
+	}
 }
 
 export async function getUpdateStatus(request: FastifyRequest, reply: FastifyReply) {
@@ -149,9 +151,11 @@ export async function getUpdateStatus(request: FastifyRequest, reply: FastifyRep
 	const allowed = ["online", "offline", "busy"];
 	if (!allowed.includes(status)) {
 		return reply.status(400).send({ error: "Invalid status" });
-	}  
-	const updatedUser = await users.updateStatus(request.user!.user_id, status);
-	return reply.status(200).send({ message: "new status", status: updatedUser.status});
+	} 
+	if (request.user!.user_id !== null) {
+		const updatedUser = await users.updateStatus(request.user!.user_id, status);
+		return reply.status(200).send({ message: "new status", status: updatedUser.status});
+	}
 }
 
 // delete user:

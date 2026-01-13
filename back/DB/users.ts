@@ -1,3 +1,4 @@
+import { boardInfo, ILeaderboard } from "../routes/leaderboard/leaderboard";
 import { ManageDB } from "./manageDB";
 
 export interface IUsers {
@@ -44,7 +45,7 @@ export class Users
 		`);
 	}
 
-	async addUser(pseudo:string, email: string, password: string):Promise<void>
+	async addUser(pseudo:string, email: string, password: string, elo:number):Promise<void>
 	{
 		const query = `
 			INSERT INTO Users (pseudo, email, password, avatar, status, creation_date, modification_date, money, twofa_secret, twofa_enabled, elo)
@@ -61,7 +62,7 @@ export class Users
 		0,
 		"",
 		0,
-		1000
+		elo
 		];
 		await this._db.execute(query, parameters);
 	}
@@ -272,6 +273,13 @@ export class Users
 		const query = ` SELECT * FROM Users WHERE pseudo != 'inactive user' AND user_id != ? AND user_id > 0 AND LOWER(pseudo) LIKE LOWER(?) LIMIT 10`; /*faire un join pour status != friend ou voir pour mettre bouton supprimer si friend*/
 		const members = await this._db.query(query, [id, `${pseudo}%`])
 		return members;
+	}
+
+	async GetLeaderboardInfo(): Promise<boardInfo[]>
+	{
+		const query = `SELECT pseudo, avatar, elo FROM Users WHERE user_id NOT IN (-1, 0) ORDER BY elo DESC LIMIT 10`;
+		const info: boardInfo[] = await this._db.query(query);
+		return info;
 	}
 
 	async setTwoFA(userId: number, secret: string | null = null, enabled: boolean): Promise<void> {

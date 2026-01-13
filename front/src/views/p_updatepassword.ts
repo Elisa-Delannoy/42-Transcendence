@@ -26,7 +26,7 @@ export async function initUpdatePassword() {
 
     try {
       const response = await genericFetch("/api/private/updateinfo/password", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ oldPw, newPw, confirm })
       });

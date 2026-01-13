@@ -20,7 +20,7 @@ import multipart from "@fastify/multipart"
 import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always";
 import * as tournamentService from "./routes/tournament/tournament.service";
 import { getProfile } from "./routes/profile/profile";
-import { getUpdateInfo, getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus, deleteUser } from "./routes/profile/getUpdate";
+import { getUpdateUsername, getUpdateEmail, getUploadAvatar, getUpdatePassword, getUpdateStatus, deleteUser } from "./routes/profile/getUpdate";
 import { logout } from "./routes/logout/logout";
 import { Friends } from "./DB/friend";
 import { allMyFriendsAndOpponent, searchUser, addFriend, acceptFriend, deleteFriend } from "./routes/friends/friends";
@@ -35,6 +35,7 @@ import { oauthStatus } from "./routes/login/oauth.status";
 import { registerGoogle, callbackGoogle } from "./routes/login/oauth.google";
 import { UpdatePasswordView } from "../front/src/views/p_updatepassword";
 import { createWebSocket } from "./middleware/socket";
+import { leaderboardInfo } from "./routes/leaderboard/leaderboard";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -140,11 +141,11 @@ fastify.post("/api/private/2fa/setup", async (request: FastifyRequest, reply: Fa
     return await setupTwoFA(request, reply);
 });
 
-fastify.post("/api/private/2fa/enable", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.put("/api/private/2fa/enable", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await enableTwoFA(request, reply);
 });
 
-fastify.post("/api/private/2fa/disable", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.put("/api/private/2fa/disable", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await disableTwoFA(request, reply);
 });
 
@@ -152,23 +153,19 @@ fastify.post("/api/private/profile", async (request: FastifyRequest, reply: Fast
 	return await getProfile(fastify, request, reply);
 });
 
-fastify.post("/api/private/updateinfo/status", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.put("/api/private/updateinfo/status", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await getUpdateStatus(request, reply);
 });
 
-fastify.post("/api/private/updateinfo", async (request: FastifyRequest, reply: FastifyReply) => {
-	return await getUpdateInfo(fastify, request, reply);
-});
-
-fastify.post("/api/private/updateinfo/username", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.put("/api/private/updateinfo/username", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await getUpdateUsername(fastify, request, reply);
 })
 
-fastify.post("/api/private/updateinfo/email", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.put("/api/private/updateinfo/email", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await getUpdateEmail(fastify, request, reply);
 })
 
-fastify.post("/api/private/updateinfo/password", async (request: FastifyRequest, reply: FastifyReply) => {
+fastify.put("/api/private/updateinfo/password", async (request: FastifyRequest, reply: FastifyReply) => {
 	return await getUpdatePassword(fastify, request, reply);
 })
 
@@ -176,7 +173,7 @@ fastify.post("/api/private/updateinfo/uploads", async (request, reply) => {
 	await getUploadAvatar(request, reply);
 });
 
-fastify.post("/api/private/updateinfo/delete", async (request, reply) => {
+fastify.delete("/api/private/updateinfo/delete", async (request, reply) => {
 	await deleteUser(fastify, request, reply);
 });
 
@@ -284,6 +281,10 @@ fastify.get("/api/private/dashboard", async (request, reply) => {
 	await dashboardInfo(request, reply);
 });
 
+fastify.get("/api/private/leaderboard", async (request, reply) => {
+	await leaderboardInfo(reply);
+});
+
 fastify.post("/api/twofa", async (request, reply) => {
 	const { code } = request.body as { code: number};
 	await checkTwoFA(request, reply, code);
@@ -309,14 +310,14 @@ const start = async () => {
 		await users.CreateUserGuest();
 		// const hashedPasswor= await bcrypt.hash("42", 12);
 		// let hashedPassword = await bcrypt.hash("a", 12);
-		// users.addUser("a", "e@g.c", hashedPassword);
-		// users.addUser("new", "e@g.c", hashedPassword);
-		// users.addUser("ok", "e@g.c", hashedPassword);
-		// users.addUser("b", "e@g.c", hashedPassword);
-		// users.addUser("c", "e@g.c", hashedPassword);
-		// users.addUser("d", "e@g.c", hashedPassword);
-		// users.addUser("42", "42", hashedPasswor);
 		const hashedPassword = await bcrypt.hash("42", 12);
+		// users.addUser("a", "e@g.c", hashedPassword, 200);
+		// users.addUser("new", "e@g.c", hashedPassword, 300);
+		// users.addUser("ok", "e@g.c", hashedPassword, 500);
+		// users.addUser("b", "e@g.c", hashedPassword, 700);
+		// users.addUser("c", "e@g.c", hashedPassword, 1500);
+		// users.addUser("d", "e@g.c", hashedPassword,2300);
+		// users.addUser("42", "42", hashedPassword, 2800);
 		// users.addUser("42", "42", hashedPassword);
 		// friends.addFriendship(5, 6);
 		// friends.addFriendship(4, 5);

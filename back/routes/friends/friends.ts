@@ -13,13 +13,12 @@ export async function allMyFriendsAndOpponent(request: FastifyRequest, reply: Fa
 {
 	try {
 		const allInfo: IFriendsAndNot = {} as IFriendsAndNot;
-		allInfo.allMyFriends = await friends.getMyFriends(request.user!.user_id);
-		allInfo.playedWith = await gameInfo.getRecentPlayerNotFriend(request.user!.user_id);
-
-		// if (allInfo.allMyFriends.length === 0)
-		// 	return (reply.send(allInfo.allMyFriends), undefined);
-		notification(allInfo.allMyFriends, request.user!.user_id);
-		reply.send(allInfo);
+		if (request.user!.user_id !== null) {
+			allInfo.allMyFriends = await friends.getMyFriends(request.user!.user_id);
+			allInfo.playedWith = await gameInfo.getRecentPlayerNotFriend(request.user!.user_id);
+			notification(allInfo.allMyFriends, request.user!.user_id);
+			reply.send(allInfo);
+		}
 
 	}
 	catch (err) {
@@ -32,8 +31,10 @@ export async function searchUser(request: FastifyRequest, reply: FastifyReply) {
 	try {
 		if (!member)
 			return reply.code(400).send({ message: "Need pseudo to find members" });
-		const allMembers = await users.searchMember(member, request.user!.user_id);
-		return reply.code(200).send(allMembers);
+		if (request.user!.user_id !== null) {
+			const allMembers = await users.searchMember(member, request.user!.user_id);
+			return reply.code(200).send(allMembers);
+		}
 	}
 	catch (err)  {
 		console.log(err);
@@ -44,8 +45,10 @@ export async function searchUser(request: FastifyRequest, reply: FastifyReply) {
 export async function addFriend(request: FastifyRequest, reply: FastifyReply) {
 	try {
 		const { friendID } = request.body as { friendID: number };
-		await  friends.addFriendship(request.user!.user_id, friendID);
-		reply.code(200).send({ message: "added" });
+		if (request.user!.user_id !== null) {
+			await  friends.addFriendship(request.user!.user_id, friendID);
+			reply.code(200).send({ message: "added" });
+		}
 	}
 	catch (err) {
 		console.log(err);
@@ -55,9 +58,11 @@ export async function addFriend(request: FastifyRequest, reply: FastifyReply) {
 export async function acceptFriend(request: FastifyRequest, reply: FastifyReply) {
 	try {
 		const { friendID } = request.body as { friendID: number };
-	await friends.acceptFriendship(friendID, request.user!.user_id);
-	globalThis.notif = false;
-	reply.code(200).send({ message: "accepted" });
+		if (request.user!.user_id !== null) {
+			await friends.acceptFriendship(friendID, request.user!.user_id);
+			globalThis.notif = false;
+			reply.code(200).send({ message: "accepted" });
+		}
 	}
 	catch (err) {
 		console.log(err);
@@ -67,8 +72,10 @@ export async function acceptFriend(request: FastifyRequest, reply: FastifyReply)
 export async function deleteFriend(request: FastifyRequest, reply: FastifyReply) {
 	try {
 		const { friendID } = request.body as { friendID: number };
-		await friends.deleteFriendship(friendID, request.user!.user_id);
-		reply.code(200).send({ message: "friendship deleted" });
+		if (request.user!.user_id !== null) {
+			await friends.deleteFriendship(friendID, request.user!.user_id);
+			reply.code(200).send({ message: "friendship deleted" });
+		}
 	}
 	catch(err) {
 		console.log(err);

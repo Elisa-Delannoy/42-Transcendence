@@ -15,6 +15,7 @@
 		class="fixed inset-0 -z-10 hidden dark:block object-cover w-full h-screen">
 	<header id="header-container" ></header>
 	<main id="app"></main>
+	<div id="chat-container" class="fixed bottom-5 right-5 flex flex-col items-end"></div>
 
 	<script type="module" src="/public/app.js"></script>
 	</body>
@@ -68,6 +69,7 @@
 					<a href="/profile" data-link class="hover:text-amber-700 mx-auto w-36">Profile</a>
 					<a href="/dashboard" data-link class="hover:text-amber-700 mx-auto w-36">Dashboard</a>
 					<a href="/friends" data-link class="hover:text-amber-700 mx-auto w-36">Friends</a>
+					<a href="/leaderboard" data-link class="hover:text-amber-700 mx-auto w-36">Leaderboard</a>
 					<a href="/logout" data-link class="hover:text-amber-700 mx-auto w-36">Logout</a>
 				</nav>
 			</div>
@@ -656,11 +658,12 @@
 						hover:bg-linear-to-r hover:from-orange-500 hover:via-amber-800 hover:to-amber-600
 						animate-pulse w-fit">Welcome in Croiscendence</h1>
 				<p class="mt-10 text-base md:text-lg lg:text-xl opacity-50
-          				 max-w-md mx-auto">
+		  				 max-w-md mx-auto">
 					You can start playing by clicking the button below,
 					and view your profile information by clicking 
 					your avatar in the top-right corner.</p>
 				<button class="btn w-40 mx-auto mt-20 block" id="scroll-button">Start playing !</button>
+				<!-- <div id="chat-container"></div> -->
 			</main>
 			<footer class="absolute bottom-4 w-full text-center text-sm opacity-60">
 				<a href="/termsofservice" data-link class="hover:underline">Terms of Service</a>
@@ -1185,6 +1188,57 @@
 		</div>
 	</template>
 
+	<template id="leaderboard">
+		<main class="h-[calc(100vh-112px)]">
+			<h1 class="h-[5%] text-center text-5xl text-amber-950">Leaderboard - TOP 50<h1>
+			<div class="h-[40%] flex flex-row items-end text-center pb-1 pt-6 w-[60%] mx-auto">
+				<div class="flex flex-col justify-between items-center w-1/3 bg-linear-to-br from-gray-300 via-slate-300 to-gray-400 mr-1 h-[85%] rounded-lg">
+					<h1 class="text-5xl text-gray-600 mt-2">#2</h1>
+					<div class="mb-1">
+						<img class="size-20 mx-auto rounded-full shadow-sm mb-5" id="avatar-2" src="src/image/croissant-white.png" alt="avatar">
+						<p class="text-3xl text-gray-600" id="pseudo-2">JustDemOn</p>
+						<p class="text-gray-600" id="elo-2">2500 CR</p>
+					</div>
+				</div>
+				<div class="flex flex-col justify-between items-center w-1/3 bg-linear-to-r from-yellow-400 via-yellow-300 to-yellow-500 mx-1 h-full rounded-lg">
+					<h1 class="text-5xl text-yellow-700 mt-2">#1</h1>
+					<div class="mb-1">
+						<img class="size-20 mx-auto rounded-full shadow-sm mb-7" id="avatar-1" src="src/image/croissant-white.png" alt="avatar">
+						<p class="text-3xl text-yellow-700" id="pseudo-1">JustDemOn</p>
+						<p class="text-yellow-700" id="elo-1">3400 CR</p>
+					</div>
+				</div>
+				<div class="flex flex-col justify-between items-center w-1/3 bg-linear-to-r from-amber-700 via-orange-800 to-orange-900 ml-1 h-[75%] rounded-lg">
+					<h1 class="text-5xl text-amber-950 mt-2">#3</h1>
+					<div class="mb-1">
+						<img class="size-20 mx-auto rounded-full shadow-sm" id="avatar-3" src="src/image/croissant-white.png" alt="avatar">
+						<p class="text-3xl text-amber-950" id="pseudo-3">JustDemOn</p>
+						<p class="text-amber-950" id="elo-3">2300 CR</p>
+					</div>
+				</div>
+			</div>
+			<div class="h-[55%]">
+				<ul id="leaderboard-l" class="h-full pt-6 pb-6 overflow-scroll scrollbar-none">
+				</ul>
+			</div>
+		</main>
+	</template>
+
+	<template id="leaderboard-list">
+		<li class="bg-linear-to-r from-amber-50 via-orange-50 to-yellow-50 rounded-lg mx-auto border-2 border-amber-200 mb-1 h-24 w-[60%]">
+			<div class="flex flex-row justify-between h-full">
+				<div class="flex flex-row items-center">
+					<img id="avatar" class="mx-8 size-16 rounded-full" src="src/image/0.png" alt="avatar">
+					<p id="pseudo" class="text-xl">- - -</p>
+				</div>
+				<div class="flex flex-row items-center h-full">
+					<p id="elo">- - -</p>
+					<p id="position" class="mx-8 text-xl"></p>
+				</div>
+			</div>
+		</li>
+	</template>
+
 	<template id="gamelocalhtml">
 		<h1>Local Game</h1>
 		<div class="game-buttons flex justify-center">
@@ -1339,7 +1393,7 @@
 							<p class="" id="rank-player"></p>
 						</div>
 						<div class="w-[40%] mx-2">
-							<p class="text-4xl text-center text-amber-900">My Elo: <span class="font-bold text-4xl" id="elo-player"></span> LP</p>
+							<p class="text-4xl text-center text-amber-900">My Elo: <span class="font-bold text-4xl" id="elo-player"></span> CR</p>
 							<div class="w-full h-3 mt-5 bg-gray-200 rounded-full overflow-hidden">
 								<div
 									id="progress-fill"
@@ -1347,7 +1401,7 @@
 									transition-all duration-700 ease-out">
 								</div>
 							</div>
-							<p class="text-xl text-center text-amber-900">Next rank: <span class="font-bold text-xl" id="elo-next"></span> LP</p>
+							<p class="text-xl text-center text-amber-900">Next rank: <span class="font-bold text-xl" id="elo-next"></span> CR</p>
 						</div>
 				</section>
 				<section class="flex flex-row h-[70%]">
@@ -1398,4 +1452,26 @@
 		</div>
 	</template>
 
+	<template id="chat-template" >
+		
+		<div id="chat-window" class="hidden flex-col w-80 h-96 bg-amber-800 rounded-xl overflow-hidden border border-amber-100">
+	
+			<div id="chat-box" class="flex-1 p-3 overflow-y-auto space-y-2 text-white"></div>
+			<form id="chat-form" class="flex border-t border-amber-100">
+				<input id="chat-input"
+					   type="text"
+					   placeholder="Write your message…"
+					   class="flex-1 bg-amber-800 text-white px-3 py-2 outline-none"
+					   autocomplete="off" />
+				<button class="bg-amber-800 px-4 text-white">Send</button>
+			</form>
+		</div>
+		<div id="chat-bar" class="bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center">
+			General Chat
+		</div>
+
+	</div>
+	</template>
+
+	
 </html>
