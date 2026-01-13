@@ -36,12 +36,14 @@ import { registerGoogle, callbackGoogle } from "./routes/login/oauth.google";
 import { UpdatePasswordView } from "../front/src/views/p_updatepassword";
 import { createWebSocket } from "./middleware/socket";
 import { leaderboardInfo } from "./routes/leaderboard/leaderboard";
+import { Chat } from "./DB/chat";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
 export const friends = new Friends(db);
 export const gameInfo = new GameInfo(db);
 export const tournament = new Tournament(db);
+export const generalChat = new Chat(db);
 
 const fastify = Fastify({
 	logger: false,
@@ -308,6 +310,7 @@ const start = async () => {
 		await tournament.createTournamentTable();
 		await users.CreateUserIA();
 		await users.CreateUserGuest();
+		await generalChat.createChatTable();
 		// const hashedPasswor= await bcrypt.hash("42", 12);
 		// let hashedPassword = await bcrypt.hash("a", 12);
 		const hashedPassword = await bcrypt.hash("42", 12);
