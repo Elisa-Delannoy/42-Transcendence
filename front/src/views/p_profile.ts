@@ -1,5 +1,5 @@
 import { IUsers } from "../../../back/DB/users";
-import { genericFetch, getPseudoHeader, loadHeader, navigateTo } from "../router";
+import { genericFetch } from "../router";
 
 export function ProfileView(): string {
 	 	return (document.getElementById("profilehtml") as HTMLTemplateElement).innerHTML;
