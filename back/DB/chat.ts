@@ -45,4 +45,9 @@ export class Chat
 		return history;
     }
 
+	async deleteChatTable()
+	{
+		const query = `DROP TABLE IF EXISTS Chat`
+		await this._db.execute(query);
+	}
 }

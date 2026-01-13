@@ -1,7 +1,6 @@
 import { METHODS } from "http";
 import { genericFetch, loadHeader, navigateTo } from "../router";
 import { Result } from "ethers";
-import { displayChat } from "./p_chat";
 
 export function towfaView()
 {

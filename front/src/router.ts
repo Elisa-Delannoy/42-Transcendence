@@ -27,6 +27,7 @@ import { InitTermsOfService, TermsOfServiceView } from "./views/terms_of_service
 import { InitPrivacyPolicy, PriavacyPolicyView } from "./views/privacypolicy";
 import { IUsers } from "../../back/DB/users";
 import { InitLeaderboard, LeaderboardView } from "./views/p_leaderboard";
+import { chatnet, displayChat, firstLogin } from "./views/p_chat";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -76,6 +77,13 @@ export type LogStatusAndInfo = {
 	user: PseudoHeaderResponse | null;
 }
 
+let isReloaded = false;
+const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
+if (nav && nav.type === "reload")
+	isReloaded = true;
+
+
+
 export function navigateTo(url: string) {
 	const state = { from: window.location.pathname };
 	history.pushState(state, "", url);
@@ -110,15 +118,12 @@ export async function genericFetch(url: string, options: RequestInit = {})
 	credentials: "include"
 })
 	const result = await res.json();
-// 	if (result.error) {
-// 		if (result.error === "TokenExpiredError")
-// 			alert("Session expired, please login")
-// 		navigateTo("/logout");
-// 		throw new Error(result.error || result.message || "Unknown error");
-// }
-// 	if (!res.ok){
-// 		throw new Error(result.error || result.message || "Unknown error");
-// }
+	if (result.error) {
+		throw new Error(result.error || result.message || "Unknown error");
+	}	
+	if (!res.ok){
+		throw new Error(result.error || result.message || "Unknown error");
+	}
 	return result;
 }
 
@@ -229,6 +234,13 @@ export async function router() {
 				alert("Session expired, please login")
 			navigateTo("/logout");
 			return;
+		}
+
+		if ((isReloaded || (window.location.pathname === "/home" && (!history.state || publicPath.includes(history.state.from))))) {
+			chatnet.connect( () => {
+				displayChat()
+			});
+			isReloaded = false;
 		}
 		loadHeader(auth);
 		if (publicPath.includes(location.pathname) && auth.logged)

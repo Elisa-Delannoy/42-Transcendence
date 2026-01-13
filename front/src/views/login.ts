@@ -1,6 +1,4 @@
 import { loadHeader, navigateTo} from "../router";
-import { displayChat } from "./p_chat";
-
 
 export function LoginView(): string {
 	return (document.getElementById("loginhtml") as HTMLFormElement).innerHTML;
@@ -48,7 +46,7 @@ export async function login(username: string, password: string, form: HTMLFormEl
 			}
 			return 0;
 		}
-		localStorage.setItem("token", result.token);
+		// localStorage.setItem("token", result.token);
 		/*ajouter localstorage pour que cela fonctionne*/
 		if (result.ok && result.twofa === true)
 			return 2;

@@ -1,5 +1,4 @@
 import { navigateTo } from "../router";
-import { displayChat } from "./p_chat";
 
 export async function initOAuthCallback() {
     const res = await fetch("/api/auth/status", {
