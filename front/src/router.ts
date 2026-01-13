@@ -57,7 +57,7 @@ const routes = [
   { path: "/oauth/callback", init: initOAuthCallback },
 ];
 
-const publicPath = ["/", "/login", "/register", "/logout", "/registerok", "/termsofservice", "/privacypolicy"];
+const publicPath = ["/", "/login", "/register", "/logout", "/registerok"];
 
 let currentRoute: any = null;
 let currentPath: string;
@@ -236,7 +236,8 @@ export async function router() {
 			return;
 		}
 
-		if ((isReloaded || (window.location.pathname === "/home" && (!history.state || publicPath.includes(history.state.from))))) {
+		console.log(history.state?.from);
+		if ((isReloaded || (window.location.pathname === "/home" && (!history.state || (publicPath.includes(history.state.from)))))) {
 			chatnet.connect( () => {
 				displayChat()
 			});
@@ -245,7 +246,7 @@ export async function router() {
 		loadHeader(auth);
 		if (publicPath.includes(location.pathname) && auth.logged)
 			navigateTo("/home");
-		if (!publicPath.includes(location.pathname) && !auth.logged)
+		if (!publicPath.includes(location.pathname) && !auth.logged && location.pathname !== "/termsofservice" && location.pathname !== "/privacypolicy")
 			navigateTo("/");
 	}
 
