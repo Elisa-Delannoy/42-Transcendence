@@ -1,6 +1,4 @@
 import { loadHeader, navigateTo} from "../router";
-import { displayChat } from "./p_chat";
-
 
 export function LoginView(): string {
 	return (document.getElementById("loginhtml") as HTMLFormElement).innerHTML;

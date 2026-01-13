@@ -2,7 +2,8 @@ import { genericFetch, loadHeader } from "../router";
 import { IMyFriends } from "../../../back/DB/friend";
 import { AsyncLocalStorage } from "async_hooks";
 import { navigateTo } from "../router";
-import { displayChat } from "./p_chat";
+import { socketTokenOk } from "../../../back/middleware/jwt";
+import { chatNetwork, dataChat } from "../chat/chatNetwork";
 
 export function homeView(): string {
 		 return (document.getElementById("homehtml") as HTMLTemplateElement).innerHTML;
@@ -31,26 +32,15 @@ function smoothScrollTo(targetY: number, duration: number) {
 	requestAnimationFrame(animation);
 }
 
-
-
-let firstLogin = false;
-
 export async function initHomePage() {
 	const res = await fetch("/api/checkLogin", {
 		credentials: "include"
-	  });
-	  const data = await res.json();   
-	  if (!data.loggedIn) {
+	});
+	const data = await res.json();   
+	if (!data.loggedIn) {
 		navigateTo("/login");
 		return;
 	}
-
-	if (!firstLogin) {
-		displayChat();
-		firstLogin = true;
-	}
-	// const { initSocket } = await import("../socket/socket");
-	// initSocket();
 	const btn = document.getElementById("scroll-button") as HTMLButtonElement;
 	const target = document.getElementById("gamepage") as HTMLImageElement;
 	btn.addEventListener("click", () => {

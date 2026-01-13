@@ -3,11 +3,9 @@ import { Server, Socket } from "socket.io";
 import { generalChat } from "../server";
 
 export async function handleGeneralChatSocket(io: Server, socket: Socket) {
-	
 	const history = await generalChat.displayHistoryMessage();
 	if (history)
 		socket.emit("chatHistory", history);
-
 	socket.join("general-chat");
 
 	socket.on("generalChatMessage", async (message: string) => {
@@ -29,13 +27,8 @@ export async function handleGeneralChatSocket(io: Server, socket: Socket) {
 				date: date, 
 			});
 		} catch (err) {
-	}
+		}
 	})
-
-	// socket.on("requestHistory", async () => {
-    // const history = await generalChat.displayHistoryMessage();
-    // socket.emit("chatHistory", history);
-	// });
-
+	socket.data.isitlogged = false;
 }
 

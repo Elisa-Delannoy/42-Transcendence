@@ -4357,104 +4357,6 @@ var init_p_pongmatch = __esm({
   }
 });
 
-// front/src/chat/chatNetwork.ts
-var chatNetwork;
-var init_chatNetwork = __esm({
-  "front/src/chat/chatNetwork.ts"() {
-    "use strict";
-    init_esm5();
-    chatNetwork = class {
-      constructor() {
-        const serverUrl = window.location.host;
-        this.socket = lookup2(serverUrl, {
-          transports: ["websocket"],
-          withCredentials: true
-        });
-      }
-      sendMessage(message) {
-        this.socket.emit("generalChatMessage", message);
-      }
-      receiveMessage(callback) {
-        this.socket.on("generalChatMessage", callback);
-      }
-      receiveHistory(callback) {
-        this.socket.on("chatHistory", callback);
-      }
-      receiveError(callback) {
-        this.socket.on("chatError", callback);
-      }
-      disconnect() {
-        this.socket.disconnect();
-      }
-      // requestHistory() {
-      // 	this.socket.emit("requestHistory");
-      // }
-    };
-  }
-});
-
-// front/src/views/p_chat.ts
-async function displayChat() {
-  const template = document.getElementById("chat-template");
-  const clone = template.content.cloneNode(true);
-  document.getElementById("chat-container").appendChild(clone);
-  const chatBar = document.getElementById("chat-bar");
-  const chatWindow = document.getElementById("chat-window");
-  chatBar.addEventListener("click", () => {
-    chatWindow.classList.toggle("hidden");
-    chatWindow.classList.toggle("flex");
-  });
-  const form = document.getElementById("chat-form");
-  const input = document.getElementById("chat-input");
-  chatnet.receiveHistory((messages) => {
-    messages.forEach((msg) => addMessageGeneral(msg));
-  });
-  chatnet.receiveMessage((data) => {
-    addMessageGeneral(data);
-  });
-  chatnet.receiveError((error) => {
-    displayError(error.error);
-  });
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    chatnet.sendMessage(input.value);
-    input.value = "";
-  });
-}
-function addMessageGeneral(data) {
-  const box = document.getElementById("chat-box");
-  const div = document.createElement("div");
-  div.className = "bg-amber-100/90 p-2 rounded-lg break-words max-w-full";
-  div.innerHTML = `
-		<div class="flex items-center justify-between">
-			<span class="font-semibold text-amber-950">${data.pseudo}</span>
-			<span class="text-xs text-gray-800">${new Date(data.date).toLocaleTimeString()}</span>
-		</div>
-		<div class="text-amber-900">${data.message}</div>
-	`;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
-function displayError(message) {
-  const input = document.getElementById("chat-input");
-  const oldPlaceholder = input.placeholder;
-  input.style.border = "2px solid red";
-  input.placeholder = message;
-  setTimeout(() => {
-    input.classList.remove("input-error");
-    input.placeholder = oldPlaceholder;
-    input.style.border = "";
-  }, 1500);
-}
-var chatnet;
-var init_p_chat = __esm({
-  "front/src/views/p_chat.ts"() {
-    "use strict";
-    init_chatNetwork();
-    chatnet = new chatNetwork();
-  }
-});
-
 // front/src/views/p_homelogin.ts
 function homeView() {
   return document.getElementById("homehtml").innerHTML;
@@ -4483,10 +4385,6 @@ async function initHomePage() {
     navigateTo("/login");
     return;
   }
-  if (!firstLogin) {
-    displayChat();
-    firstLogin = true;
-  }
   const btn = document.getElementById("scroll-button");
   const target = document.getElementById("gamepage");
   btn.addEventListener("click", () => {
@@ -4494,13 +4392,10 @@ async function initHomePage() {
     smoothScrollTo(targetY, 1e3);
   });
 }
-var firstLogin;
 var init_p_homelogin = __esm({
   "front/src/views/p_homelogin.ts"() {
     "use strict";
     init_router();
-    init_p_chat();
-    firstLogin = false;
   }
 });
 
@@ -4841,6 +4736,116 @@ var init_p_tournament = __esm({
   }
 });
 
+// front/src/chat/chatNetwork.ts
+var chatNetwork;
+var init_chatNetwork = __esm({
+  "front/src/chat/chatNetwork.ts"() {
+    "use strict";
+    init_esm5();
+    chatNetwork = class {
+      constructor() {
+        const serverUrl = window.location.host;
+        this.socket = lookup2(serverUrl, {
+          transports: ["websocket"],
+          withCredentials: true
+        });
+      }
+      onConnect(callback) {
+        this.socket.on("connect", callback);
+      }
+      sendMessage(message) {
+        this.socket.emit("generalChatMessage", message);
+      }
+      receiveMessage(callback) {
+        this.socket.on("generalChatMessage", callback);
+      }
+      receiveHistory(callback) {
+        this.socket.on("chatHistory", callback);
+      }
+      // requestHistory() {
+      // 	this.socket.emit("requestHistory");
+      // }
+      receiveError(callback) {
+        this.socket.on("chatError", callback);
+      }
+      disconnect() {
+        this.socket.disconnect();
+      }
+    };
+  }
+});
+
+// front/src/views/p_chat.ts
+async function displayChat() {
+  const template = document.getElementById("chat-template");
+  const clone = template.content.cloneNode(true);
+  document.getElementById("chat-container").appendChild(clone);
+  const chatBar = document.getElementById("chat-bar");
+  const chatWindow = document.getElementById("chat-window");
+  chatBar.addEventListener("click", () => {
+    chatWindow.classList.toggle("hidden");
+    chatWindow.classList.toggle("flex");
+  });
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("chat-input");
+  chatnet.receiveHistory((messages) => {
+    messages.forEach((msg) => addMessageGeneral(msg));
+  });
+  chatnet.receiveMessage((data) => {
+    addMessageGeneral(data);
+  });
+  chatnet.receiveError((error) => {
+    displayError(error.error);
+  });
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    chatnet.sendMessage(input.value);
+    input.value = "";
+  });
+}
+function addMessageGeneral(data) {
+  const box = document.getElementById("chat-box");
+  const div = document.createElement("div");
+  div.className = "bg-amber-100/90 p-2 rounded-lg break-words max-w-full";
+  div.innerHTML = `
+		<div class="flex items-center justify-between">
+			<span class="font-semibold text-amber-950">${data.pseudo}</span>
+			<span class="text-xs text-gray-800">${new Date(data.date).toLocaleTimeString()}</span>
+		</div>
+		<div class="text-amber-900">${data.message}</div>
+	`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+function displayError(message) {
+  const input = document.getElementById("chat-input");
+  const oldPlaceholder = input.placeholder;
+  input.style.border = "2px solid red";
+  input.placeholder = message;
+  setTimeout(() => {
+    input.classList.remove("input-error");
+    input.placeholder = oldPlaceholder;
+    input.style.border = "";
+  }, 1500);
+}
+function hideChat() {
+  const container = document.getElementById("chat-container");
+  if (container)
+    container.innerHTML = "";
+  firstLogin = false;
+  console.log("dans hidechat", firstLogin);
+  chatnet.disconnect();
+}
+var chatnet, firstLogin;
+var init_p_chat = __esm({
+  "front/src/views/p_chat.ts"() {
+    "use strict";
+    init_chatNetwork();
+    chatnet = new chatNetwork();
+    firstLogin = false;
+  }
+});
+
 // front/src/views/logout.ts
 var initLogout;
 var init_logout = __esm({
@@ -4853,7 +4858,7 @@ var init_logout = __esm({
         method: "GET",
         credentials: "include"
       });
-      chatnet.disconnect();
+      hideChat();
       navigateTo("/login");
     };
   }
@@ -5534,7 +5539,7 @@ async function checkLogStatus() {
       return { status: "error", logged: false, user: null };
     }
     if (result.loggedIn === true)
-      return { status: "logged", logged: true, user: { pseudo: result.pseudo, avatar: result.avatar, web_status: result.status, notif: result.notif } };
+      return { status: "logged", logged: true, user: { pseudo: result.user.pseudo, avatar: result.user.avatar, web_status: result.user.status, notif: result.user.notif } };
     return { status: "not_logged", logged: false, user: null };
   } catch {
     return { status: "error", logged: false, user: null };
@@ -5546,6 +5551,12 @@ async function genericFetch(url2, options = {}) {
     credentials: "include"
   });
   const result = await res.json();
+  if (result.error) {
+    throw new Error(result.error || result.message || "Unknown error");
+  }
+  if (!res.ok) {
+    throw new Error(result.error || result.message || "Unknown error");
+  }
   return result;
 }
 function matchRoute(pathname) {
@@ -5616,6 +5627,12 @@ async function router() {
       navigateTo("/logout");
       return;
     }
+    if (isReloaded || window.location.pathname === "/home" && (!history.state || publicPath.includes(history.state.from))) {
+      chatnet.onConnect(() => {
+        displayChat();
+      });
+      isReloaded = false;
+    }
     loadHeader16(auth);
     if (publicPath.includes(location.pathname) && auth.logged)
       navigateTo("/home");
@@ -5665,7 +5682,7 @@ async function popState3() {
     currentPath = path;
   await router();
 }
-var routes, publicPath, currentRoute, currentPath;
+var routes, publicPath, currentRoute, currentPath, isReloaded, nav;
 var init_router = __esm({
   "front/src/router.ts"() {
     "use strict";
@@ -5693,6 +5710,7 @@ var init_router = __esm({
     init_terms_of_service();
     init_privacypolicy();
     init_p_leaderboard();
+    init_p_chat();
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
@@ -5722,6 +5740,10 @@ var init_router = __esm({
     ];
     publicPath = ["/", "/login", "/register", "/logout"];
     currentRoute = null;
+    isReloaded = false;
+    nav = performance.getEntriesByType("navigation")[0];
+    if (nav && nav.type === "reload")
+      isReloaded = true;
   }
 });
 

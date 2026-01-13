@@ -15,8 +15,14 @@ export class chatNetwork {
 			transports: ["websocket"],
 			withCredentials: true,
 		});
+		// this.socket.on("connect", () => {
+		// 	this.requestHistory();
+		// });
 	}
 
+	onConnect(callback: () => void) {
+		this.socket.on("connect", callback);
+	}
 
 	sendMessage(message: string) {
 		this.socket.emit("generalChatMessage", message)
@@ -30,16 +36,15 @@ export class chatNetwork {
 		this.socket.on("chatHistory", callback);
 	}
 
-	receiveError(callback: (data: { error: string }) => void) {
-		this.socket.on("chatError", callback);
-	}
-
-	disconnect() { 
-		this.socket.disconnect();
-	}
-
 	// requestHistory() {
 	// 	this.socket.emit("requestHistory");
 	// }
 
+	receiveError(callback: (data: { error: string }) => void) {
+		this.socket.on("chatError", callback);
+	}
+
+	disconnect() {
+		this.socket.disconnect();
+	}
 }

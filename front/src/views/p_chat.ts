@@ -1,6 +1,7 @@
 import { chatNetwork, dataChat } from "../chat/chatNetwork";
 
 export const chatnet: chatNetwork = new chatNetwork();
+export let firstLogin = false;
 
 export async function displayChat() {	
 	const template = document.getElementById("chat-template") as HTMLTemplateElement;
@@ -29,8 +30,6 @@ export async function displayChat() {
 		chatnet.receiveError((error) => {
 			displayError(error.error);
 		})
-
-	// chatnet.requestHistory();
 
 	form!.addEventListener("submit", (e) => {
 		e.preventDefault();
@@ -70,4 +69,20 @@ function displayError(message: string) {
 		input.placeholder = oldPlaceholder;
 		input.style.border = "";
 	}, 1500);
+}
+
+
+
+export function setFirstLogin(value: boolean) {
+	console.log("dans setfirslogin", value);
+	firstLogin = value;
+}
+
+export function hideChat() {
+	const container = document.getElementById("chat-container");
+	if (container)
+		container.innerHTML = "";
+	firstLogin = false;
+	console.log("dans hidechat", firstLogin);
+	chatnet.disconnect();
 }

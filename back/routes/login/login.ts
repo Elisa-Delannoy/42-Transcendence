@@ -1,6 +1,6 @@
 import  { ManageDB } from "../../DB/manageDB";
 import { friends, users } from '../../server';
-import { createJWT, createTemp2FAToken} from "../../middleware/jwt";
+import { createJWT, createTemp2FAToken, socketTokenOk} from "../../middleware/jwt";
 import { CookieSerializeOptions } from "@fastify/cookie";
 import { FastifyReply } from "fastify";
 import bcrypt from "bcryptjs";
