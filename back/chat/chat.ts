@@ -3,7 +3,10 @@ import { Server, Socket } from "socket.io";
 import { generalChat } from "../server";
 
 export async function handleGeneralChatSocket(io: Server, socket: Socket) {
-	socket.emit("chatHistory", await generalChat.displayHistoryMessage());
+	
+	const history = await generalChat.displayHistoryMessage();
+	if (history)
+		socket.emit("chatHistory", history);
 
 	socket.join("general-chat");
 
