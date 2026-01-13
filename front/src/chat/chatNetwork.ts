@@ -9,19 +9,32 @@ export type dataChat = {
 export class chatNetwork {
 	private socket: Socket;
 
+	// constructor() {
+	// 	const serverUrl = window.location.host;
+	// 	this.socket = io(serverUrl, {
+	// 		transports: ["websocket"],
+	// 		withCredentials: true,
+	// 	});
+	// 	console.log("DANS CHATNETWORK");
+	// 	// this.socket.on("connect", () => {
+	// 	// 	this.requestHistory();
+	// 	// });
+	// }
+
 	constructor() {
+	this.socket = null as any;
+}
+
+	connect(callback: () => void) {
 		const serverUrl = window.location.host;
 		this.socket = io(serverUrl, {
 			transports: ["websocket"],
 			withCredentials: true,
 		});
-		// this.socket.on("connect", () => {
-		// 	this.requestHistory();
-		// });
-	}
-
-	onConnect(callback: () => void) {
-		this.socket.on("connect", callback);
+		if (this.socket.connected)
+			callback();
+		else
+			this.socket.once("connect", callback);
 	}
 
 	sendMessage(message: string) {

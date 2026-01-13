@@ -4743,15 +4743,30 @@ var init_chatNetwork = __esm({
     "use strict";
     init_esm5();
     chatNetwork = class {
+      // constructor() {
+      // 	const serverUrl = window.location.host;
+      // 	this.socket = io(serverUrl, {
+      // 		transports: ["websocket"],
+      // 		withCredentials: true,
+      // 	});
+      // 	console.log("DANS CHATNETWORK");
+      // 	// this.socket.on("connect", () => {
+      // 	// 	this.requestHistory();
+      // 	// });
+      // }
       constructor() {
+        this.socket = null;
+      }
+      connect(callback) {
         const serverUrl = window.location.host;
         this.socket = lookup2(serverUrl, {
           transports: ["websocket"],
           withCredentials: true
         });
-      }
-      onConnect(callback) {
-        this.socket.on("connect", callback);
+        if (this.socket.connected)
+          callback();
+        else
+          this.socket.once("connect", callback);
       }
       sendMessage(message) {
         this.socket.emit("generalChatMessage", message);
@@ -4779,23 +4794,32 @@ var init_chatNetwork = __esm({
 async function displayChat() {
   const template = document.getElementById("chat-template");
   const clone = template.content.cloneNode(true);
+  const chatWindow = clone.querySelector(".chat-window");
+  const chatBox = clone.querySelector(".chat-box");
+  const form = clone.querySelector(".chat-form");
+  const input = clone.querySelector(".chat-input");
+  const chatBar = clone.querySelector(".chat-bar");
   document.getElementById("chat-container").appendChild(clone);
-  const chatBar = document.getElementById("chat-bar");
-  const chatWindow = document.getElementById("chat-window");
   chatBar.addEventListener("click", () => {
     chatWindow.classList.toggle("hidden");
-    chatWindow.classList.toggle("flex");
+    if (!chatWindow.classList.contains("hidden")) {
+      setTimeout(() => {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 0);
+    }
   });
-  const form = document.getElementById("chat-form");
-  const input = document.getElementById("chat-input");
   chatnet.receiveHistory((messages) => {
-    messages.forEach((msg) => addMessageGeneral(msg));
+    messages.forEach((msg) => addMessageGeneral(msg, chatBox));
+    setTimeout(() => {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }, 0);
   });
   chatnet.receiveMessage((data) => {
-    addMessageGeneral(data);
+    addMessageGeneral(data, chatBox);
+    chatBox.scrollTop = chatBox.scrollHeight;
   });
   chatnet.receiveError((error) => {
-    displayError(error.error);
+    displayError(error.error, input);
   });
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -4803,8 +4827,7 @@ async function displayChat() {
     input.value = "";
   });
 }
-function addMessageGeneral(data) {
-  const box = document.getElementById("chat-box");
+function addMessageGeneral(data, box) {
   const div = document.createElement("div");
   div.className = "bg-amber-100/90 p-2 rounded-lg break-words max-w-full";
   div.innerHTML = `
@@ -4817,8 +4840,7 @@ function addMessageGeneral(data) {
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
 }
-function displayError(message) {
-  const input = document.getElementById("chat-input");
+function displayError(message, input) {
   const oldPlaceholder = input.placeholder;
   input.style.border = "2px solid red";
   input.placeholder = message;
@@ -5628,7 +5650,7 @@ async function router() {
       return;
     }
     if (isReloaded || window.location.pathname === "/home" && (!history.state || publicPath.includes(history.state.from))) {
-      chatnet.onConnect(() => {
+      chatnet.connect(() => {
         displayChat();
       });
       isReloaded = false;

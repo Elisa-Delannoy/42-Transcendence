@@ -202,8 +202,8 @@ export async function router() {
 		}
 
 		if ((isReloaded || (window.location.pathname === "/home" && (!history.state || publicPath.includes(history.state.from))))) {
-			chatnet.onConnect(() => {
-    			displayChat();
+			chatnet.connect( () => {
+				displayChat()
 			});
 			isReloaded = false;
 		}

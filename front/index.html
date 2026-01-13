@@ -1454,19 +1454,18 @@
 
 	<template id="chat-template" >
 		
-		<div id="chat-window" class="hidden flex-col w-80 h-96 bg-amber-800 rounded-xl overflow-hidden border border-amber-100">
+		<div class="chat-window hidden flex flex-col w-80 h-96 bg-amber-800 rounded-xl overflow-hidden border border-amber-100">
 	
-			<div id="chat-box" class="flex-1 p-3 overflow-y-auto space-y-2 text-white"></div>
-			<form id="chat-form" class="flex border-t border-amber-100">
-				<input id="chat-input"
-					   type="text"
+			<div class="chat-box flex-1 p-3 scrollbar-custom overflow-y-auto space-y-2 text-white"></div>
+			<form class="chat-form flex border-t border-amber-100">
+				<input type="text"
 					   placeholder="Write your message…"
-					   class="flex-1 bg-amber-800 text-white px-3 py-2 outline-none"
+					   class=" chat-input flex-1 bg-amber-600 text-white px-3 py-2 outline-none"
 					   autocomplete="off" />
-				<button class="bg-amber-800 px-4 text-white">Send</button>
+				<button class="bg-amber-600 px-4 text-white">Send</button>
 			</form>
 		</div>
-		<div id="chat-bar" class="bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center">
+		<div  class="chat-bar bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center">
 			General Chat
 		</div>
 	</template>
