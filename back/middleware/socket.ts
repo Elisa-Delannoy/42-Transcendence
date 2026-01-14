@@ -42,7 +42,7 @@ export async function createWebSocket(io: Server) {
 	io.on("connection", async (socket) => {
 		handleGameSocket(io, socket);
 		handleTournamentSocket(io, socket);
-		handleGeneralChatSocket(io, socket);
+		// handleGeneralChatSocket(io, socket);
 
 		console.log(new Date().toISOString(),"dans creat", " ", " ", socket.id, socket.data.user);
 	})

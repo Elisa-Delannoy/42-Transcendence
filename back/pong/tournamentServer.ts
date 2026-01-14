@@ -22,7 +22,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 		}
 	
 		fillSocketTournament(playerId, tournament, socket);
-		updateBrackets(tournament);
+		updateBrackets(io, tournament, socket.data.tournamentId);
 		io.to(`tournament-${tournamentId}`).emit("state", updateStateTournament(tournament.state));
 	
 		//emit to display start button for tournament creator
@@ -196,7 +196,7 @@ function setupGameTournament(socket: Socket, ennemyId: number | undefined, tourn
 	return id;
 }
 
-function updateBrackets(tournament: serverTournament)
+function updateBrackets(io: Server, tournament: serverTournament, tournamentId: number)
 {
 	const id = tournament.id;
 	let gameId = id * 1000;
@@ -207,6 +207,8 @@ function updateBrackets(tournament: serverTournament)
 		{
 			tournament.final_arr[0] = -1;
 			tournament.state.finalists.player1 = "AI";
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 0);
+			io.to(`tournament-${tournamentId}`).emit("setLoser", 1);
 		}
 		else
 		{
@@ -218,6 +220,10 @@ function updateBrackets(tournament: serverTournament)
 			}
 			tournament.state.finalists.player1 = game1.winner;
 			tournament.final_arr[0] = game1.idwinner;
+			if (tournament.idPlayers[0] == game1.idwinner)
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 0, 1);
+			else
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0);
 		}
 
 		//Only AI in second game
@@ -225,6 +231,7 @@ function updateBrackets(tournament: serverTournament)
 		{
 			tournament.final_arr[1] = -1;
 			tournament.state.finalists.player2 = "AI";
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 2, 3);
 		}
 		else
 		{
@@ -236,6 +243,10 @@ function updateBrackets(tournament: serverTournament)
 			}
 			tournament.state.finalists.player2 = game2.winner;
 			tournament.final_arr[1] = game2.idwinner;
+			if (tournament.idPlayers[2] == game2.idwinner)
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 2, 3);
+			else
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 3, 2);
 		}
 
 		if (tournament.final_arr[0] != 0 && tournament.final_arr[1] != 0)

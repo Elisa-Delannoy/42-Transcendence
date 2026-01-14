@@ -4564,6 +4564,16 @@ var init_tournamentInstance = __esm({
       getCurrentState() {
         return this.currentState;
       }
+      setWinner(el) {
+        if (!el) return;
+        el.classList.remove("border-neutral-600", "bg-neutral-900", "text-white", "border-neutral-700");
+        el.classList.add("winner");
+      }
+      setLoser(el) {
+        if (!el) return;
+        el.classList.remove("border-neutral-600", "bg-neutral-900", "text-white", "border-neutral-700");
+        el.classList.add("loser");
+      }
     };
   }
 });
@@ -4594,6 +4604,9 @@ var init_tournamentNetwork = __esm({
         this.socket.on("joinTournamentGame", (gameId, tournamentId) => {
           this.onjoinTournamentGameCallback?.(gameId, tournamentId);
         });
+        this.socket.on("setWinner", (winner, loser) => {
+          this.onsetWinnerCallback?.(winner, loser);
+        });
         this.socket.on("disconnection", () => {
           this.onDisconnectionCallback?.();
         });
@@ -4603,6 +4616,9 @@ var init_tournamentNetwork = __esm({
       }
       onTournamentHost(cb) {
         this.onTournamentHostCallback = cb;
+      }
+      onsetWinner(cb) {
+        this.onsetWinnerCallback = cb;
       }
       onDisconnection(cb) {
         this.onDisconnectionCallback = cb;
@@ -4646,6 +4662,7 @@ async function initBrackets(params) {
   const finalist1 = document.getElementById("finalist1");
   const finalist2 = document.getElementById("finalist2");
   const champion = document.getElementById("champion");
+  const pseudos = [pseudoP1, pseudoP2, pseudoP3, pseudoP4];
   currentTournament = new TournamentInstance();
   net2 = new TournamentNetwork();
   net2.join(Number(tournamentID));
@@ -4656,8 +4673,14 @@ async function initBrackets(params) {
     updatePseudo();
     if (currentTournament.getCurrentState().status == "semifinal")
       net2?.SetupSemiFinal();
-    else if (currentTournament.getCurrentState().status == "final" && currentTournament.getCurrentState().finalists.player1 != "Winner 1" && currentTournament.getCurrentState().finalists.player2 != "Winner 2")
+    else if (currentTournament.getCurrentState().status == "final")
       net2?.SetupFinal();
+  });
+  net2.onsetWinner((winner, loser) => {
+    console.log("winner : ", winner);
+    console.log("loser : ", loser);
+    currentTournament?.setWinner(pseudos[winner]);
+    currentTournament?.setLoser(pseudos[loser]);
   });
   net2.onTournamentHost(() => {
     startTournamentButton?.classList.remove("hidden");

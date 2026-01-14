@@ -15,4 +15,16 @@ export class TournamentInstance {
 	getCurrentState() {
 		return this.currentState;
 	}
+
+	setWinner(el: HTMLElement | null) {
+		if (!el) return;
+		el.classList.remove("border-neutral-600", "bg-neutral-900", "text-white", "border-neutral-700");
+		el.classList.add("winner");
+	}
+
+	setLoser(el: HTMLElement | null) {
+		if (!el) return;
+		el.classList.remove("border-neutral-600", "bg-neutral-900", "text-white", "border-neutral-700");
+		el.classList.add("loser");
+	}
 }
