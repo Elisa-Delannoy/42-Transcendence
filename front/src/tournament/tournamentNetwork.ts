@@ -81,6 +81,6 @@ export class TournamentNetwork {
 	}
 
 	disconnect() {
-		this.socket.disconnect();
+		this.socket?.disconnect();
 	}
 }

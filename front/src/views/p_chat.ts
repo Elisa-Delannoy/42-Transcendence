@@ -109,5 +109,5 @@ export function hideChat() {
 		container.innerHTML = "";
 	firstLogin = false;
 	console.log("dans hidechat", firstLogin);
-	chatnet.disconnect();
+	chatnet?.disconnect();
 }

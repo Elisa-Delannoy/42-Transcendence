@@ -1,5 +1,6 @@
 import { format } from "path";
 import { navigateTo, genericFetch, loadHeader } from "../router";
+import { showToast } from "./show_toast";
 
 export function UpdateUsernameView(): string {
 	 	return (document.getElementById("update-username-html") as HTMLTemplateElement).innerHTML;
@@ -58,11 +59,11 @@ async function updateUsername() {
         body: JSON.stringify({ newUsername, password })
       });
 
-      alert("Username updated successfully to <<  " + response.pseudo + "  >>");
-      navigateTo("/profile");
+      showToast(`Username updated successfully to << ${response.pseudo} >>`, "success", 2000);
+      setTimeout(() => navigateTo("/profile"), 2100);
 
     } catch (err: any) {
-      alert(err.message);
+      showToast(`Error: ${err.message}`, "error");
     }
   });
 }
@@ -82,11 +83,11 @@ async function deleteUser() {
         body: JSON.stringify({ confirmUser, password })
       });
 
-      alert("Account deleted successfully!");
-      navigateTo("/logout");
+      showToast("Account deleted successfully!", "success", 2000);
+      setTimeout(() => navigateTo("/logout"), 2100);
 
     } catch (err: any) {
-      alert(err.message);
+      showToast(`Error: ${err.message}`, "error");
     }
   })
 }

@@ -58,6 +58,6 @@ export class chatNetwork {
 	}
 
 	disconnect() {
-		this.socket.disconnect();
+		this.socket?.disconnect();
 	}
 }

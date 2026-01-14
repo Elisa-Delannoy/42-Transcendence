@@ -92,6 +92,6 @@ export class GameNetwork {
 	}
 
 	disconnect() {
-		this.socket.disconnect();
+		this.socket?.disconnect();
 	}
 }
