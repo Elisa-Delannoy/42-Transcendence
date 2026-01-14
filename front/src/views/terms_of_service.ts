@@ -8,7 +8,11 @@ export function TermsOfServiceView(): string
 export function InitTermsOfService()
 {
 	const btn = document.getElementById("go-back") as HTMLButtonElement;
-	btn.addEventListener("click", () => {
-		navigateTo("/register");
+	btn.addEventListener("click", () => {		
+		if (window.history.length > 1) {
+            window.history.back()
+        } else {
+            navigateTo("/register");
+        }
 	})
 }

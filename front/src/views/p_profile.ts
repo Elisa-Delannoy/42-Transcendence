@@ -1,5 +1,5 @@
 import { IUsers } from "../../../back/DB/users";
-import { genericFetch } from "../router";
+import { genericFetch, navigateTo } from "../router";
 
 export function ProfileView(): string {
 	 	return (document.getElementById("profilehtml") as HTMLTemplateElement).innerHTML;
@@ -24,7 +24,7 @@ export async function initProfile() {
 	  			headers: { 'Content-Type': 'application/json' },
 	  			body: JSON.stringify({ status })
 			});
-			console.log("Status changed :", status);
+			navigateTo("/profile");
   		});
 	}
 //   (document.getElementById("profile-money") as HTMLParagraphElement).textContent = profile.money.toString();

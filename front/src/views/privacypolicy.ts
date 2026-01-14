@@ -9,6 +9,10 @@ export function InitPrivacyPolicy()
 {
     const btn = document.getElementById("go-back") as HTMLButtonElement;
     btn.addEventListener("click", () => {
-        navigateTo("/register");
+		if (window.history.length > 1) {
+            window.history.back()
+        } else {
+            navigateTo("/register");
+        }
     })
 }

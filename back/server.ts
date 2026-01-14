@@ -298,11 +298,10 @@ const start = async () => {
 		await fastify.listen({ port: PORT, host: "0.0.0.0" });
 		console.log(`Server running on port ${PORT}`);
 		await db.connect();
-		await users.deleteUserTable();
+		// await users.deleteUserTable();
 		// await gameInfo.deleteGameInfoTable();
 		// await friends.deleteFriendTable();
 		await users.createUserTable();
-		await generalChat.createChatTable();
 		// await users.migrateUsersTable();
 		
 		await friends.createFriendTable();
