@@ -31,7 +31,7 @@ export class Users
 		await this._db.execute(`
 			CREATE TABLE IF NOT EXISTS Users (
 				user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                pseudo TEXT NOT NULL UNIQUE,
+                pseudo TEXT NOT NULL,
                 email TEXT NOT NULL UNIQUE,
                 password TEXT NOT NULL,
 				avatar TEXT NOT NULL,
@@ -79,7 +79,7 @@ export class Users
 		`;
 		const parameters = [
 		-1,
-		"AI_Player",
+		"AI",
 		"ia@ia.ia",
 		"iapassiapass",
 		"/files/ai.png",
