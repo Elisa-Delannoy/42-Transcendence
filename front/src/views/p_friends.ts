@@ -6,6 +6,7 @@ import { request } from "http";
 import { stat } from "fs";
 import { IFriendsAndNot } from "../../../back/routes/friends/friends";
 import { linearBuckets } from "prom-client";
+import { showToast } from "./show_toast";
 
 const times = [
 	{ max: 1, div: 1, units: " now" },
@@ -50,6 +51,7 @@ export async function initFriends() {
 	}
 	catch (err) {
 		console.log(err);
+		showToast("Loading failed. Please try again later.", "error", 3000);
 	}
 }
 
@@ -138,6 +140,7 @@ async function search(memberSearched: string, myfriends: IMyFriends[]) {
 	}
 	catch (error) {
 		console.log(error);
+		showToast(error, "error", 3000);
 	}
 }
 
@@ -159,6 +162,7 @@ function toAddFriend(id: number, li: DocumentFragment)
 		}
 		catch (err) {
 			console.log(err);
+			showToast(err, "error", 3000);
 			button.disabled = false;
 		}
 	})
@@ -187,6 +191,7 @@ function toAcceptFriend(friend: IMyFriends,li: DocumentFragment ) {
 		}
 		catch (err) {
 			console.log(err);
+			showToast(err, "error", 3000);
 			button.disabled = false;
 		}
 	})
@@ -209,6 +214,7 @@ function toDeleteFriend(id: number, li: DocumentFragment) {
 		}
 		catch (err) {
 			console.log(err);
+			showToast(err, "error", 3000);
 			button.disabled = false;
 		}
 	})

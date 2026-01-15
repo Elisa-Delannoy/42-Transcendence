@@ -4,6 +4,7 @@ import { contentType } from "mime-types";
 import { gameInfo } from "../../../back/server";
 import { IGameInfo } from "../../../back/DB/gameinfo";
 import { IDashBoard } from "../../../back/routes/dashboard/dashboard";
+import { showToast } from "./show_toast";
 
 export function DashboardView(): string {
 	return (document.getElementById("dashboardhtml") as HTMLTemplateElement).innerHTML;
@@ -171,6 +172,7 @@ export async function initDashboard()
 		}, 50);
 
     } catch (error) {
+		showToast("Loading failed. Please try again later.", "error", 3000);
         console.error("Erreur lors du chargement :", error);
     }
 }

@@ -1,56 +1,28 @@
 type ToastType = "success" | "error" | "warning";
 
-/* export function showToast(
-  message: string,
-  type: ToastType = "success",
-  duration = 2000
-) {
-  const toast = document.createElement("div");
-  toast.textContent = message;
-
-  let backgroundColor = "";
-  switch (type) {
-    case "success":
-      backgroundColor = "#4CAF50";
-      break;
-    case "error":
-      backgroundColor = "#F5675F";
-      break;
-    case "warning":
-      backgroundColor = "#F7C873";
-      break;
-  }
-
-  Object.assign(toast.style, {
-    position: "fixed",
-    top: "150px",
-    right: "20px",
-    backgroundColor,
-    color: "black",
-    padding: "10px 20px",
-    borderRadius: "5px",
-    fontSize: "16px",
-    zIndex: "9999",
-    opacity: "0",
-    transition: "opacity 0.3s ease",
-  });
-
-  document.body.appendChild(toast);
-  requestAnimationFrame(() => {
-    toast.style.opacity = "1";
-  });
-
-  setTimeout(() => {
-    toast.style.opacity = "0";
-    toast.addEventListener("transitionend", () => toast.remove());
-  }, duration);
-} */
 //search: successfully,
 export function showToast(
-  message: string,
+  message: unknown,
   type: ToastType = "success",
-  duration = 3000
+  duration?: number,
+  prefix?: string
 ) {
+  let displayMessage: string;
+  if (message instanceof Error) {
+    displayMessage = message.message;
+  } else if (typeof message === "string") {
+    displayMessage = message;
+  } else {
+    try {
+      displayMessage = JSON.stringify(message);
+    } catch {
+      displayMessage = "An unexpected error occurred";
+    }
+  }
+  if (prefix) {
+    displayMessage = `${prefix}: ${displayMessage}`;
+  }
+
   const toast = document.createElement("div");
 
   Object.assign(toast.style, {
@@ -94,7 +66,7 @@ export function showToast(
 
   toast.innerHTML = `
     <span style="font-size:18px">${icon}</span>
-    <span style="flex:1">${message}</span>
+    <span style="flex:1">${displayMessage}</span>
   `;
 
   if (type === "warning" || type === "error") {
@@ -118,6 +90,8 @@ export function showToast(
   });
 
   if (type === "success") {
+    setTimeout(() => removeToast(toast), duration ?? 3000);
+  } else if (duration && duration > 0) {
     setTimeout(() => removeToast(toast), duration);
   }
 

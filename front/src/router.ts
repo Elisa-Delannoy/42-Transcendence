@@ -28,6 +28,7 @@ import { InitPrivacyPolicy, PriavacyPolicyView } from "./views/privacypolicy";
 import { IUsers } from "../../back/DB/users";
 import { InitLeaderboard, LeaderboardView } from "./views/p_leaderboard";
 import { chatnet, displayChat, firstLogin } from "./views/p_chat";
+import { showToast } from "./views/show_toast";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -230,10 +231,16 @@ export async function router() {
 	if (location.pathname !== "/logout") {
 		const auth: LogStatusAndInfo = await checkLogStatus();
 		if (auth.status === "expired" || auth.status === "error") {
-			if (auth.status === "expired")
-				alert("Session expired, please login")
-			navigateTo("/logout");
-			return;
+			if (auth.status === "expired") {
+				showToast("Session expired. Please log in again.", "warning", 2000);
+				setTimeout(() => navigateTo("/logout"), 300);
+				return;
+			  }	  
+			  if (auth.status === "error") {
+				showToast("Authentication error. Please log in again.", "error", 2000);
+				setTimeout(() => navigateTo("/logout"), 300);
+				return;
+			  }
 		}
 		console.log("from ", history.state?.from, " in ", window.location.pathname);
 		if ((isReloaded || (window.location.pathname === "/home" && (!history.state || (publicPath.includes(history.state.from)))))) {

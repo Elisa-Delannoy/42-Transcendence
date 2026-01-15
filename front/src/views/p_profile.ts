@@ -1,5 +1,6 @@
 import { IUsers } from "../../../back/DB/users";
 import { genericFetch, navigateTo } from "../router";
+import { showToast } from "./show_toast";
 
 export function ProfileView(): string {
 	 	return (document.getElementById("profilehtml") as HTMLTemplateElement).innerHTML;
@@ -24,7 +25,9 @@ export async function initProfile() {
 	  			headers: { 'Content-Type': 'application/json' },
 	  			body: JSON.stringify({ status })
 			});
-			navigateTo("/profile");
+			console.log("Status changed :", status);
+			showToast(`Status updated successfully to << ${status} >>`, "success", 2000);
+			setTimeout(() => navigateTo("/profile"), 2100);
   		});
 	}
 //   (document.getElementById("profile-money") as HTMLParagraphElement).textContent = profile.money.toString();

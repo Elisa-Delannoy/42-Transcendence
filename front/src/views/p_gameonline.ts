@@ -1,4 +1,5 @@
 import { navigateTo, genericFetch, loadHeader } from "../router";
+import { showToast } from "./show_toast";
 
 export function GameOnlineView(): string {
   	return (document.getElementById("gameonlinehtml") as HTMLTemplateElement).innerHTML;
@@ -61,6 +62,7 @@ function renderGameList(games: any[]) {
 			console.log("Saved data:", res);
 		} catch (err) {
 			console.error("Error saving game:", err);
+			showToast(err, "error", 3000);
 		}
 	
 		navigateTo(`/pongmatch/${id}`);
