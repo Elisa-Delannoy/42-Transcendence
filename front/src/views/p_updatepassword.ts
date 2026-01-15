@@ -1,5 +1,6 @@
 import { format } from "path";
 import { navigateTo, genericFetch, loadHeader } from "../router";
+import { showToast } from "./show_toast";
 
 export function UpdatePasswordView(): string {
 	 	return (document.getElementById("update-password-html") as HTMLTemplateElement).innerHTML;
@@ -31,11 +32,11 @@ export async function initUpdatePassword() {
         body: JSON.stringify({ oldPw, newPw, confirm })
       });
 
-      alert("Password is updated successfully! Please re-log in!");
-      navigateTo("/logout");
+      showToast("Password is updated successfully! Please re-log in!", "success", 2000);
+      setTimeout(() => navigateTo("/logout"), 2100);
 
     } catch (err: any) {
-      alert(err.message);
+      showToast(err.message, "error", 3000, "Update password:");
     }
   });
 }

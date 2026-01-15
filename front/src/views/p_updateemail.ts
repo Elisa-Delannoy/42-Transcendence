@@ -1,5 +1,6 @@
 import { format } from "path";
 import { navigateTo, genericFetch, loadHeader } from "../router";
+import { showToast } from "./show_toast";
 
 export function UpdateEmailView(): string {
 	 	return (document.getElementById("update-email-html") as HTMLTemplateElement).innerHTML;
@@ -30,12 +31,11 @@ export async function initUpdateEmail() {
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ newEmail, password })
       });
-
-      alert("Username updated successfully to <<  " + response.email + "  >>");
-      navigateTo("/profile");
+      showToast(`Email updated successfully to << ${response.email} >>`, "success", 2000);
+      setTimeout(() => navigateTo("/profile"), 2100);
 
     } catch (err: any) {
-      alert(err.message);
+      showToast(err, "error", 3000, "Update email:");
     }
   });
 }

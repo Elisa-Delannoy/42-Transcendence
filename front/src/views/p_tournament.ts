@@ -1,4 +1,5 @@
 import { navigateTo, genericFetch, loadHeader } from "../router";
+import { showToast } from "./show_toast";
 
 export function TournamentView(): string {
 	 	const html = (document.getElementById("tournamenthtml") as HTMLTemplateElement).innerHTML;
@@ -87,6 +88,7 @@ function renderTournamentList(tournaments: any[]) {
 			console.log("Saved data:", res);
 		} catch (err) {
 			console.error("Error saving game:", err);
+			showToast(err, "error", 2000, "Error saving game:");
 		}
 
 		navigateTo(`/brackets/${id}`);
@@ -116,6 +118,7 @@ async function testTournamentDB() {
 		console.log("Tournament response:", data);
 	} catch (err) {
 		console.error("Error creating tournament:", err);
+		showToast(err, "error", 2000, "Error creating tournament:");
 	}
 }
 
@@ -151,6 +154,7 @@ async function showDBOnChain() {
 
 	} catch (err) {
 		console.error("Error loading DB/Blockchain comparison:", err);
+		showToast(err, "error", 2000, "Error loading DB/Blockchain comparison:");
 	}
 }
 

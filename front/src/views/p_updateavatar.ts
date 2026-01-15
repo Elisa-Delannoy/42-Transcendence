@@ -1,5 +1,6 @@
 import { format } from "path";
 import { navigateTo, genericFetch, loadHeader } from "../router";
+import { showToast } from "./show_toast";
 
 export function UpdateAvatarView(): string {
 	 	return (document.getElementById("update-avatar-html") as HTMLTemplateElement).innerHTML;
@@ -24,7 +25,7 @@ export async function initUpdateAvatar() {
     const avatarFile  = avatarInput?.files?.[0];
     if (!avatarFile || avatarFile.size === 0 || !avatarFile.name)
     {
-      alert ("Please upload an avatar");
+      showToast("Please upload an avatar", "warning", 3000);
       return;
     }     
     await uploadAvatar(avatarFile);
@@ -46,9 +47,10 @@ async function uploadAvatar(avatar: File) {
       credentials: "include"
     });
     console.log("uplaod success ok : ", result);
-    navigateTo("/profile");
+    showToast("Avatar uploaded successfully", "success", 2000);
+    setTimeout(() => navigateTo("/profile"), 2100);
     } catch (err) {
-      alert(err);
+      showToast(err, "error", 3000, "Upload avatar:");
       console.error(err);
 	  }
 }

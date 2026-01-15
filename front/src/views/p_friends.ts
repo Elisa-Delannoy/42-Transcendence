@@ -1,11 +1,9 @@
 import { IMyFriends } from "../../../back/DB/friend";
-import { friends } from "../../../back/server";
 import { displayStatus, genericFetch, loadHeader, navigateTo } from "../router";
 import { IUsers } from "../../../back/DB/users";
-import { request } from "http";
-import { stat } from "fs";
 import { IFriendsAndNot } from "../../../back/routes/friends/friends";
-import { linearBuckets } from "prom-client";
+import { showToast } from "./show_toast";
+
 
 const times = [
 	{ max: 1, div: 1, units: " now" },
@@ -50,6 +48,7 @@ export async function initFriends() {
 	}
 	catch (err) {
 		console.log(err);
+		showToast("Loading failed. Please try again later.", "error", 3000);
 	}
 }
 
@@ -138,6 +137,7 @@ async function search(memberSearched: string, myfriends: IMyFriends[]) {
 	}
 	catch (error) {
 		console.log(error);
+		showToast(error, "error", 3000);
 	}
 }
 
@@ -160,6 +160,7 @@ function toAddFriend(id: number, li: DocumentFragment)
 		catch (err) {
 			console.log(err);
 			button.disabled = false;
+			showToast(err, "error", 3000);
 		}
 	})
 }
@@ -188,6 +189,7 @@ function toAcceptFriend(friend: IMyFriends,li: DocumentFragment ) {
 		catch (err) {
 			console.log(err);
 			button.disabled = false;
+			showToast(err, "error", 3000);
 		}
 	})
 }
@@ -210,6 +212,7 @@ function toDeleteFriend(id: number, li: DocumentFragment) {
 		catch (err) {
 			console.log(err);
 			button.disabled = false;
+			showToast(err, "error", 3000);
 		}
 	})
 }

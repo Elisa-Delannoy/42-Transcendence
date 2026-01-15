@@ -63,7 +63,7 @@ async function updateUsername() {
       setTimeout(() => navigateTo("/profile"), 2100);
 
     } catch (err: any) {
-      showToast(`Error: ${err.message}`, "error");
+      showToast(err, "error");
     }
   });
 }
@@ -87,7 +87,7 @@ async function deleteUser() {
       setTimeout(() => navigateTo("/logout"), 2100);
 
     } catch (err: any) {
-      showToast(`Error: ${err.message}`, "error");
+      showToast(err, "error");
     }
   })
 }

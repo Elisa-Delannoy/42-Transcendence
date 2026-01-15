@@ -1,4 +1,5 @@
 import { loadHeader, navigateTo} from "../router";
+import { showToast } from "./show_toast";
 
 export function LoginView(): string {
 	return (document.getElementById("loginhtml") as HTMLFormElement).innerHTML;
@@ -52,8 +53,8 @@ export async function login(username: string, password: string, form: HTMLFormEl
 			return 2;
 		return 1;
 	} catch (err) {
-		// console.error(err);
-		return 0;     
+		showToast("Network error, please try again later", "error", 2000);
+		return 0; 
 	}
 }
 

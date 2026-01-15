@@ -1,5 +1,6 @@
 import { format } from "path";
 import { navigateTo, genericFetch, loadHeader } from "../router";
+import { showToast } from "./show_toast";
 
 export function Update2faView(): string {
 	 	return (document.getElementById("update-2fa-html") as HTMLTemplateElement).innerHTML;
@@ -54,7 +55,7 @@ export async function initUpdate2fa() {
 
 		} catch (err) {
 			console.error(err);
-			alert("Failed to setup 2FA.");
+			showToast(err, "error", 2000, "Failed to setup 2FA:");
 		}
 	});
 
@@ -62,7 +63,7 @@ export async function initUpdate2fa() {
 	verifyBtn.addEventListener("click", async () => {
 		const code = verifyInput.value.trim();
 		if (code.length !== 6) {
-			alert("Please enter a valid 6-digit code.");
+			showToast("Please enter a valid 6-digit code.", "warning", 3000);
 			return;
 		}
 
@@ -73,7 +74,7 @@ export async function initUpdate2fa() {
 				body: JSON.stringify({ code })
 			});
 
-			alert("2FA Enabled!");
+			showToast("2FA Enabled!", "success", 3000);
 
 			// Update UI
 			twofaEnableBtn.classList.add("hidden");
@@ -87,7 +88,7 @@ export async function initUpdate2fa() {
 
 		} catch (err) {
 			console.error(err);
-			alert("Invalid code, please try again.");
+			showToast(err, "error", 3000, "Invalid code, please try again.");
 		}
 	});
 
@@ -96,7 +97,7 @@ export async function initUpdate2fa() {
 		try {
 			await genericFetch("/api/private/2fa/disable", { method: "PUT" });
 
-			alert("2FA Disabled!");
+			showToast("2FA Disabled!", "success", 3000);
 
 			twofaDisableBtn.classList.add("hidden");
 			twofaEnableBtn.classList.remove("hidden");
@@ -108,7 +109,7 @@ export async function initUpdate2fa() {
 
 		} catch (err) {
 			console.error(err);
-			alert("Failed to disable 2FA.");
+			showToast(err, "error", 3000, "Failed to disable 2FA:");
 		}
 	});
 
