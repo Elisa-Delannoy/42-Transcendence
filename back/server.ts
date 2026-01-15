@@ -301,10 +301,10 @@ const start = async () => {
 		// await users.deleteUserTable();
 		// await gameInfo.deleteGameInfoTable();
 		// await friends.deleteFriendTable();
-		// await generalChat.deleteChatTableAndTrigger()
+		 await generalChat.deleteChatTableAndTrigger()
 		await users.createUserTable();
 		await generalChat.createChatTable();
-		// await generalChat.limitChatMessage();
+		await generalChat.limitChatMessage();
 		// await users.migrateUsersTable();
 		
 		await friends.createFriendTable();
@@ -312,7 +312,6 @@ const start = async () => {
 		await tournament.createTournamentTable();
 		await users.CreateUserIA();
 		await users.CreateUserGuest();
-		await generalChat.createChatTable();
 		// const hashedPasswor= await bcrypt.hash("42", 12);
 		// let hashedPassword = await bcrypt.hash("a", 12);
 		const hashedPassword = await bcrypt.hash("42", 12);
@@ -322,7 +321,7 @@ const start = async () => {
 		// users.addUser("b", "e@g.c", hashedPassword, 700);
 		// users.addUser("c", "e@g.c", hashedPassword, 1500);
 		// users.addUser("d", "e@g.c", hashedPassword,2300);
-		users.addUser("42", "42", hashedPassword, 2800); 
+		// users.addUser("42", "42", hashedPassword, 2800); 
 		// users.addUser("42", "42", hashedPassword);
 		// friends.addFriendship(5, 6);
 		// friends.addFriendship(4, 5);

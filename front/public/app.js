@@ -23,6 +23,105 @@ var init_home = __esm({
   }
 });
 
+// front/src/views/show_toast.ts
+function showToast(message, type = "success", duration, prefix) {
+  let displayMessage;
+  if (message instanceof Error) {
+    displayMessage = message.message;
+  } else if (typeof message === "string") {
+    displayMessage = message;
+  } else {
+    try {
+      displayMessage = JSON.stringify(message);
+    } catch {
+      displayMessage = "An unexpected error occurred";
+    }
+  }
+  if (prefix) {
+    displayMessage = `${prefix}: ${displayMessage}`;
+  }
+  const toast = document.createElement("div");
+  Object.assign(toast.style, {
+    position: "fixed",
+    top: "125px",
+    right: "20px",
+    minWidth: "260px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    padding: "12px 16px",
+    borderRadius: "6px",
+    fontSize: "15px",
+    color: "black",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+    zIndex: "9999",
+    opacity: "0",
+    transform: "translateX(20px)",
+    transition: "opacity 0.3s ease, transform 0.3s ease"
+  });
+  let bg = "";
+  let icon = "";
+  switch (type) {
+    case "success":
+      bg = "#4CAF50";
+      icon = "\u2705";
+      break;
+    case "warning":
+      bg = "#F7C873";
+      icon = "\u2757";
+      break;
+    case "error":
+      bg = "#F5675F";
+      icon = "\u274C";
+      break;
+  }
+  toast.style.backgroundColor = bg;
+  toast.innerHTML = `
+    <span style="font-size:18px">${icon}</span>
+    <span style="flex:1">${displayMessage}</span>
+  `;
+  if (type === "warning" || type === "error") {
+    const closeBtn = document.createElement("span");
+    closeBtn.textContent = "\u2716";
+    Object.assign(closeBtn.style, {
+      cursor: "pointer",
+      fontWeight: "bold",
+      marginLeft: "10px"
+    });
+    closeBtn.addEventListener("click", () => removeToast(toast));
+    toast.appendChild(closeBtn);
+  }
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => {
+    toast.style.opacity = "1";
+    toast.style.transform = "translateX(0)";
+  });
+  if (type === "success") {
+    setTimeout(() => removeToast(toast), duration ?? 3e3);
+  } else if (duration && duration > 0) {
+    setTimeout(() => removeToast(toast), duration);
+  }
+  stackToasts();
+}
+function removeToast(toast) {
+  toast.style.opacity = "0";
+  toast.style.transform = "translateX(20px)";
+  toast.addEventListener("transitionend", () => toast.remove());
+}
+function stackToasts() {
+  const all = Array.from(document.querySelectorAll("div")).filter(
+    (el) => el.style.position === "fixed" && el.style.right === "20px"
+  );
+  all.forEach((el, index) => {
+    el.style.top = `${125 + index * 70}px`;
+  });
+}
+var init_show_toast = __esm({
+  "front/src/views/show_toast.ts"() {
+    "use strict";
+  }
+});
+
 // front/src/views/login.ts
 function LoginView() {
   return document.getElementById("loginhtml").innerHTML;
@@ -64,11 +163,11 @@ async function login(username, password, form) {
       }
       return 0;
     }
-    localStorage.setItem("token", result.token);
     if (result.ok && result.twofa === true)
       return 2;
     return 1;
   } catch (err) {
+    showToast("Network error, please try again later", "error", 2e3);
     return 0;
   }
 }
@@ -84,6 +183,7 @@ var init_login = __esm({
   "front/src/views/login.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
   }
 });
 
@@ -191,12 +291,14 @@ async function initDashboard() {
     }, 50);
   } catch (error) {
     console.error("Erreur lors du chargement :", error);
+    showToast("Loading failed. Please try again later.", "error", 3e3);
   }
 }
 var ranks, rankColors, progressionColors;
 var init_p_dashboard = __esm({
   "front/src/views/p_dashboard.ts"() {
     "use strict";
+    init_show_toast();
     ranks = [
       { min: 0, max: 400, src: "/src/image/rank1.png", type: "Wood" },
       { min: 400, max: 800, src: "/src/image/rank2.png", type: "Iron" },
@@ -278,6 +380,7 @@ async function initRegister() {
       }
     } catch (err) {
       console.error(err);
+      showToast(err, "error", 3e3, "Registration failed:");
     }
   });
 }
@@ -288,6 +391,7 @@ var init_register = __esm({
   "front/src/views/register.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
   }
 });
 
@@ -343,6 +447,7 @@ function renderGameList(games) {
         console.log("Saved data:", res);
       } catch (err) {
         console.error("Error saving game:", err);
+        showToast(err, "error", 3e3);
       }
       navigateTo(`/pongmatch/${id}`);
     });
@@ -352,6 +457,7 @@ var init_p_gameonline = __esm({
   "front/src/views/p_gameonline.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
   }
 });
 
@@ -4144,7 +4250,7 @@ var init_gameNetwork = __esm({
         this.onGameOverCallback = cb;
       }
       disconnect() {
-        this.socket.disconnect();
+        this.socket?.disconnect();
       }
     };
   }
@@ -4357,104 +4463,6 @@ var init_p_pongmatch = __esm({
   }
 });
 
-// front/src/chat/chatNetwork.ts
-var chatNetwork;
-var init_chatNetwork = __esm({
-  "front/src/chat/chatNetwork.ts"() {
-    "use strict";
-    init_esm5();
-    chatNetwork = class {
-      constructor() {
-        const serverUrl = window.location.host;
-        this.socket = lookup2(serverUrl, {
-          transports: ["websocket"],
-          withCredentials: true
-        });
-      }
-      sendMessage(message) {
-        this.socket.emit("generalChatMessage", message);
-      }
-      receiveMessage(callback) {
-        this.socket.on("generalChatMessage", callback);
-      }
-      receiveHistory(callback) {
-        this.socket.on("chatHistory", callback);
-      }
-      receiveError(callback) {
-        this.socket.on("chatError", callback);
-      }
-      disconnect() {
-        this.socket.disconnect();
-      }
-      // requestHistory() {
-      // 	this.socket.emit("requestHistory");
-      // }
-    };
-  }
-});
-
-// front/src/views/p_chat.ts
-async function displayChat() {
-  const template = document.getElementById("chat-template");
-  const clone = template.content.cloneNode(true);
-  document.getElementById("chat-container").appendChild(clone);
-  const chatBar = document.getElementById("chat-bar");
-  const chatWindow = document.getElementById("chat-window");
-  chatBar.addEventListener("click", () => {
-    chatWindow.classList.toggle("hidden");
-    chatWindow.classList.toggle("flex");
-  });
-  const form = document.getElementById("chat-form");
-  const input = document.getElementById("chat-input");
-  chatnet.receiveHistory((messages) => {
-    messages.forEach((msg) => addMessageGeneral(msg));
-  });
-  chatnet.receiveMessage((data) => {
-    addMessageGeneral(data);
-  });
-  chatnet.receiveError((error) => {
-    displayError(error.error);
-  });
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    chatnet.sendMessage(input.value);
-    input.value = "";
-  });
-}
-function addMessageGeneral(data) {
-  const box = document.getElementById("chat-box");
-  const div = document.createElement("div");
-  div.className = "bg-amber-100/90 p-2 rounded-lg break-words max-w-full";
-  div.innerHTML = `
-		<div class="flex items-center justify-between">
-			<span class="font-semibold text-amber-950">${data.pseudo}</span>
-			<span class="text-xs text-gray-800">${new Date(data.date).toLocaleTimeString()}</span>
-		</div>
-		<div class="text-amber-900">${data.message}</div>
-	`;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
-function displayError(message) {
-  const input = document.getElementById("chat-input");
-  const oldPlaceholder = input.placeholder;
-  input.style.border = "2px solid red";
-  input.placeholder = message;
-  setTimeout(() => {
-    input.classList.remove("input-error");
-    input.placeholder = oldPlaceholder;
-    input.style.border = "";
-  }, 1500);
-}
-var chatnet;
-var init_p_chat = __esm({
-  "front/src/views/p_chat.ts"() {
-    "use strict";
-    init_chatNetwork();
-    chatnet = new chatNetwork();
-  }
-});
-
 // front/src/views/p_homelogin.ts
 function homeView() {
   return document.getElementById("homehtml").innerHTML;
@@ -4483,10 +4491,6 @@ async function initHomePage() {
     navigateTo("/login");
     return;
   }
-  if (!firstLogin) {
-    displayChat();
-    firstLogin = true;
-  }
   const btn = document.getElementById("scroll-button");
   const target = document.getElementById("gamepage");
   btn.addEventListener("click", () => {
@@ -4494,13 +4498,10 @@ async function initHomePage() {
     smoothScrollTo(targetY, 1e3);
   });
 }
-var firstLogin;
 var init_p_homelogin = __esm({
   "front/src/views/p_homelogin.ts"() {
     "use strict";
     init_router();
-    init_p_chat();
-    firstLogin = false;
   }
 });
 
@@ -4526,10 +4527,10 @@ async function initProfile() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status })
       });
-      console.log("Status changed :", status);
+      showToast(`Status updated successfully to << ${status} >>`, "success", 2e3);
+      setTimeout(() => navigateTo("/profile"), 2100);
     });
   }
-  document.getElementById("profile-money").textContent = profile.money.toString();
   document.getElementById("profile-elo").textContent = profile.elo.toString();
   const twofaStatusText = document.getElementById("twofa-status");
   if (profile.twofa_enabled === 1)
@@ -4541,6 +4542,7 @@ var init_p_profile = __esm({
   "front/src/views/p_profile.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
   }
 });
 
@@ -4651,7 +4653,7 @@ var init_tournamentNetwork = __esm({
         this.socket.emit("joinTournament", tournamentId);
       }
       disconnect() {
-        this.socket.disconnect();
+        this.socket?.disconnect();
       }
     };
   }
@@ -4814,6 +4816,7 @@ function renderTournamentList(tournaments) {
         console.log("Saved data:", res);
       } catch (err) {
         console.error("Error saving game:", err);
+        showToast(err, "error", 2e3, "Error saving game:");
       }
       navigateTo(`/brackets/${id}`);
     });
@@ -4840,6 +4843,7 @@ async function testTournamentDB() {
     console.log("Tournament response:", data);
   } catch (err) {
     console.error("Error creating tournament:", err);
+    showToast(err, "error", 2e3, "Error creating tournament:");
   }
 }
 async function showDBOnChain() {
@@ -4867,12 +4871,157 @@ async function showDBOnChain() {
 		`).join("");
   } catch (err) {
     console.error("Error loading DB/Blockchain comparison:", err);
+    showToast(err, "error", 2e3, "Error loading DB/Blockchain comparison:");
   }
 }
 var init_p_tournament = __esm({
   "front/src/views/p_tournament.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
+  }
+});
+
+// front/src/chat/chatNetwork.ts
+var chatNetwork;
+var init_chatNetwork = __esm({
+  "front/src/chat/chatNetwork.ts"() {
+    "use strict";
+    init_esm5();
+    chatNetwork = class {
+      // constructor() {
+      // 	const serverUrl = window.location.host;
+      // 	this.socket = io(serverUrl, {
+      // 		transports: ["websocket"],
+      // 		withCredentials: true,
+      // 	});
+      // 	console.log("DANS CHATNETWORK");
+      // 	// this.socket.on("connect", () => {
+      // 	// 	this.requestHistory();
+      // 	// });
+      // }
+      constructor() {
+        this.socket = null;
+      }
+      connect(callback) {
+        const serverUrl = window.location.host;
+        this.socket = lookup2(serverUrl, {
+          transports: ["websocket"],
+          withCredentials: true
+        });
+        if (this.socket.connected)
+          callback();
+        else
+          this.socket.once("connect", callback);
+      }
+      sendMessage(message) {
+        this.socket.emit("generalChatMessage", message);
+      }
+      receiveMessage(callback) {
+        this.socket.on("generalChatMessage", callback);
+      }
+      receiveHistory(callback) {
+        this.socket.on("chatHistory", callback);
+      }
+      receiveError(callback) {
+        this.socket.on("chatError", callback);
+      }
+      disconnect() {
+        this.socket?.disconnect();
+      }
+    };
+  }
+});
+
+// front/src/views/p_chat.ts
+async function displayChat() {
+  const template = document.getElementById("chat-template");
+  const clone = template.content.cloneNode(true);
+  document.getElementById("chat-container").appendChild(clone);
+  const chatBar = document.getElementById("chat-bar");
+  const chatWindow = document.getElementById("chat-window");
+  const chatBox = document.getElementById("chat-box");
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("chat-input");
+  chatBar.addEventListener("click", () => {
+    chatWindow.classList.toggle("hidden");
+    if (!chatWindow?.classList.contains("hidden")) {
+      chatBar.classList = "dark:bg-amber-800 dark:text-amber-100 bg-amber-100 hover:bg-amber-800 text-amber-100 px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center";
+      setTimeout(() => {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 0);
+    }
+  });
+  const container = document.getElementById("message-list");
+  chatnet.receiveHistory((messages) => {
+    messages.forEach((msg) => addMessageGeneral(msg, chatBox, container));
+  });
+  chatnet.receiveMessage((data) => {
+    addMessageGeneral(data, chatBox, container);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+  chatnet.receiveError((error) => {
+    displayError(error.error, input);
+  });
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    chatnet.sendMessage(input.value);
+    input.value = "";
+  });
+}
+function addMessageGeneral(data, box, container) {
+  let template;
+  if (data.me && data.me === true)
+    template = document.getElementById("my-chat-message");
+  else
+    template = document.getElementById("chat-message");
+  const item = document.createElement("div");
+  const clone = template.content.cloneNode(true);
+  const pseudo = clone.getElementById("chat_pseudo");
+  const date = clone.getElementById("chat_date");
+  const message = clone.getElementById("message");
+  pseudo.textContent = data.pseudo;
+  date.textContent = selectDate(data.date);
+  message.innerHTML = data.message;
+  item.appendChild(clone);
+  box.appendChild(item);
+  box.scrollTop = box.scrollHeight;
+  clone.appendChild(container);
+}
+function selectDate(date) {
+  const theDate = new Date(date).toLocaleDateString();
+  const now = (/* @__PURE__ */ new Date()).toLocaleDateString();
+  const yesterday = new Date((/* @__PURE__ */ new Date()).setDate((/* @__PURE__ */ new Date()).getDate() - 1)).toLocaleDateString();
+  if (theDate === now)
+    return "today, " + new Date(date).toLocaleTimeString();
+  if (theDate === yesterday)
+    return "yesterday, " + new Date(date).toLocaleTimeString();
+  return new Date(date).toLocaleString();
+}
+function displayError(message, input) {
+  const oldPlaceholder = input.placeholder;
+  input.style.border = "2px solid red";
+  input.placeholder = message;
+  setTimeout(() => {
+    input.classList.remove("input-error");
+    input.placeholder = oldPlaceholder;
+    input.style.border = "";
+  }, 1500);
+}
+function hideChat() {
+  const container = document.getElementById("chat-container");
+  if (container)
+    container.innerHTML = "";
+  firstLogin = false;
+  chatnet?.disconnect();
+}
+var chatnet, firstLogin;
+var init_p_chat = __esm({
+  "front/src/views/p_chat.ts"() {
+    "use strict";
+    init_chatNetwork();
+    chatnet = new chatNetwork();
+    firstLogin = false;
   }
 });
 
@@ -4883,18 +5032,37 @@ var init_logout = __esm({
     "use strict";
     init_router();
     init_p_chat();
+    init_show_toast();
     initLogout = async () => {
-      await fetch("/api/logout", {
-        method: "GET",
-        credentials: "include"
-      });
-      chatnet.disconnect();
-      navigateTo("/login");
+      try {
+        const res = await fetch("/api/logout", {
+          method: "GET",
+          credentials: "include"
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || "Logout failed");
+        hideChat();
+        navigateTo("/login");
+      } catch (err) {
+        showToast(err.message, "error", 0, "Logout error:");
+        console.error(err);
+      }
     };
   }
 });
 
 // front/src/views/p_friends.ts
+function getTimeInvit(date) {
+  const now = Date.now();
+  const dateDiff = (now - new Date(date).getTime()) / 1e3;
+  for (const time of times) {
+    if (dateDiff < time.max) {
+      const diff = Math.floor(dateDiff / time.div).toString();
+      return diff + time.units;
+    }
+  }
+  return new Date(date).toLocaleDateString();
+}
 function FriendsView() {
   return document.getElementById("friendshtml").innerHTML;
 }
@@ -4912,6 +5080,7 @@ async function initFriends() {
     youMayKnow(playedWithNotF);
   } catch (err) {
     console.log(err);
+    showToast("Loading failed. Please try again later.", "error", 3e3);
   }
 }
 async function myFriends(acceptedFriends) {
@@ -4934,7 +5103,7 @@ async function myFriends(acceptedFriends) {
     pseudo.textContent = friend.pseudo;
     avatar.src = friend.avatar;
     avatar.alt = `${friend.pseudo}'s avatar`;
-    date.textContent = "friend since " + new Date(friend.friendship_date).toLocaleDateString();
+    date.textContent = "friend since " + getTimeInvit(friend.friendship_date);
     displayStatus(friend, status);
     toDeleteFriend(friend.id, clone);
     item.appendChild(clone);
@@ -4996,6 +5165,7 @@ async function search(memberSearched, myfriends) {
     }
   } catch (error) {
     console.log(error);
+    showToast(error, "error", 3e3);
   }
 }
 function toAddFriend(id, li) {
@@ -5015,6 +5185,7 @@ function toAddFriend(id, li) {
     } catch (err) {
       console.log(err);
       button.disabled = false;
+      showToast(err, "error", 3e3);
     }
   });
 }
@@ -5039,6 +5210,7 @@ function toAcceptFriend(friend, li) {
     } catch (err) {
       console.log(err);
       button.disabled = false;
+      showToast(err, "error", 3e3);
     }
   });
 }
@@ -5059,6 +5231,7 @@ function toDeleteFriend(id, li) {
     } catch (err) {
       console.log(err);
       button.disabled = false;
+      showToast(err, "error", 3e3);
     }
   });
 }
@@ -5081,7 +5254,7 @@ function pendingFr(pendingFriends) {
     pseudo.textContent = friend.pseudo;
     avatar.src = friend.avatar;
     avatar.alt = `${friend.pseudo}'s avatar`;
-    date.textContent = "pending since " + new Date(friend.friendship_date).toLocaleDateString();
+    date.textContent = "pending since " + getTimeInvit(friend.friendship_date);
     toAcceptFriend(friend, clone);
     item.appendChild(clone);
     container.appendChild(item);
@@ -5110,10 +5283,22 @@ function youMayKnow(opponent) {
     container.appendChild(item);
   });
 }
+var times;
 var init_p_friends = __esm({
   "front/src/views/p_friends.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
+    times = [
+      { max: 1, div: 1, units: " now" },
+      { max: 60, div: 1, units: " secondes ago" },
+      { max: 120, div: 60, units: " minute ago" },
+      { max: 3600, div: 60, units: " minutes ago" },
+      { max: 7200, div: 3600, units: " hour ago" },
+      { max: 86400, div: 3600, units: " hours ago" },
+      { max: 172800, div: 86400, units: " day ago" },
+      { max: 259200, div: 86400, units: " days ago" }
+    ];
   }
 });
 
@@ -5183,10 +5368,10 @@ async function initUpdateEmail() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newEmail, password })
       });
-      alert("Username updated successfully to <<  " + response.email + "  >>");
-      navigateTo("/profile");
+      showToast(`Email updated successfully to << ${response.email} >>`, "success", 2e3);
+      setTimeout(() => navigateTo("/profile"), 2100);
     } catch (err) {
-      alert(err.message);
+      showToast(err, "error", 3e3, "Update email:");
     }
   });
 }
@@ -5194,6 +5379,7 @@ var init_p_updateemail = __esm({
   "front/src/views/p_updateemail.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
   }
 });
 
@@ -5241,10 +5427,10 @@ async function updateUsername() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newUsername, password })
       });
-      alert("Username updated successfully to <<  " + response.pseudo + "  >>");
-      navigateTo("/profile");
+      showToast(`Username updated successfully to << ${response.pseudo} >>`, "success", 2e3);
+      setTimeout(() => navigateTo("/profile"), 2100);
     } catch (err) {
-      alert(err.message);
+      showToast(err, "error");
     }
   });
 }
@@ -5260,10 +5446,10 @@ async function deleteUser() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ confirmUser, password })
       });
-      alert("Account deleted successfully!");
-      navigateTo("/logout");
+      showToast("Account deleted successfully!", "success", 2e3);
+      setTimeout(() => navigateTo("/logout"), 2100);
     } catch (err) {
-      alert(err.message);
+      showToast(err, "error");
     }
   });
 }
@@ -5271,6 +5457,7 @@ var init_p_updateusername = __esm({
   "front/src/views/p_updateusername.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
   }
 });
 
@@ -5297,10 +5484,10 @@ async function initUpdatePassword() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ oldPw, newPw, confirm })
       });
-      alert("Password is updated successfully! Please re-log in!");
-      navigateTo("/logout");
+      showToast("Password is updated successfully! Please re-log in!", "success", 2e3);
+      setTimeout(() => navigateTo("/logout"), 2100);
     } catch (err) {
-      alert(err.message);
+      showToast(err.message, "error", 3e3, "Update password:");
     }
   });
 }
@@ -5308,6 +5495,7 @@ var init_p_updatepassword = __esm({
   "front/src/views/p_updatepassword.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
   }
 });
 
@@ -5329,7 +5517,7 @@ async function initUpdateAvatar() {
       const avatarInput = formAvatar.querySelector('input[name="avatar"]');
       const avatarFile = avatarInput?.files?.[0];
       if (!avatarFile || avatarFile.size === 0 || !avatarFile.name) {
-        alert("Please upload an avatar");
+        showToast("Please upload an avatar", "warning", 3e3);
         return;
       }
       await uploadAvatar(avatarFile);
@@ -5346,9 +5534,10 @@ async function uploadAvatar(avatar) {
       credentials: "include"
     });
     console.log("uplaod success ok : ", result);
-    navigateTo("/profile");
+    showToast("Avatar uploaded successfully", "success", 2e3);
+    setTimeout(() => navigateTo("/profile"), 2100);
   } catch (err) {
-    alert(err);
+    showToast(err, "error", 3e3, "Upload avatar:");
     console.error(err);
   }
 }
@@ -5356,6 +5545,7 @@ var init_p_updateavatar = __esm({
   "front/src/views/p_updateavatar.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
   }
 });
 
@@ -5396,13 +5586,13 @@ async function initUpdate2fa() {
       verifyContainer.classList.remove("hidden");
     } catch (err) {
       console.error(err);
-      alert("Failed to setup 2FA.");
+      showToast(err, "error", 2e3, "Failed to setup 2FA:");
     }
   });
   verifyBtn.addEventListener("click", async () => {
     const code = verifyInput.value.trim();
     if (code.length !== 6) {
-      alert("Please enter a valid 6-digit code.");
+      showToast("Please enter a valid 6-digit code.", "warning", 3e3);
       return;
     }
     try {
@@ -5411,7 +5601,7 @@ async function initUpdate2fa() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code })
       });
-      alert("2FA Enabled!");
+      showToast("2FA Enabled!", "success", 3e3);
       twofaEnableBtn.classList.add("hidden");
       twofaDisableBtn.classList.remove("hidden");
       twofaStatusText.textContent = "2FA Enabled";
@@ -5420,13 +5610,13 @@ async function initUpdate2fa() {
       verifyInput.value = "";
     } catch (err) {
       console.error(err);
-      alert("Invalid code, please try again.");
+      showToast(err, "error", 3e3, "Invalid code, please try again.");
     }
   });
   twofaDisableBtn.addEventListener("click", async () => {
     try {
       await genericFetch("/api/private/2fa/disable", { method: "PUT" });
-      alert("2FA Disabled!");
+      showToast("2FA Disabled!", "success", 3e3);
       twofaDisableBtn.classList.add("hidden");
       twofaEnableBtn.classList.remove("hidden");
       twofaStatusText.textContent = "2FA Disabled";
@@ -5435,7 +5625,7 @@ async function initUpdate2fa() {
       verifyInput.value = "";
     } catch (err) {
       console.error(err);
-      alert("Failed to disable 2FA.");
+      showToast(err, "error", 3e3, "Failed to disable 2FA:");
     }
   });
 }
@@ -5443,6 +5633,7 @@ var init_p_update2fa = __esm({
   "front/src/views/p_update2fa.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
   }
 });
 
@@ -5476,7 +5667,11 @@ function TermsOfServiceView() {
 function InitTermsOfService() {
   const btn = document.getElementById("go-back");
   btn.addEventListener("click", () => {
-    navigateTo("/register");
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      navigateTo("/register");
+    }
   });
 }
 var init_terms_of_service = __esm({
@@ -5493,7 +5688,11 @@ function PriavacyPolicyView() {
 function InitPrivacyPolicy() {
   const btn = document.getElementById("go-back");
   btn.addEventListener("click", () => {
-    navigateTo("/register");
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      navigateTo("/register");
+    }
   });
 }
 var init_privacypolicy = __esm({
@@ -5569,7 +5768,7 @@ async function checkLogStatus() {
       return { status: "error", logged: false, user: null };
     }
     if (result.loggedIn === true)
-      return { status: "logged", logged: true, user: { pseudo: result.pseudo, avatar: result.avatar, web_status: result.status, notif: result.notif } };
+      return { status: "logged", logged: true, user: { pseudo: result.user.pseudo, avatar: result.user.avatar, web_status: result.user.status, notif: result.user.notif, xp: result.user.xp, lvl: result.user.lvl } };
     return { status: "not_logged", logged: false, user: null };
   } catch {
     return { status: "error", logged: false, user: null };
@@ -5581,6 +5780,12 @@ async function genericFetch(url2, options = {}) {
     credentials: "include"
   });
   const result = await res.json();
+  if (result.error) {
+    throw new Error(result.error || result.message || "Unknown error");
+  }
+  if (!res.ok) {
+    throw new Error(result.error || result.message || "Unknown error");
+  }
   return result;
 }
 function matchRoute(pathname) {
@@ -5598,15 +5803,34 @@ function matchRoute(pathname) {
   }
   return null;
 }
-async function loadHeader16(auth) {
+function initSwitch() {
+  const root = document.documentElement;
+  const switchInput = document.getElementById("theme-switch");
+  if (localStorage.theme === "dark" || !localStorage.theme && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    root.classList.add("dark");
+    switchInput.checked = true;
+  }
+  switchInput.addEventListener("change", () => {
+    if (switchInput.checked) {
+      root.classList.add("dark");
+      localStorage.theme = "dark";
+    } else {
+      root.classList.remove("dark");
+      localStorage.theme = "light";
+    }
+  });
+}
+async function loadHeader15(auth) {
   const container = document.getElementById("header-container");
   container.innerHTML = "";
   const templateID = auth.logged ? "headerconnect" : "headernotconnect";
   const template = document.getElementById(templateID);
   const clone = template.content.cloneNode(true);
   container.appendChild(clone);
-  if (auth.logged)
+  if (auth.logged) {
     displayPseudoHeader(auth.user);
+    initSwitch();
+  }
 }
 function displayPseudoHeader(result) {
   document.getElementById("pseudo-header").textContent = result.pseudo;
@@ -5618,7 +5842,12 @@ function displayPseudoHeader(result) {
   notification.classList.add("hidden");
   if (result.notif === true)
     notification.classList.remove("hidden");
-  return true;
+  setTimeout(() => {
+    const bar = document.getElementById("progress-xp");
+    const progress = result.xp / 2e4 * 100;
+    bar.style.width = `${progress}%`;
+  }, 50);
+  document.getElementById("lvl-header").textContent = result.lvl.toString();
 }
 function displayStatus(info, status) {
   switch (info.web_status) {
@@ -5646,15 +5875,28 @@ async function router() {
   if (location.pathname !== "/logout") {
     const auth = await checkLogStatus();
     if (auth.status === "expired" || auth.status === "error") {
-      if (auth.status === "expired")
-        alert("Session expired, please login");
-      navigateTo("/logout");
-      return;
+      if (auth.status === "expired") {
+        showToast("Session expired. Please log in again.", "warning", 2e3);
+        setTimeout(() => navigateTo("/logout"), 300);
+        return;
+      }
+      if (auth.status === "error") {
+        showToast("Authentication error. Please log in again.", "error", 2e3);
+        setTimeout(() => navigateTo("/logout"), 300);
+        return;
+      }
     }
-    loadHeader16(auth);
+    console.log("from ", history.state?.from, " in ", window.location.pathname);
+    if (isReloaded || window.location.pathname === "/home" && (!history.state || publicPath.includes(history.state.from))) {
+      chatnet.connect(() => {
+        displayChat();
+      });
+      isReloaded = false;
+    }
+    loadHeader15(auth);
     if (publicPath.includes(location.pathname) && auth.logged)
       navigateTo("/home");
-    if (!publicPath.includes(location.pathname) && !auth.logged)
+    if (!publicPath.includes(location.pathname) && !auth.logged && location.pathname !== "/termsofservice" && location.pathname !== "/privacypolicy")
       navigateTo("/");
   }
   const { route, params } = match;
@@ -5700,7 +5942,7 @@ async function popState3() {
     currentPath = path;
   await router();
 }
-var routes, publicPath, currentRoute, currentPath;
+var routes, publicPath, currentRoute, currentPath, isReloaded, nav;
 var init_router = __esm({
   "front/src/router.ts"() {
     "use strict";
@@ -5728,6 +5970,8 @@ var init_router = __esm({
     init_terms_of_service();
     init_privacypolicy();
     init_p_leaderboard();
+    init_p_chat();
+    init_show_toast();
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
@@ -5755,8 +5999,12 @@ var init_router = __esm({
       { path: "/error", view: ErrorView, init: initError },
       { path: "/oauth/callback", init: initOAuthCallback }
     ];
-    publicPath = ["/", "/login", "/register", "/logout"];
+    publicPath = ["/", "/login", "/register", "/logout", "/registerok", "/oauth/callback", "/twofa"];
     currentRoute = null;
+    isReloaded = false;
+    nav = performance.getEntriesByType("navigation")[0];
+    if (nav && nav.type === "reload")
+      isReloaded = true;
   }
 });
 
