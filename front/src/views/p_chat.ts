@@ -49,7 +49,6 @@ export async function displayChat() {
 }
 
 function addMessageGeneral(data: dataChat, box: HTMLElement, container: HTMLDivElement) {
-	console.log(data);
 	let template: HTMLTemplateElement;
 	if (data.me && data.me === true)
 		template = document.getElementById("my-chat-message") as HTMLTemplateElement;
@@ -62,7 +61,6 @@ function addMessageGeneral(data: dataChat, box: HTMLElement, container: HTMLDivE
 	const message = clone.getElementById("message") as HTMLDivElement;
 	pseudo.textContent = data.pseudo;
 	date.textContent = selectDate(data.date);
-	console.log("date =", date.textContent);
 	message.innerHTML = data.message;
 	item.appendChild(clone);
 	box!.appendChild(item);
