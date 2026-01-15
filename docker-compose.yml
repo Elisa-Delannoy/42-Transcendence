@@ -53,8 +53,10 @@ services:
   node_exporter:
     image: prom/node-exporter:latest
     container_name: node_exporter
+    command:
+    - '--web.listen-address=:9101'
     ports:
-      - "9100:9100"
+      - "9101:9101"
     networks:
       - transcendence-net
 

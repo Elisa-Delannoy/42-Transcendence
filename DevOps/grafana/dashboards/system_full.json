@@ -15706,8 +15706,8 @@
       },
       {
         "current": {
-          "text": "node_exporter:9100",
-          "value": "node_exporter:9100"
+          "text": "node_exporter:9101",
+          "value": "node_exporter:9101"
         },
         "datasource": {
           "type": "prometheus",
