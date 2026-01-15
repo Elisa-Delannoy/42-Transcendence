@@ -1,7 +1,7 @@
 import { View, init } from "./views/home";
 import { LoginView, initLogin } from "./views/login";
 import { DashboardView, initDashboard } from "./views/p_dashboard";
-import { RegisterValidView, RegisterView, initRegister } from "./views/register";
+import { RegisterView, initRegister } from "./views/register";
 import { GameOnlineView, GameOnlineinit} from "./views/p_gameonline";
 import { GameLocalView, GameLocalinit} from "./views/p_gamelocal";
 import { PongMatchView, initPongMatch, stopGame} from "./views/p_pongmatch";
@@ -29,6 +29,7 @@ import { IUsers } from "../../back/DB/users";
 import { InitLeaderboard, LeaderboardView } from "./views/p_leaderboard";
 import { chatnet, displayChat, firstLogin } from "./views/p_chat";
 import { showToast } from "./views/show_toast";
+import { achievementsView, initAchievement } from "./views/p_achievement";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -36,19 +37,19 @@ const routes = [
   { path: "/twofa", view: towfaView, init: initTowfa},
   { path: "/logout", init: initLogout},
   { path: "/register", view: RegisterView, init: initRegister},
-  { path: "/registerok", view: RegisterValidView},
   { path: "/termsofservice", view: TermsOfServiceView, init: InitTermsOfService},
   { path: "/privacypolicy", view: PriavacyPolicyView, init: InitPrivacyPolicy},
   { path: "/home", view: homeView, init: initHomePage},
   { path: "/dashboard", view: DashboardView, init: initDashboard },
   { path: "/friends", view: FriendsView, init: initFriends },
   { path: "/profile", view: ProfileView, init: initProfile},
-  { path: "/leaderboard", view: LeaderboardView, init: InitLeaderboard},
   { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
   { path: "/updateusername", view: UpdateUsernameView, init: initUpdateUsername },
   { path: "/updatepassword", view: UpdatePasswordView, init: initUpdatePassword },
   { path: "/updateavatar", view: UpdateAvatarView, init: initUpdateAvatar },
   { path: "/update2fa", view:Update2faView, init:initUpdate2fa },
+  { path: "/leaderboard", view: LeaderboardView, init: InitLeaderboard},
+  { path: "/achievement", view: achievementsView, init: initAchievement},
   { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit},
   { path: "/gamelocal", view: GameLocalView, init: GameLocalinit},
   { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },

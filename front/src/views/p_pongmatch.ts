@@ -179,9 +179,14 @@ export async function initPongMatch(params?: any) {
 		}
 		else
 		{
-			replayBtn?.addEventListener("click", async () => {
-				navigateTo(`/gameonline`);
-			});
+			let countdown = 3;
+			interval = setInterval(() => {
+			countdown--;
+			if (countdown < 0) {
+				clearInterval(interval);
+				navigateTo(`/home`);
+			}
+			}, 1000);
 		}
 		dashboardBtn?.addEventListener("click", async () => {
 			navigateTo(`/dashboard`);
