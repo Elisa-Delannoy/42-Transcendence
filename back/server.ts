@@ -37,6 +37,10 @@ import { UpdatePasswordView } from "../front/src/views/p_updatepassword";
 import { createWebSocket } from "./middleware/socket";
 import { leaderboardInfo } from "./routes/leaderboard/leaderboard";
 import { Chat } from "./DB/chat";
+import { Achievements } from "./DB/achievements";
+import { UserStats } from "./DB/users_stats";
+import { UserAchievements } from "./DB/users_achievements";
+import { getAchivementInfo } from "./routes/achievements/achievementInfo";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -44,6 +48,9 @@ export const friends = new Friends(db);
 export const gameInfo = new GameInfo(db);
 export const tournament = new Tournament(db);
 export const generalChat = new Chat(db);
+export const achievements = new Achievements(db);
+export const users_stats = new UserStats(db);
+export const users_achivements = new UserAchievements(db);
 
 const fastify = Fastify({
 	logger: false,
@@ -286,10 +293,46 @@ fastify.get("/api/private/leaderboard", async (request, reply) => {
 	await leaderboardInfo(reply);
 });
 
+fastify.get("/api/private/achievement", async (request, reply) => {
+	await getAchivementInfo(request, reply);
+});
+
 fastify.post("/api/twofa", async (request, reply) => {
 	const { code } = request.body as { code: number};
 	await checkTwoFA(request, reply, code);
 });
+
+async function lunchDB()
+{
+	await users.deleteUserTable();
+	await users.createUserTable();
+	await users.CreateUserIA();
+	await users.CreateUserGuest();
+	const hashedPassword = await bcrypt.hash("42", 12);
+	users.addUser("42", "42", hashedPassword, 2800);
+	users.addUser("43", "42", hashedPassword, 2800);
+	
+	await generalChat.createChatTable();
+	
+	// await friends.deleteFriendTable();
+	await friends.createFriendTable();
+	
+	// await gameInfo.deleteGameInfoTable();
+	await gameInfo.createGameInfoTable();
+	
+	await tournament.createTournamentTable();
+	
+	await achievements.deleteTable();
+	await achievements.createAchievementsTable();
+	await achievements.setupAchievements();
+	
+	await users_stats.deleteTable();
+	await users_stats.createUserStatsTable();
+	users_stats.addUser((await users.getPseudoUser("42")).user_id);
+	users_stats.addUser((await users.getPseudoUser("43")).user_id);
+	
+	await users_achivements.createUserAchievementsTable();
+}
 
 const start = async () => {
 	const PORT = 3000
@@ -298,29 +341,15 @@ const start = async () => {
 		await fastify.listen({ port: PORT, host: "0.0.0.0" });
 		console.log(`Server running on port ${PORT}`);
 		await db.connect();
-		await users.deleteUserTable();
-		// await gameInfo.deleteGameInfoTable();
-		// await friends.deleteFriendTable();
-		await users.createUserTable();
-		await generalChat.createChatTable();
-		// await users.migrateUsersTable();
-		
-		await friends.createFriendTable();
-		await gameInfo.createGameInfoTable();
-		await tournament.createTournamentTable();
-		await users.CreateUserIA();
-		await users.CreateUserGuest();
-		await generalChat.createChatTable();
+		await lunchDB();
 		// const hashedPasswor= await bcrypt.hash("42", 12);
 		// let hashedPassword = await bcrypt.hash("a", 12);
-		const hashedPassword = await bcrypt.hash("42", 12);
 		// users.addUser("a", "e@g.c", hashedPassword, 200);
 		// users.addUser("new", "e@g.c", hashedPassword, 300);
 		// users.addUser("ok", "e@g.c", hashedPassword, 500);
 		// users.addUser("b", "e@g.c", hashedPassword, 700);
 		// users.addUser("c", "e@g.c", hashedPassword, 1500);
 		// users.addUser("d", "e@g.c", hashedPassword,2300);
-		users.addUser("42", "42", hashedPassword, 2800); 
 		// users.addUser("42", "42", hashedPassword);
 		// friends.addFriendship(5, 6);
 		// friends.addFriendship(4, 5);

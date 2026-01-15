@@ -28,6 +28,7 @@ import { InitPrivacyPolicy, PriavacyPolicyView } from "./views/privacypolicy";
 import { IUsers } from "../../back/DB/users";
 import { InitLeaderboard, LeaderboardView } from "./views/p_leaderboard";
 import { chatnet, displayChat, firstLogin } from "./views/p_chat";
+import { achievementsView, initAchievement } from "./views/p_achievement";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -42,12 +43,13 @@ const routes = [
   { path: "/dashboard", view: DashboardView, init: initDashboard },
   { path: "/friends", view: FriendsView, init: initFriends },
   { path: "/profile", view: ProfileView, init: initProfile},
-  { path: "/leaderboard", view: LeaderboardView, init: InitLeaderboard},
   { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
   { path: "/updateusername", view: UpdateUsernameView, init: initUpdateUsername },
   { path: "/updatepassword", view: UpdatePasswordView, init: initUpdatePassword },
   { path: "/updateavatar", view: UpdateAvatarView, init: initUpdateAvatar },
   { path: "/update2fa", view:Update2faView, init:initUpdate2fa },
+  { path: "/leaderboard", view: LeaderboardView, init: InitLeaderboard},
+  { path: "/achievement", view: achievementsView, init: initAchievement},
   { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit},
   { path: "/gamelocal", view: GameLocalView, init: GameLocalinit},
   { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
