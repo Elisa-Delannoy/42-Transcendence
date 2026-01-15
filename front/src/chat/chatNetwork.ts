@@ -3,7 +3,8 @@ import { io, Socket } from "socket.io-client";
 export type dataChat = {
 	pseudo: string,
 	message : string, 
-	date: string
+	date: string,
+	me?: boolean
 }
 
 export class chatNetwork {
@@ -48,10 +49,6 @@ export class chatNetwork {
 	receiveHistory(callback: (messages: dataChat[]) => void) {
 		this.socket.on("chatHistory", callback);
 	}
-
-	// requestHistory() {
-	// 	this.socket.emit("requestHistory");
-	// }
 
 	receiveError(callback: (data: { error: string }) => void) {
 		this.socket.on("chatError", callback);

@@ -1,55 +1,39 @@
+import { container } from "googleapis/build/src/apis/container";
 import { chatNetwork, dataChat } from "../chat/chatNetwork";
+import { socketTokenOk } from "../../../back/middleware/jwt";
 
 export const chatnet: chatNetwork = new chatNetwork();
 export let firstLogin = false;
 
 export async function displayChat() {	
 	const template = document.getElementById("chat-template") as HTMLTemplateElement;
-	const clone = template.content.cloneNode(true) as DocumentFragment;
-	
-	const chatWindow = clone.querySelector(".chat-window") as HTMLElement;
-	const chatBox = clone.querySelector(".chat-box") as HTMLElement;
-	const form = clone.querySelector(".chat-form") as HTMLFormElement;
-	const input = clone.querySelector(".chat-input") as HTMLInputElement;
-	const chatBar = clone.querySelector(".chat-bar") as HTMLElement;
-	
+	const clone = template.content.cloneNode(true);
 	document.getElementById("chat-container")!.appendChild(clone);
-	// const chatBar = document.getElementById("chat-bar") as HTMLElement;
-	// const chatWindow = document.getElementById("chat-window");
 
-	chatBar.addEventListener("click", () => {
-	    chatWindow.classList.toggle("hidden");
-	
-	    if (!chatWindow.classList.contains("hidden")) {
-	        setTimeout(() => {
-	            chatBox.scrollTop = chatBox.scrollHeight;
-	        }, 0);
-	    }
+	const chatBar = document.getElementById("chat-bar");
+	const chatWindow = document.getElementById("chat-window");
+	const chatBox = document.getElementById("chat-box");
+	const form = document.getElementById("chat-form") as HTMLFormElement;
+	const input = document.getElementById("chat-input") as HTMLInputElement;
+
+	chatBar!.addEventListener("click", () => {
+		chatWindow!.classList.toggle("hidden");
+		if (!chatWindow?.classList.contains("hidden")) {
+			chatBar!.classList = "dark:bg-amber-800 dark:text-amber-100 bg-amber-100 hover:bg-amber-800 text-amber-100 px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center";
+			setTimeout(() => {
+				chatBox!.scrollTop = chatBox!.scrollHeight;
+			}, 0);
+		}
 	});
 
-
-	// const form = document.getElementById("chat-form");
-	// const input = document.getElementById("chat-input") as HTMLInputElement;
-	
+	const container = document.getElementById("message-list") as HTMLDivElement;
 	chatnet.receiveHistory((messages) => {
-		messages.forEach(msg => addMessageGeneral(msg, chatBox));
-
-		// const chatWindow = document.getElementById("chat-window"); 
-		// const chatBox = document.getElementById("chat-box");
-		// chatWindow!.classList.remove("hidden");
-
-		// const chatBox = document.getElementById("chat-box");
-		setTimeout(() => {
-			chatBox!.scrollTop = chatBox!.scrollHeight;
-		}, 0);
-		// requestAnimationFrame(() => {
-		// 	chatBox!.scrollTop = chatBox!.scrollHeight;
-		// });
+		messages.forEach(msg => addMessageGeneral(msg, chatBox!, container));
 	});
 
 	chatnet.receiveMessage((data) => {
-			addMessageGeneral(data, chatBox);
-			chatBox.scrollTop = chatBox.scrollHeight;
+			addMessageGeneral(data, chatBox!, container);
+			chatBox!.scrollTop = chatBox!.scrollHeight;
 		})
 	
 		chatnet.receiveError((error) => {
@@ -64,29 +48,41 @@ export async function displayChat() {
 	});
 }
 
-function addMessageGeneral(data: dataChat, box: HTMLElement) {
-	// const box = document.getElementById("chat-box");
-
-	const div = document.createElement("div");
-	div.className = "bg-amber-100/90 p-2 rounded-lg break-words max-w-full";
-
-	div.innerHTML = `
-		<div class="flex items-center justify-between">
-			<span class="font-semibold text-amber-950">${data.pseudo}</span>
-			<span class="text-xs text-gray-800">${new Date(data.date).toLocaleTimeString()}</span>
-		</div>
-		<div class="text-amber-900">${data.message}</div>
-	`;
-
-	box!.appendChild(div);
+function addMessageGeneral(data: dataChat, box: HTMLElement, container: HTMLDivElement) {
+	let template: HTMLTemplateElement;
+	if (data.me && data.me === true)
+		template = document.getElementById("my-chat-message") as HTMLTemplateElement;
+	else
+		template = document.getElementById("chat-message") as HTMLTemplateElement;
+	const item = document.createElement("div") as HTMLDivElement;
+	const clone = template.content.cloneNode(true) as DocumentFragment;
+	const pseudo = clone.getElementById("chat_pseudo") as HTMLSpanElement;
+	const date = clone.getElementById("chat_date") as HTMLSpanElement;
+	const message = clone.getElementById("message") as HTMLDivElement;
+	pseudo.textContent = data.pseudo;
+	date.textContent = selectDate(data.date);
+	message.innerHTML = data.message;
+	item.appendChild(clone);
+	box!.appendChild(item);
 	box!.scrollTop = box!.scrollHeight;
+	clone.appendChild(container);
+}
+
+function selectDate(date: string): string {
+	const theDate = new Date(date).toLocaleDateString();
+	const now = new Date().toLocaleDateString();
+	const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toLocaleDateString();
+
+	if (theDate === now)
+		return "today, " + new Date(date).toLocaleTimeString();
+	if (theDate === yesterday)
+		return "yesterday, " + new Date(date).toLocaleTimeString();
+	return new Date(date).toLocaleString();
 }
 
 function displayError(message: string, input: HTMLInputElement) {
-	// const input = document.getElementById("chat-input") as HTMLInputElement;
 	const oldPlaceholder = input.placeholder;
 	input.style.border = "2px solid red";
-	// input.style.backgroundColor = "rgba(255, 0, 0, 0.1)";
 	input.placeholder = message;
 
 	setTimeout(() => {
@@ -96,10 +92,7 @@ function displayError(message: string, input: HTMLInputElement) {
 	}, 1500);
 }
 
-
-
 export function setFirstLogin(value: boolean) {
-	console.log("dans setfirslogin", value);
 	firstLogin = value;
 }
 
@@ -108,6 +101,5 @@ export function hideChat() {
 	if (container)
 		container.innerHTML = "";
 	firstLogin = false;
-	console.log("dans hidechat", firstLogin);
 	chatnet?.disconnect();
 }

@@ -57,7 +57,7 @@ const routes = [
   { path: "/oauth/callback", init: initOAuthCallback },
 ];
 
-const publicPath = ["/", "/login", "/register", "/logout", "/registerok", "/twofa"];
+const publicPath = ["/", "/login", "/register", "/logout", "/registerok", "/oauth/callback", "/twofa"];
 
 let currentRoute: any = null;
 let currentPath: string;
@@ -202,7 +202,7 @@ export function displayPseudoHeader(result: PseudoHeaderResponse)
 	(document.getElementById("lvl-header") as HTMLSpanElement).textContent = result.lvl.toString();
 }
 
-export function displayStatus(info: any, status: HTMLImageElement): void {
+export function displayStatus(info: any, status: HTMLSpanElement): void {
 	switch (info.web_status)
 	{
 		case "online": status.classList.add("bg-green-500");
@@ -235,7 +235,7 @@ export async function router() {
 			navigateTo("/logout");
 			return;
 		}
-
+		console.log("from ", history.state?.from, " in ", window.location.pathname);
 		if ((isReloaded || (window.location.pathname === "/home" && (!history.state || (publicPath.includes(history.state.from)))))) {
 			chatnet.connect( () => {
 				displayChat()

@@ -35,7 +35,7 @@ export class Chat
 		user_id,
 		pseudo,
         message,
-		date.replace("T", " ").split(".")[0],
+		date,
 		];
 		await this._db.execute(query, parameters);
 	}
@@ -45,9 +45,24 @@ export class Chat
 		return history;
     }
 
-	async deleteChatTable()
-	{
-		const query = `DROP TABLE IF EXISTS Chat`
+	async deleteChatTableAndTrigger()
+	{ 
+		await this._db.execute(`DROP TRIGGER IF EXISTS limit_chat_messages`);
+		await this._db.execute(`DROP TABLE IF EXISTS Chat`);
+	}
+
+	async limitChatMessage() {
+		const query = `
+		CREATE TRIGGER IF NOT EXISTS limit_chat_messages
+		AFTER INSERT ON Chat
+		BEGIN
+			DELETE FROM Chat
+			WHERE id NOT IN (
+				SELECT id FROM Chat
+				ORDER BY date DESC
+				LIMIT 25
+			);
+		END;`;
 		await this._db.execute(query);
 	}
 }

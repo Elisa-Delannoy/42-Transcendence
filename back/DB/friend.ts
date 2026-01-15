@@ -5,7 +5,7 @@ export interface IMyFriends {
 	avatar: string;
 	pseudo: string;
 	web_status: "online" | "offline" | "busy";
-	friendship_date: Date;
+	friendship_date: string;
 	friendship_status: "pending" | "accepted";
 	asked_by: number;
 }
@@ -42,7 +42,7 @@ export class Friends
 		const parameters = [
 		user_id1,
 		user_id2,
-		new Date().toISOString().replace("T", " ").split(".")[0],
+		new Date().toISOString(),
 		"pending",
 		user_id1
 		];
@@ -77,7 +77,7 @@ export class Friends
 	async acceptFriendship(id1: number, id2: number): Promise<void>
 	{
 		await this._db.execute(`UPDATE Friend SET status = 'accepted' WHERE user_id1 = ? AND user_id2 = ?`, [id1, id2]);	
-		const updatedTime = new Date().toISOString().replace("T", " ").split(".")[0];
+		const updatedTime = new Date();
 		await this._db.query(`UPDATE Friend SET friendship_date = ? WHERE user_id1 = ? AND user_id2 = ?`, [updatedTime, id1, id2]);
 	}
 
