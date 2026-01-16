@@ -29,7 +29,7 @@ export async function initRegister() {
 			const result = await res.json();
 			if (result.ok == true)
 			{
-				showToast(`Your account have been created succesfully`, "success", 2000);
+				showToast(`Your account have been created succesfully`, "success", 3000);
 				navigateTo("/login")
 			}
 			else

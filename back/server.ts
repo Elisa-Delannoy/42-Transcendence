@@ -290,7 +290,7 @@ fastify.get("/api/private/dashboard", async (request, reply) => {
 });
 
 fastify.get("/api/private/leaderboard", async (request, reply) => {
-	await leaderboardInfo(reply);
+	await leaderboardInfo(request, reply);
 });
 
 fastify.get("/api/private/achievement", async (request, reply) => {
@@ -309,8 +309,10 @@ async function lunchDB()
 	await users.CreateUserIA();
 	await users.CreateUserGuest();
 	const hashedPassword = await bcrypt.hash("42", 12);
-	users.addUser("42", "42", hashedPassword, 2800);
+	users.addUser("42", "42", hashedPassword, 200);
 	users.addUser("43", "43", hashedPassword, 2800);
+	users.addUser("44", "44", hashedPassword, 2800);
+	users.addUser("45", "45", hashedPassword, 2800);
 	
 	await generalChat.deleteChatTableAndTrigger();
 	await generalChat.createChatTable();

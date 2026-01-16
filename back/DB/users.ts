@@ -225,6 +225,16 @@ export class Users
 		return updatedUser;
 	}
 
+	async getPositionLeaderboard(userId: number): Promise<number>
+	{
+		const [rows] = await this._db.query(` SELECT rank FROM ( SELECT user_id, ROW_NUMBER() OVER (ORDER BY elo DESC) AS rank FROM Users) ranked WHERE user_id = ?;`,
+			[userId]
+		);
+		return rows.length ? rows[0].rank : -1;
+	}
+
+
+
 	async updatePassword(id: number, newPw: string): Promise<IUsers>
 	{
 		await this._db.query(`UPDATE Users SET password = ? WHERE user_id = ?`, [newPw, id]);

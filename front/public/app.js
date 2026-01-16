@@ -348,9 +348,10 @@ async function initRegister() {
         body: JSON.stringify(data)
       });
       const result = await res.json();
-      if (result.ok == true)
-        navigateTo("/registerok");
-      else {
+      if (result.ok == true) {
+        showToast(`Your account have been created succesfully`, "success", 3e3);
+        navigateTo("/login");
+      } else {
         const usernameInput = form.querySelector("input[name='username']");
         const passwordInput = form.querySelector("input[name='password']");
         const emailInput = form.querySelector("input[name='email']");
@@ -383,9 +384,6 @@ async function initRegister() {
       showToast(err, "error", 3e3, "Registration failed:");
     }
   });
-}
-function RegisterValidView() {
-  return document.getElementById("registerok").innerHTML;
 }
 var init_register = __esm({
   "front/src/views/register.ts"() {
@@ -4433,9 +4431,14 @@ async function initPongMatch(params) {
         navigateTo(`/gamelocal`);
       });
     } else {
-      replayBtn?.addEventListener("click", async () => {
-        navigateTo(`/gameonline`);
-      });
+      let countdown = 3;
+      interval = setInterval(() => {
+        countdown--;
+        if (countdown < 0) {
+          clearInterval(interval);
+          navigateTo(`/home`);
+        }
+      }, 1e3);
     }
     dashboardBtn?.addEventListener("click", async () => {
       navigateTo(`/dashboard`);
@@ -5717,17 +5720,17 @@ async function InitLeaderboard() {
   if (leaderboard.InfoUsers.length > 0) {
     document.getElementById("avatar-1").src = leaderboard.InfoUsers[0].avatar;
     document.getElementById("pseudo-1").textContent = leaderboard.InfoUsers[0].pseudo;
-    document.getElementById("elo-1").textContent = leaderboard.InfoUsers[0].elo.toString();
+    document.getElementById("elo-1").textContent = leaderboard.InfoUsers[0].elo.toString() + " \u{1F950}";
   }
   if (leaderboard.InfoUsers.length > 1) {
     document.getElementById("avatar-2").src = leaderboard.InfoUsers[1].avatar;
     document.getElementById("pseudo-2").textContent = leaderboard.InfoUsers[1].pseudo;
-    document.getElementById("elo-2").textContent = leaderboard.InfoUsers[1].elo.toString();
+    document.getElementById("elo-2").textContent = leaderboard.InfoUsers[1].elo.toString() + " \u{1F950}";
   }
   if (leaderboard.InfoUsers.length > 2) {
     document.getElementById("avatar-3").src = leaderboard.InfoUsers[2].avatar;
     document.getElementById("pseudo-3").textContent = leaderboard.InfoUsers[2].pseudo;
-    document.getElementById("elo-3").textContent = leaderboard.InfoUsers[2].elo.toString();
+    document.getElementById("elo-3").textContent = leaderboard.InfoUsers[2].elo.toString() + " \u{1F950}";
   }
   for (let i = 3; i < 50; i++) {
     const template = document.getElementById("leaderboard-list");
@@ -5735,17 +5738,110 @@ async function InitLeaderboard() {
     if (i < leaderboard.InfoUsers.length) {
       li.getElementById("avatar").src = leaderboard.InfoUsers[i].avatar;
       li.getElementById("pseudo").textContent = leaderboard.InfoUsers[i].pseudo;
-      li.getElementById("elo").textContent = leaderboard.InfoUsers[i].elo.toString();
+      li.getElementById("elo").textContent = leaderboard.InfoUsers[i].elo.toString() + " \u{1F950}";
+      if (leaderboard.user.pseudo === leaderboard.InfoUsers[i].pseudo) {
+        li.getElementById("background").classList.add("bg-linear-to-r", "from-amber-100", "via-orange-100", "to-yellow-100");
+      } else
+        li.getElementById("background").classList.add("bg-linear-to-r", "from-amber-50", "via-orange-50", "to-yellow-50");
     }
     li.getElementById("position").textContent = "#" + (i + 1).toString();
     container.appendChild(li);
   }
+  if (leaderboard.InfoUsers.length >= 50 && leaderboard.user.elo < leaderboard.InfoUsers[49].elo) {
+    document.getElementById("your-avatar").src = leaderboard.user.avatar;
+    document.getElementById("your-pseudo").textContent = leaderboard.user.pseudo;
+    document.getElementById("your-elo").textContent = leaderboard.user.elo.toString() + " \u{1F950}";
+  } else
+    document.getElementById("your-position").classList.add("hidden");
   console.log(leaderboard);
 }
 var init_p_leaderboard = __esm({
   "front/src/views/p_leaderboard.ts"() {
     "use strict";
     init_router();
+  }
+});
+
+// front/src/views/p_achievement.ts
+function achievementsView() {
+  return document.getElementById("achievementhtml").innerHTML;
+}
+function mapByCode(list) {
+  const map = /* @__PURE__ */ new Map();
+  if (!Array.isArray(list)) return map;
+  for (const a of list) {
+    if (a?.code) {
+      map.set(a.code, a);
+    }
+  }
+  return map;
+}
+async function initAchievement() {
+  try {
+    const achievement = await genericFetch("/api/private/achievement", { method: "GET" });
+    const container1 = document.getElementById("part1");
+    const container2 = document.getElementById("part2");
+    console.log(achievement.locked);
+    const unlockedMap = mapByCode(achievement.unlocked);
+    const lockedMap = mapByCode(achievement.locked);
+    const unlockedTemplate = document.getElementById("unlocked-achievement");
+    console.log(unlockedTemplate);
+    const secretTemplate = document.getElementById("secret-achievement");
+    console.log(secretTemplate);
+    const lockedTemplate = document.getElementById("locked-achievement");
+    console.log(lockedTemplate);
+    let i = 1;
+    for (const code of ACHIEVEMENT_ORDER) {
+      let achievement2 = unlockedMap.get(code);
+      let template;
+      if (achievement2) {
+        template = achievement2.rarity === "Secret" ? secretTemplate : unlockedTemplate;
+      } else {
+        achievement2 = lockedMap.get(code);
+        if (!achievement2) continue;
+        template = achievement2.rarity === "Secret" ? secretTemplate : lockedTemplate;
+      }
+      const node = template.content.cloneNode(true);
+      const isUnlocked = unlockedMap.has(code);
+      if (achievement2.rarity === "Secret" && isUnlocked) {
+        node.getElementById("unlock").textContent = "UNLOCKED";
+        node.getElementById("img").src = "/src/image/coupe.png";
+      }
+      const title = node.getElementById("title");
+      const description = node.getElementById("description");
+      const rarity = node.getElementById("rarity");
+      const effect = node.getElementById("effect");
+      title.textContent = achievement2.rarity === "Secret" && !isUnlocked ? "???" : achievement2.title;
+      description.textContent = achievement2.rarity === "Secret" && !isUnlocked ? "A secret achievement" : achievement2.description;
+      rarity.textContent = achievement2.rarity;
+      effect.classList.add(...rarityBackground[achievement2.rarity]);
+      (i <= 4 ? container1 : container2).appendChild(node);
+      i++;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+var rarityBackground, ACHIEVEMENT_ORDER;
+var init_p_achievement = __esm({
+  "front/src/views/p_achievement.ts"() {
+    "use strict";
+    init_router();
+    rarityBackground = {
+      Common: ["bg-linear-to-r", "from-amber-400", "to-amber-500", "shadow-[0_0_25px_rgba(217,119,6,0.5)]"],
+      Rare: ["bg-linear-to-r", "from-amber-500", "to-orange-500", "shadow-[0_0_25px_rgba(217,119,6,0.5)]"],
+      Secret: ["bg-linear-to-r", "from-violet-700", "to-indigo-800", "shadow-[0_0_30px_rgba(124,58,237,0.5)]"]
+    };
+    ACHIEVEMENT_ORDER = [
+      "WIN_10_1V1",
+      "PLAY_100",
+      "LEVEL_10",
+      "NO_DEFEAT",
+      "WIN_50_1V1",
+      "PLAY_1000",
+      "LEVEL_50",
+      "SECRET_MASTER"
+    ];
   }
 });
 
@@ -5974,25 +6070,26 @@ var init_router = __esm({
     init_p_leaderboard();
     init_p_chat();
     init_show_toast();
+    init_p_achievement();
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
       { path: "/twofa", view: towfaView, init: initTowfa },
       { path: "/logout", init: initLogout },
       { path: "/register", view: RegisterView, init: initRegister },
-      { path: "/registerok", view: RegisterValidView },
       { path: "/termsofservice", view: TermsOfServiceView, init: InitTermsOfService },
       { path: "/privacypolicy", view: PriavacyPolicyView, init: InitPrivacyPolicy },
       { path: "/home", view: homeView, init: initHomePage },
       { path: "/dashboard", view: DashboardView, init: initDashboard },
       { path: "/friends", view: FriendsView, init: initFriends },
       { path: "/profile", view: ProfileView, init: initProfile },
-      { path: "/leaderboard", view: LeaderboardView, init: InitLeaderboard },
       { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
       { path: "/updateusername", view: UpdateUsernameView, init: initUpdateUsername },
       { path: "/updatepassword", view: UpdatePasswordView, init: initUpdatePassword },
       { path: "/updateavatar", view: UpdateAvatarView, init: initUpdateAvatar },
       { path: "/update2fa", view: Update2faView, init: initUpdate2fa },
+      { path: "/leaderboard", view: LeaderboardView, init: InitLeaderboard },
+      { path: "/achievement", view: achievementsView, init: initAchievement },
       { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit },
       { path: "/gamelocal", view: GameLocalView, init: GameLocalinit },
       { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
