@@ -22,6 +22,8 @@ function getTimeInvit(date: string): string {
 	for (const time of times)
 	{
 		if (dateDiff < time.max) {
+			if (time.max === 1)
+				return time.units;
 			const diff: string = Math.floor(dateDiff / time.div).toString();
 			return (diff + time.units);
 		}

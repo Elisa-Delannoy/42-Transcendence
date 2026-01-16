@@ -1,4 +1,5 @@
-import { db } from "../../server";
+import { UserStats } from "../../DB/users_stats";
+import { achievements, db, users_stats } from "../../server";
 import { users } from '../../server';
 import bcrypt from "bcryptjs";
 import { FastifyReply } from "fastify";
@@ -13,6 +14,7 @@ export async function manageRegister(pseudo: string, email: string, password: st
 		await checkPassword(password, confirm);
 		const hashedPassword = await bcrypt.hash(password, 12);
 		users.addUser(pseudo, email, hashedPassword, 500);
+		users_stats.addUser((await users.getPseudoUser(pseudo)).user_id);
 		reply.status(200).send({ ok:true, message: "You have been register successfully."})
 	}
 	catch (err)

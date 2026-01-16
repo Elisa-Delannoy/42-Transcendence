@@ -77,7 +77,7 @@ export class Friends
 	async acceptFriendship(id1: number, id2: number): Promise<void>
 	{
 		await this._db.execute(`UPDATE Friend SET status = 'accepted' WHERE user_id1 = ? AND user_id2 = ?`, [id1, id2]);	
-		const updatedTime = new Date();
+		const updatedTime = new Date().toISOString();
 		await this._db.query(`UPDATE Friend SET friendship_date = ? WHERE user_id1 = ? AND user_id2 = ?`, [updatedTime, id1, id2]);
 	}
 
