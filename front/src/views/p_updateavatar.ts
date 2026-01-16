@@ -46,11 +46,11 @@ async function uploadAvatar(avatar: File) {
       body: form,
       credentials: "include"
     });
-    console.log("uplaod success ok : ", result);
+    // console.log("uplaod success ok : ", result);
     showToast("Avatar uploaded successfully", "success", 2000);
     setTimeout(() => navigateTo("/profile"), 2100);
     } catch (err) {
-      showToast(err, "error", 3000, "Upload avatar:");
+      showToast(err, "error", 3000, "Upload avatar");
       console.error(err);
 	  }
 }

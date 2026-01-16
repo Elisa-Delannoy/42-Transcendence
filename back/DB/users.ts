@@ -319,5 +319,7 @@ export class Users
 		  `UPDATE Users SET twofa_secret = ?, twofa_enabled = ? WHERE user_id = ?`,
 		  [secret, enabled, userId]
 		);
+		const updatedTime = new Date().toISOString().replace("T", " ").split(".")[0];
+		await this._db.query(`UPDATE Users SET modification_date = ? WHERE user_id = ?`, [updatedTime, userId]);
 	} 
 }

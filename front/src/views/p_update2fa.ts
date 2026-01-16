@@ -55,7 +55,7 @@ export async function initUpdate2fa() {
 
 		} catch (err) {
 			console.error(err);
-			showToast(err, "error", 2000, "Failed to setup 2FA:");
+			showToast(err, "error", 2000, "Failed to setup 2FA");
 		}
 	});
 
@@ -109,7 +109,7 @@ export async function initUpdate2fa() {
 
 		} catch (err) {
 			console.error(err);
-			showToast(err, "error", 3000, "Failed to disable 2FA:");
+			showToast(err, "error", 3000, "Failed to disable 2FA");
 		}
 	});
 

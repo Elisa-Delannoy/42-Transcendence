@@ -36,7 +36,7 @@ export async function initUpdatePassword() {
       setTimeout(() => navigateTo("/logout"), 2100);
 
     } catch (err: any) {
-      showToast(err.message, "error", 3000, "Update password:");
+      showToast(err.message, "error", 3000, "Update password");
     }
   });
 }

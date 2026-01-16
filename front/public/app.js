@@ -143,6 +143,11 @@ async function initLogin() {
   googleBtn?.addEventListener("click", () => {
     window.location.href = "/api/oauth/google";
   });
+  const params = new URLSearchParams(window.location.search);
+  const error = params.get("error");
+  if (error === "account_inactive") {
+    showToast("This account has been deleted and can no longer be used!", "error", 3e3, "Deleted user");
+  }
 }
 async function login(username, password, form) {
   try {
@@ -5371,7 +5376,7 @@ async function initUpdateEmail() {
       showToast(`Email updated successfully to << ${response.email} >>`, "success", 2e3);
       setTimeout(() => navigateTo("/profile"), 2100);
     } catch (err) {
-      showToast(err, "error", 3e3, "Update email:");
+      showToast(err, "error", 3e3, "Update email");
     }
   });
 }
@@ -5487,7 +5492,7 @@ async function initUpdatePassword() {
       showToast("Password is updated successfully! Please re-log in!", "success", 2e3);
       setTimeout(() => navigateTo("/logout"), 2100);
     } catch (err) {
-      showToast(err.message, "error", 3e3, "Update password:");
+      showToast(err.message, "error", 3e3, "Update password");
     }
   });
 }
@@ -5533,11 +5538,10 @@ async function uploadAvatar(avatar) {
       body: form,
       credentials: "include"
     });
-    console.log("uplaod success ok : ", result);
     showToast("Avatar uploaded successfully", "success", 2e3);
     setTimeout(() => navigateTo("/profile"), 2100);
   } catch (err) {
-    showToast(err, "error", 3e3, "Upload avatar:");
+    showToast(err, "error", 3e3, "Upload avatar");
     console.error(err);
   }
 }
@@ -5586,7 +5590,7 @@ async function initUpdate2fa() {
       verifyContainer.classList.remove("hidden");
     } catch (err) {
       console.error(err);
-      showToast(err, "error", 2e3, "Failed to setup 2FA:");
+      showToast(err, "error", 2e3, "Failed to setup 2FA");
     }
   });
   verifyBtn.addEventListener("click", async () => {
@@ -5625,7 +5629,7 @@ async function initUpdate2fa() {
       verifyInput.value = "";
     } catch (err) {
       console.error(err);
-      showToast(err, "error", 3e3, "Failed to disable 2FA:");
+      showToast(err, "error", 3e3, "Failed to disable 2FA");
     }
   });
 }
@@ -5639,24 +5643,32 @@ var init_p_update2fa = __esm({
 
 // front/src/views/oauth_callback.ts
 async function initOAuthCallback() {
-  const res = await fetch("/api/auth/status", {
-    credentials: "include"
-  });
-  if (!res.ok) {
-    navigateTo("/login");
-    return;
-  }
-  const data = await res.json();
-  if (data.twofa) {
-    navigateTo("/twofa");
-  } else {
-    navigateTo("/home");
+  try {
+    const res = await fetch("/api/auth/status", {
+      credentials: "include"
+    });
+    if (!res.ok) {
+      navigateTo("/login");
+      return;
+    }
+    const data = await res.json();
+    if (data.twofa) {
+      navigateTo("/twofa");
+    } else {
+      navigateTo("/home");
+      if (data.firstTimeLogin) {
+        showToast("Welcome!\nIf this is your first login, please change your default password << google >> ", "success", 3e3);
+      }
+    }
+  } catch (err) {
+    showToast(err, "error", 3e3, "Google account");
   }
 }
 var init_oauth_callback = __esm({
   "front/src/views/oauth_callback.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
   }
 });
 
