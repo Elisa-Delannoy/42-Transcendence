@@ -9,7 +9,7 @@ export function UpdateEmailView(): string {
 export async function initUpdateEmail() {
   // get pseudo and avatar
   const profile = await genericFetch("/api/private/profile", {
-	  method: "POST",
+	  method: "GET",
 	});
 	const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
 	avatar.src = profile.avatar + "?ts=" + Date.now();

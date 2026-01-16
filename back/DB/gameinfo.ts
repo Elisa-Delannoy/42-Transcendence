@@ -2,18 +2,18 @@ import { pseudoRandomBytes } from "crypto";
 import { ManageDB } from "./manageDB";
 
 export interface IGameInfo {
-    status: string;
+	status: string;
 	type: string;
-    winner_id: number;
+	winner_id: number;
 	winner_pseudo: string;
 	winner_avatar: string;
-    loser_id: number;
+	loser_id: number;
 	loser_pseudo: string;
 	loser_avatar: string;
-    date_game: string;
-    duration_game: number;
-    winner_score: number;
-    loser_score: number;
+	date_game: string;
+	duration_game: number;
+	winner_score: number;
+	loser_score: number;
 }
 
 export class GameInfo
@@ -140,40 +140,35 @@ export class GameInfo
 	}
 
 	async getRecentPlayerNotFriend(id: number): Promise<{ id: number, pseudo: string, avatar: string }[]> {
-		const query = `SELECT pseudo, avatar, id
-			FROM (
-				SELECT u.pseudo, u.avatar,
-				CASE
-					WHEN gi.winner_id = ? THEN gi.loser_id
-					ELSE gi.winner_id
-				END AS id,
-				gi.date_game,
-				ROW_NUMBER() OVER(
-					PARTITION BY
-						CASE
-							WHEN gi.winner_id = ? THEN gi.loser_id
-							ELSE gi.winner_id
-						END
-					ORDER BY gi.date_game DESC
-				) AS row_number
-			FROM game_info AS gi
-			JOIN Users AS u ON u.user_id = 
-				CASE
+		const query = `
+			SELECT 
+				u.user_id AS id,
+				u.pseudo,
+				u.avatar,
+				MAX(gi.date_game) AS last_game
+			FROM game_info gi
+			JOIN Users u 
+				ON u.user_id = CASE 
 					WHEN gi.winner_id = ? THEN gi.loser_id
 					ELSE gi.winner_id
 				END
 				AND u.user_id > 0
-			LEFT JOIN Friend AS f ON
-				(f.user_id1 = ? AND f.user_id2 = u.user_id)
-				OR (f.user_id1 = u.user_id AND f.user_id2 = ?)
-			WHERE
-				(gi.winner_id = ? OR gi.loser_id = ?) 
+			LEFT JOIN Friend f 
+				ON (
+					(f.user_id1 = ? AND f.user_id2 = u.user_id)
+					OR (f.user_id2 = ? AND f.user_id1 = u.user_id)
+				)
+			WHERE 
+				(gi.winner_id = ? OR gi.loser_id = ?)
 				AND f.user_id1 IS NULL
-			) temp
-			WHERE row_number = 1
-			ORDER BY date_game DESC
-			LIMIT 20`
-			const players = await this._db.query(query, [id, id, id, id, id, id]);
+			GROUP BY 
+				u.user_id, u.pseudo, u.avatar
+			ORDER BY 
+				last_game DESC
+			LIMIT 20; `
+
+				
+			const players = await this._db.query(query, [id, id, id, id, id]);
 			return players;
 	}
 

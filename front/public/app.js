@@ -348,9 +348,10 @@ async function initRegister() {
         body: JSON.stringify(data)
       });
       const result = await res.json();
-      if (result.ok == true)
-        navigateTo("/registerok");
-      else {
+      if (result.ok == true) {
+        showToast(`Your account have been created succesfully`, "success", 2e3);
+        navigateTo("/login");
+      } else {
         const usernameInput = form.querySelector("input[name='username']");
         const passwordInput = form.querySelector("input[name='password']");
         const emailInput = form.querySelector("input[name='email']");
@@ -383,9 +384,6 @@ async function initRegister() {
       showToast(err, "error", 3e3, "Registration failed:");
     }
   });
-}
-function RegisterValidView() {
-  return document.getElementById("registerok").innerHTML;
 }
 var init_register = __esm({
   "front/src/views/register.ts"() {
@@ -4433,9 +4431,14 @@ async function initPongMatch(params) {
         navigateTo(`/gamelocal`);
       });
     } else {
-      replayBtn?.addEventListener("click", async () => {
-        navigateTo(`/gameonline`);
-      });
+      let countdown = 3;
+      interval = setInterval(() => {
+        countdown--;
+        if (countdown < 0) {
+          clearInterval(interval);
+          navigateTo(`/home`);
+        }
+      }, 1e3);
     }
     dashboardBtn?.addEventListener("click", async () => {
       navigateTo(`/dashboard`);
@@ -4483,14 +4486,6 @@ function smoothScrollTo(targetY, duration) {
   requestAnimationFrame(animation);
 }
 async function initHomePage() {
-  const res = await fetch("/api/checkLogin", {
-    credentials: "include"
-  });
-  const data = await res.json();
-  if (!data.loggedIn) {
-    navigateTo("/login");
-    return;
-  }
   const btn = document.getElementById("scroll-button");
   const target = document.getElementById("gamepage");
   btn.addEventListener("click", () => {
@@ -4501,7 +4496,6 @@ async function initHomePage() {
 var init_p_homelogin = __esm({
   "front/src/views/p_homelogin.ts"() {
     "use strict";
-    init_router();
   }
 });
 
@@ -4511,7 +4505,7 @@ function ProfileView() {
 }
 async function initProfile() {
   const profile = await genericFetch("/api/private/profile", {
-    method: "POST"
+    method: "GET"
   });
   const avatar = document.getElementById("profile-avatar");
   avatar.src = profile.avatar + "?ts=" + Date.now();
@@ -5071,7 +5065,7 @@ function FriendsView() {
 async function initFriends() {
   try {
     const allInfo = await genericFetch("/api/private/friend", {
-      method: "POST"
+      method: "GET"
     });
     const acceptedFriends = allInfo.allMyFriends.filter((f) => f.friendship_status === "accepted");
     const pendingFriends = allInfo.allMyFriends.filter((f) => f.friendship_status === "pending");
@@ -5223,7 +5217,7 @@ function toDeleteFriend(id, li) {
   button.addEventListener("click", async () => {
     try {
       await genericFetch("/api/private/friend/delete", {
-        method: "POST",
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ friendID: id })
       });
@@ -5353,7 +5347,7 @@ function UpdateEmailView() {
 }
 async function initUpdateEmail() {
   const profile = await genericFetch("/api/private/profile", {
-    method: "POST"
+    method: "GET"
   });
   const avatar = document.getElementById("profile-avatar");
   avatar.src = profile.avatar + "?ts=" + Date.now();
@@ -5391,7 +5385,7 @@ function UpdateUsernameView() {
 }
 async function initUpdateUsername() {
   const profile = await genericFetch("/api/private/profile", {
-    method: "POST"
+    method: "GET"
   });
   const avatar = document.getElementById("profile-avatar");
   avatar.src = profile.avatar + "?ts=" + Date.now();
@@ -5469,7 +5463,7 @@ function UpdatePasswordView() {
 }
 async function initUpdatePassword() {
   const profile = await genericFetch("/api/private/profile", {
-    method: "POST"
+    method: "GET"
   });
   const avatar = document.getElementById("profile-avatar");
   avatar.src = profile.avatar + "?ts=" + Date.now();
@@ -5507,7 +5501,7 @@ function UpdateAvatarView() {
 }
 async function initUpdateAvatar() {
   const profile = await genericFetch("/api/private/profile", {
-    method: "POST"
+    method: "GET"
   });
   const avatar = document.getElementById("profile-avatar");
   avatar.src = profile.avatar + "?ts=" + Date.now();
@@ -5557,7 +5551,7 @@ function Update2faView() {
 }
 async function initUpdate2fa() {
   const profile = await genericFetch("/api/private/profile", {
-    method: "POST"
+    method: "GET"
   });
   const avatar = document.getElementById("profile-avatar");
   avatar.src = profile.avatar + "?ts=" + Date.now();
@@ -5749,6 +5743,89 @@ var init_p_leaderboard = __esm({
   }
 });
 
+// front/src/views/p_achievement.ts
+function achievementsView() {
+  return document.getElementById("achievementhtml").innerHTML;
+}
+function mapByCode(list) {
+  const map = /* @__PURE__ */ new Map();
+  if (!Array.isArray(list)) return map;
+  for (const a of list) {
+    if (a?.code) {
+      map.set(a.code, a);
+    }
+  }
+  return map;
+}
+async function initAchievement() {
+  try {
+    const achievement = await genericFetch("/api/private/achievement", { method: "GET" });
+    const container1 = document.getElementById("part1");
+    const container2 = document.getElementById("part2");
+    console.log(achievement.locked);
+    const unlockedMap = mapByCode(achievement.unlocked);
+    const lockedMap = mapByCode(achievement.locked);
+    const unlockedTemplate = document.getElementById("unlocked-achievement");
+    console.log(unlockedTemplate);
+    const secretTemplate = document.getElementById("secret-achievement");
+    console.log(secretTemplate);
+    const lockedTemplate = document.getElementById("locked-achievement");
+    console.log(lockedTemplate);
+    let i = 1;
+    for (const code of ACHIEVEMENT_ORDER) {
+      let achievement2 = unlockedMap.get(code);
+      let template;
+      if (achievement2) {
+        template = achievement2.rarity === "Secret" ? secretTemplate : unlockedTemplate;
+      } else {
+        achievement2 = lockedMap.get(code);
+        if (!achievement2) continue;
+        template = achievement2.rarity === "Secret" ? secretTemplate : lockedTemplate;
+      }
+      const node = template.content.cloneNode(true);
+      const isUnlocked = unlockedMap.has(code);
+      if (achievement2.rarity === "Secret" && isUnlocked) {
+        node.getElementById("unlock").textContent = "UNLOCKED";
+        node.getElementById("img").src = "/src/image/coupe.png";
+      }
+      const title = node.getElementById("title");
+      const description = node.getElementById("description");
+      const rarity = node.getElementById("rarity");
+      const effect = node.getElementById("effect");
+      title.textContent = achievement2.rarity === "Secret" && !isUnlocked ? "???" : achievement2.title;
+      description.textContent = achievement2.rarity === "Secret" && !isUnlocked ? "A secret achievement" : achievement2.description;
+      rarity.textContent = achievement2.rarity;
+      effect.classList.add(...rarityBackground[achievement2.rarity]);
+      (i <= 4 ? container1 : container2).appendChild(node);
+      i++;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+var rarityBackground, ACHIEVEMENT_ORDER;
+var init_p_achievement = __esm({
+  "front/src/views/p_achievement.ts"() {
+    "use strict";
+    init_router();
+    rarityBackground = {
+      Common: ["bg-linear-to-r", "from-amber-400", "to-amber-500", "shadow-[0_0_25px_rgba(217,119,6,0.5)]"],
+      Rare: ["bg-linear-to-r", "from-amber-500", "to-orange-500", "shadow-[0_0_25px_rgba(217,119,6,0.5)]"],
+      Secret: ["bg-linear-to-r", "from-violet-700", "to-indigo-800", "shadow-[0_0_30px_rgba(124,58,237,0.5)]"]
+    };
+    ACHIEVEMENT_ORDER = [
+      "WIN_10_1V1",
+      "PLAY_100",
+      "LEVEL_10",
+      "NO_DEFEAT",
+      "WIN_50_1V1",
+      "PLAY_1000",
+      "LEVEL_50",
+      "SECRET_MASTER"
+    ];
+  }
+});
+
 // front/src/router.ts
 function navigateTo(url2) {
   const state = { from: window.location.pathname };
@@ -5760,20 +5837,20 @@ function navigateTo(url2) {
 }
 async function checkLogStatus() {
   try {
-    const res = await fetch("/api/checkLogin", {
+    const res = await fetch("/api/checkLogged", {
       credentials: "include"
     });
     const result = await res.json();
     if (result.error || !res.ok) {
       if (result.error === "TokenExpiredError")
-        return { status: "expired", logged: false, user: null };
-      return { status: "error", logged: false, user: null };
+        return { status: "expired", logged: false, notif: result.notif, user: null };
+      return { status: "error", logged: false, notif: result.notif, user: null };
     }
     if (result.loggedIn === true)
-      return { status: "logged", logged: true, user: { pseudo: result.user.pseudo, avatar: result.user.avatar, web_status: result.user.status, notif: result.user.notif, xp: result.user.xp, lvl: result.user.lvl } };
-    return { status: "not_logged", logged: false, user: null };
+      return { status: "logged", logged: true, notif: result.notif, user: { pseudo: result.user.pseudo, avatar: result.user.avatar, web_status: result.user.status, xp: result.user.xp, lvl: result.user.lvl } };
+    return { status: "not_logged", logged: false, notif: result.notif, user: null };
   } catch {
-    return { status: "error", logged: false, user: null };
+    return { status: "error", logged: false, notif: false, user: null };
   }
 }
 async function genericFetch(url2, options = {}) {
@@ -5830,11 +5907,11 @@ async function loadHeader15(auth) {
   const clone = template.content.cloneNode(true);
   container.appendChild(clone);
   if (auth.logged) {
-    displayPseudoHeader(auth.user);
+    displayPseudoHeader(auth.user, auth.notif);
     initSwitch();
   }
 }
-function displayPseudoHeader(result) {
+function displayPseudoHeader(result, notif) {
   document.getElementById("pseudo-header").textContent = result.pseudo;
   const avatar = document.getElementById("header-avatar");
   const status = document.getElementById("status");
@@ -5842,7 +5919,7 @@ function displayPseudoHeader(result) {
   displayStatus(result, status);
   const notification = document.getElementById("notification");
   notification.classList.add("hidden");
-  if (result.notif === true)
+  if (notif === true)
     notification.classList.remove("hidden");
   setTimeout(() => {
     const bar = document.getElementById("progress-xp");
@@ -5888,7 +5965,6 @@ async function router() {
         return;
       }
     }
-    console.log("from ", history.state?.from, " in ", window.location.pathname);
     if (isReloaded || window.location.pathname === "/home" && (!history.state || publicPath.includes(history.state.from))) {
       chatnet.connect(() => {
         displayChat();
@@ -5974,25 +6050,26 @@ var init_router = __esm({
     init_p_leaderboard();
     init_p_chat();
     init_show_toast();
+    init_p_achievement();
     routes = [
       { path: "/", view: View, init },
       { path: "/login", view: LoginView, init: initLogin },
       { path: "/twofa", view: towfaView, init: initTowfa },
       { path: "/logout", init: initLogout },
       { path: "/register", view: RegisterView, init: initRegister },
-      { path: "/registerok", view: RegisterValidView },
       { path: "/termsofservice", view: TermsOfServiceView, init: InitTermsOfService },
       { path: "/privacypolicy", view: PriavacyPolicyView, init: InitPrivacyPolicy },
       { path: "/home", view: homeView, init: initHomePage },
       { path: "/dashboard", view: DashboardView, init: initDashboard },
       { path: "/friends", view: FriendsView, init: initFriends },
       { path: "/profile", view: ProfileView, init: initProfile },
-      { path: "/leaderboard", view: LeaderboardView, init: InitLeaderboard },
       { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
       { path: "/updateusername", view: UpdateUsernameView, init: initUpdateUsername },
       { path: "/updatepassword", view: UpdatePasswordView, init: initUpdatePassword },
       { path: "/updateavatar", view: UpdateAvatarView, init: initUpdateAvatar },
       { path: "/update2fa", view: Update2faView, init: initUpdate2fa },
+      { path: "/leaderboard", view: LeaderboardView, init: InitLeaderboard },
+      { path: "/achievement", view: achievementsView, init: initAchievement },
       { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit },
       { path: "/gamelocal", view: GameLocalView, init: GameLocalinit },
       { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },

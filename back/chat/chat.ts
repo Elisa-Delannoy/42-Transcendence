@@ -12,6 +12,8 @@ export async function handleGeneralChatSocket(io: Server, socket: Socket) {
   		}));
 		socket.emit("chatHistory", historyAndMe);
 	}
+	socket.join("user:" + socket.data.user.user_id);
+
 	socket.join("general-chat");
 
 	socket.on("generalChatMessage", async (message: string) => {
@@ -27,13 +29,13 @@ export async function handleGeneralChatSocket(io: Server, socket: Socket) {
 			const pseudo = socket.data.user.pseudo;
 			const date = new Date().toISOString();
 			await generalChat.addMessageChat(socket.data.user.id, pseudo, message, date);
-			socket.emit("generalChatMessage", {
+			io.to("user:" + socket.data.user.user_id).emit("generalChatMessage", {
 				pseudo,
 				message,
 				date,
 				me: true
 			});
-			socket.to("general-chat").emit("generalChatMessage", {
+			socket.to("general-chat").except("user:" + socket.data.user.user_id).emit("generalChatMessage", {
 				pseudo: pseudo,
 				message: message,
 				date: date,
@@ -42,8 +44,4 @@ export async function handleGeneralChatSocket(io: Server, socket: Socket) {
 		} catch (err) {
 		}
 	})
-	socket.data.isitlogged = false;
 }
-
-// function 
-

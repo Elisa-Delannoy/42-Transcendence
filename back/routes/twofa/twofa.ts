@@ -102,8 +102,6 @@ export async function checkTwoFA(request: FastifyRequest, reply: FastifyReply, c
 		};
 		const jwtoken = createJWT(user.user_id, user.pseudo, user.avatar);
 		users.updateStatus(user.user_id, "online");
-		const allFriends = await friends.getMyFriends(user.user_id);
-		notification(allFriends, user.user_id);
 		reply.clearCookie("tempToken", options).setCookie("token", jwtoken, options).status(200).send({ twofa:false, ok:true, message: "Login successful"})
 	}
 	catch (err)

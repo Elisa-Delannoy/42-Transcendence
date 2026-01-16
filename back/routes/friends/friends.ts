@@ -16,10 +16,10 @@ export async function allMyFriendsAndOpponent(request: FastifyRequest, reply: Fa
 		if (request.user!.user_id !== null) {
 			allInfo.allMyFriends = await friends.getMyFriends(request.user!.user_id);
 			allInfo.playedWith = await gameInfo.getRecentPlayerNotFriend(request.user!.user_id);
-			notification(allInfo.allMyFriends, request.user!.user_id);
 			reply.send(allInfo);
 		}
-
+		console.log(allInfo);
+		
 	}
 	catch (err) {
 		console.log(err);
@@ -60,7 +60,6 @@ export async function acceptFriend(request: FastifyRequest, reply: FastifyReply)
 		const { friendID } = request.body as { friendID: number };
 		if (request.user!.user_id !== null) {
 			await friends.acceptFriendship(friendID, request.user!.user_id);
-			globalThis.notif = false;
 			reply.code(200).send({ message: "accepted" });
 		}
 	}
@@ -82,11 +81,19 @@ export async function deleteFriend(request: FastifyRequest, reply: FastifyReply)
 	}
 }
 
-export function notification(allFriends: IMyFriends[], id: number) {
-	const printNotif = allFriends.filter(f => f.friendship_status === "pending" && f.asked_by != id);
-		if (printNotif.length > 0)
-			globalThis.notif = true;
-		else
-			globalThis.notif = false;
+export async function notification(request: FastifyRequest, reply: FastifyReply): Promise<boolean> {
+	try  {
+		if (request.user!.user_id !== null) {
+			const allFriends: IMyFriends[] = await friends.getMyFriends(request.user!.user_id);
+			const printNotif = allFriends.filter(f => f.friendship_status === "pending" && f.asked_by != request.user!.user_id);
+			if (printNotif.length > 0)
+				return true;
+			else
+				return false;
+		}
+		return false;
+	} catch(err) {
+		return false;
+	}
 }
 

@@ -8,7 +8,7 @@ export function ProfileView(): string {
 
 export async function initProfile() {
   const profile: IUsers = await genericFetch("/api/private/profile", {
-	method: "POST",
+	method: "GET",
 	});
 			
 	const avatar = document.getElementById("profile-avatar") as HTMLImageElement;

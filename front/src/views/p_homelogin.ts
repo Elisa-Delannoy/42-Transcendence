@@ -33,18 +33,21 @@ function smoothScrollTo(targetY: number, duration: number) {
 }
 
 export async function initHomePage() {
-	const res = await fetch("/api/checkLogin", {
-		credentials: "include"
-	});
-	const data = await res.json();   
-	if (!data.loggedIn) {
-		navigateTo("/login");
-		return;
-	}
-	const btn = document.getElementById("scroll-button") as HTMLButtonElement;
-	const target = document.getElementById("gamepage") as HTMLImageElement;
-	btn.addEventListener("click", () => {
-		const targetY = target.getBoundingClientRect().top + window.scrollY;
-		smoothScrollTo(targetY, 1000);
-	});
+	// try {
+		// const res = await fetch("/api/checkLogged", {
+		// 	credentials: "include"
+		// });
+		// const data = await res.json();   
+		// if (!data.loggedIn) {
+		// 	navigateTo("/login");
+		// 	return;
+		// }
+		const btn = document.getElementById("scroll-button") as HTMLButtonElement;
+		const target = document.getElementById("gamepage") as HTMLImageElement;
+		btn.addEventListener("click", () => {
+			const targetY = target.getBoundingClientRect().top + window.scrollY;
+			smoothScrollTo(targetY, 1000);
+		});
+	// } catch(err) {
+	// }
 }
