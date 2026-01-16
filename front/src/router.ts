@@ -27,7 +27,7 @@ import { InitTermsOfService, TermsOfServiceView } from "./views/terms_of_service
 import { InitPrivacyPolicy, PriavacyPolicyView } from "./views/privacypolicy";
 import { IUsers } from "../../back/DB/users";
 import { InitLeaderboard, LeaderboardView } from "./views/p_leaderboard";
-import { chatnet, displayChat, firstLogin } from "./views/p_chat";
+import { chatnet, displayChat } from "./views/p_chat";
 import { showToast } from "./views/show_toast";
 import { achievementsView, initAchievement } from "./views/p_achievement";
 
@@ -245,6 +245,7 @@ export async function router() {
 		}
 		if ((isReloaded || (window.location.pathname === "/home" && (!history.state || (publicPath.includes(history.state.from)))))) {
 			chatnet.connect( () => {
+				chatnet.toKnowUserID();
 				displayChat()
 			});
 			isReloaded = false;

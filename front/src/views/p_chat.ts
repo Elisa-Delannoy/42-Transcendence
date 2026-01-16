@@ -3,7 +3,6 @@ import { chatNetwork, dataChat } from "../chat/chatNetwork";
 import { socketTokenOk } from "../../../back/middleware/jwt";
 
 export const chatnet: chatNetwork = new chatNetwork();
-export let firstLogin = false;
 
 export async function displayChat() {	
 	const template = document.getElementById("chat-template") as HTMLTemplateElement;
@@ -50,7 +49,9 @@ export async function displayChat() {
 
 function addMessageGeneral(data: dataChat, box: HTMLElement, container: HTMLDivElement) {
 	let template: HTMLTemplateElement;
-	if (data.me && data.me === true)
+if (data.me === undefined)
+		data.me = (data.id === chatnet.getsocketUserID())
+	if (data.me)
 		template = document.getElementById("my-chat-message") as HTMLTemplateElement;
 	else
 		template = document.getElementById("chat-message") as HTMLTemplateElement;
@@ -92,14 +93,9 @@ function displayError(message: string, input: HTMLInputElement) {
 	}, 1500);
 }
 
-export function setFirstLogin(value: boolean) {
-	firstLogin = value;
-}
-
 export function hideChat() {
 	const container = document.getElementById("chat-container");
 	if (container)
 		container.innerHTML = "";
-	firstLogin = false;
 	chatnet?.disconnect();
 }

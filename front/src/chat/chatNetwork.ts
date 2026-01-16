@@ -5,10 +5,12 @@ export type dataChat = {
 	message : string, 
 	date: string,
 	me?: boolean
+	id?: number | null,
 }
 
 export class chatNetwork {
 	private socket: Socket;
+	private socketUserID: number | null;
 
 	// constructor() {
 	// 	const serverUrl = window.location.host;
@@ -24,7 +26,12 @@ export class chatNetwork {
 
 	constructor() {
 	this.socket = null as any;
+	this.socketUserID = null;
 }
+
+	getsocketUserID() {
+		return this.socketUserID;
+	}
 
 	connect(callback: () => void) {
 		const serverUrl = window.location.host;
@@ -32,10 +39,13 @@ export class chatNetwork {
 			transports: ["websocket"],
 			withCredentials: true,
 		});
-		if (this.socket.connected)
-			callback();
-		else
-			this.socket.once("connect", callback);
+		this.socket.once("connect", callback);
+	}
+
+	toKnowUserID() {
+		this.socket.on("userID", (data) => {
+			this.socketUserID = data.id;
+		})
 	}
 
 	sendMessage(message: string) {

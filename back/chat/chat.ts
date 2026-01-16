@@ -12,7 +12,10 @@ export async function handleGeneralChatSocket(io: Server, socket: Socket) {
   		}));
 		socket.emit("chatHistory", historyAndMe);
 	}
-	socket.join("user:" + socket.data.user.user_id);
+
+	socket.emit("userID", {
+		id: socket.data.user.id
+	})
 
 	socket.join("general-chat");
 
@@ -29,17 +32,11 @@ export async function handleGeneralChatSocket(io: Server, socket: Socket) {
 			const pseudo = socket.data.user.pseudo;
 			const date = new Date().toISOString();
 			await generalChat.addMessageChat(socket.data.user.id, pseudo, message, date);
-			io.to("user:" + socket.data.user.user_id).emit("generalChatMessage", {
-				pseudo,
-				message,
-				date,
-				me: true
-			});
-			socket.to("general-chat").except("user:" + socket.data.user.user_id).emit("generalChatMessage", {
+			io.to("general-chat").emit("generalChatMessage", {
 				pseudo: pseudo,
 				message: message,
 				date: date,
-				me: false
+				id: socket.data.user.id
 			});
 		} catch (err) {
 		}

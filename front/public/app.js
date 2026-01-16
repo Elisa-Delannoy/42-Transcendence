@@ -143,6 +143,11 @@ async function initLogin() {
   googleBtn?.addEventListener("click", () => {
     window.location.href = "/api/oauth/google";
   });
+  const params = new URLSearchParams(window.location.search);
+  const error = params.get("error");
+  if (error === "account_inactive") {
+    showToast("This account has been deleted and can no longer be used!", "error", 3e3, "Deleted user");
+  }
 }
 async function login(username, password, form) {
   try {
@@ -248,7 +253,7 @@ async function initDashboard() {
         loserscore.textContent = game.loser_score.toString();
         loserpseudo.textContent = game.loser_pseudo;
         date.textContent = new Date(game.date_game).toLocaleDateString();
-        duration.textContent = "Dur\xE9e : " + formatDuration(game.duration_game);
+        duration.textContent = "Duration: " + formatDuration(game.duration_game);
         type.textContent = game.type;
         item.appendChild(clone);
         container.appendChild(item);
@@ -4896,6 +4901,10 @@ var init_chatNetwork = __esm({
       // }
       constructor() {
         this.socket = null;
+        this.socketUserID = null;
+      }
+      getsocketUserID() {
+        return this.socketUserID;
       }
       connect(callback) {
         const serverUrl = window.location.host;
@@ -4903,10 +4912,14 @@ var init_chatNetwork = __esm({
           transports: ["websocket"],
           withCredentials: true
         });
-        if (this.socket.connected)
-          callback();
-        else
-          this.socket.once("connect", callback);
+        this.socket.once("connect", callback);
+      }
+      toKnowUserID() {
+        console.log("FRONT: \xE9coute userID");
+        this.socket.on("userID", (data) => {
+          console.log("FRONT: re\xE7u userID =", data.id);
+          this.socketUserID = data.id;
+        });
       }
       sendMessage(message) {
         this.socket.emit("generalChatMessage", message);
@@ -4965,7 +4978,9 @@ async function displayChat() {
 }
 function addMessageGeneral(data, box, container) {
   let template;
-  if (data.me && data.me === true)
+  if (data.me === void 0)
+    data.me = data.id === chatnet.getsocketUserID();
+  if (data.me)
     template = document.getElementById("my-chat-message");
   else
     template = document.getElementById("chat-message");
@@ -5006,16 +5021,14 @@ function hideChat() {
   const container = document.getElementById("chat-container");
   if (container)
     container.innerHTML = "";
-  firstLogin = false;
   chatnet?.disconnect();
 }
-var chatnet, firstLogin;
+var chatnet;
 var init_p_chat = __esm({
   "front/src/views/p_chat.ts"() {
     "use strict";
     init_chatNetwork();
     chatnet = new chatNetwork();
-    firstLogin = false;
   }
 });
 
@@ -5038,7 +5051,7 @@ var init_logout = __esm({
         hideChat();
         navigateTo("/login");
       } catch (err) {
-        showToast(err.message, "error", 0, "Logout error:");
+        showToast(err.message, "error", 0, "Logout error");
         console.error(err);
       }
     };
@@ -5364,10 +5377,10 @@ async function initUpdateEmail() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newEmail, password })
       });
+      navigateTo("/profile");
       showToast(`Email updated successfully to << ${response.email} >>`, "success", 2e3);
-      setTimeout(() => navigateTo("/profile"), 2100);
     } catch (err) {
-      showToast(err, "error", 3e3, "Update email:");
+      showToast(err, "error", 3e3, "Update email");
     }
   });
 }
@@ -5423,8 +5436,8 @@ async function updateUsername() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newUsername, password })
       });
+      navigateTo("/profile");
       showToast(`Username updated successfully to << ${response.pseudo} >>`, "success", 2e3);
-      setTimeout(() => navigateTo("/profile"), 2100);
     } catch (err) {
       showToast(err, "error");
     }
@@ -5480,10 +5493,10 @@ async function initUpdatePassword() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ oldPw, newPw, confirm })
       });
+      navigateTo("/logout");
       showToast("Password is updated successfully! Please re-log in!", "success", 2e3);
-      setTimeout(() => navigateTo("/logout"), 2100);
     } catch (err) {
-      showToast(err.message, "error", 3e3, "Update password:");
+      showToast(err.message, "error", 3e3, "Update password");
     }
   });
 }
@@ -5529,11 +5542,10 @@ async function uploadAvatar(avatar) {
       body: form,
       credentials: "include"
     });
-    console.log("uplaod success ok : ", result);
+    navigateTo("/profile");
     showToast("Avatar uploaded successfully", "success", 2e3);
-    setTimeout(() => navigateTo("/profile"), 2100);
   } catch (err) {
-    showToast(err, "error", 3e3, "Upload avatar:");
+    showToast(err, "error", 3e3, "Upload avatar");
     console.error(err);
   }
 }
@@ -5582,7 +5594,7 @@ async function initUpdate2fa() {
       verifyContainer.classList.remove("hidden");
     } catch (err) {
       console.error(err);
-      showToast(err, "error", 2e3, "Failed to setup 2FA:");
+      showToast(err, "error", 2e3, "Failed to setup 2FA");
     }
   });
   verifyBtn.addEventListener("click", async () => {
@@ -5621,7 +5633,7 @@ async function initUpdate2fa() {
       verifyInput.value = "";
     } catch (err) {
       console.error(err);
-      showToast(err, "error", 3e3, "Failed to disable 2FA:");
+      showToast(err, "error", 3e3, "Failed to disable 2FA");
     }
   });
 }
@@ -5635,24 +5647,31 @@ var init_p_update2fa = __esm({
 
 // front/src/views/oauth_callback.ts
 async function initOAuthCallback() {
-  const res = await fetch("/api/auth/status", {
-    credentials: "include"
-  });
-  if (!res.ok) {
-    navigateTo("/login");
-    return;
-  }
-  const data = await res.json();
-  if (data.twofa) {
-    navigateTo("/twofa");
-  } else {
-    navigateTo("/home");
+  try {
+    const res = await fetch("/api/auth/status", {
+      credentials: "include"
+    });
+    if (!res.ok) {
+      navigateTo("/login");
+      return;
+    }
+    const data = await res.json();
+    if (data.twofa) {
+      navigateTo("/twofa");
+    } else {
+      navigateTo("/home");
+      if (data.firstTimeLogin)
+        showToast("Welcome! If this is your first login, please change your default password << google >> ", "success", 3e3);
+    }
+  } catch (err) {
+    showToast(err, "error", 3e3, "Google account");
   }
 }
 var init_oauth_callback = __esm({
   "front/src/views/oauth_callback.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
   }
 });
 
@@ -5967,6 +5986,7 @@ async function router() {
     }
     if (isReloaded || window.location.pathname === "/home" && (!history.state || publicPath.includes(history.state.from))) {
       chatnet.connect(() => {
+        chatnet.toKnowUserID();
         displayChat();
       });
       isReloaded = false;
