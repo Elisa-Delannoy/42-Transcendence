@@ -135,7 +135,7 @@ export function joinGame(playerId: number, gameId: number)
 	const game = games_map.get(gameId);
 	if (game)
 	{
-		if (game.idPlayer2 == 0)
+		if (game.idPlayer2 == 0 && game.idPlayer1 != playerId)
 			game.idPlayer2 = playerId;
 		else
 			console.log("Game is already full.");
