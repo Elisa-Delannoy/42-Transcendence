@@ -21,7 +21,7 @@ export const initLogout = async() => {
 		hideChat();
 		navigateTo("/login")
 	} catch (err: any) {
-		showToast(err.message, "error", 0, "Logout error:");
+		showToast(err.message, "error", 0, "Logout error");
 		console.error(err);
 	}
 }

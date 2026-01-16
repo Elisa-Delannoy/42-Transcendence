@@ -115,7 +115,7 @@ export async function initDashboard()
 				loserscore.textContent = game.loser_score.toString();
 				loserpseudo.textContent = game.loser_pseudo;
 				date.textContent = new Date(game.date_game).toLocaleDateString();
-				duration.textContent = "Durée : " + formatDuration(game.duration_game);
+				duration.textContent = "Duration: " + formatDuration(game.duration_game);
 				type.textContent = game.type;
 				
 				item.appendChild(clone);
