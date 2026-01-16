@@ -35,7 +35,7 @@ export async function initUpdateEmail() {
       setTimeout(() => navigateTo("/profile"), 2100);
 
     } catch (err: any) {
-      showToast(err, "error", 3000, "Update email:");
+      showToast(err, "error", 3000, "Update email");
     }
   });
 }
