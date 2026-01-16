@@ -355,7 +355,11 @@ async function initRegister() {
       const result = await res.json();
       if (result.ok == true) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         showToast(`Your account have been created succesfully`, "success", 2e3);
+=======
+        showToast(`Your account have been created succesfully`, "success", 3e3);
+>>>>>>> noah
 =======
         showToast(`Your account have been created succesfully`, "success", 3e3);
 >>>>>>> noah

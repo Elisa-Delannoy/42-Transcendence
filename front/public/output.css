@@ -462,6 +462,12 @@
     margin-top: calc(var(--spacing) * 15);
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+  .mt-16 {
+    margin-top: calc(var(--spacing) * 16);
+  }
+>>>>>>> noah
 =======
   .mt-16 {
     margin-top: calc(var(--spacing) * 16);
@@ -685,6 +691,12 @@
     height: 40%;
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+  .h-\[45\%\] {
+    height: 45%;
+  }
+>>>>>>> noah
 =======
   .h-\[45\%\] {
     height: 45%;
@@ -1320,7 +1332,10 @@
     background-image: linear-gradient(var(--tw-gradient-stops));
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> noah
   .bg-gradient-to-br {
     --tw-gradient-position: to bottom right in oklab;
     background-image: linear-gradient(var(--tw-gradient-stops));
@@ -1329,6 +1344,9 @@
     --tw-gradient-position: to right in oklab;
     background-image: linear-gradient(var(--tw-gradient-stops));
   }
+<<<<<<< HEAD
+>>>>>>> noah
+=======
 >>>>>>> noah
   .bg-\[linear-gradient\(180deg\,var\(--color-amber-400\)_20\%\,var\(--color-amber-50\)_20\%\)\] {
     background-image: linear-gradient(180deg,var(--color-amber-400) 20%,var(--color-amber-50) 20%);
@@ -1828,7 +1846,10 @@
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> noah
   .shadow-\[0_0_25px_rgba\(156\,163\,175\,0\.6\)\] {
     --tw-shadow: 0 0 25px var(--tw-shadow-color, rgba(156,163,175,0.6));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -1837,17 +1858,26 @@
     --tw-shadow: 0 0 25px var(--tw-shadow-color, rgba(180,83,9,0.6));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
+<<<<<<< HEAD
+>>>>>>> noah
+=======
 >>>>>>> noah
   .shadow-\[0_0_25px_rgba\(217\,119\,6\,0\.5\)\] {
     --tw-shadow: 0 0 25px var(--tw-shadow-color, rgba(217,119,6,0.5));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> noah
   .shadow-\[0_0_25px_rgba\(234\,179\,8\,0\.6\)\] {
     --tw-shadow: 0 0 25px var(--tw-shadow-color, rgba(234,179,8,0.6));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
+<<<<<<< HEAD
+>>>>>>> noah
+=======
 >>>>>>> noah
   .shadow-\[0_0_30px_rgba\(124\,58\,237\,0\.5\)\] {
     --tw-shadow: 0 0 30px var(--tw-shadow-color, rgba(124,58,237,0.5));
