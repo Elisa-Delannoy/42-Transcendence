@@ -53,11 +53,8 @@ export async function initAchievement()
 		const lockedMap = mapByCode(achievement.locked);
 
 		const unlockedTemplate = document.getElementById("unlocked-achievement") as HTMLTemplateElement;
-		console.log(unlockedTemplate);
 		const secretTemplate = document.getElementById("secret-achievement") as HTMLTemplateElement;
-		console.log(secretTemplate);
 		const lockedTemplate = document.getElementById("locked-achievement") as HTMLTemplateElement;
-		console.log(lockedTemplate);
 
 		let i = 1;
 		for (const code of ACHIEVEMENT_ORDER) {

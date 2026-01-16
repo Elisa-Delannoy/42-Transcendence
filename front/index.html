@@ -19,7 +19,6 @@
 	<script type="module" src="/public/app.js"></script>
 	</body>
 
-
 	<template id="headernotconnect">
 		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 			<a href="/" data-link class="block dark:hidden ml-4">
@@ -1308,7 +1307,6 @@
 		</footer>
 	</template>
 
-
 	<template id="leaderboard-list">
 		<li id="background" class="rounded-xl w-[60%] mx-auto mb-2 h-24 overflow-hidden
 					bg-linear-to-r from-amber-50 via-orange-50 to-yellow-50
@@ -1325,7 +1323,6 @@
 			</div>
 		</li>
 	</template>
-
 
 	<template id="gamelocalhtml">
 		<h1>Local Game</h1>
@@ -1676,5 +1673,47 @@
 			</div>
 		</div>
 	</template>
+
+	<template id="success-toast">
+		<div
+			id="toast-success"
+			class="toast fixed top-[125px] right-5 z-50 min-w-[280px] flex items-center gap-3 p-4 rounded-lg text-black
+				bg-linear-to-r from-green-300 to-green-400 shadow-xl opacity-0 translate-x-5 mr-8 scale-95
+				transition-all duration-300">
+			<span id="icon" class="text-xl">✅</span>
+			<span id="message" class="flex-1 font-medium text-sm"></span>
+		</div>
+	</template>
+
+	<template id="error-toast">
+		<div
+			id="toast-warning"
+			class="toast fixed top-[125px] right-5 z-50 min-w-[280px] flex items-center gap-3 p-4 rounded-lg text-black
+				bg-linear-to-r from-red-400 to-red-500 shadow-xl opacity-0 translate-x-5 scale-95
+				transition-all duration-300">
+			<span id="icon" class="text-xl grayscale-25">❌</span>
+			<span id="message" class="flex-1 font-medium text-sm"></span>
+			<button id="close"
+				class="close ml-3 text-black font-bold hover:text-gray-900 cursor-pointer transition-colors">
+				✖
+			</button>
+		</div>
+	</template>
+
+	<template id="warning-toast">
+		<div
+			id="toast-warning"
+			class="toast fixed top-[125px] right-5 z-50 min-w-[280px] flex items-center gap-3 p-4 rounded-lg text-black
+				bg-linear-to-r from-amber-400 to-amber-500 shadow-xl opacity-0 translate-x-5 scale-95
+				transition-all duration-300">
+			<span id="icon" class="text-xl">❗</span>
+			<span id="message" class="flex-1 font-medium text-sm"></span>
+			<button id="close"
+				class="close ml-3 text-black font-bold hover:text-gray-900 cursor-pointer transition-colors">
+				✖
+			</button>
+		</div>
+	</template>
+
 
 </html>

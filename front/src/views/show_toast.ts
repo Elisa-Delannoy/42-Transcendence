@@ -1,115 +1,89 @@
-type ToastType = "success" | "error" | "warning";
+type ToastType = "success" | "error" | "warning" | "achievement";
 
-//search: successfully,
-export function showToast(
-  message: unknown,
-  type: ToastType = "success",
-  duration?: number,
-  prefix?: string
-) {
-  let displayMessage: string;
-  if (message instanceof Error) {
-    displayMessage = message.message;
-  } else if (typeof message === "string") {
-    displayMessage = message;
-  } else {
-    try {
-      displayMessage = JSON.stringify(message);
-    } catch {
-      displayMessage = "An unexpected error occurred";
-    }
-  }
-  if (prefix) {
-    displayMessage = `${prefix}: ${displayMessage}`;
-  }
+const TEMPLATE_MAP: Record<ToastType, string> = {
+  success: "success-toast",
+  error: "error-toast",
+  warning: "warning-toast",
+  achievement: "achievement-toast",
+};
 
-  const toast = document.createElement("div");
+export function showToast(message: unknown, type: ToastType = "success", duration?: number, prefix?: string)
+{
+	const displayMessage = formatMessage(message, prefix);
+	const templateId = TEMPLATE_MAP[type];
+	const template = document.getElementById(TEMPLATE_MAP[type]) as HTMLTemplateElement;
+	if (!template) {
+		console.error(`Toast template "${templateId}" not found`);
+		return;
+	}
 
-  Object.assign(toast.style, {
-    position: "fixed",
-    top: "125px",
-    right: "20px",
-    minWidth: "260px",
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    padding: "12px 16px",
-    borderRadius: "6px",
-    fontSize: "15px",
-    color: "black",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-    zIndex: "9999",
-    opacity: "0",
-    transform: "translateX(20px)",
-    transition: "opacity 0.3s ease, transform 0.3s ease",
-  });
+	const node = template.content.cloneNode(true) as DocumentFragment;
+	
+	(node.getElementById("message") as HTMLSpanElement).textContent = displayMessage;
 
-  let bg = "";
-  let icon = "";
+	const toast = node.firstElementChild as HTMLElement;
 
-  switch (type) {
-    case "success":
-      bg = "#4CAF50"; 
-      icon = "✅";
-      break;
-    case "warning":
-      bg = "#F7C873";
-      icon = "❗";
-      break;
-    case "error":
-      bg = "#F5675F";
-      icon = "❌";
-      break;
-  }
+	const closeBtn = toast.querySelector(".close");
+	if (closeBtn)
+	{
+		closeBtn.addEventListener("click", () => removeToast(toast));
+	}
 
-  toast.style.backgroundColor = bg;
+	document.body.appendChild(toast);
 
-  toast.innerHTML = `
-    <span style="font-size:18px">${icon}</span>
-    <span style="flex:1">${displayMessage}</span>
-  `;
+	requestAnimationFrame(() => {
+		toast.style.opacity = "1";
+		toast.style.transform = "translateX(0)";
+	});
 
-  if (type === "warning" || type === "error") {
-    const closeBtn = document.createElement("span");
-    closeBtn.textContent = "✖";
-    Object.assign(closeBtn.style, {
-      cursor: "pointer",
-      fontWeight: "bold",
-      marginLeft: "10px",
-    });
+	if (type === "success")
+	{
+    	setTimeout(() => removeToast(toast), duration ?? 3000);
+  	}
+	else if (duration && duration > 0)
+	{
+    	setTimeout(() => removeToast(toast), duration);
+  	}
 
-    closeBtn.addEventListener("click", () => removeToast(toast));
-    toast.appendChild(closeBtn);
-  }
-
-  document.body.appendChild(toast);
-
-  requestAnimationFrame(() => {
-    toast.style.opacity = "1";
-    toast.style.transform = "translateX(0)";
-  });
-
-  if (type === "success") {
-    setTimeout(() => removeToast(toast), duration ?? 3000);
-  } else if (duration && duration > 0) {
-    setTimeout(() => removeToast(toast), duration);
-  }
-
-  stackToasts();
+	stackToasts();
 }
 
-function removeToast(toast: HTMLElement) {
-  toast.style.opacity = "0";
-  toast.style.transform = "translateX(20px)";
-  toast.addEventListener("transitionend", () => toast.remove());
+
+function formatMessage(message: unknown, prefix?: string): string
+{
+	let result: string;
+
+	if (message instanceof Error)
+	{
+		result = message.message;
+	}
+	else if (typeof message === "string")
+	{
+		result = message;
+	}
+	else
+	{
+		try {
+		result = JSON.stringify(message);
+		} catch {
+		result = "An unexpected error occurred";
+		}
+	}
+	return prefix ? `${prefix}: ${result}` : result;
+}
+
+
+function removeToast(toast: HTMLElement)
+{
+	toast.style.opacity = "0";
+	toast.style.transform = "translateX(20px)";
+	toast.addEventListener("transitionend", () => toast.remove(), { once: true });
 }
 
 function stackToasts() {
-  const all = Array.from(document.querySelectorAll("div")).filter(
-    el => el.style.position === "fixed" && el.style.right === "20px"
-  );
-
-  all.forEach((el, index) => {
-    (el as HTMLElement).style.top = `${125 + index * 70}px`;
-  });
+	const toasts = Array.from(document.querySelectorAll(".toast")) as HTMLElement[];
+	
+	toasts.forEach((toast, index) => {
+		toast.style.top = `${125 + index * 70}px`;
+	});
 }
