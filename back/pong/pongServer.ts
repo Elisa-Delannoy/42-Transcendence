@@ -177,13 +177,13 @@ async function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gam
 	
 	let role: "player1" | "player2";
 
-	if (playerId === game.idPlayer1 && game.idPlayer1 == 0)
+	if (playerId === game.idPlayer1)
 	{
 		role = "player1";
 		game.sockets.player1 = socket.id;
 		game.state.pseudo.player1 = pseudo;
 	}
-	else if (playerId === game.idPlayer2 && game.idPlayer2 == 0)
+	else if (playerId === game.idPlayer2)
 	{
 		role = "player2";
 		game.sockets.player2 = socket.id;
