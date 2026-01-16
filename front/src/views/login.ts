@@ -20,6 +20,11 @@ export async function initLogin()
 		}
     });
 
+	// check if not localhost => hidden google login button
+	const isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+	if (!isLocalhost)
+		document.getElementById("div-google-login")?.classList.add("hidden")
+
 	// Google OAuth
 	const googleBtn = document.getElementById("google-login-btn");
 	googleBtn?.addEventListener("click", () => {

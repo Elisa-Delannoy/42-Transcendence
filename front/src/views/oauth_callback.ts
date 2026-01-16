@@ -15,10 +15,14 @@ export async function initOAuthCallback() {
     if (data.twofa) {
       navigateTo("/twofa");
     } else {
-      navigateTo("/home");
       // console.log('data firstTimeLogin', data.firstTimeLogin);
       if (data.firstTimeLogin)
-        showToast("Welcome! If this is your first login, please change your default password << google >> ", "success", 3000);
+      {
+        navigateTo("/setggpass");
+        showToast("Welcome! If this is your first login, please create a password for your account! 🎉", "success", 3000);
+      }
+      else
+        navigateTo("/home");
     }
   } catch (err: any) {
     showToast(err, "error", 3000, "Google account");

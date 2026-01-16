@@ -20,6 +20,7 @@ import { initTowfa, towfaView } from "./views/twofa";
 import { UpdateEmailView, initUpdateEmail } from "./views/p_updateemail";
 import { UpdateUsernameView, initUpdateUsername } from "./views/p_updateusername";
 import { UpdatePasswordView, initUpdatePassword } from "./views/p_updatepassword";
+import { SetGGPasswordView, initSetGGPassword } from "./views/p_updatepassgg";
 import { UpdateAvatarView, initUpdateAvatar } from "./views/p_updateavatar";
 import { Update2faView, initUpdate2fa } from "./views/p_update2fa";
 import { initOAuthCallback } from "./views/oauth_callback";
@@ -46,6 +47,7 @@ const routes = [
   { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
   { path: "/updateusername", view: UpdateUsernameView, init: initUpdateUsername },
   { path: "/updatepassword", view: UpdatePasswordView, init: initUpdatePassword },
+  { path: "/setggpass", view: SetGGPasswordView, init: initSetGGPassword },
   { path: "/updateavatar", view: UpdateAvatarView, init: initUpdateAvatar },
   { path: "/update2fa", view:Update2faView, init:initUpdate2fa },
   { path: "/leaderboard", view: LeaderboardView, init: InitLeaderboard},

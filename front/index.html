@@ -152,14 +152,16 @@
 				<a href="/register" data-link class="mt-2 text-sm text-amber-900 dark:text-white hover:underline" >
 					Create account ?
 				</a>
-				<div class="flex items-center gap-2 my-4 text-sm text-gray-500">
-					<hr class="flex-1 border-gray-300 dark:border-gray-600" />
-					<span>or</span>
-					<hr class="flex-1 border-gray-300 dark:border-gray-600" />
+				<div id="div-google-login" class="">
+					<div class="flex items-center gap-2 my-4 text-sm text-gray-500">
+						<hr class="flex-1 border-gray-300 dark:border-gray-600" />
+						<span>or</span>
+						<hr class="flex-1 border-gray-300 dark:border-gray-600" />
+					</div>
+					<button type="button" id="google-login-btn" class="mx-auto w-full max-w-xs flex items-center justify-center gap-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-black/30">
+						<img src="/src/image/google-icon.svg" alt="Google login" class="h-10" />
+					</button>
 				</div>
-				<button type="button" id="google-login-btn" class="mx-auto w-full max-w-xs flex items-center justify-center gap-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-black/30">
-					<img src="/src/image/google-icon.svg" alt="Google login" class="h-10" />
-				</button>
 			</form>
 		</div>
 		<footer class="absolute bottom-4 w-full dark:text-white duration-300 text-center text-sm opacity-60">
@@ -1180,6 +1182,77 @@
 								type="submit" 
 								class="btn w-40 mx-auto mt-20 block">
 								Update Password
+							</button>
+						</form>
+					</div>
+				</div>
+				<div>
+					<br>
+				</div>
+			</div>
+		</main>
+		<div>
+			<br>
+		</div>
+		<footer class="dark:text-white text-center text-sm opacity-60">
+			<div><br></div>
+			<div>
+					<a href="/termsofservice" data-link class="hover:underline">Terms of Service</a>
+					<span>|</span>
+					<a href="/privacypolicy" data-link class="hover:underline">Privacy Policy</a>
+			</div>
+			<p>© 2026 Croiscendence</p>
+			<div><br></div>
+ 		</footer>
+	</template>
+
+	<template id="set-gg-password-html">
+		<div>
+			<br>
+		</div>
+		<main class="flex">
+			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
+						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
+						mx-auto shadow-2xl items-center">
+				<div class="flex flex-row w-100 mt-3 justify-between">
+					<div class="w-5"></div>
+					<h1 class="text-3xl mx-auto font-bold text-amber-900
+						drop-shadow-lg" id="profile-pseudo">
+					</h1>
+					<a class="size-6 mt-2 justify-end mr-5 object-contain" href="/profile" data-link>
+						<img class="invert ring-1 p-0.5 ring-blue-950 rounded-md" src="src/image/back.png" alt="back">
+					</a>
+				</div>
+				<a class="mt-2 object-contain">
+					<img class="ring-4 ring-amber-900 rounded-full shadow-xl" id="profile-avatar" src="" alt="Your avatar" width="150">
+				</a>
+				<div class="flex flex-col mt-6">
+					<!-- Create Password -->
+					<div class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
+								w-80 ring-1 ring-amber-900 rounded-lg mt-6 p-3">
+						<h2 class="font-bold mb-2 text-center">Create A Password</h2>
+						<p class="text-sm text-amber-900 mt-3 mb-0.5">
+							🎉 Welcome! This is your first time login by Google Oauth 2.0, please create a <strong>strong password</strong> to protect your account.
+						</p>
+						<form id="set-gg-password-form" class="flex flex-col gap-2">
+							<h2 class="text-sm text-amber-900 mt-3 mb-0.5">Password</h2>
+							<input
+								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+								type="password"
+								name="new-password"
+								placeholder="••••••••••••"
+								required />
+							<h2 class="text-sm text-amber-900 mt-3 mb-0.5">Confirm Password</h2>
+							<input
+								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
+								type="password"
+								name="confirm-new-password"
+								placeholder="••••••••••••"
+								required />
+							<button
+								type="submit" 
+								class="btn w-40 mx-auto mt-20 block">
+								Create Password
 							</button>
 						</form>
 					</div>

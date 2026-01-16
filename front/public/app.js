@@ -139,6 +139,9 @@ async function initLogin() {
       navigateTo("/home");
     }
   });
+  const isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  if (!isLocalhost)
+    document.getElementById("div-google-login")?.classList.add("hidden");
   const googleBtn = document.getElementById("google-login-btn");
   googleBtn?.addEventListener("click", () => {
     window.location.href = "/api/oauth/google";
@@ -5500,6 +5503,44 @@ var init_p_updatepassword = __esm({
   }
 });
 
+// front/src/views/p_updatepassgg.ts
+function SetGGPasswordView() {
+  return document.getElementById("set-gg-password-html").innerHTML;
+}
+async function initSetGGPassword() {
+  const profile = await genericFetch("/api/private/profile", {
+    method: "GET"
+  });
+  const avatar = document.getElementById("profile-avatar");
+  avatar.src = profile.avatar + "?ts=" + Date.now();
+  document.getElementById("profile-pseudo").textContent = profile.pseudo;
+  const formPassword = document.getElementById("set-gg-password-form");
+  formPassword.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const oldPw = "google";
+    const newPw = formPassword["new-password"].value;
+    const confirm = formPassword["confirm-new-password"].value;
+    try {
+      const response = await genericFetch("/api/private/updateinfo/password", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ oldPw, newPw, confirm })
+      });
+      navigateTo("/logout");
+      showToast("Password is updated successfully! Please re-log in!", "success", 2e3);
+    } catch (err) {
+      showToast(err.message, "error", 3e3, "Update password");
+    }
+  });
+}
+var init_p_updatepassgg = __esm({
+  "front/src/views/p_updatepassgg.ts"() {
+    "use strict";
+    init_router();
+    init_show_toast();
+  }
+});
+
 // front/src/views/p_updateavatar.ts
 function UpdateAvatarView() {
   return document.getElementById("update-avatar-html").innerHTML;
@@ -5651,9 +5692,11 @@ async function initOAuthCallback() {
     if (data.twofa) {
       navigateTo("/twofa");
     } else {
-      navigateTo("/home");
-      if (data.firstTimeLogin)
-        showToast("Welcome! If this is your first login, please change your default password << google >> ", "success", 3e3);
+      if (data.firstTimeLogin) {
+        navigateTo("/setggpass");
+        showToast("\u{1F389} Welcome! If this is your first login, please create a password for your account!", "success", 3e3);
+      } else
+        navigateTo("/home");
     }
   } catch (err) {
     showToast(err, "error", 3e3, "Google account");
@@ -6053,6 +6096,7 @@ var init_router = __esm({
     init_p_updateemail();
     init_p_updateusername();
     init_p_updatepassword();
+    init_p_updatepassgg();
     init_p_updateavatar();
     init_p_update2fa();
     init_oauth_callback();
@@ -6077,6 +6121,7 @@ var init_router = __esm({
       { path: "/updateemail", view: UpdateEmailView, init: initUpdateEmail },
       { path: "/updateusername", view: UpdateUsernameView, init: initUpdateUsername },
       { path: "/updatepassword", view: UpdatePasswordView, init: initUpdatePassword },
+      { path: "/setggpass", view: SetGGPasswordView, init: initSetGGPassword },
       { path: "/updateavatar", view: UpdateAvatarView, init: initUpdateAvatar },
       { path: "/update2fa", view: Update2faView, init: initUpdate2fa },
       { path: "/leaderboard", view: LeaderboardView, init: InitLeaderboard },
