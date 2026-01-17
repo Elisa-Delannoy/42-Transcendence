@@ -1,7 +1,7 @@
 import { IAchievement } from "../../../back/DB/achievements";
 import { IEndGame } from "../../../back/routes/endgame/endgame";
 import { achievements } from "../../../back/server";
-import { genericFetch } from "../router";
+import { genericFetch, navigateTo } from "../router";
 import { showToast } from "./show_toast";
 
 export function endGameView(): string
@@ -11,6 +11,11 @@ export function endGameView(): string
 
 export async function InitEndGame()
 {
+	const state = history.state;
+	if (!state || !state.from.includes("pongmatch")) {
+		navigateTo("/home");
+	}
+
 	const endgame: IEndGame = await genericFetch("/api/private/endgame", {
 				method: "GET" });
 	const container = document.getElementById("game-end-container") as HTMLDivElement;
