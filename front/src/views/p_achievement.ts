@@ -1,6 +1,7 @@
-import { Achievement } from "../../../back/DB/achievements";
+import { IAchievement } from "../../../back/DB/achievements";
 import { AchievementInfo } from "../../../back/routes/achievements/achievementInfo";
 import { genericFetch } from "../router";
+import { showToast } from "./show_toast";
 
 
 export function achievementsView(): string
@@ -26,9 +27,9 @@ const ACHIEVEMENT_ORDER: string[] = [
 	"SECRET_MASTER"
 ];
 
-function mapByCode(list?: Achievement[]): Map<string, Achievement>
+function mapByCode(list?: IAchievement[]): Map<string, IAchievement>
 {
-	const map = new Map<string, Achievement>();
+	const map = new Map<string, IAchievement>();
 
 	if (!Array.isArray(list)) return map;
 

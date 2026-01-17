@@ -41,6 +41,7 @@ import { Achievements } from "./DB/achievements";
 import { UserStats } from "./DB/users_stats";
 import { UserAchievements } from "./DB/users_achievements";
 import { getAchivementInfo } from "./routes/achievements/achievementInfo";
+import { getEndGameInfo } from "./routes/endgame/endgame";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -275,6 +276,10 @@ fastify.get("/api/private/leaderboard", async (request, reply) => {
 
 fastify.get("/api/private/achievement", async (request, reply) => {
 	await getAchivementInfo(request, reply);
+});
+
+fastify.get("/api/private/endgame", async (request, reply) => {
+	await getEndGameInfo(request, reply);
 });
 
 fastify.post("/api/twofa", async (request, reply) => {

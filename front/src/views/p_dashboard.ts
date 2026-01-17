@@ -107,7 +107,7 @@ export async function initDashboard()
 				const date = clone.getElementById("date") as HTMLParagraphElement;
 				const duration = clone.getElementById("duration") as HTMLParagraphElement;
 				const type = clone.getElementById("type") as HTMLParagraphElement;
-	
+				
 				winnerpath.src = game.winner_avatar;
 				winnerscore.textContent = game.winner_score.toString();
 				winnerpseudo.textContent = game.winner_pseudo;
@@ -117,6 +117,14 @@ export async function initDashboard()
 				date.textContent = new Date(game.date_game).toLocaleDateString();
 				duration.textContent = "Duration: " + formatDuration(game.duration_game);
 				type.textContent = game.type;
+
+				if (game.type === "Online" || game.type === "Tournament")
+				{
+					const winner_elo = clone.getElementById("winnerelo") as HTMLParagraphElement;
+					winner_elo.textContent = `+ ${game.winner_elo} 🥐`;
+					const loser_elo = clone.getElementById("loserelo") as HTMLParagraphElement;
+					loser_elo.textContent = `- ${Math.abs(game.loser_elo)} 🥐`;
+				}
 				
 				item.appendChild(clone);
 				container.appendChild(item);

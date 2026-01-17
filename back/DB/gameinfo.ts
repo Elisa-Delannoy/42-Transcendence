@@ -3,7 +3,7 @@ import { ManageDB } from "./manageDB";
 
 export interface IGameInfo {
 	status: string;
-	type: string;
+	type: "Local" | "AI" | "Online" | "Tournament";
 	winner_id: number;
 	winner_pseudo: string;
 	winner_avatar: string;
@@ -14,6 +14,8 @@ export interface IGameInfo {
 	duration_game: number;
 	winner_score: number;
 	loser_score: number;
+	winner_elo: number;
+	loser_elo: number;
 }
 
 export class GameInfo
@@ -36,18 +38,20 @@ export class GameInfo
 				date_game TEXT,
 				duration_game INTEGER DEFAULT 0,
 				winner_score INTEGER,
-				loser_score INTEGER
+				loser_score INTEGER,
+				winner_elo INTEGER,
+				loser_elo INTEGER
 			)
 		`);
 	};
 
 	async finishGame(winner_id: number, loser_id: number, winner_score: number,
-		loser_score: number, duration_game: number, gameDate: string, type: string): Promise<void>
+		loser_score: number, duration_game: number, gameDate: string, type: string, new_elo: {winner_elo: number, loser_elo: number}): Promise<void>
 	{
 		const query = `
 			INSERT INTO game_info (status, winner_id, loser_id,
-			 date_game, duration_game, winner_score, loser_score, type)
-			VALUES (?,?,?,?,?,?,?,?)
+			 date_game, duration_game, winner_score, loser_score, type, winner_elo, loser_elo)
+			VALUES (?,?,?,?,?,?,?,?,?,?)
 			`;
 
 		const parameters = [
@@ -58,7 +62,9 @@ export class GameInfo
 			duration_game,
 			winner_score,
 			loser_score,
-			type
+			type,
+			new_elo.winner_elo,
+			new_elo.loser_elo
 		];
 
 		await this._db.execute(query, parameters);
@@ -68,7 +74,7 @@ export class GameInfo
 	{
 		const sql = `
 				SELECT 
-				gi.status, gi.winner_id, gi.loser_id, gi.type, gi.date_game, gi.duration_game, gi.winner_score, gi.loser_score,
+				gi.status, gi.winner_id, gi.loser_id, gi.type, gi.date_game, gi.duration_game, gi.winner_score, gi.loser_score, gi.winner_elo, gi.loser_elo,
 				uw.pseudo AS winner_pseudo,
 				uw.avatar AS winner_avatar,
 				ul.pseudo AS loser_pseudo,
@@ -96,9 +102,60 @@ export class GameInfo
 			date_game: row.date_game,
 			duration_game: row.duration_game,
 			winner_score: row.winner_score,
-			loser_score: row.loser_score
+			loser_score: row.loser_score,
+			winner_elo: row.winner_elo,
+			loser_elo: row.loser_elo
 		}));
 	}
+
+	async getLastGame(userId: number): Promise<IGameInfo>
+	{
+		const rows = await this._db.query(`
+			SELECT
+				gi.status,
+				gi.type,
+				gi.winner_id,
+				uw.pseudo AS winner_pseudo,
+				uw.avatar AS winner_avatar,
+				gi.loser_id,
+				ul.pseudo AS loser_pseudo,
+				ul.avatar AS loser_avatar,
+				gi.date_game,
+				gi.duration_game,
+				gi.winner_score,
+				gi.loser_score,
+				gi.winner_elo,
+				gi.loser_elo
+			FROM game_info gi
+			LEFT JOIN Users uw ON gi.winner_id = uw.user_id
+			LEFT JOIN Users ul ON gi.loser_id = ul.user_id
+			WHERE gi.winner_id = :userId OR gi.loser_id = :userId
+			ORDER BY gi.date_game DESC
+			LIMIT 1;
+		`, [ userId ]);
+
+		const row = rows[0];
+
+		const game: IGameInfo = {
+			status: row.status,
+			type: row.type,
+			winner_id: row.winner_id,
+			winner_pseudo: row.winner_pseudo,
+			winner_avatar: row.winner_avatar,
+			loser_id: row.loser_id,
+			loser_pseudo: row.loser_pseudo,
+			loser_avatar: row.loser_avatar,
+			date_game: row.date_game,
+			duration_game: row.duration_game,
+			winner_score: row.winner_score,
+			loser_score: row.loser_score,
+			winner_elo: row.winner_elo,
+			loser_elo: row.loser_elo,
+		};
+
+		return game;
+	}
+
 
 	async getWinsLosses(userId: number) : Promise<{win:number; loose:number}>
 	{

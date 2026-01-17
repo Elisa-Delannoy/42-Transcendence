@@ -278,12 +278,17 @@ export class Users
 		return eloChange;
 	}
 
-	async updateElo(id_win: number, id_lose: number, score_win: number, score_lose: number)
+	async updateElo(id_win: number, id_lose: number, winner_elo: number, loser_elo: number)
+	{
+		await this._db.execute(`UPDATE Users SET elo = elo + ? WHERE user_id = ?`, [winner_elo , id_win]);
+		await this._db.execute(`UPDATE Users SET elo = elo + ? WHERE user_id = ?`, [loser_elo , id_lose]);
+	}
+
+	async getNewElo(id_win: number, id_lose: number, score_win: number, score_lose: number): Promise<{winner_elo: number, loser_elo: number}>
 	{
 		const eloWin: number = await this.getEloFromID(id_win);
 		const eloLose: number = await this.getEloFromID(id_lose);
-		await this._db.execute(`UPDATE Users SET elo = elo + ? WHERE user_id = ?`, [this.calculateElo(eloLose, eloWin, score_win, score_lose) , id_win]);
-		await this._db.execute(`UPDATE Users SET elo = elo + ? WHERE user_id = ?`, [this.calculateElo(eloWin, eloLose, score_lose, score_win) , id_lose]);
+		return {winner_elo: this.calculateElo(eloLose, eloWin, score_win, score_lose) , loser_elo: this.calculateElo(eloWin, eloLose, score_lose, score_win)}
 	}
 
 	async addElo(id: number)
