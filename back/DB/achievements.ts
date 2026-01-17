@@ -2,14 +2,14 @@ import { AchievementInfo } from "../routes/achievements/achievementInfo";
 import { users, users_achivements, users_stats } from "../server";
 import { ManageDB } from "./manageDB";
 
-export interface Achievement {
+export interface IAchievement {
     achievement_id: number;
     code: string;
     title: string;
     description: string;
     rarity: "Common" | "Rare" | "Secret";
     type: string;
-    target: number | null;
+    target: number;
     icon?: string | null;
     hidden: boolean;
     unlocked_at?: string | null;
@@ -52,11 +52,11 @@ export class Achievements {
 				('WIN_50_1V1', 'Dominator', 'Win 50 online 1v1 games', 'Rare', 'counter', 50, 0),
 				('PLAY_1000', 'Marathon', 'Play 1000 games', 'Rare', 'global', 1000, 0),
 				('LEVEL_50', 'Veteran', 'Reach level 50', 'Rare', 'level', 50, 0),
-				('SECRET_MASTER', 'Secret Master', 'Unlock all secret achievements', 'Secret', 'boolean', NULL, 1);
+				('SECRET_MASTER', 'Secret Master', 'Unlock all secret achievements', 'Secret', 'boolean', 0, 1);
 		`);
 	}
 
-	async getLockedAchievements(userId: number)
+	async getLockedAchievements(userId: number): Promise<IAchievement[]>
 	{
 		return await this._db.query(`
 			SELECT a.*
@@ -68,14 +68,16 @@ export class Achievements {
 		`, [userId]);
 	}
 
-	async checkAchievementsForUser(userId: number)
+	async checkAchievementsForUser(userId: number): Promise<IAchievement[]>
 	{
 		const stats = await users_stats.getUserStats(userId);
-		if (!stats) return;
+		if (!stats) return {} as IAchievement[];
 		const level = await users.getLvlFromID(userId);
 		console.log(level);
 		const achievements = await this.getLockedAchievements(userId);
 		const unlocked = await users_achivements.checkSecretAllAchievement(userId);
+
+		const new_achievements : IAchievement[] = [] as IAchievement[];
 
 		for (const achievement of achievements) {
 
@@ -108,8 +110,10 @@ export class Achievements {
 
 			if (isUnlocked) {
 				await users_achivements.unlockAchievement(userId, achievement.achievement_id);
+				new_achievements.push(achievement);
 			}
 		}
+		return new_achievements;
 	}
 
 	async deleteTable()
@@ -120,7 +124,7 @@ export class Achievements {
 
 	async getAchievementsStatus(userId: number): Promise<AchievementInfo>
 	{
-		const allAchievements: Achievement[] = await this._db.query(`
+		const allAchievements: IAchievement[] = await this._db.query(`
 			SELECT *
 			FROM achievements
 			ORDER BY achievement_id ASC;
@@ -131,10 +135,10 @@ export class Achievements {
 		const unlockedSet = new Map<number, string>();
 		unlockedRows.forEach((row: any) => unlockedSet.set(row.achievement_id, row.unlocked_at));
 
-		const unlocked: Achievement[] = [];
-		const locked: Achievement[] = [];
+		const unlocked: IAchievement[] = [];
+		const locked: IAchievement[] = [];
 
-		allAchievements.forEach((ach: Achievement) => {
+		allAchievements.forEach((ach: IAchievement) => {
 			if (unlockedSet.has(ach.achievement_id)) {
 				unlocked.push({ ...ach, unlocked_at: unlockedSet.get(ach.achievement_id) });
 			} else {

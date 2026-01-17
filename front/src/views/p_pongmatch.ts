@@ -179,12 +179,12 @@ export async function initPongMatch(params?: any) {
 		}
 		else
 		{
-			let countdown = 3;
+			let countdown = 1;
 			interval = setInterval(() => {
 			countdown--;
 			if (countdown < 0) {
 				clearInterval(interval);
-				navigateTo(`/home`);
+				navigateTo(`/endgame`);
 			}
 			}, 1000);
 		}

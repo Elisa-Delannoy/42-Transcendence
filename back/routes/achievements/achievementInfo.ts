@@ -1,12 +1,12 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { Achievement } from "../../DB/achievements";
+import { IAchievement } from "../../DB/achievements";
 import { achievements } from "../../server";
 import { REPLServer } from "repl";
 
 export interface AchievementInfo
 {
-	unlocked: Achievement[],
-	locked: Achievement[]
+	unlocked: IAchievement[],
+	locked: IAchievement[]
 }
 
 export async function getAchivementInfo(request: FastifyRequest, reply: FastifyReply)

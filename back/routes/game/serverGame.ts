@@ -155,14 +155,16 @@ export async function endGame(winner_id: number, loser_id: number, winner_score:
 	loser_score: number, duration_game: number, gameid: number, gameInfo: GameInfo, type: string): Promise<void>
 {
 	const gameDate: any = getDate(Number(gameid));
-	await gameInfo.finishGame(winner_id, loser_id, winner_score, loser_score, duration_game, gameDate, type);
 	if (type === "Online")
 	{
-		await users.updateElo(winner_id, loser_id, winner_score, loser_score);
-		await users.updateXp(winner_id, loser_id, winner_score, loser_score);
-		await users_stats.updateStats(winner_id, true, true);
-		await users_stats.updateStats(loser_id, true, false);
-		await achievements.checkAchievementsForUser(winner_id);
-	}	
+			const new_elo = await users.getNewElo(winner_id, loser_id, winner_score, loser_score);
+			await gameInfo.finishGame(winner_id, loser_id, winner_score, loser_score, duration_game, gameDate, type, new_elo);
+			await users.updateElo(winner_id, loser_id, new_elo.winner_elo, new_elo.loser_elo);
+			await users.updateXp(winner_id, loser_id, winner_score, loser_score);
+			await users_stats.updateStats(winner_id, true, true);
+			await users_stats.updateStats(loser_id, true, false);
+	}
+	else
+		await gameInfo.finishGame(winner_id, loser_id, winner_score, loser_score, duration_game, gameDate, type, {winner_elo:0,loser_elo:0});
 	games_map.delete(gameid);
 }

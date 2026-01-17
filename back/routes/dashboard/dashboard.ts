@@ -38,6 +38,8 @@ export async function dashboardInfo(request: FastifyRequest, reply: FastifyReply
 				duration_game: game.duration_game,
 				winner_score: game.winner_score,
 				loser_score: game.loser_score,
+				winner_elo: game.winner_elo,
+				loser_elo: game.loser_elo
 				};
 		}));
 		dashboard.WinLoose = await gameInfo.getWinsLosses(user_id);

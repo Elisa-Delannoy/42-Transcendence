@@ -31,6 +31,7 @@ import { InitLeaderboard, LeaderboardView } from "./views/p_leaderboard";
 import { chatnet, displayChat } from "./views/p_chat";
 import { showToast } from "./views/show_toast";
 import { achievementsView, initAchievement } from "./views/p_achievement";
+import { endGameView, InitEndGame } from "./views/p_endgame";
 
 const routes = [
   { path: "/", view: View, init: init},
@@ -55,6 +56,7 @@ const routes = [
   { path: "/gameonline", view: GameOnlineView, init: GameOnlineinit},
   { path: "/gamelocal", view: GameLocalView, init: GameLocalinit},
   { path: "/pongmatch/:id", view: PongMatchView, init: initPongMatch, cleanup: stopGame },
+  { path: "/endgame", view: endGameView, init: InitEndGame},
   { path: "/tournament", view: TournamentView},
   { path: "/brackets/:id", view: BracketsView, init: initBrackets, cleanup: stopTournament},
   { path: "/error", view: ErrorView, init:initError},
