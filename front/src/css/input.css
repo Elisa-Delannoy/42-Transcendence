@@ -2,8 +2,6 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-
-
 @layer base {
 	a {
 	}
@@ -11,10 +9,9 @@
 
 @layer components {
 	.dash {
-		@apply bg-[linear-gradient(180deg,var(--amber-white)_95%,var(--color-amber-900)_95%)] mt-4 mx-4
-		dark:bg-[linear-gradient(180deg,var(--color-amber-100)_95%,var(--color-amber-900)_95%)]
+		@apply  mt-4 mx-4 bg-amber-100 dark:bg-amber-100
 		ring-2 ring-amber-400  dark:ring-amber-900 rounded-xl p-4 flex items-center justify-between shadow-lg duration-300
-		hover:-translate-0.5 hover:shadow-2xl hover:bg-[linear-gradient(180deg,var(--color-orange-50)_95%,var(--color-amber-400)_95%)]
+		hover:-translate-0.5 hover:shadow-2xl hover:bg-[linear-gradient(180deg,var(--color-amber-100)_95%,var(--color-amber-400)_95%)]
 		dark:hover:bg-[linear-gradient(180deg,var(--color-amber-100)_95%,var(--color-amber-900)_95%)]
 		
 		;
@@ -150,6 +147,18 @@
 	}
 	.loser {
 		@apply bg-red-100 text-red-800 border-l-4 border-red-400;
+	}
+}
+
+@layer components {
+	.stat-card {
+		@apply bg-amber-100/70 dark:bg-amber-900/40
+		ring-1 ring-amber-400 rounded-xl
+		text-center py-4 text-amber-900 dark:text-amber-100
+		font-semibold;
+	}
+	.stat-value {
+		@apply text-5xl font-bold;
 	}
 }
 
