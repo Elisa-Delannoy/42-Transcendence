@@ -19,31 +19,31 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
+  "id": 1,
   "links": [
     {
+      "asDropdown": false,
       "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
       "tags": [],
       "targetBlank": true,
-      "title": "Available metrics",
+      "title": "42 Perpignan",
+      "tooltip": "",
       "type": "link",
-      "url": "/metrics"
+      "url": "https://42perpignan.fr/"
     },
     {
+      "asDropdown": false,
       "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
       "tags": [],
       "targetBlank": true,
-      "title": "Grafana docs",
+      "title": "Croiscendence 🥐",
+      "tooltip": "",
       "type": "link",
-      "url": "https://grafana.com/docs/grafana/latest/"
-    },
-    {
-      "icon": "external link",
-      "tags": [],
-      "targetBlank": true,
-      "title": "Prometheus docs",
-      "type": "link",
-      "url": "http://prometheus.io/docs/introduction/overview/"
+      "url": "https://github.com/Elisa-Delannoy/42-Transcendence"
     }
   ],
   "panels": [
@@ -57,7 +57,7 @@
       },
       "id": 19,
       "panels": [],
-      "title": "Row title",
+      "title": "Grafana Metrics",
       "type": "row"
     },
     {
@@ -128,7 +128,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -210,7 +210,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -292,7 +292,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -374,7 +374,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -399,17 +399,6 @@
       },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "cellOptions": {
-              "type": "auto"
-            },
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "decimals": 0,
-          "displayName": "",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -436,9 +425,6 @@
               {
                 "id": "displayName",
                 "value": "Time"
-              },
-              {
-                "id": "custom.align"
               }
             ]
           }
@@ -452,10 +438,23 @@
       },
       "id": 17,
       "options": {
-        "cellHeight": "sm",
-        "showHeader": true
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "first"
+          ],
+          "fields": "/^12\\.3\\.1$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "name",
+        "wideLayout": true
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -480,7 +479,7 @@
           }
         }
       ],
-      "type": "table"
+      "type": "stat"
     },
     {
       "datasource": {
@@ -596,7 +595,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -759,6 +758,30 @@
                 }
               }
             ]
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "firing alerts"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
           }
         ]
       },
@@ -782,7 +805,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -891,6 +914,30 @@
                 }
               }
             ]
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "{instance=\"grafana:3003\", job=\"grafana\"}"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
           }
         ]
       },
@@ -914,7 +961,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -1065,7 +1112,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.3.0",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -1100,22 +1147,52 @@
     }
   ],
   "preload": false,
-  "refresh": "",
+  "refresh": "auto",
   "schemaVersion": 42,
   "tags": [
-    "grafana",
-    "prometheus"
+    "grafana"
   ],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": "Prometheus",
+          "value": "prometheus"
+        },
+        "label": "Datasource",
+        "name": "source",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "text": "Grafana",
+          "value": "Grafana"
+        },
+        "label": "Job",
+        "name": "Job",
+        "options": [
+          {
+            "selected": true,
+            "text": "Grafana",
+            "value": "Grafana"
+          }
+        ],
+        "query": "Grafana",
+        "type": "custom"
+      }
+    ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Grafana Metrics Dashboard",
+  "title": "croiscendence's Grafana",
   "uid": "isFoa0z7k",
-  "version": 3
+  "version": 1
 }
