@@ -87,17 +87,33 @@ export function handleGameSocket(io: Server, socket: Socket) {
 
 		console.log("Client disconnected:", socket.id);
 
-		game.status = "disconnected";
-		io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status, game.type));
-		io.to(`game-${game.id}`).emit("disconnection", updateStateGame(game.state, game.status, game.type));
-
-		if (!game.disconnectTimer) {
-			game.disconnectTimer = setTimeout(() => {
-				console.log("Timeout disconnected game : ", gameId);
-				io.to(`game-${game.id}`).emit("noReconnection");
-				game.status = "playing";
-				io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status, game.type));
-			}, 1 * 15 * 1000);
+		if (game.status === "finished")
+		{
+			io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status, game.type));
+			let countdown = 5;
+			let interval = setInterval(() => {
+				countdown--;
+				if (countdown < 0) {
+					clearInterval(interval);
+					console.log("Tournament deleted :", tournamentId);
+					games_map.delete(gameId);
+				}
+			}, 1000);
+		}
+		else
+		{
+			game.status = "disconnected";
+			io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status, game.type));
+			io.to(`game-${game.id}`).emit("disconnection", updateStateGame(game.state, game.status, game.type));
+	
+			if (!game.disconnectTimer) {
+				game.disconnectTimer = setTimeout(() => {
+					console.log("Timeout disconnected game : ", gameId);
+					io.to(`game-${game.id}`).emit("noReconnection");
+					game.status = "playing";
+					io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status, game.type));
+				}, 1 * 7 * 1000);
+			}
 		}
 	});
 }
@@ -175,15 +191,15 @@ function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number,
 
 async function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gameId: number, playerId: number, pseudo: string) {
 	
-	let role: "player1" | "player2";
+	let role: "player1" | "player2" | "spectator";
 
-	if (playerId === game.idPlayer1)
+	if (playerId === game.idPlayer1 && game.sockets.player1 === null)
 	{
 		role = "player1";
 		game.sockets.player1 = socket.id;
 		game.state.pseudo.player1 = pseudo;
 	}
-	else if (playerId === game.idPlayer2)
+	else if (playerId === game.idPlayer2 && game.sockets.player2 === null)
 	{
 		role = "player2";
 		game.sockets.player2 = socket.id;
@@ -192,9 +208,10 @@ async function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gam
 	}
 	else
 	{
-		socket.emit("gameFull"); // => UNUSED SO FAR
+		role = "spectator";
 		return;
 	}
+	console.log("role : ", role);
 	socket.emit("assignRole", role);
 
 	if (game.status !== "disconnected")

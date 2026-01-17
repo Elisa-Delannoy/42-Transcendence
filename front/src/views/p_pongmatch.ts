@@ -46,6 +46,10 @@ export async function initPongMatch(params?: any) {
 	// 5. Join game room
 	net.join(Number(gameID), Number(tournamentId));
 
+	net.onSpectator(() => {
+
+	});
+
 	net.onCountdown(() => {
 		let countdown = 4;
 		interval = setInterval(() => {

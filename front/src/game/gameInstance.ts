@@ -1,7 +1,7 @@
 import { GameNetwork, GameState } from "./gameNetwork";
 
 export class GameInstance {
-	private role: "player1" | "player2" | null = null;
+	private role: "player1" | "player2" | "spectator" | null = null;
 	private currentState: GameState = {
 		ball: { x: 300, y: 240 },
 		paddles: { player1: 210, player2: 210 },

@@ -213,8 +213,8 @@ fastify.post("/api/private/game/join", async (request, reply) => {
 	const { gameId } = request.body as any;
 	const playerId = request.user?.user_id as any;
 	const id = Number(gameId);
-	joinGame(playerId, id);
-	reply.send({ message: "Player joined game" });
+	const res = joinGame(Number(playerId), id);
+	reply.send({ res });
 });
 
 fastify.get("/api/private/game/list", async (request, reply) => {

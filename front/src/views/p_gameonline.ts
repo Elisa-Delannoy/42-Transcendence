@@ -49,10 +49,10 @@ function renderGameList(games: any[]) {
 	document.querySelectorAll(".join-game-btn").forEach(btn => {
 	btn.addEventListener("click", async () => {
 		const id = (btn as HTMLElement).dataset.gameId;
-
+		let res;
 		try
 		{
-			const res = await genericFetch("/api/private/game/join", {
+			res = await genericFetch("/api/private/game/join", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -64,8 +64,11 @@ function renderGameList(games: any[]) {
 			console.error("Error saving game:", err);
 			showToast(err, "error", 3000);
 		}
-	
-		navigateTo(`/pongmatch/${id}`);
+		console.log("res : ", res.res, " | type : ", typeof(res.res));
+		if (res.res == 0)
+			navigateTo(`/pongmatch/${id}`);
+		else
+			alert("Your account is already in game.");
 	});
 	});
 }

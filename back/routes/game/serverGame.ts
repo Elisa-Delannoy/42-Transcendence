@@ -102,6 +102,7 @@ export function createGame(PlayerId: number, isLocal: boolean, type: "Local" | "
 	const gameId = id;
 	const game = new ServerGame(gameId, isLocal);
 	game.idPlayer1 = PlayerId;
+	console.log("id player1 : ", game.idPlayer1);
 	game.type = type;
 	if (options.vsAI)
 	{
@@ -130,16 +131,24 @@ export async function displayGameList()
 	return list;
 }
 
-export function joinGame(playerId: number, gameId: number)
+export function joinGame(playerId: number, gameId: number) : number
 {
 	const game = games_map.get(gameId);
 	if (game)
 	{
-		if (game.idPlayer2 == 0 && game.idPlayer1 != playerId)
-			game.idPlayer2 = playerId;
+		if (game.idPlayer2 == 0)
+		{
+			console.log("id player1 : ", game.idPlayer1);
+			console.log("id playerId : ", playerId);
+			if (game.idPlayer1 != playerId)
+				game.idPlayer2 = playerId;
+			else
+				return -1;
+		}
 		else
-			console.log("Game is already full.");
+			console.log("Entered the game as a spectator.");
 	}
+	return 0;
 }
 
 export function getGameType(gameId: number)

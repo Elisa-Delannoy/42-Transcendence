@@ -21,6 +21,8 @@ export class GameNetwork {
 
 	private onDisconnectionCallback?: () => void;
 
+	private onSpectatorCallback?: () => void;
+
 	private onRoleCallback?: (role: "player1" | "player2") => void;
 
 	constructor() {
@@ -46,6 +48,10 @@ export class GameNetwork {
 			this.onCountdownCallback?.();
 		});
 
+		this.socket.on("spectator", () => {
+
+		});
+
 		this.socket.on("disconnection", () => {
 			this.onDisconnectionCallback?.();
 		});
@@ -57,6 +63,10 @@ export class GameNetwork {
 
 	onRole(cb: (role: "player1" | "player2") => void) {
 		this.onRoleCallback = cb;
+	}
+
+	onSpectator(cb: () => void) {
+		this.onSpectatorCallback = cb;
 	}
 
 	onCountdown(cb: () => void) {
@@ -79,7 +89,7 @@ export class GameNetwork {
 		this.socket.emit("startGame");
 	}
 
-	sendInput(direction: "up" | "down" | "stop", player?: "player1" | "player2") {
+	sendInput(direction: "up" | "down" | "stop", player?: "player1" | "player2" | "spectator") {
 		this.socket.emit("input", { direction, player });
 	}
 

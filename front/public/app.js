@@ -439,8 +439,9 @@ function renderGameList(games) {
   document.querySelectorAll(".join-game-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const id = btn.dataset.gameId;
+      let res;
       try {
-        const res = await genericFetch("/api/private/game/join", {
+        res = await genericFetch("/api/private/game/join", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -452,7 +453,11 @@ function renderGameList(games) {
         console.error("Error saving game:", err);
         showToast(err, "error", 3e3);
       }
-      navigateTo(`/pongmatch/${id}`);
+      console.log("res : ", res.res, " | type : ", typeof res.res);
+      if (res.res == 0)
+        navigateTo(`/pongmatch/${id}`);
+      else
+        alert("Your account is already in game.");
     });
   });
 }
@@ -4218,6 +4223,8 @@ var init_gameNetwork = __esm({
         this.socket.on("startCountdown", () => {
           this.onCountdownCallback?.();
         });
+        this.socket.on("spectator", () => {
+        });
         this.socket.on("disconnection", () => {
           this.onDisconnectionCallback?.();
         });
@@ -4227,6 +4234,9 @@ var init_gameNetwork = __esm({
       }
       onRole(cb) {
         this.onRoleCallback = cb;
+      }
+      onSpectator(cb) {
+        this.onSpectatorCallback = cb;
       }
       onCountdown(cb) {
         this.onCountdownCallback = cb;
@@ -4336,6 +4346,8 @@ async function initPongMatch(params) {
       currentGame?.setNetwork(net, role);
   });
   net.join(Number(gameID), Number(tournamentId));
+  net.onSpectator(() => {
+  });
   net.onCountdown(() => {
     let countdown = 4;
     interval = setInterval(() => {
