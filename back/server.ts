@@ -302,10 +302,17 @@ async function lunchDB()
 	users.addUser("43", "43", hashedPassword, 2800);
 	users.addUser("44", "44", hashedPassword, 2800);
 	users.addUser("45", "45", hashedPassword, 2800);
-	
+	users.addUser("420", "420", hashedPassword, 200);
+	users.addUser("430", "430", hashedPassword, 2800);
+	users.addUser("440", "440", hashedPassword, 2800);
+	users.addUser("450", "450", hashedPassword, 2800);
+	users.addUser("4200", "402", hashedPassword, 200);
+	users.addUser("4300", "403", hashedPassword, 2800);
+	users.addUser("4400", "404", hashedPassword, 2800);
+	users.addUser("4500", "405", hashedPassword, 2800);
+	0
 	await generalChat.deleteChatTableAndTrigger();
-	await generalChat.createChatTable();
-	await generalChat.limitChatMessage();
+	await generalChat.createChatTableAndTrigger();
 	
 	// await friends.deleteFriendTable();
 	await friends.createFriendTable();

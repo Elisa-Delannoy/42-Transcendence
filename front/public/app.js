@@ -357,15 +357,7 @@ async function initRegister() {
       });
       const result = await res.json();
       if (result.ok == true) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-        showToast(`Your account have been created succesfully`, "success", 2e3);
-=======
         showToast(`Your account have been created succesfully`, "success", 3e3);
->>>>>>> noah
-=======
-        showToast(`Your account have been created succesfully`, "success", 3e3);
->>>>>>> noah
         navigateTo("/login");
       } else {
         const usernameInput = form.querySelector("input[name='username']");
@@ -4926,9 +4918,7 @@ var init_chatNetwork = __esm({
         this.socket.once("connect", callback);
       }
       toKnowUserID() {
-        console.log("FRONT: \xE9coute userID");
         this.socket.on("userID", (data) => {
-          console.log("FRONT: re\xE7u userID =", data.id);
           this.socketUserID = data.id;
         });
       }
@@ -4963,8 +4953,9 @@ async function displayChat() {
   const input = document.getElementById("chat-input");
   chatBar.addEventListener("click", () => {
     chatWindow.classList.toggle("hidden");
+    chatBar.classList = "bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center";
     if (!chatWindow?.classList.contains("hidden")) {
-      chatBar.classList = "dark:bg-amber-800 dark:text-amber-100 bg-amber-100 hover:bg-amber-800 text-amber-100 px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center";
+      chatBar.classList = "bg-amber-100 hover:bg-amber-800 hover:text-amber-100 dark:bg-amber-800 dark:text-amber-100 px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center";
       setTimeout(() => {
         chatBox.scrollTop = chatBox.scrollHeight;
       }, 0);
@@ -5289,7 +5280,7 @@ function youMayKnow(opponent) {
   }
   const container = document.getElementById("opponent-list");
   opponent.forEach(async (user) => {
-    const template = document.getElementById("myfriends");
+    const template = document.getElementById("opponent-li");
     const item = document.createElement("div");
     item.classList.add("dash");
     const clone = template.content.cloneNode(true);
@@ -5708,17 +5699,11 @@ async function initOAuthCallback() {
     if (data.twofa) {
       navigateTo("/twofa");
     } else {
-<<<<<<< HEAD
       if (data.firstTimeLogin) {
         navigateTo("/setggpass");
-        showToast("\u{1F389} Welcome! If this is your first login, please create a password for your account!", "success", 3e3);
+        showToast("Welcome! If this is your first login, please create a password for your account! \u{1F389}", "success", 3e3);
       } else
         navigateTo("/home");
-=======
-      navigateTo("/home");
-      if (data.firstTimeLogin)
-        showToast("Welcome! If this is your first login, please change your default password << google >> ", "success", 3e3);
->>>>>>> elisa
     }
   } catch (err) {
     showToast(err, "error", 3e3, "Google account");
@@ -5807,9 +5792,9 @@ async function InitLeaderboard() {
       li.getElementById("pseudo").textContent = leaderboard.InfoUsers[i].pseudo;
       li.getElementById("elo").textContent = leaderboard.InfoUsers[i].elo.toString() + " \u{1F950}";
       if (leaderboard.user.pseudo === leaderboard.InfoUsers[i].pseudo) {
+        li.getElementById("background").classList.remove("bg-linear-to-r", "from-amber-50", "via-orange-50", "to-yellow-50");
         li.getElementById("background").classList.add("bg-linear-to-r", "from-amber-100", "via-orange-100", "to-yellow-100");
-      } else
-        li.getElementById("background").classList.add("bg-linear-to-r", "from-amber-50", "via-orange-50", "to-yellow-50");
+      }
     }
     li.getElementById("position").textContent = "#" + (i + 1).toString();
     container.appendChild(li);
