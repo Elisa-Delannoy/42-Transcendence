@@ -3,7 +3,7 @@ import { ManageDB } from "./manageDB";
 
 export interface IGameInfo {
 	status: string;
-	type: string;
+	type: "Local" | "AI" | "Online" | "Tournament";
 	winner_id: number;
 	winner_pseudo: string;
 	winner_avatar: string;

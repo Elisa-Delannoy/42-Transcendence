@@ -1822,10 +1822,40 @@
 		</div>
 	</template>
 
-	<template id="achievement-toast">
+	<template id="secret-achievement-toast">
 		<div id="achievement-toast"
 			class="toast fixed top-1/2 mt-10 left-1/2 z-50 min-w-[280px] flex items-center gap-3 p-4 rounded-lg text-white
             bg-linear-to-r from-violet-700 to-indigo-800 shadow-[0_0_30px_rgba(124,58,237,0.5)]
+            opacity-0 translate-x-[-50%] translate-y-[-50%] scale-95
+            transition-all duration-300">
+			<img src="/src/image/coupe.png" alt="succes" class="h-8 w-8 invert">
+			<span id="message" class="flex-1 font-medium text-sm"></span>
+			<button id="close"
+				class="close ml-3 text-black font-bold hover:text-gray-900 cursor-pointer transition-colors">
+				✖
+			</button>
+		</div>
+	</template>
+
+	<template id="common-achievement-toast">
+		<div id="achievement-toast"
+			class="toast fixed top-1/2 mt-10 left-1/2 z-50 min-w-[280px] flex items-center gap-3 p-4 rounded-lg text-white
+            bg-linear-to-r from-amber-400 to-amber-500 shadow-[0_0_25px_rgba(217,119,6,0.5)]
+            opacity-0 translate-x-[-50%] translate-y-[-50%] scale-95
+            transition-all duration-300">
+			<img src="/src/image/coupe.png" alt="succes" class="h-8 w-8 invert">
+			<span id="message" class="flex-1 font-medium text-sm"></span>
+			<button id="close"
+				class="close ml-3 text-black font-bold hover:text-gray-900 cursor-pointer transition-colors">
+				✖
+			</button>
+		</div>
+	</template>
+
+	<template id="rare-achievement-toast">
+		<div id="achievement-toast"
+			class="toast fixed top-1/2 mt-10 left-1/2 z-50 min-w-[280px] flex items-center gap-3 p-4 rounded-lg text-white
+            bg-linear-to-r from-amber-500 to-orange-500 shadow-[0_0_25px_rgba(217,119,6,0.5)]
             opacity-0 translate-x-[-50%] translate-y-[-50%] scale-95
             transition-all duration-300">
 			<img src="/src/image/coupe.png" alt="succes" class="h-8 w-8 invert">

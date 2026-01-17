@@ -173,9 +173,14 @@ export async function initPongMatch(params?: any) {
 		}
 		else if (currentGame.isLocalMode() || currentGame.getCurrentState().type == "AI")
 		{
-			replayBtn?.addEventListener("click", async () => {
-				navigateTo(`/gamelocal`);
-			});
+			let countdown = 1;
+			interval = setInterval(() => {
+			countdown--;
+			if (countdown < 0) {
+				clearInterval(interval);
+				navigateTo(`/endgame`);
+			}
+			}, 1000);
 		}
 		else
 		{

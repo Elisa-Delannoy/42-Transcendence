@@ -118,7 +118,7 @@ export async function initDashboard()
 				duration.textContent = "Duration: " + formatDuration(game.duration_game);
 				type.textContent = game.type;
 
-				if (game.type === "Online")
+				if (game.type === "Online" || game.type === "Tournament")
 				{
 					const winner_elo = clone.getElementById("winnerelo") as HTMLParagraphElement;
 					winner_elo.textContent = `+ ${game.winner_elo} 🥐`;

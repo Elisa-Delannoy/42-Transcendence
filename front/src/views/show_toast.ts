@@ -1,10 +1,12 @@
-type ToastType = "success" | "error" | "warning" | "achievement";
+type ToastType = "success" | "error" | "warning" | "secret-achievement" | "rare-achievement" | "common-achievement";
 
 const TEMPLATE_MAP: Record<ToastType, string> = {
   success: "success-toast",
   error: "error-toast",
   warning: "warning-toast",
-  achievement: "achievement-toast",
+  "secret-achievement": "secret-achievement-toast",
+  "rare-achievement": "rare-achievement-toast",
+  "common-achievement": "common-achievement-toast"
 };
 
 export function showToast(message: unknown, type: ToastType = "success", duration?: number, prefix?: string)
