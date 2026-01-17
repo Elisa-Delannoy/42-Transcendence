@@ -59,13 +59,13 @@ async function myFriends(acceptedFriends: IMyFriends[]) {
 	if (!container)
 		return;
 	if (acceptedFriends.length === 0) {
-		container.innerHTML = `<p class="text-l italic text-center text-amber-800">No friend yet</p>`;
+		container.innerHTML = `<p class="text-base md:text-lg xl:text-xl 2xl:text-2xl italic text-center text-amber-800">No friend yet</p>`;
 		return;
 	}
 	acceptedFriends.forEach(async (friend: IMyFriends) => {
 		const template = document.getElementById("myfriends") as HTMLTemplateElement;
 		const item = document.createElement("div") as HTMLDivElement;
-		item.classList.add("dash");
+		item.classList.add("frd");
 		const clone = template.content.cloneNode(true) as DocumentFragment;
 		const avatar = clone.getElementById("avatar") as HTMLImageElement;
 		const pseudo = clone.getElementById("pseudo") as HTMLParagraphElement;
@@ -118,7 +118,8 @@ async function search(memberSearched: string, myfriends: IMyFriends[]) {
 		});
 		listedMember.innerHTML = "";
 		if (existedMember.length === 0)	
-			listedMember.innerHTML = "<li>No result</li>";
+			listedMember.innerHTML = `<li class="text-base md:text-lg xl:text-xl 2xl:text-2xl italic text-center dark:text-amber-50 text-amber-800">No result</li>`;
+	
 		else {
 			existedMember.forEach((member: IUsers) => {
 				const template = document.getElementById("list-search") as HTMLTemplateElement;
@@ -225,13 +226,13 @@ function pendingFr(pendingFriends: IMyFriends[]) {
 	if (!container)
 		return;
 	if (pendingFriends.length === 0) {
-		container.innerHTML = `<p class="text-l italic text-center text-amber-800">No pending invitation</p>`;
+		container.innerHTML = `<p class="text-base md:text-lg xl:text-xl 2xl:text-2xl italic text-center text-amber-800">No pending invitation</p>`;
 		return;
 	}
 	pendingFriends.forEach(async (friend: IMyFriends) => {
 		const template = document.getElementById("myfriends") as HTMLTemplateElement;
 		const item = document.createElement("div") as HTMLDivElement;
-		item.classList.add("dash");
+		item.classList.add("frd");
 		const clone = template.content.cloneNode(true) as DocumentFragment;
 		const avatar = clone.getElementById("avatar") as HTMLImageElement;
 		const pseudo = clone.getElementById("pseudo") as HTMLParagraphElement;

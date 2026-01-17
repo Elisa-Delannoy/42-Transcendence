@@ -11,9 +11,26 @@
 
 @layer components {
 	.dash {
-		@apply bg-[linear-gradient(180deg,var(--color-white)_95%,var(--color-amber-400)_95%)] mt-4 mx-4
-		ring-2 ring-amber-400 rounded-xl p-4 flex items-center justify-between shadow-lg duration-300
-		hover:-translate-0.5 hover:shadow-2xl hover:bg-[linear-gradient(180deg,var(--color-orange-50)_95%,var(--color-amber-400)_95%)];
+		@apply bg-[linear-gradient(180deg,var(--amber-white)_95%,var(--color-amber-900)_95%)] mt-4 mx-4
+		dark:bg-[linear-gradient(180deg,var(--color-amber-100)_95%,var(--color-amber-900)_95%)]
+		ring-2 ring-amber-400  dark:ring-amber-900 rounded-xl p-4 flex items-center justify-between shadow-lg duration-300
+		hover:-translate-0.5 hover:shadow-2xl hover:bg-[linear-gradient(180deg,var(--color-orange-50)_95%,var(--color-amber-400)_95%)]
+		dark:hover:bg-[linear-gradient(180deg,var(--color-amber-100)_95%,var(--color-amber-900)_95%)]
+		
+		;
+	}
+}
+/* <!-- autre : dark:bg-yellow-100/80  dark:text-amber-900  moi :  dark:text-amber-100  dark:bg-amber-800 chat:  dark:bg-yellow-950/90 --> */
+
+@layer components {
+	.frd {
+		@apply bg-[linear-gradient(180deg,var(--color-white)_60%,var(--color-amber-400)_140%)] mt-4 mx-4 mb-1
+		dark:bg-[linear-gradient(180deg,var(--color-amber-100)_50%,var(--color-amber-800)_150%)] 
+		ring-2 ring-amber-400 dark:ring-amber-900 rounded-xl p-4 flex items-center justify-between shadow-lg duration-300
+		hover:-translate-0.5 hover:shadow-2xl hover:bg-[linear-gradient(180deg,var(--color-orange-50)_95%,var(--color-amber-400)_95%)]
+		dark:hover:bg-[linear-gradient(180deg,var(--color-amber-100)_95%,var(--color-amber-900)_95%)]
+		
+		;
 	}
 }
 
@@ -88,8 +105,10 @@
 @layer components {
 	.stat {
 		@apply bg-[linear-gradient(180deg,var(--color-amber-50)_95%,var(--color-amber-400)_95%)]
-				h-1/3 text-3xl hover:-translate-1 duration-300 text-amber-900 rounded-xl pt-4 mx-2 my-2 ring-4 ring-amber-400
-				shadow-xl hover:bg-[linear-gradient(180deg,var(--color-orange-50)_95%,var(--color-amber-400)_95%)] hover:shadow-2xl;
+				dark:bg-[linear-gradient(180deg,var(--color-amber-100)_95%,var(--color-amber-900)_95%)]
+				h-1/3 text-3xl hover:-translate-1 duration-300 text-amber-900 rounded-xl pt-4 mx-2 my-2 ring-4 ring-amber-400 dark:ring-amber-900
+				shadow-xl hover:bg-[linear-gradient(180deg,var(--color-orange-50)_95%,var(--color-amber-400)_95%)] hover:shadow-2xl
+				dark:hover:bg-[linear-gradient(180deg,var(--color-amber-100)_95%,var(--color-amber-900)_95%)]
 	}
 }
 

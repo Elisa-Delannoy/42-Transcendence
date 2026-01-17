@@ -25,71 +25,19 @@ var init_home = __esm({
 
 // front/src/views/show_toast.ts
 function showToast(message, type = "success", duration, prefix) {
-  let displayMessage;
-  if (message instanceof Error) {
-    displayMessage = message.message;
-  } else if (typeof message === "string") {
-    displayMessage = message;
-  } else {
-    try {
-      displayMessage = JSON.stringify(message);
-    } catch {
-      displayMessage = "An unexpected error occurred";
-    }
+  const displayMessage = formatMessage(message, prefix);
+  const templateId = TEMPLATE_MAP[type];
+  const template = document.getElementById(TEMPLATE_MAP[type]);
+  if (!template) {
+    console.error(`Toast template "${templateId}" not found`);
+    return;
   }
-  if (prefix) {
-    displayMessage = `${prefix}: ${displayMessage}`;
-  }
-  const toast = document.createElement("div");
-  Object.assign(toast.style, {
-    position: "fixed",
-    top: "125px",
-    right: "20px",
-    minWidth: "260px",
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    padding: "12px 16px",
-    borderRadius: "6px",
-    fontSize: "15px",
-    color: "black",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-    zIndex: "9999",
-    opacity: "0",
-    transform: "translateX(20px)",
-    transition: "opacity 0.3s ease, transform 0.3s ease"
-  });
-  let bg = "";
-  let icon = "";
-  switch (type) {
-    case "success":
-      bg = "#4CAF50";
-      icon = "\u2705";
-      break;
-    case "warning":
-      bg = "#F7C873";
-      icon = "\u2757";
-      break;
-    case "error":
-      bg = "#F5675F";
-      icon = "\u274C";
-      break;
-  }
-  toast.style.backgroundColor = bg;
-  toast.innerHTML = `
-    <span style="font-size:18px">${icon}</span>
-    <span style="flex:1">${displayMessage}</span>
-  `;
-  if (type === "warning" || type === "error") {
-    const closeBtn = document.createElement("span");
-    closeBtn.textContent = "\u2716";
-    Object.assign(closeBtn.style, {
-      cursor: "pointer",
-      fontWeight: "bold",
-      marginLeft: "10px"
-    });
+  const node = template.content.cloneNode(true);
+  node.getElementById("message").textContent = displayMessage;
+  const toast = node.firstElementChild;
+  const closeBtn = toast.querySelector(".close");
+  if (closeBtn) {
     closeBtn.addEventListener("click", () => removeToast(toast));
-    toast.appendChild(closeBtn);
   }
   document.body.appendChild(toast);
   requestAnimationFrame(() => {
@@ -103,22 +51,42 @@ function showToast(message, type = "success", duration, prefix) {
   }
   stackToasts();
 }
+function formatMessage(message, prefix) {
+  let result;
+  if (message instanceof Error) {
+    result = message.message;
+  } else if (typeof message === "string") {
+    result = message;
+  } else {
+    try {
+      result = JSON.stringify(message);
+    } catch {
+      result = "An unexpected error occurred";
+    }
+  }
+  return prefix ? `${prefix}: ${result}` : result;
+}
 function removeToast(toast) {
   toast.style.opacity = "0";
   toast.style.transform = "translateX(20px)";
-  toast.addEventListener("transitionend", () => toast.remove());
+  toast.addEventListener("transitionend", () => toast.remove(), { once: true });
 }
 function stackToasts() {
-  const all = Array.from(document.querySelectorAll("div")).filter(
-    (el) => el.style.position === "fixed" && el.style.right === "20px"
-  );
-  all.forEach((el, index) => {
-    el.style.top = `${125 + index * 70}px`;
+  const toasts = Array.from(document.querySelectorAll(".toast"));
+  toasts.forEach((toast, index) => {
+    toast.style.top = `${125 + index * 70}px`;
   });
 }
+var TEMPLATE_MAP;
 var init_show_toast = __esm({
   "front/src/views/show_toast.ts"() {
     "use strict";
+    TEMPLATE_MAP = {
+      success: "success-toast",
+      error: "error-toast",
+      warning: "warning-toast",
+      achievement: "achievement-toast"
+    };
   }
 });
 
@@ -4953,9 +4921,9 @@ async function displayChat() {
   const input = document.getElementById("chat-input");
   chatBar.addEventListener("click", () => {
     chatWindow.classList.toggle("hidden");
-    chatBar.classList = "bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center";
+    chatBar.classList = "bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 xl:w-60 text-center";
     if (!chatWindow?.classList.contains("hidden")) {
-      chatBar.classList = "bg-amber-100 hover:bg-amber-800 hover:text-amber-100 dark:bg-amber-800 dark:text-amber-100 px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center";
+      chatBar.classList = "bg-amber-100 hover:bg-amber-800 hover:text-amber-100 dark:bg-amber-800 dark:text-amber-100 px-4 py-2 rounded-lg shadow cursor-pointer w-32 xl:w-60 text-center";
       setTimeout(() => {
         chatBox.scrollTop = chatBox.scrollHeight;
       }, 0);
@@ -5099,13 +5067,13 @@ async function myFriends(acceptedFriends) {
   if (!container)
     return;
   if (acceptedFriends.length === 0) {
-    container.innerHTML = `<p class="text-l italic text-center text-amber-800">No friend yet</p>`;
+    container.innerHTML = `<p class="text-base md:text-lg xl:text-xl 2xl:text-2xl italic text-center text-amber-800">No friend yet</p>`;
     return;
   }
   acceptedFriends.forEach(async (friend) => {
     const template = document.getElementById("myfriends");
     const item = document.createElement("div");
-    item.classList.add("dash");
+    item.classList.add("frd");
     const clone = template.content.cloneNode(true);
     const avatar = clone.getElementById("avatar");
     const pseudo = clone.getElementById("pseudo");
@@ -5251,13 +5219,13 @@ function pendingFr(pendingFriends) {
   if (!container)
     return;
   if (pendingFriends.length === 0) {
-    container.innerHTML = `<p class="text-l italic text-center text-amber-800">No pending invitation</p>`;
+    container.innerHTML = `<p class="text-base md:text-lg xl:text-xl 2xl:text-2xlitalic text-center text-amber-800">No pending invitation</p>`;
     return;
   }
   pendingFriends.forEach(async (friend) => {
     const template = document.getElementById("myfriends");
     const item = document.createElement("div");
-    item.classList.add("dash");
+    item.classList.add("frd");
     const clone = template.content.cloneNode(true);
     const avatar = clone.getElementById("avatar");
     const pseudo = clone.getElementById("pseudo");
@@ -5837,11 +5805,8 @@ async function initAchievement() {
     const unlockedMap = mapByCode(achievement.unlocked);
     const lockedMap = mapByCode(achievement.locked);
     const unlockedTemplate = document.getElementById("unlocked-achievement");
-    console.log(unlockedTemplate);
     const secretTemplate = document.getElementById("secret-achievement");
-    console.log(secretTemplate);
     const lockedTemplate = document.getElementById("locked-achievement");
-    console.log(lockedTemplate);
     let i = 1;
     for (const code of ACHIEVEMENT_ORDER) {
       let achievement2 = unlockedMap.get(code);
