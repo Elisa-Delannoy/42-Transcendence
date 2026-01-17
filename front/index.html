@@ -1624,90 +1624,145 @@
 	</template>
 
 	<template id="dashboardhtml">
-		<div class="flex flex-row">
-			<section class="bg-amber-100/80 dark:bg-amber-900/60 mt-5 ml-2 w-[50%] h-[80vh] flex flex-col ring-2 ring-amber-400 dark:ring-amber-900 items-center rounded-lg">	<h1 class="font-bold text-xl dark:text-amber-50 mb-1 text-amber-900">History - 20 last games :</h1>
-				<div id="game-list" class="w-[90%] h-[90%] px-1 overflow-y-auto scrollbar-none mb-2 ring-2
-					bg-amber-50 dark:bg-yellow-700/20 rounded-lg ring-amber-200 dark:ring-amber-900 shadow-lg">
+	<div class="flex flex-col flex-1 px-4 py-6 gap-6">
+
+		<!-- GRID PRINCIPALE -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1">
+
+			<!-- HISTORIQUE -->
+			<section
+				class="bg-amber-100/80 dark:bg-amber-900/60
+				ring-2 ring-amber-400 dark:ring-amber-900
+				rounded-xl flex flex-col p-4 min-h-[300px]">
+
+				<h1 class="font-bold text-xl text-center text-amber-900 dark:text-amber-50 mb-3">
+					History – 20 last games
+				</h1>
+
+				<div
+					id="game-list"
+					class="">
 				</div>
 			</section>
-			<div class="w-[50%] ml-2">
-				<section class="flex flex-row items-center ring-4 ring-amber-400 dark:ring-amber-900 bg-amber-50 dark:bg-amber-100 mt-5 mx-8 h-[30%] rounded-2xl">
-						<img id="rank-img" class="size-40 rounded-full mx-4 border-2 w-[23%]" src="" alt="icone-rank">
-						<div class="w-[37%] mx-2">
-							<p class="text-4xl text-amber-900 pb">My Rank: <br></p>
-							<p class="" id="rank-player"></p>
-						</div>
-						<div class="w-[40%] mx-2">
-							<p class="text-4xl text-center text-amber-900">My Elo: <span class="font-bold text-4xl" id="elo-player"></span> CR</p>
-							<div class="w-full h-3 mt-5 bg-gray-200 rounded-full overflow-hidden">
-								<div
-									id="progress-fill"
-									class="h-full w-0 rounded-full
-									transition-all duration-700 ease-out">
-								</div>
+
+			<!-- DROITE -->
+			<div class="flex flex-col gap-6">
+
+				<!-- RANK -->
+				<section
+					class="flex flex-col sm:flex-row items-center gap-6
+					bg-amber-50 dark:bg-amber-100
+					ring-4 ring-amber-400 dark:ring-amber-900
+					rounded-2xl p-6">
+
+					<img id="rank-img"
+						class="size-32 sm:size-36 rounded-full border-2"
+						src=""
+						alt="rank icon">
+
+					<div class="flex-1 text-center sm:text-left">
+						<p class="text-3xl text-amber-900">My Rank</p>
+						<p id="rank-player" class="text-xl font-bold"></p>
+					</div>
+
+					<div class="flex-1 w-full">
+						<p class="text-2xl text-center text-amber-900">
+							My Elo :
+							<span id="elo-player" class="font-bold"></span> CR
+						</p>
+
+						<div class="w-full h-3 mt-4 bg-gray-200 rounded-full overflow-hidden">
+							<div
+								id="progress-fill"
+								class="h-full w-0 rounded-full transition-all duration-700 ease-out">
 							</div>
-							<p class="text-xl text-center text-amber-900">Next rank: <span class="font-bold text-xl" id="elo-next"></span> CR</p>
 						</div>
-				</section>
-				<section class="flex flex-row h-[70%]">
-					<div class="flex flex-col w-[50%] h-[95%] mx-4 text-center mt-4">
-						<p class="stat">Wins <br><span class="text-6xl" id="win"></span></p>
-						<p class="stat">Losses <br><span class="text-6xl" id="loose"></span></p>
-						<p class="stat">Winrate <br><span class="text-6xl" id="winrate"></span></p>
-					</div>
-					<div class="flex flex-col w-[50%] h-[95%] mx-4 text-center mt-4">
-						<p class="stat">Points Scored <br><span class="text-6xl" id="scored"></span></p>
-						<p class="stat">Points Taken <br><span class="text-6xl" id="taken"></span></p>
-						<p class="stat">Ratio <br><span class="text-6xl" id="ratio"></span></p>
+
+						<p class="text-center text-amber-900 mt-2">
+							Next rank :
+							<span id="elo-next" class="font-bold"></span> CR
+						</p>
 					</div>
 				</section>
+
+				<!-- STATS -->
+				<section class="grid grid-cols-2 gap-4">
+					<div class="stat-card">
+						Wins<br><span id="win" class="stat-value"></span>
+					</div>
+					<div class="stat-card">
+						Points Scored<br><span id="scored" class="stat-value"></span>
+					</div>
+					<div class="stat-card">
+						Losses<br><span id="loose" class="stat-value"></span>
+					</div>
+					<div class="stat-card">
+						Points Taken<br><span id="taken" class="stat-value"></span>
+					</div>
+					<div class="stat-card">
+						Winrate<br><span id="winrate" class="stat-value"></span>
+					</div>
+					<div class="stat-card">
+						Ratio<br><span id="ratio" class="stat-value"></span>
+					</div>
+				</section>
+
 			</div>
 		</div>
-		<footer class="absolute bottom-4 w-full dark:text-white duration-300 text-center text-sm opacity-60">
-			<a href="/termsofservice" data-link class="hover:underline">Terms of Service</a>
-			<span>|</span>
-			<a href="/privacypolicy" data-link class="hover:underline">Privacy Policy</a>
-			<p>© 2026 Croiscendence</p>
-		</footer>
-	</template>
+	</div>
 
-	<template id="history-dashboard">
-		<div class="flex items-center gap-4 w-1/3">
-			<img id="winnerpath" src="" alt="winner avatar"
-				class="size-10 lg:size-16 hidden sm:block rounded-full border-2 border-green-500">
+	<footer class="w-full text-center text-sm dark:text-white opacity-60 py-4">
+		<a href="/termsofservice" data-link class="hover:underline">Terms of Service</a>
+		<span>|</span>
+		<a href="/privacypolicy" data-link class="hover:underline">Privacy Policy</a>
+		<p>© 2026 Croiscendence</p>
+	</footer>
+</template>
+
+
+<template id="history-dashboard">
+	<div
+		class="flex items-center justify-between gap-4
+		rounded-lg p-3 w-full">
+
+		<!-- WINNER -->
+		<div class="flex items-center gap-3 w-1/3">
+			<img id="winnerpath"
+				class="size-10 lg:size-14 rounded-full border-2 border-green-500 hidden sm:block"
+				src="">
 			<div>
-				<div class="flex flex-col">
-					<p id="winnerpseudo" class="text-xs lg:text-xl font-semibold text-green-500"></p>
-					<p id="winnerelo" class="text-xs lg:text-xl text-green-500"></p>
-				</div>
-				<p id="winnerscore" class="text-sm lg:text-2xl bg-amber-600/30 rounded-sm w-3 lg:w-6 text-center ring-1 ring-amber-600/50 text-amber-900 font-bold"></p>
+				<p id="winnerpseudo" class="font-semibold text-green-600"></p>
+				<p id="winnerelo" class="text-sm text-green-500"></p>
+				<p id="winnerscore"
+					class="mt-1 bg-amber-600/30 ring-1 ring-amber-600/50
+					text-center rounded-sm text-amber-900 font-bold w-6">
+				</p>
 			</div>
 		</div>
 
-		<div>
-			<p class="text-xs lg:text-xl items-end font-semibold text-green-500">Winner</p>
-		</div>
-		<div class="flex flex-col items-center w-1/3">
-			<p id="type" class="text-sm lg:text-xl text-amber-950"></p>
-			<p id="date" class="text-xs lg:text-lg text-amber-800"></p>
-			<p id="duration" class="text-xs lg:text-sm text-amber-900"></p>
-		</div>
-		<div>
-			<p class="text-xs lg:text-xl items-start font-semibold text-red-500">Loser</p>
+		<!-- MATCH INFO -->
+		<div class="flex flex-col items-center text-center w-1/3">
+			<p id="type" class="font-semibold text-amber-900"></p>
+			<p id="date" class="text-sm text-amber-800"></p>
+			<p id="duration" class="text-xs text-amber-700"></p>
 		</div>
 
-		<div class="flex items-center gap-4 w-1/3 justify-end">
-			<div class="">
-				<div class="flex flex-col">
-					<p id="loserpseudo" class="text-xs lg:text-xl font-semibold text-red-500"></p>
-					<p id="loserelo" class="text-xs lg:text-xl text-red-500"></p>
-				</div>
-				<p id="loserscore" class="text-sm lg:text-2xl bg-amber-600/30 rounded-sm ring-1 ring-amber-600/50 w-3 lg:w-6 text-center ml-auto text-amber-900 font-bold"></p>
+		<!-- LOSER -->
+		<div class="flex items-center gap-3 justify-end w-1/3">
+			<div class="text-right">
+				<p id="loserpseudo" class="font-semibold text-red-600"></p>
+				<p id="loserelo" class="text-sm text-red-500"></p>
+				<p id="loserscore"
+					class="mt-1 bg-amber-600/30 ring-1 ring-amber-600/50
+					text-center rounded-sm text-amber-900 font-bold w-6 ml-auto">
+				</p>
 			</div>
-			<img id="loserpath" src="" alt="loser avatar"
-				class="size-10 lg:size-16 hidden sm:block rounded-full object-cover border-2 border-red-500">
-		</div>	
-	</template>
+			<img id="loserpath"
+				class="size-10 lg:size-14 rounded-full border-2 border-red-500 hidden sm:block"
+				src="">
+		</div>
+	</div>
+</template>
 
 			
 	<template id="chat-template">

@@ -142,7 +142,7 @@ export async function initDashboard()
 		}
 		
 		
-		if (dashboards.WinLoose.win > 0 && dashboards.WinLoose.loose > 0)
+		if (dashboards.WinLoose.win > 0 || dashboards.WinLoose.loose > 0)
 		{
 			const winrate = document.getElementById("winrate") as HTMLSpanElement;
 			const win = document.getElementById("win") as HTMLSpanElement;
@@ -152,7 +152,7 @@ export async function initDashboard()
 			loose.textContent = dashboards.WinLoose.loose.toString();
 		}
 
-		if (dashboards.TotalScore.scored > 0 && dashboards.TotalScore.taken > 0)
+		if (dashboards.TotalScore.scored > 0 || dashboards.TotalScore.taken > 0)
 		{
 			const taken = document.getElementById("taken") as HTMLSpanElement;
 			const scored = document.getElementById("scored") as HTMLSpanElement;
