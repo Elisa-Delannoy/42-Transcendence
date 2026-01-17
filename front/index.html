@@ -763,41 +763,47 @@
 
 	<template id="friendshtml">
 		<div class="flex flex-col h-[calc(100vh-112px)] px-2 sm:px-4 lg:px-8">
-			<div id ="search" class="relative flex flex-col w-full sm:w-2/3 md:1/3 lg:w-1/4 xl:1/4 2xl:1/5 mx-auto pt-2">
+			<div id ="search" class="relative flex flex-col w-full sm:w-2/3 md:1/3 md:w-2/4 xl:1/4 2xl:1/5 mx-auto pt-2">
 				<input type="text" id="searchInput" placeholder="🔍 Search..." 
-				class="text-base sm:text-base md:text-lg lg:text-lg xl:text-xl 2xl:text-2xl xborder border-amber-600/50 backdrop-blur-sm rounded-md outline-none focus:ring-2 focus:ring-amber-600/50 focus:border-amber-600/50 ">
-				<ul id ="members" class="absolute z-50 w-full top-full mx-auto bg-amber-100 rounded-lg empty:border-0 border border-amber-500 overflow-y-auto max-h-40 sm:max-h-60 lg:max-h-80 scrollbar-custom"></ul> 
+				class="text-base sm:text-base md:text-lg lg:text-lg xl:text-xl 2xl:text-2xl border border-amber-600/50 backdrop-blur-sm rounded-md outline-none focus:ring-2 focus:ring-amber-600/50 focus:border-amber-600/50">
+				<ul id ="members" class="absolute z-50 w-full top-full mx-auto bg-amber-100 rounded-lg border border-amber-500 overflow-y-auto max-h-40 sm:max-h-60 lg:max-h-80 scrollbar-custom empty:border-0"></ul> 
 			</div>
-			<div class="flex flex-row pt-3 items-start h-[95%]">
-				<div class="w-[50%] h-full">
-					<h1 class="relative z-20 font-bold text-l ml-20 w-28 text-stone-100 bg-amber-900 pl-4 rounded">My friends</h1>
-					<section class="max-h-[97%] bg-amber-100/80 -mt-4 mx-15 flex flex-col ring-2 ring-amber-400 items-center rounded-lg p-4">
-						<div id="friend-list" class="w-[95%] px-1 scrollbar-custom overflow-y-auto mb-2">
+			<div class="flex flex-col lg:flex-row pt-3 gap-4 h-full">
+				<div class="w-full mah-h-full lg:w-1/2 lg:h-full flex flex-col">
+					<h1 class="relative z-20 font-bold text-base ml-5 w-28 md:ml-12 md:w-32 lg:text-2xl lg:ml-16 lg:w-40 2xl:text-3xl 2xl:w-48
+
+					text-stone-100 bg-amber-900 pl-4 rounded">My friends</h1>
+					<section class="max-h-[97%] bg-amber-100/80 -mt-4 md:mx-4  xl:mx-8 2xl:mx-12 flex flex-col ring-2 ring-amber-400 items-center rounded-lg p-4">
+						<div id="friend-list" class="h-full w-[95%] px-1 2xl:grid 2xl:grid-cols-2 scrollbar-custom overflow-y-auto mb-2 sm:text-base md:text-lg lg:text-base xl:text-xl 2xl:text-2xl">
 						</div>
 					</section>
 				</div>
-				<div class="flex flex-col w-[50%] h-full justify-between">
-					<div class="h-[65%] bg-amber-100">
-						<div class="max-h-[65%] bg-amber-50">
-							<h1 class="relative z-20 font-bold text-l ml-8 w-44 text-stone-100 bg-amber-900 pl-4 rounded">Pending invitations</h1>
-							<section class="h-full bg-amber-100/80 ml-2 mr-15 -mt-4 flex flex-col ring-2 ring-amber-400 items-center rounded-lg p-2 z-10">
-								<div id="pending-list" class="w-[95%] px-1 scrollbar-custom overflow-y-auto mb-2">
+				<div class="w-full lg:w-1/2 h-full flex flex-col lg:justify-between">
+					<div class="max-h-[70%]">
+						<div class="h-full" >
+							<h1 class="relative z-20 font-bold text-base ml-5 w-44 md:ml-12 md:w-48 lg:text-2xl lg:ml-16 lg:w-60 2xl:text-3xl 2xl:w-76
+							 text-stone-100 bg-amber-900 pl-4 rounded">Pending invitations</h1>
+							<section class="h-full bg-amber-100/80 -mt-4 md:mx-4 xl:mx-8 2xl:mx-12 flex flex-col ring-2 ring-amber-400 items-center rounded-lg p-4 z-10">
+								<div id="pending-list" class="w-full h-full 2xl:grid 2xl:grid-cols-2 px-1 scrollbar-custom overflow-y-auto mb-2 sm:text-base md:text-lg lg:text-base xl:text-xl 2xl:text-2xl">
 								</div>
 							</section>
 						</div>
 					</div>
-					<div class="h-[30%]">
-						<h1 class="relative z-20 font-bold text-l ml-8 w-76 text-stone-100 bg-amber-900 px-3 rounded">Users you played with and may know</h1>
-						<section class="h-[90%] -mt-4 bg-amber-100/80 ml-2 mr-15 flex flex-col ring-2 ring-amber-400 items-center rounded-lg relative">
-							<div id="no-opponent" class="flex flex-col hidden items-center">
-								<h1 id="no opponent text" class="mt-6 text-xl text-center font-semibold text-amber-800">Click below to begin a party and meet new users</h1>
-								<a href="/gameonline" data-link class="btn mt-2 ml-3 w-20 text-center">1 VS 1</a>
-							</div>
-							<div id="opponent" class="h-full w-full pt-2">
-								<div id="opponent-list" class="h-full grid grid-cols-1 sm:grid-cols-2 w-full scrollbar-custom overflow-y-auto">
+					<div class="pt-8 lg:max-h-[25%] 2xl:min-h-[25%] 2xl:max-h-full pb-8">
+						<div class="lg:h-full 2xl:min-h-[25%] 2xl:max-h-full">
+							<h1 class="relative z-20 font-bold text-base ml-5 w-76 md:ml-12 md:w-84 lg:text-2xl lg:ml-16 lg:w-112 2xl:text-3xl 2xl:w-136
+								 text-stone-100 bg-amber-900 pl-4 rounded">Users you played with and may know</h1>
+							<section class="2xl:max-h-full bg-amber-100/80 -mt-4 md:mx-4 xl:mx-8 2xl:mx-12 flex flex-col ring-2 ring-amber-400 items-center rounded-lg relative">
+								<div id="no-opponent" class="flex flex-col hidden items-center sm:text-base md:text-lg lg:text-lg xl:text-xl 2xl:text-2xl">
+									<h1 id="no opponent text" class="mt-6 text-xl text-center font-semibold text-amber-800">Click below to begin a party and meet new users</h1>
+									<a href="/gameonline" data-link class="btn mt-2 ml-3 w-20 text-center">1 VS 1</a>
 								</div>
-							</div>
-						</section>
+								<div id="opponent" class="h-full w-full pt-2 ">
+									<div id="opponent-list" class="h-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 w-full scrollbar-custom overflow-y-auto ">
+									</div>
+								</div>
+							</section>
+						</div>
 					</div>
 				</div>
 
@@ -820,8 +826,23 @@
 				<img id="avatar" class="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 2xl:w-16 2xl:h-16 rounded-full my-auto object-cover" src="" alt="avatar"/>
 				<p id="pseudo" class="my-auto ml-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl text-amber-900"></p>
 			</div>
-			<button id="addordelete" class="bg-amber-700 my-auto px-2 py-1 
-						sm:px-3 sm:py-1.5 
+			<button id="addordelete" class="bg-amber-700 my-auto px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 lg:px-4 lg:py-2 xl:px-5 xl:py-2 2xl:px-6 2xl:py-3
+						text-xs sm:text-sm md:text-base lg:text-base xl:text-lg 2xl:text-xl text-amber-50 rounded cursor-pointer"></button>
+		</li>
+	</template>
+
+	<template id="myfriends">
+		<div class="flex flex col items-center justify-between w-full rounded-sm">
+			<div class="flex flex-row items-center gap-3 relative">
+				<div>
+					<span id="f_status" class="absolute w-4 h-4 rounded-full"></span>
+					<img id="avatar" class="w-16 h-16 2xl:w-24 2xl:h-24 rounded-full my-auto object-cover" src="" alt="avatar"></img>
+				</div>
+				<p id="pseudo" class="text-l text-amber-800 font-semibold"></p>
+			</div>
+			<div class="flex items-center flex-col">
+				<button id="addordelete" class="bg-amber-700 px-2 py-2
+				sm:px-3 sm:py-1.5 
 						md:px-4 md:py-2 
 						lg:px-4 lg:py-2 
 						xl:px-5 xl:py-2 
@@ -832,21 +853,28 @@
 						lg:text-base 
 						xl:text-lg 
 						2xl:text-xl
-			text-amber-50 rounded cursor-pointer"></button>
-		</li>
+				text-white rounded cursor-pointer"></button>
+				<p id="date-friendship" class="mt-4 mr-4 italic text-xs text-gray-600"></p>
+			</div>
+		</div>
 	</template>
 
-	<template id="myfriends">
-		<div class="flex items-center justify-between w-full hover:bg-amber-600/20 rounded-sm">
+		<template id="opponent-li">
+		<div class="flex flex col items-center justify-between w-full rounded-sm">
 			<div class="flex flex-row items-center gap-3">
 				<div>
 					<span id="f_status" class="absolute w-4 h-4 rounded-full"></span>
-					<img id="avatar" class="w-16 h-16 rounded-full my-auto" src="" alt="avatar"></img>
+					<img id="avatar" class="w-10 h-10 2xl:w-20 2xl:h-20 rounded-full my-auto object-cover" src="" alt="avatar"></img>
 				</div>
-				<p id="pseudo" class="text-l text-amber-800 font-semibold"></p>
+				<p id="pseudo" class="text-l text-amber-800 font-semibold text-xs sm:text-sm xl:text-base 2xl:text-xl"></p>
 			</div>
 			<div class="flex items-center flex-col">
-				<button id="addordelete" class="bg-amber-700 px-2 py-2 text-white rounded cursor-pointer text-sm"></button>
+				<button id="addordelete" class="bg-amber-700 px-2 py-2
+						sm:px-3 sm:py-1.5 
+						text-xs 
+						sm:text-sm 
+						2xl:text-base
+				text-white rounded cursor-pointer"></button>
 				<p id="date-friendship" class="mt-4 mr-4 italic text-xs text-gray-600"></p>
 			</div>
 		</div>
@@ -1583,7 +1611,7 @@
 			
 	<template id="chat-template">
 		<div id="chat-window" class="hidden flex flex-col w-80 h-96 bg-amber-100 rounded-xl overflow-hidden shadow-lg mb-0.5 dark:bg-yellow-950/90">
-			<header id="headchat" class="bg-blue-500 h-12 text-center dark:bg-yellow-950 dark:border-amber-100/60 dark:border-b">
+			<header id="headchat" class="bg-amber-500 h-12 text-center dark:bg-yellow-950 dark:border-amber-100/60 dark:border-b">
 				<p class="text center text-amber-50 text-xl pt-2 dark:">General Chat</p>
 			</header>
 			<div id="chat-box" class="flex-1 p-3  scrollbar-custom overflow-y-auto space-y-2 mt-2">
@@ -1599,7 +1627,7 @@
 				<button class="bg-amber-100 px-4 text-amber-900 hover:bg-amber-500 dark:bg-yellow-950 dark:text-amber-100 dark:hover:bg-amber-100 dark:hover:text-amber-800">Send</button>
 			</form>
 		</div>
-		<div id="chat-bar">
+		<div id="chat-bar" class="bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center">
 			General Chat
 		</div>
 	</template>

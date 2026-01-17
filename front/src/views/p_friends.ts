@@ -255,7 +255,7 @@ function youMayKnow(opponent: {id: number, pseudo: string, avatar: string}[]) {
 	}
 	const container = document.getElementById("opponent-list") as HTMLDivElement;
 	opponent.forEach(async (user: {id: number, pseudo: string, avatar: string}) => {
-		const template = document.getElementById("myfriends") as HTMLTemplateElement;
+		const template = document.getElementById("opponent-li") as HTMLTemplateElement;
 		const item = document.createElement("div") as HTMLDivElement;
 		item.classList.add("dash");
 		const clone = template.content.cloneNode(true) as DocumentFragment;
