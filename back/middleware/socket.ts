@@ -7,6 +7,7 @@ import { handleGameSocket } from "../pong/pongServer";
 import { handleTournamentSocket } from "../pong/tournamentServer";
 import { tournaments_map } from "../routes/tournament/serverTournament";
 import { handleGeneralChatSocket } from "../chat/chat";
+import { users } from "../server";
 
 export async function createWebSocket(io: Server) {
 	io.use((socket, next) => {
@@ -39,6 +40,10 @@ export async function createWebSocket(io: Server) {
 		handleGameSocket(io, socket);
 		handleTournamentSocket(io, socket);
 		handleGeneralChatSocket(io, socket);
+		
+		socket.on("disconnect", async () => {
+			await users.updateStatus(socket.data.user.id, "offline");
+		});
 
 		console.log(new Date().toISOString(),"dans creat", " ", " ", socket.id, socket.data.user);
 	})

@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import { checkLogStatus, loadHeader } from "../router";
 
 export type dataChat = {
 	pseudo: string,

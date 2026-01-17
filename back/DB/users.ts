@@ -58,7 +58,7 @@ export class Users
 		email,
 		password,
 		"/files/0.png",
-		"online",
+		"offline",
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		"",

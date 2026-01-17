@@ -284,6 +284,7 @@ export async function router() {
 				chatnet.toKnowUserID();
 				displayChat()
 			});
+			auth.user!.web_status = "online";
 			isReloaded = false;
 		}
 		loadHeader(auth);

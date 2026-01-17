@@ -1,6 +1,6 @@
 import { userInfo } from "os";
 import { Server, Socket } from "socket.io";
-import { generalChat } from "../server";
+import { generalChat, users } from "../server";
 import { dataChat } from "../../front/src/chat/chatNetwork";
 
 export async function handleGeneralChatSocket(io: Server, socket: Socket) {
@@ -15,7 +15,9 @@ export async function handleGeneralChatSocket(io: Server, socket: Socket) {
 
 	socket.emit("userID", {
 		id: socket.data.user.id
-	})
+	});
+
+	await users.updateStatus(socket.data.user.id, "online");
 
 	socket.join("general-chat");
 
