@@ -1,6 +1,6 @@
 import { GameRenderer } from "../game/gameRenderer";
 import { GameNetwork } from "../game/gameNetwork";
-import { loadHeader, navigateTo, getPreviousPath, getBeforePreviousPath, setBeforePreviousPath } from "../router";
+import { navigateTo, getPreviousPath, getBeforePreviousPath } from "../router";
 import { GameInstance } from "../game/gameInstance";
 
 let renderer: GameRenderer | null = null;
@@ -37,16 +37,13 @@ export async function initPongMatch(params?: any) {
 	let input2: "up" | "down" | "stop" = "stop";
 	let input: "up" | "down" | "stop" = "stop";
 
-	// 1. Create game for client
 	currentGame = new GameInstance();
 
-	// 2. Prepare drawing system
 	renderer = new GameRenderer();
 
 	if (currentGame.getCurrentState().type == "Local")
 		currentGame.enableLocalMode();
 
-	// 3. Connect to server
 	net = new GameNetwork();
 
 	net.onKick(() => {
@@ -54,13 +51,11 @@ export async function initPongMatch(params?: any) {
 		return;
 	});
 
-	//4. set role (player 1 or 2)
 	net.onRole((role) => {
 		if (net)
 			currentGame?.setNetwork(net, role);
 	});
 
-	// 5. Join game room
 	net.join(Number(gameID), Number(tournamentId));
 
 	net.onCountdown(() => {
@@ -89,21 +84,17 @@ export async function initPongMatch(params?: any) {
 		renderer.draw(currentGame.getCurrentState(), false);
 	})
 
-	// 6. Receive game state from server
 	net.onState((state) => {
 		if (!currentGame || !renderer)
 			return;
 
-		//update local state
 		currentGame.applyServerState(state);
 		updatePseudo();
 
-		//draw actual state
 		renderer.draw(currentGame.getCurrentState(), true);
 		updateInput();
 	});
 
-	// 7. Send inputs to server
 	const keyState: { [key: string]: boolean } = {};
 	const keyState2: { [key: string]: boolean } = {};
 
@@ -125,7 +116,6 @@ export async function initPongMatch(params?: any) {
 		{
 			if (currentGame.isLocalMode())
 			{
-				//player1
 				if ((keyState["w"] || keyState["W"]) && input1 != "up")
 					input1 = "up";
 				else if ((keyState["s"] || keyState["S"]) && input1 != "down")
@@ -134,7 +124,6 @@ export async function initPongMatch(params?: any) {
 					input1 = "stop";
 				currentGame.sendInput(input1, "player1");
 
-				//player2
 				if (keyState2["ArrowUp"] && input2 != "up")
 					input2 = "up";
 				else if (keyState2["ArrowDown"] && input2 != "down")

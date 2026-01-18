@@ -1,7 +1,5 @@
 export const tournaments_map = new Map<number, serverTournament>();
-import { Server } from "socket.io";
 import { ServerGame } from "../game/serverGame";
-import { tournament } from "../../server";
 
 interface TournamentState {
 	status: "waiting" | "semifinal" | "final" | "finished";
@@ -17,16 +15,14 @@ export class serverTournament {
 	sockets: { player1: string | null, player2: string | null, player3: string | null, player4: string | null };
 	semi_index: number[];
 	final_arr: number[];
-	private io?: Server;
 	disconnectTimer: NodeJS.Timeout | null;
 	state: TournamentState;
 
-	constructor(id: number, io?: Server)
+	constructor(id: number)
 	{
 		this.id = id;
 		this.idPlayers = Array(4).fill(-1);
 		this.sockets = { player1: null, player2: null, player3: null, player4: null };
-		this.io = io;
 		this.semi_index = [0, 2, 1, 3];
 		this.final_arr = [0, 0];
 		this.disconnectTimer = null;
@@ -44,10 +40,6 @@ export class serverTournament {
 			},
 			champion: { player: "Champion" }
 		};
-	}
-
-	setIo(io: Server) {
-		this.io = io;
 	}
 }
 
