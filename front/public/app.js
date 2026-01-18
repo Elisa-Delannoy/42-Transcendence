@@ -4879,7 +4879,7 @@ async function displayChat() {
     chatWindow.classList.toggle("hidden");
     chatBar.classList = "bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 xl:w-60 text-center";
     if (!chatWindow?.classList.contains("hidden")) {
-      chatBar.classList = "bg-amber-100 hover:bg-amber-800 hover:text-amber-100 dark:bg-amber-800 dark:text-amber-100 px-4 py-2 rounded-lg shadow cursor-pointer w-32 xl:w-60 text-center";
+      chatBar.classList = "bg-amber-100 text:amber-800 hover:bg-amber-800 hover:text-amber-100 dark:bg-amber-800 dark:text-amber-100 px-4 py-2 rounded-lg shadow cursor-pointer w-32 xl:w-60 text-center";
       setTimeout(() => {
         chatBox.scrollTop = chatBox.scrollHeight;
       }, 0);
@@ -5021,7 +5021,7 @@ async function myFriends(acceptedFriends) {
   if (!container)
     return;
   if (acceptedFriends.length === 0) {
-    container.innerHTML = `<p class="text-base md:text-lg xl:text-xl 2xl:text-2xl italic text-center text-amber-800">No friend yet</p>`;
+    container.innerHTML = `<p class="text-base md:text-lg xl:text-xl 2xl:text-2xl italic text-center text-amber-800 dark:text-amber-50">No friend yet</p>`;
     return;
   }
   acceptedFriends.forEach(async (friend) => {
@@ -5200,7 +5200,7 @@ function youMayKnow(opponent) {
   opponent.forEach(async (user) => {
     const template = document.getElementById("opponent-li");
     const item = document.createElement("div");
-    item.classList.add("dash");
+    item.classList.add("frd");
     const clone = template.content.cloneNode(true);
     const avatar = clone.getElementById("avatar");
     const pseudo = clone.getElementById("pseudo");
@@ -5820,51 +5820,96 @@ async function InitEndGame() {
   if (!state || !state.from.includes("pongmatch")) {
     navigateTo("/home");
   }
-  const endgame = await genericFetch("/api/private/endgame", {
-    method: "GET"
-  });
-  const container = document.getElementById("game-end-container");
-  const templateId = `end-game-${endgame.type}`;
-  const template = document.getElementById(templateId);
-  const node = template.content.cloneNode(true);
-  container.appendChild(node);
-  document.getElementById("winner-id").textContent = endgame.gameinfo.winner_pseudo;
-  document.getElementById("winner-score").textContent = endgame.gameinfo.winner_score.toString();
-  document.getElementById("loser-id").textContent = endgame.gameinfo.loser_pseudo;
-  document.getElementById("loser-score").textContent = endgame.gameinfo.loser_score.toString();
-  document.getElementById("final-score").textContent = `${endgame.gameinfo.winner_score} - ${endgame.gameinfo.loser_score}`;
-  if (endgame.gameinfo.type === "Online" || endgame.gameinfo.type === "Tournament") {
-    document.getElementById("loser-elo").textContent = `- ${Math.abs(endgame.gameinfo.loser_elo)} \u{1F950}`;
-    document.getElementById("winner-elo").textContent = `+ ${endgame.gameinfo.winner_elo} \u{1F950}`;
-  }
-  const replayBtn = document.getElementById("replay-button");
-  switch (endgame.gameinfo.type) {
-    case "Online":
-      replayBtn.href = "/gameonline";
-      break;
-    case "AI":
-    case "Local":
-      replayBtn.href = "/gamelocal";
-      break;
-    case "Tournament":
-      replayBtn.href = "/tournament";
-      break;
-  }
-  if (!endgame.new_achievements?.length) return;
-  if (endgame.new_achievements.length > 0) {
-    for (const achievement of endgame.new_achievements) {
-      switch (achievement.rarity) {
-        case "Common":
-          showToast(`You unlock the achievement : ${achievement.title}`, "common-achievement", 5e3);
-          break;
-        case "Rare":
-          showToast(`You unlock the achievement : ${achievement.title}`, "rare-achievement", 5e3);
-          break;
-        case "Secret":
-          showToast(`You unlock the achievement : ${achievement.title}`, "secret-achievement", 5e3);
-          break;
+  try {
+    const endgame = await genericFetch("/api/private/endgame", {
+      method: "GET"
+    });
+    const container = document.getElementById("game-end-container");
+    const templateId = `end-game-${endgame.type}`;
+    const template = document.getElementById(templateId);
+    const node = template.content.cloneNode(true);
+    container.appendChild(node);
+    document.getElementById("winner-id").textContent = endgame.gameinfo.winner_pseudo;
+    document.getElementById("winner-score").textContent = endgame.gameinfo.winner_score.toString();
+    document.getElementById("loser-id").textContent = endgame.gameinfo.loser_pseudo;
+    document.getElementById("loser-score").textContent = endgame.gameinfo.loser_score.toString();
+    document.getElementById("final-score").textContent = `${endgame.gameinfo.winner_score} - ${endgame.gameinfo.loser_score}`;
+    const addFriend = document.getElementById("addgamer");
+    const addFriendDark = document.getElementById("dark-addgamer");
+    if (endgame.friend) {
+      addFriend.classList.add("hidden");
+      addFriendDark.classList.add("hidden");
+    }
+    if (endgame.gameinfo.type === "Online" || endgame.gameinfo.type === "Tournament") {
+      document.getElementById("loser-elo").textContent = `- ${Math.abs(endgame.gameinfo.loser_elo)} \u{1F950}`;
+      document.getElementById("winner-elo").textContent = `+ ${endgame.gameinfo.winner_elo} \u{1F950}`;
+      if (addFriend && addFriendDark && !endgame.friend) {
+        [addFriend, addFriendDark].forEach((el) => {
+          el?.addEventListener("click", async () => {
+            if (endgame.type === "victory") {
+              await AddFriendEndG(endgame.gameinfo.loser_id, endgame.gameinfo.loser_pseudo);
+              if (el === addFriendDark)
+                el.classList.remove("dark:block");
+              else
+                el.classList.add("hidden");
+            } else {
+              await AddFriendEndG(endgame.gameinfo.winner_id, endgame.gameinfo.winner_pseudo);
+              if (el === addFriendDark)
+                el.classList.remove("dark:block");
+              else
+                el.classList.add("hidden");
+            }
+          });
+        });
+      }
+      ;
+    }
+    const replayBtn = document.getElementById("replay-button");
+    switch (endgame.gameinfo.type) {
+      case "Online":
+        replayBtn.href = "/gameonline";
+        break;
+      case "AI":
+      case "Local":
+        replayBtn.href = "/gamelocal";
+        break;
+      case "Tournament":
+        replayBtn.href = "/tournament";
+        break;
+    }
+    if (!endgame.new_achievements?.length) return;
+    if (endgame.new_achievements.length > 0) {
+      for (const achievement of endgame.new_achievements) {
+        switch (achievement.rarity) {
+          case "Common":
+            showToast(`You unlock the achievement : ${achievement.title}`, "common-achievement", 5e3);
+            break;
+          case "Rare":
+            showToast(`You unlock the achievement : ${achievement.title}`, "rare-achievement", 5e3);
+            break;
+          case "Secret":
+            showToast(`You unlock the achievement : ${achievement.title}`, "secret-achievement", 5e3);
+            break;
+        }
       }
     }
+  } catch {
+  }
+}
+async function AddFriendEndG(id, pseudo) {
+  try {
+    const result = await genericFetch("/api/private/friend/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ friendID: id })
+    });
+    console.log("result notif=", result);
+    if (result.message === "added")
+      showToast(`Invitation sent to ${pseudo}`, "success");
+    else
+      showToast(`${pseudo} already sent an invitation`, "warning");
+  } catch (err) {
+    showToast(err, "error", 3e3);
   }
 }
 var init_p_endgame = __esm({

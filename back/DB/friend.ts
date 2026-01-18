@@ -68,6 +68,16 @@ export class Friends
 			return friendship;
 	}
 
+	async isMyFriend(id1: number, id2: number): Promise<boolean> {
+		const friendship: IMyFriends[] = await this._db.query(
+		`SELECT f.user_id1 FROM Friend as f 
+			WHERE (f.user_id1 = ? AND f.user_id2 = ?) OR
+				(f.user_id1 = ? AND f.user_id2 = ?);
+			`, [id1, id2, id2, id1]);
+		return (friendship.length > 0);
+	}
+
+
 	async deleteFriendTable(): Promise<void>
 	{
 		const query = `DROP TABLE IF EXISTS Friend`

@@ -5,12 +5,12 @@ import { dataChat } from "../../front/src/chat/chatNetwork";
 
 export class Chat
 {
-    private _db: ManageDB;
+	private _db: ManageDB;
 
-    constructor (db: ManageDB)
-    {
-        this._db = db;
-    }
+	constructor (db: ManageDB)
+	{
+		this._db = db;
+	}
 
 	async createChatTableAndTrigger()
 	{
@@ -21,8 +21,10 @@ export class Chat
 				pseudo TEXT NOT NULL,
 				message TEXT NOT NULL,
 				date TEXT NOT NULL
-			);
+			)
+		`);
 		
+		await this._db.execute(`
 			CREATE TRIGGER IF NOT EXISTS limit_chat_messages
 			AFTER INSERT ON Chat
 			BEGIN
@@ -32,10 +34,11 @@ export class Chat
 					ORDER BY date DESC
 					LIMIT 25
 				);
-			END;`);
+			END;
+		  `);
 	}
 
-    async addMessageChat(user_id: number, pseudo: string, message: string, date: string): Promise<void>
+	async addMessageChat(user_id: number, pseudo: string, message: string, date: string): Promise<void>
 	{
 		const query = `
 			INSERT INTO Chat (user_id, pseudo, message, date)
@@ -44,16 +47,16 @@ export class Chat
 		const parameters = [
 		user_id,
 		pseudo,
-        message,
+		message,
 		date,
 		];
 		await this._db.execute(query, parameters);
 	}
 
 	async displayHistoryMessage(): Promise <dataChat[]> {
-    	const  history = await this._db.query(`SELECT * FROM Chat ORDER BY id ASC`);
+		const  history = await this._db.query(`SELECT * FROM Chat ORDER BY id ASC`);
 		return history;
-    }
+	}
 
 	async deleteChatTableAndTrigger()
 	{ 

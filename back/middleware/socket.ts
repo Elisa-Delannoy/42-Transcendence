@@ -20,7 +20,6 @@ export async function createWebSocket(io: Server) {
 			  return next(new Error("No token"));
 			}
 			const user = jwt.verify(token, secretkey);
-			console.log("user ", user);
 			socket.data.user = user;
 			next();
 		} catch (err) {

@@ -17,7 +17,7 @@ export async function displayChat() {
 		chatWindow!.classList.toggle("hidden");
 		chatBar!.classList = "bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 xl:w-60 text-center"
 		if (!chatWindow?.classList.contains("hidden")) {
-			chatBar!.classList = "bg-amber-100 hover:bg-amber-800 hover:text-amber-100 dark:bg-amber-800 dark:text-amber-100 px-4 py-2 rounded-lg shadow cursor-pointer w-32 xl:w-60 text-center";
+			chatBar!.classList = "bg-amber-100 text:amber-800 hover:bg-amber-800 hover:text-amber-100 dark:bg-amber-800 dark:text-amber-100 px-4 py-2 rounded-lg shadow cursor-pointer w-32 xl:w-60 text-center";
 			setTimeout(() => {
 				chatBox!.scrollTop = chatBox!.scrollHeight;
 			}, 0);

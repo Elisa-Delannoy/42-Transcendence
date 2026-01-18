@@ -41,8 +41,12 @@ export async function addFriend(request: FastifyRequest, reply: FastifyReply): P
 	try {
 		const { friendID } = request.body as { friendID: number };
 		if (request.user!.user_id !== null) {
-			await  friends.addFriendship(request.user!.user_id, friendID);
-			reply.code(200).send({ message: "added" });
+			const frd = await friends.isMyFriend(request.user!.user_id, friendID);
+			if (!frd) {
+				await  friends.addFriendship(request.user!.user_id, friendID);
+				reply.code(200).send({ message: "added" });
+			}
+			reply.code(200).send({ message: "already in friendship" });
 		}
 	}
 	catch (err) {
@@ -87,5 +91,8 @@ export async function notification(request: FastifyRequest, reply: FastifyReply)
 	} catch(err) {
 		return false;
 	}
+}
+function isMyFriend() {
+	throw new Error('Function not implemented.');
 }
 

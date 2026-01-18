@@ -57,7 +57,7 @@ async function myFriends(acceptedFriends: IMyFriends[]) {
 	if (!container)
 		return;
 	if (acceptedFriends.length === 0) {
-		container.innerHTML = `<p class="text-base md:text-lg xl:text-xl 2xl:text-2xl italic text-center text-amber-800">No friend yet</p>`;
+		container.innerHTML = `<p class="text-base md:text-lg xl:text-xl 2xl:text-2xl italic text-center text-amber-800 dark:text-amber-50">No friend yet</p>`;
 		return;
 	}
 	acceptedFriends.forEach(async (friend: IMyFriends) => {
@@ -249,7 +249,7 @@ function youMayKnow(opponent: {id: number, pseudo: string, avatar: string}[]) {
 	opponent.forEach(async (user: {id: number, pseudo: string, avatar: string}) => {
 		const template = document.getElementById("opponent-li") as HTMLTemplateElement;
 		const item = document.createElement("div") as HTMLDivElement;
-		item.classList.add("dash");
+		item.classList.add("frd");
 		const clone = template.content.cloneNode(true) as DocumentFragment;
 		const avatar = clone.getElementById("avatar") as HTMLImageElement;
 		const pseudo = clone.getElementById("pseudo") as HTMLParagraphElement;
