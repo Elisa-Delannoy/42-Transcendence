@@ -4235,9 +4235,10 @@ var init_gameInstance = __esm({
       sendInput(direction, player) {
         if (!this.network)
           return;
-        if (this.localMode) {
+        if (this.currentState.type == "Local") {
           if (!player)
             return;
+          console.log("player : ", player);
           this.network.sendInput(direction, player);
         } else {
           if (!this.role)
@@ -4266,14 +4267,15 @@ async function initPongMatch(params) {
   console.log("beforePrev : ", beforePrev);
   if (prev === null || beforePrev === null || !beforePrev.startsWith("/gameonline") || !prev.startsWith("/pongmatch")) {
     if (!beforePrev.startsWith("/brackets")) {
-      navigateTo("/home");
-      return;
+      if (!beforePrev.startsWith("/gamelocal")) {
+        navigateTo("/home");
+        return;
+      }
     }
   }
   const gameID = params?.id;
   const paramUrl = new URLSearchParams(window.location.search);
   const tournamentId = paramUrl.get("tournamentId");
-  const replayBtn = document.getElementById("replay-btn");
   const dashboardBtn = document.getElementById("dashboard-btn");
   const pseudoP1 = document.getElementById("player1-name");
   const pseudoP2 = document.getElementById("player2-name");
@@ -4337,7 +4339,7 @@ async function initPongMatch(params) {
   function updateInput() {
     if (!currentGame) return;
     if (currentGame.getCurrentState().status == "playing") {
-      if (currentGame.isLocalMode()) {
+      if (currentGame.getCurrentState().type == "Local") {
         if ((keyState["w"] || keyState["W"]) && input1 != "up")
           input1 = "up";
         else if ((keyState["s"] || keyState["S"]) && input1 != "down")

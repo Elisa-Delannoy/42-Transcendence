@@ -21,14 +21,16 @@ export async function initPongMatch(params?: any) {
 	{
 		if (!beforePrev.startsWith("/brackets"))
 		{
-			navigateTo("/home");
-			return;
+			if (!beforePrev.startsWith("/gamelocal"))
+			{
+				navigateTo("/home");
+				return;
+			}
 		}
 	}
 	const gameID: string = params?.id;
 	const paramUrl = new URLSearchParams(window.location.search);
 	const tournamentId = paramUrl.get("tournamentId");
-	const replayBtn = document.getElementById("replay-btn");
 	const dashboardBtn = document.getElementById("dashboard-btn");
 	const pseudoP1 = document.getElementById("player1-name");
 	const pseudoP2 = document.getElementById("player2-name");
@@ -114,7 +116,7 @@ export async function initPongMatch(params?: any) {
 
 		if (currentGame.getCurrentState().status == "playing")
 		{
-			if (currentGame.isLocalMode())
+			if (currentGame.getCurrentState().type == "Local")
 			{
 				if ((keyState["w"] || keyState["W"]) && input1 != "up")
 					input1 = "up";
