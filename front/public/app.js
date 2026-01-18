@@ -4238,7 +4238,6 @@ var init_gameInstance = __esm({
         if (this.currentState.type == "Local") {
           if (!player)
             return;
-          console.log("player : ", player);
           this.network.sendInput(direction, player);
         } else {
           if (!this.role)
@@ -4540,6 +4539,11 @@ var init_tournamentInstance = __esm({
         el.classList.remove("border-neutral-600", "bg-neutral-900", "text-white", "border-neutral-700");
         el.classList.add("loser");
       }
+      setChampion(el) {
+        if (!el) return;
+        el.classList.remove("border-neutral-600", "bg-neutral-900", "text-white", "border-neutral-700");
+        el.classList.add("champion");
+      }
     };
   }
 });
@@ -4668,6 +4672,7 @@ async function initBrackets(params) {
     if (status == "final") {
       currentTournament?.setWinner(finalists[winner]);
       currentTournament?.setLoser(finalists[loser]);
+      currentTournament?.setChampion(champion);
     }
   });
   net2.onTournamentHost(() => {

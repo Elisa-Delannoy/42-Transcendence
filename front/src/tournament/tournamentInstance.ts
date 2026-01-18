@@ -27,4 +27,10 @@ export class TournamentInstance {
 		el.classList.remove("border-neutral-600", "bg-neutral-900", "text-white", "border-neutral-700");
 		el.classList.add("loser");
 	}
+
+	setChampion(el: HTMLElement | null) {
+		if (!el) return;
+		el.classList.remove("border-neutral-600", "bg-neutral-900", "text-white", "border-neutral-700");
+		el.classList.add("champion");
+	}
 }

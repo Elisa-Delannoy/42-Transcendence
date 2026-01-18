@@ -60,6 +60,7 @@ export async function initBrackets(params?: any) {
 		{
 			currentTournament?.setWinner(finalists[winner]);
 			currentTournament?.setLoser(finalists[loser]);
+			currentTournament?.setChampion(champion);
 		}
 	});
 

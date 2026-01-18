@@ -232,8 +232,7 @@ function updateBrackets(io: Server, tournament: serverTournament, tournamentId: 
 			tournament.final_arr[0] = -1;
 			tournament.state.finalists.player1 = "AI";
 			tournament.idFourth = -1;
-			io.to(`tournament-${tournamentId}`).emit("setWinner", 0, "semifinal");
-			io.to(`tournament-${tournamentId}`).emit("setLoser", 1, "semifinal");
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0, "semifinal");
 		}
 		else
 		{
@@ -261,7 +260,7 @@ function updateBrackets(io: Server, tournament: serverTournament, tournamentId: 
 			tournament.final_arr[1] = -1;
 			tournament.idThird = -1;
 			tournament.state.finalists.player2 = "AI";
-			io.to(`tournament-${tournamentId}`).emit("setWinner", 2, 3, "semifinal");
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 3, 2, "semifinal");
 		}
 		else
 		{
@@ -300,15 +299,18 @@ function updateBrackets(io: Server, tournament: serverTournament, tournamentId: 
 	}
 	if (tournament.state.status == "final")
 	{
-		if (tournament.idFourth == tournament.idPlayers[0])
-			io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0, "semifinal");
-		else
-			io.to(`tournament-${tournamentId}`).emit("setWinner", 0, 1, "semifinal");
-
-		if (tournament.idThird == tournament.idPlayers[2])
-			io.to(`tournament-${tournamentId}`).emit("setWinner", 3, 2, "semifinal");
-		else
-			io.to(`tournament-${tournamentId}`).emit("setWinner", 2, 3, "semifinal");
+		if (tournament.final_arr[0] != -1 && tournament.final_arr[1] != -1)
+		{
+			if (tournament.idFourth == tournament.idPlayers[0])
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0, "semifinal");
+			else
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 0, 1, "semifinal");
+	
+			if (tournament.idThird == tournament.idPlayers[2])
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 3, 2, "semifinal");
+			else
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 2, 3, "semifinal");
+		}
 
 		//Only AI in final
 		if (tournament.final_arr[0] == -1 && tournament.final_arr[1] == -1)
@@ -316,6 +318,12 @@ function updateBrackets(io: Server, tournament: serverTournament, tournamentId: 
 			tournament.state.champion.player = "AI";
 			tournament.idFirst = -1;
 			tournament.idSecond = -1;
+
+			if (tournament.idFirst == tournament.final_arr[0])
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 0, 1, "final");
+			else
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0, "final");
+
 			tournament.state.status = "finished";
 		}
 		else
