@@ -40,7 +40,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 		{
 			io.to(`tournament-${tournamentId}`).emit("state", updateStateTournament(tournament.state));
 			console.log("Client disconnected:", socket.id);
-			let countdown = 10;
+			let countdown = 3;
 			let interval = setInterval(() => {
 				countdown--;
 				if (countdown < 0) {
@@ -231,8 +231,9 @@ function updateBrackets(io: Server, tournament: serverTournament, tournamentId: 
 		{
 			tournament.final_arr[0] = -1;
 			tournament.state.finalists.player1 = "AI";
-			io.to(`tournament-${tournamentId}`).emit("setWinner", 0);
-			io.to(`tournament-${tournamentId}`).emit("setLoser", 1);
+			tournament.idFourth = -1;
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 0, "semifinal");
+			io.to(`tournament-${tournamentId}`).emit("setLoser", 1, "semifinal");
 		}
 		else
 		{
@@ -242,20 +243,25 @@ function updateBrackets(io: Server, tournament: serverTournament, tournamentId: 
 				console.log("Problem getting game1");
 				return;
 			}
-			tournament.state.finalists.player1 = game1.winner;
-			tournament.final_arr[0] = game1.idwinner;
-			if (tournament.idPlayers[0] == game1.idwinner)
-				io.to(`tournament-${tournamentId}`).emit("setWinner", 0, 1);
-			else
-				io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0);
+			if (game1.idwinner != 0)
+			{
+				tournament.state.finalists.player1 = game1.winner;
+				tournament.final_arr[0] = game1.idwinner;
+				tournament.idFourth = game1.idloser;
+				if (tournament.idPlayers[0] == game1.idwinner)
+					io.to(`tournament-${tournamentId}`).emit("setWinner", 0, 1, "semifinal");
+				else
+					io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0, "semifinal");
+			}
 		}
 
 		//Only AI in second game
 		if (tournament.idPlayers[2] == -1 && tournament.idPlayers[3] == -1)
 		{
 			tournament.final_arr[1] = -1;
+			tournament.idThird = -1;
 			tournament.state.finalists.player2 = "AI";
-			io.to(`tournament-${tournamentId}`).emit("setWinner", 2, 3);
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 2, 3, "semifinal");
 		}
 		else
 		{
@@ -265,23 +271,51 @@ function updateBrackets(io: Server, tournament: serverTournament, tournamentId: 
 				console.log("Problem getting game2");
 				return;
 			}
-			tournament.state.finalists.player2 = game2.winner;
-			tournament.final_arr[1] = game2.idwinner;
-			if (tournament.idPlayers[2] == game2.idwinner)
-				io.to(`tournament-${tournamentId}`).emit("setWinner", 2, 3);
-			else
-				io.to(`tournament-${tournamentId}`).emit("setWinner", 3, 2);
+			if (game2.idwinner != 0)
+			{
+				tournament.state.finalists.player2 = game2.winner;
+				tournament.idThird = game2.idloser;
+				tournament.final_arr[1] = game2.idwinner;
+				if (tournament.idPlayers[2] == game2.idwinner)
+					io.to(`tournament-${tournamentId}`).emit("setWinner", 2, 3, "semifinal");
+				else
+					io.to(`tournament-${tournamentId}`).emit("setWinner", 3, 2, "semifinal");
+			}
 		}
 
 		if (tournament.final_arr[0] != 0 && tournament.final_arr[1] != 0)
+		{
+			if (tournament.idFourth == tournament.idPlayers[0])
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0, "semifinal");
+			else
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 0, 1, "semifinal");
+	
+			if (tournament.idThird == tournament.idPlayers[2])
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 3, 2, "semifinal");
+			else
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 2, 3, "semifinal");
+
 			tournament.state.status = "final";
+		}
 	}
 	if (tournament.state.status == "final")
 	{
+		if (tournament.idFourth == tournament.idPlayers[0])
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0, "semifinal");
+		else
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 0, 1, "semifinal");
+
+		if (tournament.idThird == tournament.idPlayers[2])
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 3, 2, "semifinal");
+		else
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 2, 3, "semifinal");
+
 		//Only AI in final
 		if (tournament.final_arr[0] == -1 && tournament.final_arr[1] == -1)
 		{
 			tournament.state.champion.player = "AI";
+			tournament.idFirst = -1;
+			tournament.idSecond = -1;
 			tournament.state.status = "finished";
 		}
 		else
@@ -293,7 +327,16 @@ function updateBrackets(io: Server, tournament: serverTournament, tournamentId: 
 				return;
 			}
 	
+			tournament.idFirst = game3.idwinner;
+			tournament.idSecond = game3.idloser;
+			tournament.idSecond = -1;
 			tournament.state.champion.player = game3.winner;
+
+			if (tournament.idFirst == tournament.final_arr[0])
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 0, 1, "final");
+			else
+				io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0, "final");
+
 			tournament.state.status = "finished";
 		}
 	}

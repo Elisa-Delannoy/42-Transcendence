@@ -1,4 +1,3 @@
-import { userInfo } from "os";
 import { Server, Socket } from "socket.io";
 import { generalChat, users } from "../server";
 import { dataChat } from "../../front/src/chat/chatNetwork";
@@ -9,7 +8,7 @@ export async function handleGeneralChatSocket(io: Server, socket: Socket) {
 		const historyAndMe: dataChat[] = history.map((info: any) => ({
 			...info,
 			me: info.pseudo === socket.data.user.pseudo
-  		}));
+	}));
 		socket.emit("chatHistory", historyAndMe);
 	}
 
@@ -23,7 +22,6 @@ export async function handleGeneralChatSocket(io: Server, socket: Socket) {
 
 	socket.on("generalChatMessage", async (message: string) => {
 		try {
-
 			if (typeof message !== "string")
 				socket.emit("chatError", {error: "invalid message"});
 			message = message.trim();

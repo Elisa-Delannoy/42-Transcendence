@@ -3,23 +3,22 @@ import * as dotenv from "dotenv";
 import { users } from "../server";
 import { IUsers } from "../DB/users"
 import { FastifyRequest, FastifyReply } from "fastify";
-import { IsDeepStrictEqualOptions } from "util";
-import { io } from "socket.io-client";
 
 dotenv.config({ path: "./back/.env" });
+
 export const secretkey: string = process.env.SECRETKEY as string;
 const TEMP_JWT_SECRET = process.env.TEMP_JWT_SECRET!;
 
 export type UserJWT = { 
 	user_id: number;
-    pseudo: string;
-    avatar: string;
-    status: string;
+	pseudo: string;
+	avatar: string;
+	status: string;
 	xp: number;
 	lvl: number;
 } | {
-    user_id: null;
-    error?: string;
+	user_id: null;
+	error?: string;
 }
 
 if (!secretkey)
@@ -47,21 +46,15 @@ export const checkAuth = async (token: string): Promise< IUsers | Error> => {
 
 export const tokenOK = async (request: FastifyRequest, reply: FastifyReply): Promise <UserJWT> => {
 	const token = request.cookies.token;
-	if (!token) {
-		// reply.code(401).send({ error: "Unauthorized: token is missing"});
+	if (!token) 
 		return { user_id: null };
-	}
 	const user_loged = await checkAuth(token);
-	if (user_loged instanceof Error) {
-		// reply.code(401).send({ error: user_loged.name });
+	if (user_loged instanceof Error) 
 		return { user_id: null, error: user_loged.name };
-	}
-	//reply.code(200);
-	// console.log("user_loged ", user_loged);
 	return { user_id: user_loged.user_id, pseudo: user_loged.pseudo, avatar: user_loged.avatar, status: user_loged.status, xp: user_loged.xp, lvl: user_loged.lvl };
 }
 
-export async function socketTokenOk(token: string): Promise <IUsers | null>{
+export async function socketTokenOk(token: string): Promise <IUsers | null> {
 	if (!token)
 		return null;
 	const user_logged = await checkAuth(token);
@@ -72,15 +65,15 @@ export async function socketTokenOk(token: string): Promise <IUsers | null>{
 
 export function createTemp2FAToken( user_id: number)
 {
-  return jwt.sign(
-    {
-      id : user_id
-    },
-    TEMP_JWT_SECRET,
-    {
-      expiresIn: "5m"
-    }
-  );
+	return jwt.sign(
+		{
+			id : user_id
+		},
+		TEMP_JWT_SECRET,
+		{
+			expiresIn: "5m"
+		}
+	);
 }
 
 export async function checkTempToken(request: FastifyRequest) : Promise<IUsers> 

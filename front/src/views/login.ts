@@ -1,4 +1,4 @@
-import { loadHeader, navigateTo} from "../router";
+import { navigateTo} from "../router";
 import { showToast } from "./show_toast";
 
 export function LoginView(): string {
@@ -13,12 +13,12 @@ export async function initLogin()
 		const username = (document.getElementById("username") as HTMLInputElement).value;
 		const password = (document.getElementById("password") as HTMLInputElement).value;
 		const success = await login(username, password, form)
-   		if (success == 2)
+		if (success == 2)
 			navigateTo("/twofa");
 		if (success == 1) {
 			navigateTo("/home");
 		}
-    });
+	});
 
 	// check if not localhost => hidden google login button
 	const isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
@@ -41,12 +41,11 @@ export async function initLogin()
 export async function login(username: string, password: string, form: HTMLFormElement): Promise<number> {
 	try {
 		clearLoginErrors(form);
-
 		const res = await fetch("/api/login", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({username, password}),
-		credentials: "include"
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({username, password}),
+			credentials: "include"
 		});
 		const result = await res.json();
 		if (!result.ok) {
@@ -68,12 +67,12 @@ export async function login(username: string, password: string, form: HTMLFormEl
 }
 
 function clearLoginErrors(form: HTMLFormElement) {
-    const usernameInput = form.querySelector("input[name='username']") as HTMLInputElement;
-    const passwordInput = form.querySelector("input[name='password']") as HTMLInputElement;
+	const usernameInput = form.querySelector("input[name='username']") as HTMLInputElement;
+	const passwordInput = form.querySelector("input[name='password']") as HTMLInputElement;
 
-    const usernameMsg = document.getElementById("username-loginmsg") as HTMLParagraphElement;
-    const passwordMsg = document.getElementById("password-loginmsg") as HTMLParagraphElement;
+	const usernameMsg = document.getElementById("username-loginmsg") as HTMLParagraphElement;
+	const passwordMsg = document.getElementById("password-loginmsg") as HTMLParagraphElement;
 
-    [usernameMsg, passwordMsg].forEach(p => p.textContent = "");
-    [usernameInput, passwordInput].forEach(p => p.classList.remove("error"));
+	[usernameMsg, passwordMsg].forEach(p => p.textContent = "");
+	[usernameInput, passwordInput].forEach(p => p.classList.remove("error"));
 }

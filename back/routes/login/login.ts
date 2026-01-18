@@ -1,12 +1,9 @@
-import  { ManageDB } from "../../DB/manageDB";
-import { friends, users } from '../../server';
+import { users } from '../../server';
 import { createJWT, createTemp2FAToken, socketTokenOk} from "../../middleware/jwt";
 import { CookieSerializeOptions } from "@fastify/cookie";
 import { FastifyReply } from "fastify";
 import bcrypt from "bcryptjs";
-import { IMyFriends } from "../../DB/friend";
 import { IUsers } from "../../DB/users";
-import { notification } from "../friends/friends";
 
 export async function manageLogin(pseudo: string, password: string, reply: FastifyReply)
 {

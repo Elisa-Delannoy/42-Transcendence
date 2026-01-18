@@ -4,7 +4,6 @@ import { IUsers } from "../../../back/DB/users";
 import { IFriendsAndNot } from "../../../back/routes/friends/friends";
 import { showToast } from "./show_toast";
 
-
 const times = [
 	{ max: 1, div: 1, units: " now" },
 	{ max: 60, div: 1, units: " secondes ago" },
@@ -49,7 +48,6 @@ export async function initFriends() {
 		youMayKnow(playedWithNotF);
 	}
 	catch (err) {
-		console.log(err);
 		showToast("Loading failed. Please try again later.", "error", 3000);
 	}
 }
@@ -139,7 +137,6 @@ async function search(memberSearched: string, myfriends: IMyFriends[]) {
 		}
 	}
 	catch (error) {
-		console.log(error);
 		showToast(error, "error", 3000);
 	}
 }
@@ -161,7 +158,6 @@ function toAddFriend(id: number, li: DocumentFragment)
 			navigateTo("/friends");
 		}
 		catch (err) {
-			console.log(err);
 			button.disabled = false;
 			showToast(err, "error", 3000);
 		}
@@ -171,13 +167,11 @@ function toAddFriend(id: number, li: DocumentFragment)
 function toAcceptFriend(friend: IMyFriends,li: DocumentFragment ) {
 	const button = li.getElementById("addordelete") as HTMLButtonElement;
 	if (friend.asked_by !== friend.id) {
-		// button.textContent = "Delete invitation";
 		toDeleteFriend(friend.id, li);
 		return button;
 	}
 	button.textContent = "Accept";
 	button.classList.add("hover:bg-amber-800");
-	// button.className = "px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600";
 	button.addEventListener("click", async () => {
 		try {
 			await genericFetch("/api/private/friend/accept", {
@@ -190,7 +184,6 @@ function toAcceptFriend(friend: IMyFriends,li: DocumentFragment ) {
 			navigateTo("/friends");
 		}
 		catch (err) {
-			console.log(err);
 			button.disabled = false;
 			showToast(err, "error", 3000);
 		}
@@ -213,7 +206,6 @@ function toDeleteFriend(id: number, li: DocumentFragment) {
 			navigateTo("/friends");
 		}
 		catch (err) {
-			console.log(err);
 			button.disabled = false;
 			showToast(err, "error", 3000);
 		}
@@ -221,7 +213,6 @@ function toDeleteFriend(id: number, li: DocumentFragment) {
 }
 
 function pendingFr(pendingFriends: IMyFriends[]) {
-
 	const container = document.getElementById("pending-list") as HTMLDivElement;
 	if (!container)
 		return;

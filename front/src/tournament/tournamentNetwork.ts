@@ -15,7 +15,7 @@ export class TournamentNetwork {
 	private onHostDisconnectedCallback?: () => void;
 	private onStartTournamentGameCallback?: (gameId: number, tournamentId: number) => void;
 	private onjoinTournamentGameCallback?: (gameId: number, loser: number) => void;
-	private onsetWinnerCallback?: (winner: number, tournamentId: number) => void;
+	private onsetWinnerCallback?: (winner: number, tournamentId: number, status: "semifinal" | "final") => void;
 
 	constructor() {
 		const serverUrl = window.location.host;
@@ -41,8 +41,8 @@ export class TournamentNetwork {
 			this.onjoinTournamentGameCallback?.(gameId, tournamentId);
 		});
 
-		this.socket.on("setWinner", (winner: number, loser: number) => {
-			this.onsetWinnerCallback?.(winner, loser);
+		this.socket.on("setWinner", (winner: number, loser: number, status: "semifinal" | "final") => {
+			this.onsetWinnerCallback?.(winner, loser, status);
 		});
 
 		this.socket.on("hostDisconnected", () => {
@@ -62,7 +62,7 @@ export class TournamentNetwork {
 		this.onTournamentHostCallback = cb;
 	}
 
-	onsetWinner(cb: (winner: number, loser: number) => void) {
+	onsetWinner(cb: (winner: number, loser: number, status: "semifinal" | "final") => void) {
 		this.onsetWinnerCallback = cb;
 	}
 

@@ -4,7 +4,7 @@ import { GameState, updateBall, updatePaddles } from "../../pong/gameEngine";
 import { simulateAI } from "../../pong/simulateAI";
 import { checkForWinner, updateStateGame } from "../../pong/pongServer";
 import { Server } from "socket.io";
-import { achievements, users, users_achivements, users_stats } from "../../server";
+import { users, users_stats } from "../../server";
 
 const TICK_RATE = 16;
 
@@ -15,6 +15,7 @@ export class ServerGame {
 	nbDeconnectionsP1: number;
 	nbDeconnectionsP2: number;
 	idwinner: number;
+	idloser: number;
 	status: "waiting" | "playing" | "finished" | "countdown" | "disconnected";
 	type: "Local" | "AI" | "Online" | "Tournament";
 	gameDate: string;
@@ -38,6 +39,7 @@ export class ServerGame {
 		this.nbDeconnectionsP1 = 0;
 		this.nbDeconnectionsP2 = 0;
 		this.idwinner = 0;
+		this.idloser = 0;
 		this.status = "waiting";
 		this.type = "Local";
 		this.gameDate = new Date().toISOString().replace("T", " ").split(".")[0];

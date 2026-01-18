@@ -2,12 +2,11 @@ import { navigateTo } from "../router";
 import { showToast } from "./show_toast";
 
 export function RegisterView(): string {
-	 	return (document.getElementById("registerhtml") as HTMLTemplateElement).innerHTML;
+	return (document.getElementById("registerhtml") as HTMLTemplateElement).innerHTML;
 }
 
 export async function initRegister() {
 	const form = document.getElementById("register-form") as HTMLFormElement;
-
 	form.addEventListener("submit", async (e) => 
 	{
 		e.preventDefault();
@@ -18,9 +17,8 @@ export async function initRegister() {
 			email: formData.get("email"),
 			password: formData.get("password"),
 			confirm: formData.get("confirm-password"),
-	};
-
-	try {
+		};
+		try {
 			const res = await fetch("/api/register", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -72,7 +70,6 @@ export async function initRegister() {
 		} 
 		catch (err) 
 		{
-			console.error(err);
 			showToast(err, "error", 3000, "Registration failed:");
 		}
 	});

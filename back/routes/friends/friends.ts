@@ -1,15 +1,13 @@
-import { db, friends, gameInfo, users } from '../../server';
-import { Friends, IMyFriends } from '../../DB/friend';
-import { IUsers } from '../../DB/users'; 
-import { FastifyReply, FastifyRequest, FastifySerializerCompiler } from 'fastify';
-import { log } from 'console';
+import { friends, gameInfo, users } from '../../server';
+import { IMyFriends } from '../../DB/friend';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 export interface IFriendsAndNot {
 	allMyFriends: IMyFriends[];
 	playedWith: {id: number, pseudo: string, avatar: string}[];
 }
 
-export async function allMyFriendsAndOpponent(request: FastifyRequest, reply: FastifyReply) 
+export async function allMyFriendsAndOpponent(request: FastifyRequest, reply: FastifyReply): Promise <void>
 {
 	try {
 		const allInfo: IFriendsAndNot = {} as IFriendsAndNot;
@@ -17,16 +15,14 @@ export async function allMyFriendsAndOpponent(request: FastifyRequest, reply: Fa
 			allInfo.allMyFriends = await friends.getMyFriends(request.user!.user_id);
 			allInfo.playedWith = await gameInfo.getRecentPlayerNotFriend(request.user!.user_id);
 			reply.send(allInfo);
-		}
-		console.log(allInfo);
-		
+			return;
+		}		
 	}
 	catch (err) {
-		console.log(err);
 	}
 }
 
-export async function searchUser(request: FastifyRequest, reply: FastifyReply) {
+export async function searchUser(request: FastifyRequest, reply: FastifyReply): Promise <void> {
 	const { member } = request.body as { member: string };
 	try {
 		if (!member)
@@ -37,12 +33,11 @@ export async function searchUser(request: FastifyRequest, reply: FastifyReply) {
 		}
 	}
 	catch (err)  {
-		console.log(err);
 		return reply.code(500).send({ error: err});
 	}
 }
 
-export async function addFriend(request: FastifyRequest, reply: FastifyReply) {
+export async function addFriend(request: FastifyRequest, reply: FastifyReply): Promise <void> {
 	try {
 		const { friendID } = request.body as { friendID: number };
 		if (request.user!.user_id !== null) {
@@ -51,11 +46,10 @@ export async function addFriend(request: FastifyRequest, reply: FastifyReply) {
 		}
 	}
 	catch (err) {
-		console.log(err);
 	}
 }
 
-export async function acceptFriend(request: FastifyRequest, reply: FastifyReply) {
+export async function acceptFriend(request: FastifyRequest, reply: FastifyReply): Promise <void> {
 	try {
 		const { friendID } = request.body as { friendID: number };
 		if (request.user!.user_id !== null) {
@@ -64,11 +58,10 @@ export async function acceptFriend(request: FastifyRequest, reply: FastifyReply)
 		}
 	}
 	catch (err) {
-		console.log(err);
 	}
 }
 
-export async function deleteFriend(request: FastifyRequest, reply: FastifyReply) {
+export async function deleteFriend(request: FastifyRequest, reply: FastifyReply): Promise <void> {
 	try {
 		const { friendID } = request.body as { friendID: number };
 		if (request.user!.user_id !== null) {
@@ -77,7 +70,6 @@ export async function deleteFriend(request: FastifyRequest, reply: FastifyReply)
 		}
 	}
 	catch(err) {
-		console.log(err);
 	}
 }
 

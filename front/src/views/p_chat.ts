@@ -1,6 +1,4 @@
-import { container } from "googleapis/build/src/apis/container";
 import { chatNetwork, dataChat } from "../chat/chatNetwork";
-import { socketTokenOk } from "../../../back/middleware/jwt";
 
 export const chatnet: chatNetwork = new chatNetwork();
 

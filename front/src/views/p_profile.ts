@@ -29,7 +29,6 @@ export async function initProfile() {
 			showToast(`Status updated successfully to << ${status} >>`, "success", 2000);
   		});
 	}
-//   (document.getElementById("profile-money") as HTMLParagraphElement).textContent = profile.money.toString();
   (document.getElementById("profile-elo") as HTMLParagraphElement).textContent = profile.elo.toString();
 
 

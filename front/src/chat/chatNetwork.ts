@@ -1,5 +1,4 @@
 import { io, Socket } from "socket.io-client";
-import { checkLogStatus, loadHeader } from "../router";
 
 export type dataChat = {
 	pseudo: string,
@@ -13,22 +12,10 @@ export class chatNetwork {
 	private socket: Socket;
 	private socketUserID: number | null;
 
-	// constructor() {
-	// 	const serverUrl = window.location.host;
-	// 	this.socket = io(serverUrl, {
-	// 		transports: ["websocket"],
-	// 		withCredentials: true,
-	// 	});
-	// 	console.log("DANS CHATNETWORK");
-	// 	// this.socket.on("connect", () => {
-	// 	// 	this.requestHistory();
-	// 	// });
-	// }
-
 	constructor() {
 	this.socket = null as any;
 	this.socketUserID = null;
-}
+	}
 
 	getsocketUserID() {
 		return this.socketUserID;

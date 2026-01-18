@@ -1,20 +1,17 @@
 import Fastify, { FastifyRequest, FastifyReply } from "fastify";
 import fastifyStatic from "@fastify/static";
-import path, { join } from "path";
-import  { ManageDB } from "./DB/manageDB";
+import { join } from "path";
+import { ManageDB } from "./DB/manageDB";
 import { Users } from './DB/users';
 import { manageLogin } from './routes/login/login';
 import { manageRegister } from "./routes/register/register";
 import { GameInfo } from "./DB/gameinfo";
 import fastifyCookie from "@fastify/cookie";
-import { checkAuth, tokenOK } from "./middleware/jwt";
-import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
+import { tokenOK } from "./middleware/jwt";
 import bcrypt from "bcryptjs";
 import { createGame, joinGame, getGameType, isCreator } from "./routes/game/serverGame";
 import fs from "fs";
 import { Tournament } from './DB/tournament';
-import { uploadPendingTournaments } from "./routes/tournament/tournament.service";
-import * as avalancheService from "./blockchain/avalanche.service";
 import { Server } from "socket.io";
 import multipart from "@fastify/multipart"
 import FastifyHttpsAlwaysPlugin, { HttpsAlwaysOptions } from "fastify-https-always";
@@ -26,14 +23,10 @@ import { Friends } from "./DB/friend";
 import { allMyFriendsAndOpponent, searchUser, addFriend, acceptFriend, deleteFriend, notification } from "./routes/friends/friends";
 import fastifyMetrics from "fastify-metrics";
 import { dashboardInfo } from "./routes/dashboard/dashboard";
-import { request } from "http";
-import { navigateTo } from "../front/src/router";
 import { checkTwoFA, disableTwoFA, enableTwoFA, setupTwoFA } from "./routes/twofa/twofa";
-import { createTournament, createTournamentGame, displayTournamentList, getIdPlayers, getTournamentGameType, joinTournament, joinTournamentGame } from "./routes/tournament/serverTournament";
-
+import { createTournament, displayTournamentList, getIdPlayers, getTournamentGameType, joinTournament } from "./routes/tournament/serverTournament";
 import { oauthStatus } from "./routes/login/oauth.status";
 import { registerGoogle, callbackGoogle } from "./routes/login/oauth.google";
-import { UpdatePasswordView } from "../front/src/views/p_updatepassword";
 import { createWebSocket } from "./middleware/socket";
 import { leaderboardInfo } from "./routes/leaderboard/leaderboard";
 import { Chat } from "./DB/chat";
@@ -64,25 +57,25 @@ const fastify = Fastify({
 });
 
 fastify.register(fastifyMetrics, {
-  endpoint: "/metrics",
-  defaultMetrics: {
+	endpoint: "/metrics",
+	defaultMetrics: {
 	enabled: true,
-  }
+	}
 });
 
 const httpsAlwaysOpts: HttpsAlwaysOptions = {
-  productionOnly: false,
-  redirect:       false,
-  httpsPort:      3000
+	productionOnly: false,
+	redirect:       false,
+	httpsPort:      3000
 }
 
 fastify.register(fastifyStatic, {
-  root: join(process.cwd(), "front"),
-  prefix: "/",
+	root: join(process.cwd(), "front"),
+	prefix: "/",
 });
 
 fastify.register(fastifyCookie, {
-  parseOptions: {}
+	parseOptions: {}
 })
 
 fastify.register(FastifyHttpsAlwaysPlugin, httpsAlwaysOpts)
@@ -97,10 +90,10 @@ fastify.register(multipart, {
 fastify.register(async function (instance) {
 
   instance.register(fastifyStatic, {
-    root: join(__dirname, "uploads"),
-    prefix: "/files/",
-    index: false,
-  });
+	root: join(__dirname, "uploads"),
+	prefix: "/files/",
+	index: false,
+	});
 });
 
 fastify.addHook("onRequest", async(request: FastifyRequest, reply: FastifyReply) => {
@@ -138,7 +131,7 @@ fastify.post("/api/login", async (request: FastifyRequest, reply: FastifyReply) 
 });
 
 fastify.post("/api/private/2fa/setup", async (request: FastifyRequest, reply: FastifyReply) => {
-    return await setupTwoFA(request, reply);
+	return await setupTwoFA(request, reply);
 });
 
 fastify.put("/api/private/2fa/enable", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -301,8 +294,8 @@ fastify.setNotFoundHandler((request: FastifyRequest, reply: FastifyReply) => {
 })
 
 const io = new Server(fastify.server, {
-			cors: { origin: "*", credentials: true}
-		});
+	cors: { origin: "*", credentials: true}
+	});
 createWebSocket(io);
 
 async function lunchDB()
@@ -331,7 +324,7 @@ async function lunchDB()
 	// await friends.deleteFriendTable();
 	await friends.createFriendTable();
 	
-	// await gameInfo.deleteGameInfoTable();
+	await gameInfo.deleteGameInfoTable();
 	await gameInfo.createGameInfoTable();
 	
 	await tournament.createTournamentTable();

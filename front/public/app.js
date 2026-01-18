@@ -4235,9 +4235,10 @@ var init_gameInstance = __esm({
       sendInput(direction, player) {
         if (!this.network)
           return;
-        if (this.localMode) {
+        if (this.currentState.type == "Local") {
           if (!player)
             return;
+          console.log("player : ", player);
           this.network.sendInput(direction, player);
         } else {
           if (!this.role)
@@ -4266,14 +4267,15 @@ async function initPongMatch(params) {
   console.log("beforePrev : ", beforePrev);
   if (prev === null || beforePrev === null || !beforePrev.startsWith("/gameonline") || !prev.startsWith("/pongmatch")) {
     if (!beforePrev.startsWith("/brackets")) {
-      navigateTo("/home");
-      return;
+      if (!beforePrev.startsWith("/gamelocal")) {
+        navigateTo("/home");
+        return;
+      }
     }
   }
   const gameID = params?.id;
   const paramUrl = new URLSearchParams(window.location.search);
   const tournamentId = paramUrl.get("tournamentId");
-  const replayBtn = document.getElementById("replay-btn");
   const dashboardBtn = document.getElementById("dashboard-btn");
   const pseudoP1 = document.getElementById("player1-name");
   const pseudoP2 = document.getElementById("player2-name");
@@ -4337,7 +4339,7 @@ async function initPongMatch(params) {
   function updateInput() {
     if (!currentGame) return;
     if (currentGame.getCurrentState().status == "playing") {
-      if (currentGame.isLocalMode()) {
+      if (currentGame.getCurrentState().type == "Local") {
         if ((keyState["w"] || keyState["W"]) && input1 != "up")
           input1 = "up";
         else if ((keyState["s"] || keyState["S"]) && input1 != "down")
@@ -4568,8 +4570,8 @@ var init_tournamentNetwork = __esm({
         this.socket.on("joinTournamentGame", (gameId, tournamentId) => {
           this.onjoinTournamentGameCallback?.(gameId, tournamentId);
         });
-        this.socket.on("setWinner", (winner, loser) => {
-          this.onsetWinnerCallback?.(winner, loser);
+        this.socket.on("setWinner", (winner, loser, status) => {
+          this.onsetWinnerCallback?.(winner, loser, status);
         });
         this.socket.on("hostDisconnected", () => {
           this.onHostDisconnectedCallback?.();
@@ -4628,8 +4630,6 @@ function BracketsView() {
 async function initBrackets(params) {
   const prev = getPreviousPath();
   let beforePrev = getBeforePreviousPath();
-  console.log("prev : ", prev);
-  console.log("beforePrev : ", beforePrev);
   if (prev === null || beforePrev === null || !beforePrev.startsWith("/tournament") || !prev.startsWith("/brackets")) {
     if (!prev.startsWith("/brackets") || !beforePrev.startsWith("/pongmatch")) {
       navigateTo("/home");
@@ -4646,6 +4646,7 @@ async function initBrackets(params) {
   const finalist2 = document.getElementById("finalist2");
   const champion = document.getElementById("champion");
   const pseudos = [pseudoP1, pseudoP2, pseudoP3, pseudoP4];
+  const finalists = [finalist1, finalist2];
   currentTournament = new TournamentInstance();
   net2 = new TournamentNetwork();
   net2.join(Number(tournamentID));
@@ -4659,11 +4660,15 @@ async function initBrackets(params) {
     else if (currentTournament.getCurrentState().status == "final")
       net2?.SetupFinal();
   });
-  net2.onsetWinner((winner, loser) => {
-    console.log("winner : ", winner);
-    console.log("loser : ", loser);
-    currentTournament?.setWinner(pseudos[winner]);
-    currentTournament?.setLoser(pseudos[loser]);
+  net2.onsetWinner((winner, loser, status) => {
+    if (status == "semifinal") {
+      currentTournament?.setWinner(pseudos[winner]);
+      currentTournament?.setLoser(pseudos[loser]);
+    }
+    if (status == "final") {
+      currentTournament?.setWinner(finalists[winner]);
+      currentTournament?.setLoser(finalists[loser]);
+    }
   });
   net2.onTournamentHost(() => {
     startTournamentButton?.classList.remove("hidden");
@@ -4734,7 +4739,6 @@ function generateRandomRanking() {
 }
 function initTournamentPage() {
   const createTournamentBtn = document.getElementById("create-tournament");
-  const joinTournamentBtn = document.getElementById("join-tournament");
   const createBtn = document.getElementById("create-test");
   const showBtn = document.getElementById("show-onchain");
   const backBtn = document.getElementById("back-to-home");
@@ -4747,9 +4751,6 @@ function initTournamentPage() {
     else
       navigateTo(`/brackets/${tournamentId}`);
   });
-  joinTournamentBtn?.addEventListener("click", async () => {
-    loadTournaments();
-  });
   createBtn?.addEventListener("click", async () => {
     await testTournamentDB();
   });
@@ -4758,43 +4759,6 @@ function initTournamentPage() {
   });
   backBtn?.addEventListener("click", () => {
     navigateTo("/home");
-  });
-}
-async function loadTournaments() {
-  const { tournaments } = await genericFetch("/api/private/tournament/list");
-  renderTournamentList(tournaments);
-}
-function renderTournamentList(tournaments) {
-  const container = document.getElementById("tournament-list");
-  if (!container) return;
-  if (tournaments.length === 0) {
-    container.innerHTML = "<p>Aucun tournoi disponible.</p>";
-    return;
-  }
-  container.innerHTML = tournaments.map((tournament) => `
-	<div class="tournament-item">
-		<p>Tournament #${tournament.id}</p>
-		<button data-tournament-id="${tournament.id}" class="join-tournament-btn btn w-32">Rejoindre</button>
-	</div>
-	`).join("");
-  document.querySelectorAll(".join-tournament-btn").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const id = btn.dataset.tournamentId;
-      try {
-        const res = await genericFetch("/api/private/tournament/join", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            tournamentId: id
-          })
-        });
-        console.log("Saved data:", res);
-      } catch (err) {
-        console.error("Error saving game:", err);
-        showToast(err, "error", 2e3, "Error saving game:");
-      }
-      navigateTo(`/brackets/${id}`);
-    });
   });
 }
 async function testTournamentDB() {
@@ -6024,7 +5988,7 @@ function initSwitch() {
     }
   });
 }
-async function loadHeader15(auth) {
+async function loadHeader12(auth) {
   const container = document.getElementById("header-container");
   container.innerHTML = "";
   const templateID = auth.logged ? "headerconnect" : "headernotconnect";
@@ -6098,7 +6062,7 @@ async function router() {
       auth.user.web_status = "online";
       isReloaded = false;
     }
-    loadHeader15(auth);
+    loadHeader12(auth);
     if (publicPath.includes(location.pathname) && auth.logged)
       navigateTo("/home");
     if (!publicPath.includes(location.pathname) && !auth.logged && location.pathname !== "/termsofservice" && location.pathname !== "/privacypolicy")

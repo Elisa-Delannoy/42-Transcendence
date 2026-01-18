@@ -21,7 +21,6 @@ function generateRandomRanking(): number[] {
 // ===================== Events =====================
 function initTournamentPage() {
 	const createTournamentBtn = document.getElementById("create-tournament");
-	const joinTournamentBtn = document.getElementById("join-tournament");
 	const createBtn = document.getElementById("create-test");
 	const showBtn = document.getElementById("show-onchain");
 	const backBtn = document.getElementById("back-to-home");
@@ -35,10 +34,6 @@ function initTournamentPage() {
 		else
 			navigateTo(`/brackets/${tournamentId}`);
 	});
-	
-	joinTournamentBtn?.addEventListener("click", async () => {
-		loadTournaments();
-	});
 
 	createBtn?.addEventListener("click", async () => {
 		await testTournamentDB();
@@ -50,52 +45,6 @@ function initTournamentPage() {
 
 	backBtn?.addEventListener("click", () => {
 		navigateTo("/home");
-	});
-}
-
-async function loadTournaments()
-{
-	const { tournaments } = await genericFetch("/api/private/tournament/list");
-	renderTournamentList(tournaments);
-}
-
-function renderTournamentList(tournaments: any[]) {
-	const container = document.getElementById("tournament-list");
-	if (!container) return;
-
-	if (tournaments.length === 0) {
-		container.innerHTML = "<p>Aucun tournoi disponible.</p>";
-		return;
-	}
-
-	container.innerHTML = tournaments.map(tournament => `
-	<div class="tournament-item">
-		<p>Tournament #${tournament.id}</p>
-		<button data-tournament-id="${tournament.id}" class="join-tournament-btn btn w-32">Rejoindre</button>
-	</div>
-	`).join("");
-
-	document.querySelectorAll(".join-tournament-btn").forEach(btn => {
-	btn.addEventListener("click", async () => {
-		const id = (btn as HTMLElement).dataset.tournamentId;
-
-		try
-		{
-			const res = await genericFetch("/api/private/tournament/join", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					tournamentId: id
-				})
-			});
-			console.log("Saved data:", res);
-		} catch (err) {
-			console.error("Error saving game:", err);
-			showToast(err, "error", 2000, "Error saving game:");
-		}
-
-		navigateTo(`/brackets/${id}`);
-	});
 	});
 }
 

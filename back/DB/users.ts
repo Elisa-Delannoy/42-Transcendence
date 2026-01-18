@@ -1,4 +1,4 @@
-import { boardInfo, ILeaderboard } from "../routes/leaderboard/leaderboard";
+import { boardInfo } from "../routes/leaderboard/leaderboard";
 import { ManageDB } from "./manageDB";
 
 export interface IUsers {
@@ -7,7 +7,7 @@ export interface IUsers {
 	email: string;
 	password: string;
 	avatar: string;
-	status: string;
+	status: "online" | "offline" | "busy" | "playing";
 	creation_date: Date;
 	modification_date: Date;
 	elo: number;
@@ -31,16 +31,16 @@ export class Users
 		await this._db.execute(`
 			CREATE TABLE IF NOT EXISTS Users (
 				user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                pseudo TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE,
-                password TEXT NOT NULL,
+				pseudo TEXT NOT NULL,
+				email TEXT NOT NULL UNIQUE,
+				password TEXT NOT NULL,
 				avatar TEXT NOT NULL,
-                status TEXT NOT NULL,
-                creation_date TEXT NOT NULL,
+				status TEXT NOT NULL,
+				creation_date TEXT NOT NULL,
 				modification_date TEXT NOT NULL,
 				twofa_secret TEXT,
 				twofa_enabled INTEGER DEFAULT 0,
-                elo INTEGER DEFAULT 0,
+				elo INTEGER DEFAULT 0,
 				lvl INTEGER DEFAULT 1,
 				xp INTEGER DEFAULT 0
 			)
@@ -141,7 +141,6 @@ export class Users
 		await this._db.execute(query, [userId]);
 	}
 
-
 	async getEmailUser(email: string)
 	{
 		const infos: any[] = await this._db.query(`SELECT * FROM Users WHERE email = ?`, [email])
@@ -232,8 +231,6 @@ export class Users
 		);
 		return rows.length ? rows[0].rank : -1;
 	}
-
-
 
 	async updatePassword(id: number, newPw: string): Promise<IUsers>
 	{

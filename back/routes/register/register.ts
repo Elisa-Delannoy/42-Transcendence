@@ -1,5 +1,4 @@
-import { UserStats } from "../../DB/users_stats";
-import { achievements, db, users_stats } from "../../server";
+import { users_stats } from "../../server";
 import { users } from '../../server';
 import bcrypt from "bcryptjs";
 import { FastifyReply } from "fastify";
@@ -75,4 +74,3 @@ export async function checkPassword(password: string, confirm: string)
 	if (password !== confirm)
 		throw { field: "confirm", message: "Password confirmation doesn't match."}
 }
-

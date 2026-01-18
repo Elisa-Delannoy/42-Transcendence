@@ -68,7 +68,7 @@ export class Friends
 			return friendship;
 	}
 
-	async deleteFriendTable()
+	async deleteFriendTable(): Promise<void>
 	{
 		const query = `DROP TABLE IF EXISTS Friend`
 		await this._db.execute(query, []);
@@ -86,4 +86,3 @@ export class Friends
 		await this._db.execute(`DELETE FROM Friend WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2= ?)`, [id1, id2, id2, id1]);	
 	}
 }
-

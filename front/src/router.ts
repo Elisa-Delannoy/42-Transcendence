@@ -10,12 +10,8 @@ import { ProfileView, initProfile} from "./views/p_profile";
 import { BracketsView, initBrackets, stopTournament} from "./views/p_brackets";
 import { TournamentView} from "./views/p_tournament";
 import { initLogout } from "./views/logout";
-import { fromTwos } from "ethers";
-import { Statement } from "sqlite3";
 import { FriendsView, initFriends } from "./views/p_friends";
 import { ErrorView, initError } from "./views/error";
-import { request } from "http";
-import { userInfo } from "os";
 import { initTowfa, towfaView } from "./views/twofa";
 import { UpdateEmailView, initUpdateEmail } from "./views/p_updateemail";
 import { UpdateUsernameView, initUpdateUsername } from "./views/p_updateusername";
@@ -26,7 +22,6 @@ import { Update2faView, initUpdate2fa } from "./views/p_update2fa";
 import { initOAuthCallback } from "./views/oauth_callback";
 import { InitTermsOfService, TermsOfServiceView } from "./views/terms_of_service";
 import { InitPrivacyPolicy, PriavacyPolicyView } from "./views/privacypolicy";
-import { IUsers } from "../../back/DB/users";
 import { InitLeaderboard, LeaderboardView } from "./views/p_leaderboard";
 import { chatnet, displayChat } from "./views/p_chat";
 import { showToast } from "./views/show_toast";
@@ -98,7 +93,6 @@ function saveHistoryStack(stack: string[]) {
 	sessionStorage.setItem(HISTORY_KEY, JSON.stringify(stack));
 }
 
-
 export function navigateTo(url: string) {
 	const state = { from: window.location.pathname };
 	history.pushState(state, "", url);
@@ -152,9 +146,9 @@ export async function checkLogStatus(): Promise<LogStatusAndInfo> {
 export async function genericFetch(url: string, options: RequestInit = {})
 {
 	const res = await fetch(url, {
-	...options,
-	credentials: "include"
-})
+		...options,
+		credentials: "include"
+	})
 	const result = await res.json();
 	if (result.error) {
 		throw new Error(result.error || result.message || "Unknown error");
@@ -206,7 +200,6 @@ function initSwitch()
 }
 
 export async function loadHeader(auth: LogStatusAndInfo) {
-
 	const container = document.getElementById("header-container");
 	container!.innerHTML = "";
 	const templateID = auth.logged ? "headerconnect" : "headernotconnect";
@@ -232,10 +225,10 @@ export function displayPseudoHeader(result: headerResponse, notif: boolean)
 	if (notif === true)
 		notification.classList.remove("hidden");
 	setTimeout(() => {
-			const bar = document.getElementById("progress-xp") as HTMLDivElement;
-			const progress = (result.xp / 20000) * 100;
-			bar.style.width = `${progress}%`;
-		}, 50);
+		const bar = document.getElementById("progress-xp") as HTMLDivElement;
+		const progress = (result.xp / 20000) * 100;
+		bar.style.width = `${progress}%`;
+	}, 50);
 	
 	(document.getElementById("lvl-header") as HTMLSpanElement).textContent = result.lvl.toString();
 }
@@ -253,7 +246,6 @@ export function displayStatus(info: any, status: HTMLSpanElement): void {
 }
 
 export async function router() {
-	//clean route who got cleanup function (game)
 	if (currentRoute?.cleanup)
 	{
 		if (typeof currentRoute.cleanup === "function")
@@ -261,7 +253,6 @@ export async function router() {
 	}
 	const match = matchRoute(location.pathname);
 	if (!match) {
-
 		navigateTo("/error");
 		return;
 	}
@@ -314,17 +305,15 @@ export async function initRouter() {
 			}
 		}
   });
-  	// history.replaceState({ from: "/" }, "", "/");
 	currentPath = window.location.pathname;
-  	window.addEventListener("popstate", async (event) => {	
+	window.addEventListener("popstate", async () => {	
 		await popState();
 	});
-  await router();
+	await router();
 }
 
 export async function popState() {
 	const path = window.location.pathname;
-	// const publicPath = ["/", "/login", "/register", "/logout"];
 	const toIsPrivate = !publicPath.includes(path);
 	const fromIsPrivate = !publicPath.includes(currentPath);
 	if (!history.state.from && fromIsPrivate)

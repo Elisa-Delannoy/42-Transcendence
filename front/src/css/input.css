@@ -17,7 +17,6 @@
 		;
 	}
 }
-/* <!-- autre : dark:bg-yellow-100/80  dark:text-amber-900  moi :  dark:text-amber-100  dark:bg-amber-800 chat:  dark:bg-yellow-950/90 --> */
 
 @layer components {
 	.frd {
@@ -25,21 +24,18 @@
 		dark:bg-[linear-gradient(180deg,var(--color-amber-100)_50%,var(--color-amber-800)_150%)] 
 		ring-2 ring-amber-400 dark:ring-amber-900 rounded-xl p-4 flex items-center justify-between shadow-lg duration-300
 		hover:-translate-0.5 hover:shadow-2xl hover:bg-[linear-gradient(180deg,var(--color-orange-50)_95%,var(--color-amber-400)_95%)]
-		dark:hover:bg-[linear-gradient(180deg,var(--color-amber-100)_95%,var(--color-amber-900)_95%)]
-		
-		;
+		dark:hover:bg-[linear-gradient(180deg,var(--color-amber-100)_95%,var(--color-amber-900)_95%)];
 	}
 }
 
 @keyframes shimmer {
-  0% {
+	0% {
 	transform: translateX(-100%);
-  }
-  100% {
+	}
+	100% {
 	transform: translateX(100%);
-  }
+	}
 }
-
 
 @layer components {
 	.btn {

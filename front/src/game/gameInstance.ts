@@ -30,7 +30,7 @@ export class GameInstance {
 		if (!this.network)
 			return;
 
-		if (this.localMode)
+		if (this.currentState.type == "Local")
 		{
 			if (!player)
 				return;

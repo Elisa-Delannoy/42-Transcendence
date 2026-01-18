@@ -1,4 +1,4 @@
-import { navigateTo, loadHeader, getPreviousPath, getBeforePreviousPath } from "../router";
+import { navigateTo, getPreviousPath, getBeforePreviousPath } from "../router";
 import { TournamentInstance } from "../tournament/tournamentInstance";
 import { TournamentNetwork, TournamentState } from "../tournament/tournamentNetwork";
 
@@ -12,8 +12,6 @@ export function BracketsView(): string {
 export async function initBrackets(params?: any) {
 	const prev = getPreviousPath();
 	let beforePrev = getBeforePreviousPath();
-	console.log("prev : ", prev);
-	console.log("beforePrev : ", beforePrev);
 	if (prev === null || beforePrev === null || !beforePrev.startsWith("/tournament") || !prev.startsWith("/brackets"))
 	{
 		if (!prev.startsWith("/brackets") || !beforePrev.startsWith("/pongmatch"))
@@ -22,15 +20,6 @@ export async function initBrackets(params?: any) {
 			return;
 		}
 	}
-
-	/*
-	prev :  /brackets/1
-	beforePrev :  /tournament
-	prev :  /pongmatch/1000?tournamentId=1
-	beforePrev :  /brackets/1
-	prev :  /brackets/1
-	beforePrev :  /pongmatch/1000?tournamentId=1
-	*/
 
 	const tournamentID: string = params?.id;
 	const startTournamentButton = document.getElementById("start-button");
@@ -42,6 +31,7 @@ export async function initBrackets(params?: any) {
 	const finalist2 = document.getElementById("finalist2");
 	const champion = document.getElementById("champion");
 	const pseudos = [ pseudoP1, pseudoP2, pseudoP3, pseudoP4 ];
+	const finalists = [ finalist1, finalist2 ];
 
 	currentTournament = new TournamentInstance();
 
@@ -60,11 +50,17 @@ export async function initBrackets(params?: any) {
 			net?.SetupFinal();
 	});
 
-	net.onsetWinner((winner: number, loser: number) => {
-		console.log("winner : ", winner);
-		console.log("loser : ", loser);
-		currentTournament?.setWinner(pseudos[winner]);
-		currentTournament?.setLoser(pseudos[loser]);
+	net.onsetWinner((winner: number, loser: number, status: "semifinal" | "final") => {
+		if (status == "semifinal")
+		{
+			currentTournament?.setWinner(pseudos[winner]);
+			currentTournament?.setLoser(pseudos[loser]);
+		}
+		if (status == "final")
+		{
+			currentTournament?.setWinner(finalists[winner]);
+			currentTournament?.setLoser(finalists[loser]);
+		}
 	});
 
 	net.onTournamentHost(() => {
