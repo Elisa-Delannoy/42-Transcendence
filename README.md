@@ -147,6 +147,70 @@ Each chosen module was selected to enhance the project’s educational value and
 > - Team members involved
 > )
 
+
+
+IV.1 Web
+
+
+
+
+
+Major: Allow users to interact with other users. The minimum requirements are:
+◦ A basic chat system (send/receive messages between users).
+◦ A profile system (view user information).
+◦ A friends system (add/remove friends, see friends list).
+
+We chose this module because it contains important and relevant features for a gaming platform.
+
+We implemented a general chat that allows users to communicate with all other connected users.
+WebSockets enable real-time chat, available across all pages once the user is connected.
+To ensure persistence, messages are stored in a database, with a limit of 25 messages (managed by a trigger that removes the oldest entry when a new one is added).
+Messages are displayed in one color when a member sends a message and in another color when they receive one.
+Multiple connections are also handled: if a user connects from multiple devices, the message bubbles remain consistent, and each message appears only once.
+
+The friends page is divided into four sections:
+- search bar: to add users – includes a debounce function to avoid excessive database calls.
+- friends list: displays avatar, status (online/offline...), friendship date, and a button to delete a friend.
+- pending invitations: display username, avatar, and request date (if less than 3 days: displayed as x seconds, x minutes, x hours, or x days ago), with accept and delete buttons.
+- friend suggestions: other users with whom games have been played, limited to 20 suggestions.
+
+SQL queries are used to build this page. The Friend table, which associates two users with information about their friendship (date, status), and the game_info table, used for friend suggestions, provide the necessary data to build this page.
+
+
+
+
+
+IV.3 User Management
+
+
+Major: Standard user management and authentication.
+◦ Users can update their profile information.
+◦ Users can upload an avatar (with a default avatar if none provided).
+◦ Users can add other users ass friends and see their online status.
+◦ Users have a profile page displaying their information
+
+
+
+
+The avatar path is stored in the Users database.
+A default path is set initially. Each time the avatar is updated, it is renamed as user_id.type.
+Upload restrictions are enforced for file size and type (6 MB – PNG and JPEG).
+
+On the friends page, users can send friend requests and view their friends along with their status.
+
+
+
+
+
+IV.10 Modules of choice
+Minor : JWT (Json Web Token)
+
+For enhanced security, we have implemented a JWT-based system.
+Upon each login, a JWT is generated and stored in the cookies. It is valid for one hour and contains the user’s ID.
+Using an addhook, the system checks on every page whether the JWT exists and is still valid.
+If the token has expired or is invalid, the user is automatically logged out.
+This JWT mechanism allows user information to be securely transmitted to the front-end.
+
 ---
 
 ## Instructions

@@ -22,7 +22,7 @@ export async function manageLogin(pseudo: string, password: string, reply: Fasti
 			};
 		if (info.twofa_enabled === 0)
 		{
-			const jwtoken = createJWT(info.user_id, info.pseudo, info.avatar);
+			const jwtoken = createJWT(info.user_id);
 			users.updateStatus(info.user_id, "online");
 			reply.setCookie("token", jwtoken, options).status(200).send({ twofa:false, ok:true, message: "Login successful"})
 		}

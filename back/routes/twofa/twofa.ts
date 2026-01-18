@@ -100,7 +100,7 @@ export async function checkTwoFA(request: FastifyRequest, reply: FastifyReply, c
 				sameSite: "strict",
 				path: "/",
 		};
-		const jwtoken = createJWT(user.user_id, user.pseudo, user.avatar);
+		const jwtoken = createJWT(user.user_id);
 		users.updateStatus(user.user_id, "online");
 		reply.clearCookie("tempToken", options).setCookie("token", jwtoken, options).status(200).send({ twofa:false, ok:true, message: "Login successful"})
 	}
