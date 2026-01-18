@@ -24,8 +24,8 @@ export type UserJWT = {
 if (!secretkey)
 	throw new Error("SECRETKEY is missing in .env");
 
-export const createJWT = (id: number): string => {
-	return jwt.sign({ id}, secretkey, { expiresIn: "1h", algorithm: "HS256" });
+export const createJWT = (id: number, pseudo: string, avatar: string): string => {
+	return jwt.sign({ id, pseudo, avatar }, secretkey, { expiresIn: "1h", algorithm: "HS256" });
 }
 
 export const checkAuth = async (token: string): Promise< IUsers | Error> => {

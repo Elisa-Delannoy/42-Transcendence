@@ -364,7 +364,6 @@ async function initRegister() {
         }
       }
     } catch (err) {
-      console.error(err);
       showToast(err, "error", 3e3, "Registration failed:");
     }
   });
@@ -4238,7 +4237,6 @@ var init_gameInstance = __esm({
         if (this.currentState.type == "Local") {
           if (!player)
             return;
-          console.log("player : ", player);
           this.network.sendInput(direction, player);
         } else {
           if (!this.role)
@@ -4828,17 +4826,6 @@ var init_chatNetwork = __esm({
     "use strict";
     init_esm5();
     chatNetwork = class {
-      // constructor() {
-      // 	const serverUrl = window.location.host;
-      // 	this.socket = io(serverUrl, {
-      // 		transports: ["websocket"],
-      // 		withCredentials: true,
-      // 	});
-      // 	console.log("DANS CHATNETWORK");
-      // 	// this.socket.on("connect", () => {
-      // 	// 	this.requestHistory();
-      // 	// });
-      // }
       constructor() {
         this.socket = null;
         this.socketUserID = null;
@@ -4991,7 +4978,6 @@ var init_logout = __esm({
         navigateTo("/login");
       } catch (err) {
         showToast(err.message, "error", 0, "Logout error");
-        console.error(err);
       }
     };
   }
@@ -5027,7 +5013,6 @@ async function initFriends() {
     pendingFr(pendingFriends);
     youMayKnow(playedWithNotF);
   } catch (err) {
-    console.log(err);
     showToast("Loading failed. Please try again later.", "error", 3e3);
   }
 }
@@ -5112,7 +5097,6 @@ async function search(memberSearched, myfriends) {
       });
     }
   } catch (error) {
-    console.log(error);
     showToast(error, "error", 3e3);
   }
 }
@@ -5131,7 +5115,6 @@ function toAddFriend(id, li) {
       button.disabled = true;
       navigateTo("/friends");
     } catch (err) {
-      console.log(err);
       button.disabled = false;
       showToast(err, "error", 3e3);
     }
@@ -5156,7 +5139,6 @@ function toAcceptFriend(friend, li) {
       button.disabled = true;
       navigateTo("/friends");
     } catch (err) {
-      console.log(err);
       button.disabled = false;
       showToast(err, "error", 3e3);
     }
@@ -5177,7 +5159,6 @@ function toDeleteFriend(id, li) {
       button.disabled = true;
       navigateTo("/friends");
     } catch (err) {
-      console.log(err);
       button.disabled = false;
       showToast(err, "error", 3e3);
     }
@@ -5523,7 +5504,6 @@ async function uploadAvatar(avatar) {
     showToast("Avatar uploaded successfully", "success", 2e3);
   } catch (err) {
     showToast(err, "error", 3e3, "Upload avatar");
-    console.error(err);
   }
 }
 var init_p_updateavatar = __esm({
@@ -5988,7 +5968,7 @@ function initSwitch() {
     }
   });
 }
-async function loadHeader12(auth) {
+async function loadHeader10(auth) {
   const container = document.getElementById("header-container");
   container.innerHTML = "";
   const templateID = auth.logged ? "headerconnect" : "headernotconnect";
@@ -6062,7 +6042,7 @@ async function router() {
       auth.user.web_status = "online";
       isReloaded = false;
     }
-    loadHeader12(auth);
+    loadHeader10(auth);
     if (publicPath.includes(location.pathname) && auth.logged)
       navigateTo("/home");
     if (!publicPath.includes(location.pathname) && !auth.logged && location.pathname !== "/termsofservice" && location.pathname !== "/privacypolicy")
@@ -6088,7 +6068,7 @@ async function initRouter() {
     }
   });
   currentPath = window.location.pathname;
-  window.addEventListener("popstate", async (event) => {
+  window.addEventListener("popstate", async () => {
     await popState3();
   });
   await router();
