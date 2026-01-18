@@ -23,11 +23,11 @@
 		<header class="flex dark:bg-black/30 items-center pb-2 h-28 bg-gray-200/20 backdrop-blur-sm shadow-md">
 			<a href="/" data-link class="block dark:hidden ml-4">
 				<img src="/src/image/croissant-white.png" alt="croissantw"
-					 class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+					 class="w-16 sm:w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 			<a href="/" data-link class="hidden dark:block ml-4">
 				<img src="/src/image/croissant-black.png" alt="croissantd"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+					class="w-16 sm:w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 			</a>
 		</header>
 	</template>
@@ -37,34 +37,39 @@
 			<div class="flex items-center space-x-4">
 				<a href="/home" data-link class="block dark:hidden ml-4">
 					<img src="/src/image/croissant-white.png" alt="croissantw"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+					class="w-16 sm:w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 				</a>
 				<a href="/home" data-link class="hidden dark:block ml-4">
 					<img src="/src/image/croissant-black.png" alt="croissantd"
-					class="w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
+					class="w-16 sm:w-24 duration-200 hover:-translate-y-1 rounded-full mt-3">
 				</a>
 			</div>
-			<!-- Menu Deroulent -->
 			<div class="mr-10 flex items-center">
 				<input type="checkbox" id="burger" class="peer hidden">
 				<label for="burger" class="cursor-pointer select-none">
-				<div class="flex flex-row">
-					<div class="flex flex-row items-center mr-2">
-						<span class="w-12 h-12 mr-4 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center font-bold text-4xl justify-center text-white" id="lvl-header"></span>
-						<div class="w-40 mr-4s">
-							<h1 class="text-2xl my-auto font-medium text-center text-amber-900 dark:text-white" id="pseudo-header"></h1>
-							<div class="w-full h-3 mt-5 bg-amber-50 ring-1 ring-amber-900 dark:ring-white rounded-full overflow-hidden">
-								<div
-									id="progress-xp"
-									class="h-full w-0 rounded-full
-									transition-all duration-700 bg-amber-500 ease-out">
-								</div>
+				<div class="flex flex-row items-center mr-2 relative">
+					<div class="flex flex-row items-center w-full">
+						<span class="w-8 h-8 sm:w-12 sm:h-12 mr-4 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center font-bold text-xl text-4xl justify-center text-white" id="lvl-header"></span>
+					</div>
+					<div class="flex flex-col items-center h-full max-w-[120px] sm:max-w-[320px]">
+						<h1 class="w-full text-base sm:text-2xl font-medium text-center text-amber-900 dark:text-white truncate" id="pseudo-header"></h1>
+						<div class="w-full flex flex-col h-2 sm:h-3 mt-5 bg-amber-50 ring-1 ring-amber-900 dark:ring-white rounded-full overflow-hidden">
+							<div id="progress-xp" class="h-full w-0 rounded-full transition-all duration-700 bg-amber-500 ease-out">
 							</div>
 						</div>
 					</div>
-					<div>
+					<div class="ml-4 relative shrink-0">
 						<span id="status" class="absolute w-4 h-4 rounded-full border-2 border-white"></span>
-						<img class="rounded-full w-20 h-20" id="header-avatar" src="" alt="Your avatar" width="70"/>
+						<img class="rounded-full w-16 h-16 sm:w-20 sm:h-20" id="header-avatar" src="" alt="Your avatar" width="70"/>
+					</div>
+					<div class="mr-0 shrink-0 items-center">
+						<a href="/friends" id="notification" data-link class="hidden ml-4">
+							<img src="/src/image/wfriend.png" alt="notification"
+							class="w-12 sm:w-18 duration-200 hover:-translate-y-1 mt-3 dark:hidden notif">
+							
+							<img src="/src/image/bfriend.png" alt="notification"
+							class="w-12 sm:w-18 duration-200 hover:-translate-y-1 mt-3 hidden dark:block notif">
+						</a>
 					</div>
 				</div>
 				</label>
@@ -91,12 +96,6 @@
 						<img class="ml-2 size-5 dark:invert" src="/src/image/lune.png" alt="dark">
 					</div>
 				</nav>
-				<div class="flex justify-end items-center">
-					<a href="/friends" id="notification" data-link class="hidden ml-4">
-						<img src="/src/image/notification.png" alt="notification"
-						class="w-12 duration-200 hover:-translate-y-1 rounded-full mt-3">
-					</a>
-				</div>
 			</div>
 		</header>
 	</template>

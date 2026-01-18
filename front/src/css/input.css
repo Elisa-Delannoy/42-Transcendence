@@ -33,10 +33,10 @@
 
 @keyframes shimmer {
   0% {
-    transform: translateX(-100%);
+	transform: translateX(-100%);
   }
   100% {
-    transform: translateX(100%);
+	transform: translateX(100%);
   }
 }
 
@@ -99,6 +99,29 @@
 	}
 }
 
+@layer utilities {
+	.notif {
+	filter: drop-shadow(0 0 10px rgba(255,0,0,0.8));
+		animation: notif 2.5s ease-in-out infinite;
+	}
+
+	@keyframes notif {
+		0%, 100% {
+			transform: translateY(0) translateX(0);
+		}
+		25% {
+			transform: translateY(-3px) translateX(1px);
+		}
+		50% {
+			transform: translateY(3px) translateX(-2px);
+		}
+		75% {
+			transform: translateY(-2px) translateX(2px);
+		}
+	}
+}
+
+
 @layer components {
 	.stat {
 		@apply bg-[linear-gradient(180deg,var(--color-amber-50)_95%,var(--color-amber-400)_95%)]
@@ -124,11 +147,11 @@
 
 @layer utilities {
 	.scrollbar-none::-webkit-scrollbar {
-    	display: none;
+		display: none;
   	}
 
 	.scrollbar-none {
-    	scrollbar-width: none; /* Firefox */
+		scrollbar-width: none; /* Firefox */
 	}
 
 	.scrollbar-custom {
