@@ -366,7 +366,7 @@ function updateBrackets(io: Server, tournament: serverTournament, tournamentId: 
 				console.log("Problem getting game3");
 				return;
 			}
-	
+
 			tournament.idFirst = game3.idwinner;
 			tournament.idSecond = game3.idloser;
 			tournament.idSecond = -1;
@@ -379,6 +379,23 @@ function updateBrackets(io: Server, tournament: serverTournament, tournamentId: 
 
 			tournament.state.status = "finished";
 		}
+	}
+	if (tournament.state.status === "finished")
+	{
+		if (tournament.idFourth == tournament.idPlayers[0])
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0, "semifinal");
+		else
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 0, 1, "semifinal");
+
+		if (tournament.idThird == tournament.idPlayers[2])
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 3, 2, "semifinal");
+		else
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 2, 3, "semifinal");
+
+		if (tournament.idFirst == tournament.final_arr[0])
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 0, 1, "final");
+		else
+			io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0, "final");
 	}
 }
 
