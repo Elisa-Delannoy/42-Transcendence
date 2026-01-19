@@ -4859,6 +4859,7 @@ var init_chatNetwork = __esm({
         this.socket.on("chatError", callback);
       }
       disconnect() {
+        console.log("disco chat");
         this.socket?.disconnect();
       }
     };

@@ -7,6 +7,8 @@ import { handleTournamentSocket } from "../pong/tournamentServer";
 import { handleGeneralChatSocket } from "../chat/chat";
 import { users } from "../server";
 
+const userNbCon = new Map<number, number>();
+
 export async function createWebSocket(io: Server) {
 	io.use((socket, next) => {
 		try {
@@ -31,8 +33,17 @@ export async function createWebSocket(io: Server) {
 		handleGameSocket(io, socket);
 		handleTournamentSocket(io, socket);
 		handleGeneralChatSocket(io, socket);
+
+		let count = (userNbCon.get(socket.data.user.id) || 0) + 1;
+		userNbCon.set(socket.data.user.id, count);
 		socket.on("disconnect", async () => {
-			await users.updateStatus(socket.data.user.id, "offline");
+			count = (userNbCon.get(socket.data.user.id) || 1) - 1;
+			if (count <= 0) { 
+				userNbCon.delete(socket.data.user.id);
+				await users.updateStatus(socket.data.user.id, "offline");
+			} else {
+				userNbCon.set(socket.data.user.id, count);
+			};
 		});
-	})
+	});
 }
