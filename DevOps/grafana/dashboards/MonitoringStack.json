@@ -15,11 +15,11 @@
       }
     ]
   },
-  "description": "Metrics about Grafana",
+  "description": "Metrics about Prometheus and Grafana",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 4,
   "links": [
     {
       "asDropdown": false,
@@ -1150,7 +1150,8 @@
   "refresh": "auto",
   "schemaVersion": 42,
   "tags": [
-    "grafana"
+    "grafana",
+    "prometheus"
   ],
   "templating": {
     "list": [
@@ -1192,7 +1193,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "croiscendence's Grafana",
+  "title": "croiscendence's Monitoring Stack",
   "uid": "isFoa0z7k",
   "version": 1
 }

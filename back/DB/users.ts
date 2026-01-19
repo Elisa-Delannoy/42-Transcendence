@@ -254,6 +254,9 @@ export class Users
 
 	async updateStatus(id: number, status: string): Promise < IUsers> {
 		await this._db.execute(`UPDATE Users SET status = ? WHERE user_id = ?`, [status, id]);
+		const updatedTime = new Date().toISOString().replace("T", " ").split(".")[0];
+		await this._db.query(`UPDATE Users SET modification_date = ? WHERE user_id = ?`, [updatedTime, id]);
+
 		const updatedUser = await this.getIDUser(id);
 		return updatedUser;
 	}

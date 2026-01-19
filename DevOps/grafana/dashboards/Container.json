@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 4,
+  "id": 3,
   "links": [
     {
       "asDropdown": false,
@@ -78,7 +78,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# cAdvisor Dashboard\n\nThis is dashboard for Docker metrics\n\nNumber of services: 6\n\n  - Backend: 3000 (https)\n  - Prometheus: 9090\n  - Grafana: 3003 (https)\n  - Nodejs Exporter: 9101\n  - cAdvisor: 8080\n  - AlertManager: 9093",
+        "content": "# Container Dashboard\n\nThis is dashboard for Docker metrics\n\nNumber of services: 6\n\n  - Backend: 3000 (https)\n  - Prometheus: 9090\n  - Grafana: 3003 (https)\n  - Nodejs Exporter: 9101\n  - cAdvisor: 8080\n  - AlertManager: 9093",
         "mode": "markdown"
       },
       "pluginVersion": "12.3.1",
@@ -990,7 +990,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "croiscendence's cAdvisor",
+  "title": "croiscendence's Container",
   "uid": "256c02cc-d259-45e0-a8d8-332e33b40549",
   "version": 1,
   "weekStart": "monday"

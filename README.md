@@ -1,6 +1,6 @@
 # ft_transcendence — Croiscendence 🥐
 
-*This project was created as part of the 42 curriculum by Noah, Elisa, Philippe, Lan, and Tat Hoang Nguyen.*
+*This project was created as part of the 42 curriculum by edelanno, lanyang, nrontard, pmenard, tat-nguy
 
 ---
 
@@ -93,8 +93,10 @@ The goal of the project is to deliver a fun and competitive game while demonstra
 #### Frontend
 - HTML, CSS, JavaScript
 - Tailwind CSS
+- TypeScript
 
 #### Backend
+- JavaScript
 - Node.js
 - Fastify
 - TypeScript
@@ -147,6 +149,52 @@ Each chosen module was selected to enhance the project’s educational value and
 > - Team members involved
 > )
 
+#### VII - Devops
+
+##### 1. Major Module: Monitoring system with Prometheus and Grafana (2 points)
+
+- Motivation: This helps monitoring the server system, analyzing performance and informing the team immediately when there's a trouble in operation of the server and used services.
+
+- Module in details:
+  - Set up Prometheus to collect metrics
+    
+    Prometheus was deployed as the central metrics collector (http://localhost:9090)
+    
+  - Configure exporters and integrations
+
+    - Node Exporter for collecting host-level metrics (http://localhost:9101)
+    - cAdvisor for collecting container-level metrics (http://localhost:8080)
+    - Backend (Fastify / Node.js) for collecting application-level metrics (https://localhost:3000/metrics)
+
+  - Create custom Grafana dashboards:
+
+    Grafana helps visualize the metrics through these custom dashboards below:
+    - **Operation System Dashboard**: Host CPU, memory disk, network usage
+    - **Container Dashboard**: CPU, memory, IO, network, resource usage per container
+    - **Backend Dashboard**: Heap usage, event loop lag, request rate, latency...
+    - **Monitoring Stack Dashboard**: Dashboard count, active alerts, Alertmanager status
+
+  - Set up alerting rules:
+
+    Alerting rules were defined to detect critical issues:
+    - The game down (level: 🔴 critical)
+    - High CPU usage (level: 🟡 warning)
+    - High heap memory usage (level: 🔵 info)
+    - Event loop lag (level: 🟡 warning)
+    - Unrachable services (level: 🟡 warning)
+
+    These alerts are sent to both **AlertManager** center (http://localhost:9093) and [**Discord's Croiscendence server**](https://discord.gg/7Cda9VHh)
+
+  - Secure access to Grafana (https://localhost:3003)
+
+    Grafana's security was considered as an important part of this module to ensure that sensitive operational data is protected
+
+    - Grafana runs only with **https** and behind authenticated access
+    - Anonymous access to Grafana was disabled
+    - Admin credentials are configured via *.env* variables and do not contain sensitive words like 'admin' or 'administrator'
+
+- PIC: tat-nguy
+
 ---
 
 ## Instructions
@@ -161,18 +209,19 @@ Each chosen module was selected to enhance the project’s educational value and
 
 1. Clone the repository:
   ```bash
-   git clone <repository_url> croisandence
+   git clone <repository_url> ft_transcendence
    cd ft_transcendence
   ```
 
-2. Copy template file `.env.example` and fill in the credential values in `.env`:
+2. Fill in required values in template file `.env.example` and turn it to `.env`:
   ```
   cp /back/.env.example /back/.env
   ```
 
 2. Build and run the project:
   ```
-    docker compose up --build
+    make
+    make help
   ```
 
 3. Open your browser:
@@ -187,16 +236,16 @@ Each chosen module was selected to enhance the project’s educational value and
 ### References
 
 - 42 ft_transcendence Subject
-- [Fastify Documentation]()
-- [Tailwind CSS Documentation]()
-- [sqlite Documentation]()
-- [Prometheus Documentation]()
-- [Grafana Documentation]()
-- [Avalanche Documentation]()
+- [Fastify Documentation](https://fastify.dev/docs/latest/Reference/)
+- [Tailwind CSS Documentation](https://v2.tailwindcss.com/docs)
+- [SQLite Documentation](https://www.sqlite.org/docs.html)
+- [Prometheus Documentation](https://prometheus.io/docs/introduction/overview/)
+- [Grafana Documentation](https://grafana.com/docs/)
+- [Avalanche Documentation](https://build.avax.network/academy)
 
 ### AI Involvements
 
-AI tools (as ChatGPT, Gemini 3, Mistral's Le Chat) were used for:
+AI tools (such as ChatGPT, Gemini 3, Mistral's Le Chat) were used for:
 - Documentation assistance and defination explication
 - Code review suggestions
 - Debugging guidance
