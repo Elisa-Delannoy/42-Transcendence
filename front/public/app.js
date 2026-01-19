@@ -5122,12 +5122,16 @@ function toAddFriend(id, li) {
 }
 function toAcceptFriend(friend, li) {
   const button = li.getElementById("addordelete");
+  const buttonD = li.getElementById("addordeleteBIS");
   if (friend.asked_by !== friend.id) {
     toDeleteFriend(friend.id, li);
     return button;
   }
   button.textContent = "Accept";
+  buttonD.textContent = "Deny";
   button.classList.add("hover:bg-amber-800");
+  buttonD.classList.remove("hidden");
+  buttonD.classList.add("hover:bg-amber-800");
   button.addEventListener("click", async () => {
     try {
       await genericFetch("/api/private/friend/accept", {
@@ -5137,9 +5141,26 @@ function toAcceptFriend(friend, li) {
       });
       button.textContent = "Accepted";
       button.disabled = true;
+      buttonD.classList.add("hidden");
       navigateTo("/friends");
     } catch (err) {
       button.disabled = false;
+      showToast(err, "error", 3e3);
+    }
+  });
+  buttonD.addEventListener("click", async () => {
+    try {
+      await genericFetch("/api/private/friend/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ friendID: friend.id })
+      });
+      buttonD.textContent = "Denied";
+      buttonD.disabled = true;
+      button.classList.add("hidden");
+      navigateTo("/friends");
+    } catch (err) {
+      buttonD.disabled = false;
       showToast(err, "error", 3e3);
     }
   });
@@ -5838,7 +5859,7 @@ async function InitEndGame() {
     const addFriendDark = document.getElementById("dark-addgamer");
     if (endgame.friend) {
       addFriend.classList.add("hidden");
-      addFriendDark.classList.add("hidden");
+      addFriendDark.classList.remove("dark:block");
     }
     if (endgame.gameinfo.type === "Online" || endgame.gameinfo.type === "Tournament") {
       document.getElementById("loser-elo").textContent = `- ${Math.abs(endgame.gameinfo.loser_elo)} \u{1F950}`;

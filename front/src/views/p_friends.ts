@@ -164,14 +164,19 @@ function toAddFriend(id: number, li: DocumentFragment)
 	})
 }
 
-function toAcceptFriend(friend: IMyFriends,li: DocumentFragment ) {
+function toAcceptFriend(friend: IMyFriends,li: DocumentFragment) {
 	const button = li.getElementById("addordelete") as HTMLButtonElement;
+	const buttonD = li.getElementById("addordeleteBIS") as HTMLButtonElement;
 	if (friend.asked_by !== friend.id) {
 		toDeleteFriend(friend.id, li);
 		return button;
 	}
 	button.textContent = "Accept";
+	buttonD.textContent = "Deny";
 	button.classList.add("hover:bg-amber-800");
+	buttonD.classList.remove("hidden");
+	buttonD.classList.add("hover:bg-amber-800");
+
 	button.addEventListener("click", async () => {
 		try {
 			await genericFetch("/api/private/friend/accept", {
@@ -181,13 +186,30 @@ function toAcceptFriend(friend: IMyFriends,li: DocumentFragment ) {
 			});
 			button.textContent = "Accepted";
 			button.disabled = true;
+			buttonD.classList.add("hidden");
 			navigateTo("/friends");
-		}
-		catch (err) {
+		} catch (err) {
 			button.disabled = false;
 			showToast(err, "error", 3000);
 		}
-	})
+	});
+
+	buttonD.addEventListener("click", async () => {
+		try {
+			await genericFetch("/api/private/friend/delete", {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ friendID: friend.id })
+			});
+			buttonD.textContent = "Denied";
+			buttonD.disabled = true;
+			button.classList.add("hidden");
+			navigateTo("/friends");
+		} catch (err) {
+			buttonD.disabled = false;
+			showToast(err, "error", 3000);
+		}
+	});
 }
 
 function toDeleteFriend(id: number, li: DocumentFragment) {
