@@ -101,23 +101,30 @@
 	</template>
 
 	<template id="html">
-		<main class="flex mx-auto flex-col mt-[10vh] grow">
-			<h1 class="text-4xl md:text-7xl font-bold mx-auto 
-				bg-linear-to-r from-amber-800 via-amber-600 to-orange-500 
-				bg-clip-text text-transparent drop-shadow-lg
-				hover:bg-linear-to-r hover:from-orange-500 hover:via-amber-800 hover:to-amber-600
-				animate-pulse">
-				Croiscendence</h1>
-			<div class="mt-14">
-				<nav id="public-nav">
-					<a href="/login" data-link class="btn mx-auto w-48">Log in</a>
-					<a href="/register" data-link class="btn mx-auto w-48">Register</a>
-				</nav>
-			</div>
-			<p class="absolute mb-4 opacity-60 bottom-0 w-full text-center">This isn't a bakery at all — it's the Pong game from 42!
-			<br>© 2026 Croiscendence</p>
+		<main class="flex-1 flex flex-col items-center justify-center text-center px-6 transition-colors duration-300">
+			<h1 class="text-5xl md:text-7xl font-extrabold mb-4 -mt-20 bg-linear-to-r from-amber-700 via-orange-500 to-yellow-400 dark:from-amber-300 dark:via-orange-400 dark:to-yellow-300 bg-clip-text text-transparent drop-shadow-lg"> 
+				Croiscendence
+			</h1>
+			<p class="max-w-md text-base md:text-lg mb-12
+				text-amber-900/70 dark:text-amber-200/70">
+				A competitive Pong, crispy and merciless.
+			</p>
+			<nav id="public-nav" class="flex flex-col sm:flex-row gap-6">
+				<a href="/login" data-link
+					class="btn w-48 shadow-lg shadow-amber-500/30dark:shadow-amber-900/40">
+					Log in
+				</a>
+				<a href="/register" data-link
+					class="btn w-48 shadow-lg shadow-orange-500/30 dark:shadow-orange-900/40">
+					Register
+				</a>
+			</nav>
+			<p class="absolute bottom-4 text-sm opacity-60
+				text-amber-900 dark:text-amber-200 text-center w-full px-4">
+				This isn't a bakery at all — it's the Pong game from 42!
+				<br>© 2026 Croiscendence
+			</p>
 		</main>
-		<div><br></div>
 	</template>
 
 	<template id="loginhtml">

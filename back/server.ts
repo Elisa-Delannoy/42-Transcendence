@@ -305,19 +305,19 @@ async function lunchDB()
 	await users.CreateUserIA();
 	await users.CreateUserGuest();
 	const hashedPassword = await bcrypt.hash("42", 12);
-	users.addUser("42", "42", hashedPassword, 200);
-	users.addUser("43", "43", hashedPassword, 2800);
-	users.addUser("44", "44", hashedPassword, 2800);
-	users.addUser("45", "45", hashedPassword, 2800);
-	users.addUser("420", "420", hashedPassword, 200);
-	users.addUser("430", "430", hashedPassword, 2800);
-	users.addUser("440", "440", hashedPassword, 2800);
-	users.addUser("450", "450", hashedPassword, 2800);
-	users.addUser("4200", "402", hashedPassword, 200);
-	users.addUser("4300", "403", hashedPassword, 2800);
-	users.addUser("4400", "404", hashedPassword, 2800);
-	users.addUser("4500", "405", hashedPassword, 2800);
-	0
+	await users.addUser("42", "42", hashedPassword, 200);
+	await users.addUser("43", "43", hashedPassword, 2800);
+	await users.addUser("44", "44", hashedPassword, 2800);
+	await users.addUser("45", "45", hashedPassword, 2800);
+	await users.addUser("420", "420", hashedPassword, 200);
+	await users.addUser("430", "430", hashedPassword, 2800);
+	await users.addUser("440", "440", hashedPassword, 2800);
+	await users.addUser("450", "450", hashedPassword, 2800);
+	await users.addUser("4200", "402", hashedPassword, 200);
+	await users.addUser("4300", "403", hashedPassword, 2800);
+	await users.addUser("4400", "404", hashedPassword, 2800);
+	await users.addUser("4500", "405", hashedPassword, 2800);
+	
 	await generalChat.deleteChatTableAndTrigger();
 	await generalChat.createChatTableAndTrigger();
 	
@@ -335,8 +335,8 @@ async function lunchDB()
 	
 	await users_stats.deleteTable();
 	await users_stats.createUserStatsTable();
-	users_stats.addUser((await users.getPseudoUser("42")).user_id);
-	users_stats.addUser((await users.getPseudoUser("43")).user_id);
+	await users_stats.addUser((await users.getPseudoUser("42")).user_id);
+	await users_stats.addUser((await users.getPseudoUser("43")).user_id);
 	
 	await users_achivements.deleteTable();
 	await users_achivements.createUserAchievementsTable();
