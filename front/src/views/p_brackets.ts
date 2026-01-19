@@ -23,6 +23,7 @@ export async function initBrackets(params?: any) {
 
 	const tournamentID: string = params?.id;
 	const startTournamentButton = document.getElementById("start-button");
+	const watchFinalButton = document.getElementById("watch-final");
 	const pseudoP1 = document.getElementById("player1-name");
 	const pseudoP2 = document.getElementById("player2-name");
 	const pseudoP3 = document.getElementById("player3-name");
@@ -62,6 +63,14 @@ export async function initBrackets(params?: any) {
 			currentTournament?.setLoser(finalists[loser]);
 			currentTournament?.setChampion(champion);
 		}
+	});
+
+	net.onSetUpSpecFinal(() => {
+		watchFinalButton?.classList.remove("hidden");
+		watchFinalButton?.addEventListener("click", async () => {
+			net?.watchFinal();
+			watchFinalButton?.classList.add("hidden");
+		});
 	});
 
 	net.onTournamentHost(() => {

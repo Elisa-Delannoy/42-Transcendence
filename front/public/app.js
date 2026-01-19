@@ -4577,6 +4577,9 @@ var init_tournamentNetwork = __esm({
         this.socket.on("setWinner", (winner, loser, status) => {
           this.onsetWinnerCallback?.(winner, loser, status);
         });
+        this.socket.on("setupSpecFinal", () => {
+          this.onsetUpSpecFinalCallback?.();
+        });
         this.socket.on("hostDisconnected", () => {
           this.onHostDisconnectedCallback?.();
         });
@@ -4602,6 +4605,9 @@ var init_tournamentNetwork = __esm({
       SetupFinal() {
         this.socket.emit("setupFinal");
       }
+      onSetUpSpecFinal(cb) {
+        this.onsetUpSpecFinalCallback = cb;
+      }
       onStartTournamentGame(cb) {
         this.onStartTournamentGameCallback = cb;
       }
@@ -4613,6 +4619,9 @@ var init_tournamentNetwork = __esm({
       }
       startTournament() {
         this.socket.emit("startTournament");
+      }
+      watchFinal() {
+        this.socket.emit("watchFinal");
       }
       changeHost() {
         this.socket.emit("resetHost");
@@ -4642,6 +4651,7 @@ async function initBrackets(params) {
   }
   const tournamentID = params?.id;
   const startTournamentButton = document.getElementById("start-button");
+  const watchFinalButton = document.getElementById("watch-final");
   const pseudoP1 = document.getElementById("player1-name");
   const pseudoP2 = document.getElementById("player2-name");
   const pseudoP3 = document.getElementById("player3-name");
@@ -4674,6 +4684,13 @@ async function initBrackets(params) {
       currentTournament?.setLoser(finalists[loser]);
       currentTournament?.setChampion(champion);
     }
+  });
+  net2.onSetUpSpecFinal(() => {
+    watchFinalButton?.classList.remove("hidden");
+    watchFinalButton?.addEventListener("click", async () => {
+      net2?.watchFinal();
+      watchFinalButton?.classList.add("hidden");
+    });
   });
   net2.onTournamentHost(() => {
     startTournamentButton?.classList.remove("hidden");

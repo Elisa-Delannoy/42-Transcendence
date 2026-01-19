@@ -87,6 +87,16 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 		
 	});
 
+	socket.on("watchFinal", () => {
+		const tournamentId = socket.data.tournamentId;
+		let tournament = tournaments_map.get(tournamentId);
+		if (!tournament)
+			return;
+		let gameId = 2;
+		gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId);
+		io.to(socket.id).emit("joinTournamentGame", gameId, tournamentId);
+	});
+
 	socket.on("setupSemiFinal", () => {
 		const tournamentId = socket.data.tournamentId;
 		const playerId = socket.data.user.id;
@@ -204,6 +214,28 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 						gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId);
 						io.to(socket.id).emit("joinTournamentGame", gameId, tournamentId);
 					}
+				}
+			}, 1000);
+		}
+		else
+		{
+			if (tournament.final_arr[0] == 0 || tournament.final_arr[1] == 0)
+			{
+				if (!tournament.disconnectTimer) {
+					tournament.disconnectTimer = setTimeout(() => {
+						if (tournament.final_arr[0] != 0 && tournament.final_arr[1] != 0)
+						{
+							return;
+						}
+					}, 5 * 60 * 1000);
+				}
+			}
+			let countdown = 6;
+			let interval = setInterval(() => {
+				countdown--;
+				if (countdown < 0) {
+					clearInterval(interval);
+					io.to(`tournament-${tournamentId}`).emit("setupSpecFinal");
 				}
 			}, 1000);
 		}

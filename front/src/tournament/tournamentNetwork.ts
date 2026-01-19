@@ -13,6 +13,7 @@ export class TournamentNetwork {
 	private onTournamentHostCallback?: () => void;
 	private onDisconnectionCallback?: () => void;
 	private onHostDisconnectedCallback?: () => void;
+	private onsetUpSpecFinalCallback?: () => void;
 	private onStartTournamentGameCallback?: (gameId: number, tournamentId: number) => void;
 	private onjoinTournamentGameCallback?: (gameId: number, loser: number) => void;
 	private onsetWinnerCallback?: (winner: number, tournamentId: number, status: "semifinal" | "final") => void;
@@ -43,6 +44,10 @@ export class TournamentNetwork {
 
 		this.socket.on("setWinner", (winner: number, loser: number, status: "semifinal" | "final") => {
 			this.onsetWinnerCallback?.(winner, loser, status);
+		});
+
+		this.socket.on("setupSpecFinal", () => {
+			this.onsetUpSpecFinalCallback?.();
 		});
 
 		this.socket.on("hostDisconnected", () => {
@@ -78,6 +83,10 @@ export class TournamentNetwork {
 		this.socket.emit("setupFinal");
 	}
 
+	onSetUpSpecFinal(cb: () => void) {
+		this.onsetUpSpecFinalCallback = cb;
+	}
+
 	onStartTournamentGame(cb: (gameId: number, tournamentId: number) => void) {
 		this.onStartTournamentGameCallback = cb;
 	}
@@ -92,6 +101,10 @@ export class TournamentNetwork {
 
 	startTournament() {
 		this.socket.emit("startTournament");
+	}
+
+	watchFinal() {
+		this.socket.emit("watchFinal");
 	}
 
 	changeHost() {

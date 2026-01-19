@@ -137,7 +137,56 @@ and workload distribution.
 ### Modules in Detail
 
 - **Major Modules** (2 points each)
+
+IMPLEMENT A COMPLETE WEB-BASED GAME WHERE USERS CAN PLAY AGAINST EACH OTHER
+
+> - Motivation for choosing it
+We started working on Transcendence about a month before the subject was updated. In the previous version of the subject, we were required to implement a Pong game, and we decided to continue in that direction by building upon the work we had already started.
+
+> - Implementation details
+The backend is responsible for the entire game logic. It manages the positions of the paddles and the ball, the score, collision detection, and all game-related rules. It continuously sends the necessary game state data to the frontend, which is only responsible for rendering the game for each player.
+This architecture was chosen to ensure a more secure and fair gameplay experience, as it prevents players from manipulating the game state or cheating.
+
+> - Team members involved
+pmenard
+nrontard
+layang
+
+REMOTE PLAYERS - ENABLE TWO PLAYERS ON SEPARATE COMPUTERS TO PLAY THE SAME GAME IN REAL-TIME
+
+> - Motivation for choosing it
+From the very beginning, supporting remote players was an obvious choice for us. Our goal was to create a website that allows anyone to play on the same device against a friend, against an AI, or against another player using a different device.
+
+> - Implementation details
+To support remote players, we initially started with a private API. However, we quickly realized that this approach was not well suited for real-time gameplay. We therefore switched to using WebSockets, which provide a more efficient and reliable way to handle real-time communication between players.
+The technical details of this implementation are further explained in the dedicated WebSocket module.
+
+> - Team members involved
+pmenard
+
 - **Minor Modules** (1 point each)
+
+IMPLEMENT A TOURNAMENT SYSTEM
+> - Motivation for choosing it
+We believe that tournaments are a great addition to a game, as they introduce a stronger sense of competition and engagement for players.
+
+> - Implementation details
+The first player to join a tournament is designated as its creator. This player can either wait for other participants to join or start the tournament immediately, in which case any remaining slots are filled with AI players.
+To improve readability and user experience, we also added visual indicators using colors to clearly show match results and distinguish winners from losers.
+
+> - Team members involved
+pmenard
+
+IMPLEMENT SPECTATOR MODE FOR GAMES
+
+> - Motivation for choosing it
+We wanted to allow players who were eliminated from a tournament to watch the final match if they wished.
+
+> - Implementation details
+When the final match starts, an HTML button becomes available for eliminated players. By clicking on this button, they can join the game as spectators and watch the match in real time.
+
+> - Team members involved
+pmenard
 
 Each chosen module was selected to enhance the project’s educational value and gameplay experience.
 

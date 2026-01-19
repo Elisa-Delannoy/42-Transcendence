@@ -170,7 +170,6 @@ export function joinTournamentGame(playerId: number, gameId: number, tournamentI
 	{
 		let id: number = tournamentID * 1000;
 		id += gameId;
-		console.log("gameid back join : ", id);
 		const game = tournament.games.get(id);
 		if (game)
 		{
