@@ -188,16 +188,32 @@ Each chosen module was selected to enhance the project’s educational value and
 
 #### 3. Minor: Use a backend framework (Fastify) (1 pt)
 
-- Motivation: It was a major module of the accient subject
+- **Motivation**: It was a major module of the accient subject
 
-- Details:
-	- Fastify API to communicate between frontend and backend.
+- **Details**:
+	- Fastify API helps to communicate between frontend and backend.
 
-- PIC: edelanno, layang, nrontard, pmenard and tat-nguy
+- **PIC**: edelanno, layang, nrontard, pmenard and tat-nguy
 
 #### 4. Major: Implement real-time features using WebSockets or similar technology (2 pts)
 
-#### 5. Major: Allow users to interact with other users (2 points)
+- **Motivation**:
+  
+Sockets are required to enable live chat functionality and are preferred for games and tournaments due to their higher stability between clients and better efficiency compared to traditional REST APIs.
+
+- **Details**:
+	- WebSockets are used for the following features:
+		- Chat: real-time message exchange, including message history.
+		- Game: complete game management (paddles, ball, countdown, etc.), detailed in the game module.
+		- Tournament: links four users to a tournament and ensures reliable handling of disconnections, detailed in the tournament module.
+	- Backend and frontend communicate smoothly using listeners `.on` and triggers `.emit`.
+	- All transmitted data is secured using JWT authentication (detailed below).
+	- User status is automatically updated when the page is closed.
+
+- **PIC**: pmenard and edelanno
+
+
+#### 5. Major: Allow users to interact with other users (2 pts)
 
 - **Motivation**: We chose this module because it contains important and relevant features for a gaming platform.
 
@@ -224,13 +240,10 @@ Each chosen module was selected to enhance the project’s educational value and
    
 - **PIC**: edelanno (chat, friend), tat-nguy (profile)
 
-#### 8. Minor: A complete notification system for all creation, update, and deletion actions.
+#### 8. Minor: A complete notification system for all creation, update, and deletion actions (1 pt)
 
 - PIC: layang
-  
 
-
-### II - Accessibility and Internationalization
 
 ### III - User Management
 
@@ -248,54 +261,44 @@ Each chosen module was selected to enhance the project’s educational value and
 
 - **PIC**: edelanno, tat-nguy
 
-#### 2. Minor: Game statistics and match history (requires a game module).
+#### 2. Minor: Game statistics and match history (requires a game module) (1 pt)
 
-Minor: Game statistics and match history (requires a game module).
-◦ Track user game statistics (wins, losses, ranking, level, etc.).
-◦ Display match history (1v1 games, dates, results, opponents).
-◦ Show achievements and progression.
-◦ Leaderboard integration.
+- **Details**:
+	- Player Statistics Tracking:
 
-Player Statistics Tracking:
+		I implemented multiple API requests to retrieve all relevant player data, including wins, losses, and rank, which are then dynamically displayed on the user dashboard. The player’s level is shown directly in the header, accompanied by a visual progression bar that reflects experience gained and overall advancement in real time.
 
-I implemented multiple API requests to retrieve all relevant player data, including wins, losses, and rank,
-which are then dynamically displayed on the user dashboard. The player’s level is shown directly in the header,
-accompanied by a visual progression bar that reflects experience gained and overall advancement in real time.
+	- Match History System:
 
-Match History System:
+		The DB stores a detailed match history for every player. For each 1v1 game, the following information is recorded and displayed:
+	  	- Match date and time
+		- Game mode (ranked, local, AI, etc.)
+		- Final result (win or loss)
+		- Opponent identity (player or AI)
 
-The DB stores a detailed match history for every player. For each 1v1 game, the following information is recorded and displayed:
-◦ Match date and time
-◦ Game mode (ranked, local, AI, etc.)
-◦ Final result (win or loss)
-◦ Opponent identity (player or AI)
+	- Achievements and Progression:
 
-Achievements and Progression:
+		A dedicated achievement system was designed to reward player engagement and skill progression. Achievements can be:
+	  	- Unlocked, locked, or secret
+		- Based on specific conditions (number of wins, ranking reached, special accomplishments, etc.)
+		- Common, rare, secret
 
-A dedicated achievement system was designed to reward player engagement and skill progression.
-Achievements can be:
+	- Ranking and Leaderboard Integration:
 
-◦ Unlocked, locked, or secret
-◦ Based on specific conditions (number of wins, ranking reached, special accomplishments, etc.)
-◦ Common, rare, secret
+		Competitive performance feeds directly into a leaderboard system, where players are ranked based on their accumulated ranking points. This provides:
+	  	- A clear competitive hierarchy
+		- Motivation through comparison with other players
+		- Real-time reflection of player progression in the global ranking
 
-Ranking and Leaderboard Integration:
+- **PIC**: nrontard
 
-Competitive performance feeds directly into a leaderboard system, 
-where players are ranked based on their accumulated ranking points. This provides:
 
-◦ A clear competitive hierarchy
-◦ Motivation through comparison with other players
-◦ Real-time reflection of player progression in the global ranking
-
-- PIC: nrontard
-
-#### 3. Minor: Implement remote authentication with OAuth 2.0 (Google, GitHub, 42, etc.)
+#### 3. Minor: Implement remote authentication with OAuth 2.0 (Google) (1 pt)
 
 - PIC: layang
 
 
-#### 6. Minor: Implement a complete 2FA (Two-Factor Authentication) system for the users
+#### 6. Minor: Implement a complete 2FA (Two-Factor Authentication) system for the users (1 pt)
 
 - PIC: layang
 
@@ -307,79 +310,88 @@ where players are ranked based on their accumulated ranking points. This provide
 - PIC: layang
 
 
-### V - Cybersecurity
-
 ### VI - Gaming and user experience
 
 #### 1. Major: Implement a complete web-based game where users can play against each other (2 pts)
 
-- **Motivation for choosing it**
-We started working on Transcendence about a month before the subject was updated. In the previous version of the subject, we were required to implement a Pong game, and we decided to continue in that direction by building upon the work we had already started.
+- **Motivation**:
+  
+	We started working on Transcendence about a month before the subject was updated. In the previous version of the subject, we were required to implement a Pong game, and we decided to continue in that direction by building upon the work we had already started.
 
 - **Implementation details**
-The backend is responsible for the entire game logic. It manages the positions of the paddles and the ball, the score, collision detection, and all game-related rules. It continuously sends the necessary game state data to the frontend, which is only responsible for rendering the game for each player.
-This architecture was chosen to ensure a more secure and fair gameplay experience, as it prevents players from manipulating the game state or cheating.
+  
+	The backend is responsible for the entire game logic. It manages the positions of the paddles and the ball, the score, collision detection, and all game-related rules. It continuously sends the necessary game state data to the frontend, which is only responsible for rendering the game for each player.
 
-- **Team members involved**
-pmenard, nrontard, layang
+	This architecture was chosen to ensure a more secure and fair gameplay experience, as it prevents players from manipulating the game state or cheating.
+
+- **PIC**: pmenard, nrontard, layang
 
 
 #### 2. Major: Remote players — Enable two players on separate computers to play the same game in real-time (2 pts)
 
-- **Motivation for choosing it**
-From the very beginning, supporting remote players was an obvious choice for us. Our goal was to create a website that allows anyone to play on the same device against a friend, against an AI, or against another player using a different device.
+- **Motivation**:
+
+	From the very beginning, supporting remote players was an obvious choice for us. Our goal was to create a website that allows anyone to play on the same device against a friend, against an AI, or against another player using a different device.
 
 - **Implementation details**
-To support remote players, we initially started with a private API. However, we quickly realized that this approach was not well suited for real-time gameplay. We therefore switched to using WebSockets, which provide a more efficient and reliable way to handle real-time communication between players.
-The technical details of this implementation are further explained in the dedicated WebSocket module.
 
-- **Team members involved**
-pmenard
+	To support remote players, we initially started with a private API. However, we quickly realized that this approach was not well suited for real-time gameplay. We therefore switched to using WebSockets, which provide a more efficient and reliable way to handle real-time communication between players.
+
+	The technical details of this implementation are further explained in the dedicated WebSocket module.
+
+- **PIC**: pmenard
+
 
 #### 7. Minor: Implement a tournament system (1 pt)
 
-- **Motivation for choosing it**
-We believe that tournaments are a great addition to a game, as they introduce a stronger sense of competition and engagement for players.
+- **Motivation**:
 
-- **Implementation details**
-The first player to join a tournament is designated as its creator. This player can either wait for other participants to join or start the tournament immediately, in which case any remaining slots are filled with AI players.
-To improve readability and user experience, we also added visual indicators using colors to clearly show match results and distinguish winners from losers.
+	We believe that tournaments are a great addition to a game, as they introduce a stronger sense of competition and engagement for players.
 
-- **Team members involved**
-pmenard
+- **Implementation details**:
+
+	The first player to join a tournament is designated as its creator. This player can either wait for other participants to join or start the tournament immediately, in which case any remaining slots are filled with AI players.
+
+	To improve readability and user experience, we also added visual indicators using colors to clearly show match results and distinguish winners from losers.
+
+- **PIC**: pmenard
+
 
 #### 9. Minor: A gamification system to reward users for their actions (1 pt)
 
-4 implementations:
-◦ Avhievements
-◦ XP/level system
-◦ leaderboards,
-◦ badges
+- Details:
 
-All data is persistently stored in the database, ensuring progress is maintained between sessions.
+	- 4 implementations:
+	  	- Avhievements
+		- XP/level system
+		- leaderboards
+		- badges
 
-Visual feedback is provided through notifications and progress bars, giving users real-time updates on their achievements and progression.
+	- All data is persistently stored in the database, ensuring progress is maintained between sessions.
 
-Rules and progression mechanics are transparent: players can view clear rules before starting a game, ensuring a fair and understandable system.
+	- Visual feedback is provided through notifications and progress bars, giving users real-time updates on their achievements and progression.
+
+	- Rules and progression mechanics are transparent: players can view clear rules before starting a game, ensuring a fair and understandable system.
 
 - **PIC**: nrontard
 
 
 #### 10. Minor: Implement spectator mode for games (1 pt)
 
-- **Motivation for choosing it**
-We wanted to allow players who were eliminated from a tournament to watch the final match if they wished.
+- **Motivatio**:
 
-- **Implementation details**
-When the final match starts, an HTML button becomes available for eliminated players. By clicking on this button, they can join the game as spectators and watch the match in real time.
+	We wanted to allow players who were eliminated from a tournament to watch the final match if they wished.
 
-- **Team members involved**
-pmenard
+- **Implementation details**:
+
+	When the final match starts, an HTML button becomes available for eliminated players. By clicking on this button, they can join the game as spectators and watch the match in real time.
+
+- **PIC**: pmenard
 
 
 ### VII - Devops
 
-#### 1. Major Module: Monitoring system with Prometheus and Grafana (2 points)
+#### 1. Major Module: Monitoring system with Prometheus and Grafana (2 pts)
 
 - **Motivation**: This helps monitoring the server system, analyzing performance and informing the team immediately when there's a trouble in operation of the server and used services.
 
@@ -424,16 +436,15 @@ pmenard
 - **PIC**: tat-nguy
 
 
-### VIII - Data and Analytics
-
 ### IX - Blockchain
+
 #### 1. Major: Store tournament scores on the Blockchain (2 pts)
 
 - PIC: layang
 
 ### X - Modules of choice
 
-#### 1. Minor : JWT (Json Web Token) (1 point)
+#### 1. Minor: JWT (Json Web Token) (1 pt)
 
 - **Motivation**: For enhanced security, we have implemented a JWT-based system.
   
