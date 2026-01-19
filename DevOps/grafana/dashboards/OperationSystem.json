@@ -105,7 +105,7 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 4,
+        "w": 6,
         "x": 0,
         "y": 1
       },
@@ -234,7 +234,7 @@
       "gridPos": {
         "h": 4,
         "w": 3,
-        "x": 4,
+        "x": 6,
         "y": 1
       },
       "id": 20,
@@ -318,7 +318,7 @@
       "gridPos": {
         "h": 4,
         "w": 3,
-        "x": 7,
+        "x": 9,
         "y": 1
       },
       "id": 155,
@@ -392,7 +392,7 @@
       "gridPos": {
         "h": 4,
         "w": 3,
-        "x": 10,
+        "x": 12,
         "y": 1
       },
       "id": 16,
@@ -476,7 +476,7 @@
       "gridPos": {
         "h": 4,
         "w": 3,
-        "x": 13,
+        "x": 15,
         "y": 1
       },
       "id": 21,
@@ -508,90 +508,6 @@
         }
       ],
       "title": "SWAP Used",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${ds_prometheus}"
-      },
-      "description": "Used Root FS",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgba(50, 172, 45, 0.97)",
-                "value": 0
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 80
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 90
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 3,
-        "x": 16,
-        "y": 1
-      },
-      "id": 154,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "12.3.1",
-      "targets": [
-        {
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "(\n  (node_filesystem_size_bytes{instance=\"$node\", job=\"$job\", mountpoint=\"/\", fstype!=\"rootfs\"}\n   - node_filesystem_avail_bytes{instance=\"$node\", job=\"$job\", mountpoint=\"/\", fstype!=\"rootfs\"})\n  / node_filesystem_size_bytes{instance=\"$node\", job=\"$job\", mountpoint=\"/\", fstype!=\"rootfs\"}\n) * 100\n",
-          "format": "time_series",
-          "instant": true,
-          "range": false,
-          "refId": "A",
-          "step": 240
-        }
-      ],
-      "title": "Root FS Used",
       "type": "gauge"
     },
     {
@@ -632,7 +548,7 @@
       "gridPos": {
         "h": 2,
         "w": 3,
-        "x": 19,
+        "x": 18,
         "y": 1
       },
       "id": 14,
@@ -711,8 +627,8 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 2,
-        "x": 22,
+        "w": 3,
+        "x": 21,
         "y": 1
       },
       "id": 18,
@@ -792,7 +708,7 @@
       "gridPos": {
         "h": 2,
         "w": 3,
-        "x": 19,
+        "x": 18,
         "y": 3
       },
       "id": 75,
@@ -871,8 +787,8 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 2,
-        "x": 22,
+        "w": 3,
+        "x": 21,
         "y": 3
       },
       "id": 15,
@@ -3089,8 +3005,8 @@
       },
       {
         "current": {
-          "text": "43a085f0075e",
-          "value": "43a085f0075e"
+          "text": "1e896d39a966",
+          "value": "1e896d39a966"
         },
         "datasource": {
           "type": "prometheus",
