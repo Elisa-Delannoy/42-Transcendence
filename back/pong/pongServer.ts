@@ -304,10 +304,14 @@ function checkDeconnections(io: Server, socket: Socket, playerId: number, game: 
 	{
 		if (game.nbDeconnectionsP1 >= 2)
 			io.to(socket.id).emit("kick");
+		else if (game.nbDeconnectionsP1 == 1)
+			io.to(socket.id).emit("warning");
 	}
 	else if (playerId == game.idPlayer2)
 	{
 		if (game.nbDeconnectionsP2 >= 2)
 			io.to(socket.id).emit("kick");
+		else if (game.nbDeconnectionsP2 == 1)
+			io.to(socket.id).emit("warning");
 	}
 }

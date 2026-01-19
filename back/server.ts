@@ -249,14 +249,6 @@ fastify.get("/api/private/tournament/list", async (request, reply) => {
 	return { tournaments: list };
 });
 
-/* fastify.post("/api/private/tournament/join", async (request, reply) => {
-	const { tournamentId } = request.body as any;
-	const playerId = request.user?.user_id as any;
-	const id = Number(tournamentId);
-	joinTournament(playerId, id);
-	reply.send({ message: "Player joined tournament" });
-}); */
-
 fastify.get("/api/private/tournament/all", (req, reply) => {
 	return tournamentService.getAllTournamentsDetailed(req, reply);
 });

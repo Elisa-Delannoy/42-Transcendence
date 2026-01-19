@@ -95,14 +95,19 @@ export class ServerGame {
 	}
 }
 
-function getDate(id: number)
+function getDate(id: number, type: string)
 {
-	return games_map.get(id)?.gameDate;
+	if (type == "Online")
+		return games_map.get(id)?.gameDate;
 }
 
 export function createGame(PlayerId: number, isLocal: boolean, type: "Local" | "AI" | "Online" | "Tournament", options: { vsAI: boolean }): number 
 {
-	let id: number = 1;
+	let id: number
+	if (type === "AI" || type === "Local")
+		id = 1000000;
+	else
+		id = 1;
 	while (games_map.has(id))
 		id++;
 	const gameId = id;
@@ -185,7 +190,7 @@ export function getGameType(gameId: number)
 export async function endGame(winner_id: number, loser_id: number, winner_score: number,
 	loser_score: number, duration_game: number, gameid: number, gameInfo: GameInfo, type: string): Promise<void>
 {
-	const gameDate: any = getDate(Number(gameid));
+	const gameDate: any = getDate(Number(gameid), type);
 	if (type === "Online" || type === "Tournament")
 	{
 			const new_elo = await users.getNewElo(winner_id, loser_id, winner_score, loser_score);

@@ -2,6 +2,7 @@ import { GameRenderer } from "../game/gameRenderer";
 import { GameNetwork } from "../game/gameNetwork";
 import { navigateTo, getPreviousPath, getBeforePreviousPath } from "../router";
 import { GameInstance } from "../game/gameInstance";
+import { showToast } from "./show_toast";
 
 let renderer: GameRenderer | null = null;
 let net: GameNetwork | null = null;
@@ -63,6 +64,10 @@ export async function initPongMatch(params?: any) {
 		currentGame.enableLocalMode();
 
 	net = new GameNetwork();
+
+	net.onWarning(() => {
+		showToast("Next game deconnection will get you kicked from the game.", "warning", 5000);
+	});
 
 	net.onKick(() => {
 		navigateTo("/home");

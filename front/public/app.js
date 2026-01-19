@@ -4158,6 +4158,9 @@ var init_gameNetwork = __esm({
         this.socket.on("disconnection", () => {
           this.onDisconnectionCallback?.();
         });
+        this.socket.on("warning", () => {
+          this.onWarningCallback?.();
+        });
         this.socket.on("kick", () => {
           this.onKickCallback?.();
         });
@@ -4179,6 +4182,9 @@ var init_gameNetwork = __esm({
       }
       onDisconnection(cb) {
         this.onDisconnectionCallback = cb;
+      }
+      onWarning(cb) {
+        this.onWarningCallback = cb;
       }
       onKick(cb) {
         this.onKickCallback = cb;
@@ -4294,6 +4300,9 @@ async function initPongMatch(params) {
   if (currentGame.getCurrentState().type == "Local")
     currentGame.enableLocalMode();
   net = new GameNetwork();
+  net.onWarning(() => {
+    showToast("Next game deconnection will get you kicked from the game.", "warning", 5e3);
+  });
   net.onKick(() => {
     navigateTo("/home");
     return;
@@ -4437,6 +4446,7 @@ var init_p_pongmatch = __esm({
     init_gameNetwork();
     init_router();
     init_gameInstance();
+    init_show_toast();
     renderer = null;
     net = null;
     currentGame = null;
@@ -5858,15 +5868,8 @@ async function InitEndGame() {
     document.getElementById("final-score").textContent = `${endgame.gameinfo.winner_score} - ${endgame.gameinfo.loser_score}`;
     const addFriend = document.getElementById("addgamer");
     const addFriendDark = document.getElementById("dark-addgamer");
-<<<<<<< HEAD
-    if (endgame.friend) {
-      addFriend.classList.add("hidden");
-      addFriendDark.classList.remove("dark:block");
-    }
-=======
     if (endgame.friend || endgame.gameinfo.type === "AI" || endgame.gameinfo.type === "Local")
       addFriendDark.classList.remove("dark:block");
->>>>>>> main
     if (endgame.gameinfo.type === "Online" || endgame.gameinfo.type === "Tournament") {
       document.getElementById("loser-elo").textContent = `- ${Math.abs(endgame.gameinfo.loser_elo)} \u{1F950}`;
       document.getElementById("winner-elo").textContent = `+ ${endgame.gameinfo.winner_elo} \u{1F950}`;
@@ -6108,7 +6111,6 @@ async function router() {
         return;
       }
     }
-    console.log("reload ?", isReloaded, "from ", history?.state?.from, "to ", window.location.pathname);
     if (auth.logged && (isReloaded && !publicPath.includes(window.location.pathname) || window.location.pathname === "/home" && (!history.state || publicPath.includes(history.state.from)))) {
       chatnet.connect(() => {
         chatnet.toKnowUserID();
@@ -6120,10 +6122,8 @@ async function router() {
     loadHeader10(auth);
     if (publicPath.includes(location.pathname) && auth.logged)
       navigateTo("/home");
-    if (!publicPath.includes(location.pathname) && !auth.logged && location.pathname !== "/termsofservice" && location.pathname !== "/privacypolicy") {
-      console.log("in if");
+    if (!publicPath.includes(location.pathname) && !auth.logged && location.pathname !== "/termsofservice" && location.pathname !== "/privacypolicy")
       navigateTo("/");
-    }
   }
   const { route, params } = match;
   document.querySelector("#header-container").innerHTML;
