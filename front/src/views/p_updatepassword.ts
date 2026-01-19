@@ -32,7 +32,7 @@ export async function initUpdatePassword() {
         body: JSON.stringify({ oldPw, newPw, confirm })
       });
       navigateTo("/logout");
-      showToast("Password is updated successfully! Please re-log in!", "success", 2000);
+      showToast("Password is updated successfully! Please re-login!", "success", 2000);
 
     } catch (err: any) {
       showToast(err.message, "error", 3000, "Update password");

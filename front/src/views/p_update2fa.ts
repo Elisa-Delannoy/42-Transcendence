@@ -74,8 +74,6 @@ export async function initUpdate2fa() {
 				body: JSON.stringify({ code })
 			});
 
-			showToast("2FA Enabled!", "success", 3000);
-
 			// Update UI
 			twofaEnableBtn.classList.add("hidden");
 			twofaDisableBtn.classList.remove("hidden");
@@ -85,6 +83,9 @@ export async function initUpdate2fa() {
 			twofaQr.classList.add("hidden");
 			verifyContainer.classList.add("hidden");
 			verifyInput.value = "";
+
+			showToast("2FA Enabled successfully! Please re-login!", "success", 2000);
+			navigateTo("/logout");
 
 		} catch (err) {
 			console.error(err);

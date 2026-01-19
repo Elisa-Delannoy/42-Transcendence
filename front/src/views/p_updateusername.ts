@@ -59,8 +59,9 @@ async function updateUsername() {
         body: JSON.stringify({ newUsername, password })
       });
 
-      navigateTo("/profile");
-      showToast(`Username updated successfully to << ${response.pseudo} >>`, "success", 2000);
+      navigateTo("/logout");
+      showToast(`Username updated successfully to << ${response.pseudo} >> Please re-login!`, "success", 2000);
+      
 
     } catch (err: any) {
       showToast(err, "error");
