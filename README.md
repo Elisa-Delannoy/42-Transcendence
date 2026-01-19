@@ -109,16 +109,50 @@ The goal of the project is to deliver a fun and competitive game while demonstra
 
 ### Database Schema
 
-The database stores:
-- Users (user information, authentication data, profile)
-- Chat (general chat history)
-- Friend (user's friend connections)
-- achievements (game achievements)
-- game_info (game results)
-- tournament (tournament status)
-- tournament_result (tournament result)
-- user_achievements (users achievement)
-- user_stats (user statistics)
+SQLite database helps to store and retrieve data from these tables:
+
+- **Users**: users information, authentication data, profile
+	- Key: user_id (INTEGER)
+
+- **Chat**: general chat history
+	- Key: id (INTEGER)
+ 	- Relatons:
+  		- user_id (INTEGER) -> **Users** user_id
+
+- **Friend**: user's friend connections
+	- Key: id (INTEGER)
+ 	- Relations:
+  		- user_id1 (INTEGER) -> **Users** user_id
+    	- user_id2 (INTEGER) -> **Users** user_id
+
+- **game_info**: game results
+	- Key: id (INTEGER)
+   	- Relations:
+   	  	- winner_id (INTEGER) -> **Users** user_id
+   	  	- loser_id (INTEGER) -> **Users** user_id
+
+- **tournament**: tournament status
+	- Key: id (INTEGER)
+
+- **tournament_result**: tournament results
+	- Key: id (INTEGER)
+ 	- Relations:
+  		- tournament_id (INTEGER) -> **tournament** id
+		- player_id (INTEGER) -> **Users** user_id
+
+- **achievements**: game achievements
+  	- Key: achievement_id (INTEGER)
+  	
+- **user_achievements**: users achievement
+	- Key: user_id (INTEGER), achievement_id (INTEGER)
+ 	- Relations:
+  		- user_id -> **Users** user_id
+    	- achievement_id -> **achievements** achievement_id
+    
+- **user_stats** (user statistics)
+	- Key: user_id (INTEGER)
+ 	- Relations:
+  		- user_id -> **Users** user_id
 
 Relationships are designed to ensure data consistency and efficient queries.
 
