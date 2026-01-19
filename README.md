@@ -104,15 +104,21 @@ The goal of the project is to deliver a fun and competitive game while demonstra
 - WebSockets for real-time gameplay
 - Docker & Docker Compose for containerization
 
-**Technical choices were made to balance performance, simplicity, and compliance with the ft_transcendence subject constraints.**
+*Technical choices were made to balance performance, simplicity, and compliance with the ft_transcendence subject constraints.*
 
 
 ### Database Schema
 
 The database stores:
-- Users (authentication data, profile, statistics)
-- Matches (players, scores, results)
-- Tournaments (participants, progression)
+- Users (user information, authentication data, profile)
+- Chat (general chat history)
+- Friend (user's friend connections)
+- achievements (game achievements)
+- game_info (game results)
+- tournament (tournament status)
+- tournament_result (tournament result)
+- user_achievements (users achievement)
+- user_stats (user statistics)
 
 Relationships are designed to ensure data consistency and efficient queries.
 
@@ -122,7 +128,7 @@ Relationships are designed to ensure data consistency and efficient queries.
 - Real-time Pong gameplay
 - Matchmaking system
 - Tournament management
-- Player statistics and profiles
+- User statistics and profiles
 
 Each feature was implemented collaboratively, with ownership depending on complexity
 and workload distribution.
@@ -148,6 +154,7 @@ Each chosen module was selected to enhance the project’s educational value and
 #### 2. Minor: Use a frontend framework (React, Vue, Angular, Svelte, etc.)
 #### 3. Minor: Use a backend framework (Express, Fastify, NestJS, Django, etc.).
 #### 4. Major: Implement real-time features using WebSockets or similar technology.
+
 #### 5. Major: Allow users to interact with other users (2 points)
 
 The minimum requirements are:
@@ -155,23 +162,30 @@ The minimum requirements are:
 ◦ A profile system (view user information).
 ◦ A friends system (add/remove friends, see friends list).
 
-We chose this module because it contains important and relevant features for a gaming platform.
+- Motivation: We chose this module because it contains important and relevant features for a gaming platform.
 
-We implemented a general chat that allows users to communicate with all other connected users.
-WebSockets enable real-time chat, available across all pages once the user is connected.
-To ensure persistence, messages are stored in a database, with a limit of 25 messages (managed by a trigger that removes the oldest entry when a new one is added).
-Messages are displayed in one color when a member sends a message and in another color when they receive one.
-Multiple connections are also handled: if a user connects from multiple devices, the message bubbles remain consistent, and each message appears only once.
+- Details:
+  - Basic chat system:
+    - We implemented a general chat that allows users to communicate with all other connected users.
+    - WebSockets enable real-time chat, available across all pages once the user is connected.
+    - To ensure persistence, messages are stored in a database, with a limit of 25 messages (managed by a trigger that removes the oldest entry when a new one is added).
+    - Messages are displayed in one color when a member sends a message and in another color when they receive one.
+    - Multiple connections are also handled: if a user connects from multiple devices, the message bubbles remain consistent, and each message appears only once.
 
-The friends page is divided into four sections:
-- search bar: to add users – includes a debounce function to avoid excessive database calls.
-- friends list: displays avatar, status (online/offline...), friendship date, and a button to delete a friend.
-- pending invitations: display username, avatar, and request date (if less than 3 days: displayed as x seconds, x minutes, x hours, or x days ago), with accept and delete buttons.
-- friend suggestions: other users with whom games have been played, limited to 20 suggestions.
-
-SQL queries are used to build this page. The Friend table, which associates two users with information about their friendship (date, status), and the game_info table, used for friend suggestions, provide the necessary data to build this page.
-
-
+  - The friends page is divided into four sections:
+    - search bar: to add users – includes a debounce function to avoid excessive database calls.
+    - friends list: displays avatar, status (online/offline...), friendship date, and a button to delete a friend.
+    - pending invitations: display username, avatar, and request date (if less than 3 days: displayed as x seconds, x minutes, x hours, or x days ago), with accept and delete buttons.
+    - friend suggestions: other users with whom games have been played, limited to 20 suggestions.
+    - SQL queries are used to build this page. The Friend table, which associates two users with information about their friendship (date, status), and the game_info table, used for friend suggestions, provide the necessary data to build this page.
+   
+  - Profile system:
+    - All user information are shown on the Profile page.
+    - Users have a profile page displaying all their information such as username, password, email, avatar,...
+    - User is also allowed to update their information and delete their own profile.
+    - All user's information stores in table Users in the database.
+   
+- PIC: edelanno (chat, friend), tat-nguy (profile)
 
 #### 6. Major: A public API to interact with the database with a secured API key, rate limiting, documentation, and at least 5 endpoints
 #### 7. Minor: Use an ORM for the database
@@ -194,7 +208,9 @@ SQL queries are used to build this page. The Friend table, which associates two 
   
 - Module in details:
   - Users have a profile page displaying all their information
-  - User can update their profile informations such as *Username*, *Password*, *Email*, *2FA Enable*, *Online Status*, *Avatar*
+  - User is allowed to change their own information such as *Username*, *Password*, *Email*, *2FA Enable*, *Online Status*, *Avatar*...
+  - User is also allowed to delete their own profile, this action can't be recover, so we ask user to write a request, confirm their password, make sure that it's not a mistake and they really want to delete. 
+  - The first time register and login with Google Oauth, users are asked to set up a password immeditately.
   - Users can upload an avatar (with a default avatar if none provided). The avatar path is stored in the Users database. A default path is set initially. Each time the avatar is updated, it is renamed as user_id.type. Upload restrictions are enforced for file size and type (6 MB – PNG and JPEG).
   - Users can add other users as friends and see their online status. On the friends page, users can send friend requests and view their friends along with their status.
 
