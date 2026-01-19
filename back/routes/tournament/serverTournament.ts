@@ -21,6 +21,7 @@ export class serverTournament {
 	idFourth: number;
 	disconnectTimer: NodeJS.Timeout | null;
 	state: TournamentState;
+	finalized: boolean = false;
 
 	constructor(id: number)
 	{

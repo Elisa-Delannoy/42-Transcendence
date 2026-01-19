@@ -1,6 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { createTournamentGame, joinTournamentGame, serverTournament, tournaments_map } from "../routes/tournament/serverTournament";
 import { TournamentState } from "../../front/src/tournament/tournamentNetwork";
+import { finalizeTournament } from "../routes/tournament/tournament.service";
 
 export function handleTournamentSocket(io: Server, socket: Socket)
 {
@@ -220,7 +221,7 @@ function setupGameTournament(socket: Socket, ennemyId: number | undefined, tourn
 	return id;
 }
 
-function updateBrackets(io: Server, tournament: serverTournament, tournamentId: number)
+async function updateBrackets(io: Server, tournament: serverTournament, tournamentId: number)
 {
 	const id = tournament.id;
 	let gameId = id * 1000;
@@ -338,6 +339,10 @@ function updateBrackets(io: Server, tournament: serverTournament, tournamentId: 
 				io.to(`tournament-${tournamentId}`).emit("setWinner", 1, 0, "final");
 
 			tournament.state.status = "finished";
+		}
+		if (!tournament.finalized) {
+			await finalizeTournament(tournament);
+			tournament.finalized = true;
 		}
 	}
 }

@@ -13,7 +13,7 @@ const abi = [
   {
     "inputs": [
       { "internalType": "uint256", "name": "_id", "type": "uint256" },
-      { "internalType": "uint256[8]", "name": "_ranking", "type": "uint256[8]" }
+      { "internalType": "int256[8]", "name": "_ranking", "type": "int256[8]" }
     ],
     "name": "addTournamentOnChain",
     "outputs": [],
@@ -23,7 +23,7 @@ const abi = [
   {
     "inputs": [{ "internalType": "uint256", "name": "_id", "type": "uint256" }],
     "name": "getTournamentOnChain",
-    "outputs": [{ "internalType": "uint256[8]", "name": "", "type": "uint256[8]" }],
+    "outputs": [{ "internalType": "int256[8]", "name": "", "type": "int256[8]" }],
     "stateMutability": "view",
     "type": "function"
   },

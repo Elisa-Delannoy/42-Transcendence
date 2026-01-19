@@ -40,6 +40,7 @@ export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
 export const friends = new Friends(db);
 export const gameInfo = new GameInfo(db);
+export const tournamentDB = new Tournament(db);
 export const tournament = new Tournament(db);
 export const generalChat = new Chat(db);
 export const achievements = new Achievements(db);
@@ -248,13 +249,13 @@ fastify.get("/api/private/tournament/list", async (request, reply) => {
 	return { tournaments: list };
 });
 
-fastify.post("/api/private/tournament/join", async (request, reply) => {
+/* fastify.post("/api/private/tournament/join", async (request, reply) => {
 	const { tournamentId } = request.body as any;
 	const playerId = request.user?.user_id as any;
 	const id = Number(tournamentId);
 	joinTournament(playerId, id);
 	reply.send({ message: "Player joined tournament" });
-});
+}); */
 
 fastify.post("/api/private/tournament/add", (req, reply) => {
 	return tournamentService.updateTournament(req, reply);
@@ -297,6 +298,28 @@ const io = new Server(fastify.server, {
 	cors: { origin: "*", credentials: true}
 	});
 createWebSocket(io);
+
+function blockchainUpload() {
+	(async () => {
+	  try {
+		await tournamentService.uploadPendingTournaments();
+		console.log("Pending tournaments uploaded successfully");
+	  } catch (err) {
+		console.error(
+		  "Initial uploadPendingTournaments failed, server will still start",
+		  err
+		);
+	  }
+	})();
+  
+	setInterval(async () => {
+	  try {
+		await tournamentService.uploadPendingTournaments();
+	  } catch (err) {
+		console.error("uploadPendingTournaments failed", err);
+	  }
+	}, 60_000);
+}
 
 async function lunchDB()
 {
@@ -349,6 +372,7 @@ const start = async () => {
 		console.log(`Server running on port ${PORT}`);
 		await db.connect();
 		await lunchDB();
+		blockchainUpload();
 		// const hashedPasswor= await bcrypt.hash("42", 12);
 		// let hashedPassword = await bcrypt.hash("a", 12);
 		// users.addUser("a", "e@g.c", hashedPassword, 200);

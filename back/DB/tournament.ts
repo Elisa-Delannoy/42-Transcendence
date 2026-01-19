@@ -7,100 +7,159 @@ export class Tournament {
     this._db = db;
   }
 
-  /**
-   * Create the tournament table if it doesn't exist
-   * Fields:
-   * - id: primary key
-   * - winner_id ~ eighth_place_id: final ranking of players
-   * - onchain: 0 = not uploaded to blockchain, 1 = uploaded
-   */
+  /* =====================================================
+   * TABLE CREATION
+   * ===================================================== */
+
   async createTournamentTable() {
     const query = `
       CREATE TABLE IF NOT EXISTS tournament (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        winner_id INTEGER,
-        second_place_id INTEGER,
-        third_place_id INTEGER,
-        fourth_place_id INTEGER,
-        fifth_place_id INTEGER,
-        sixth_place_id INTEGER,
-        seventh_place_id INTEGER,
-        eighth_place_id INTEGER,
-        onchain INTEGER DEFAULT 0
+        status TEXT DEFAULT 'running',
+        onchain INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `;
     await this._db.execute(query, []);
   }
 
-  /**
-   * Delete the tournament table
-   */
-  async deleteTournamentTable() {
-    const query = `DROP TABLE IF EXISTS tournament`;
+  async createTournamentResultTable() {
+    const query = `
+      CREATE TABLE IF NOT EXISTS tournament_result (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        tournament_id INTEGER NOT NULL,
+        player_id INTEGER NOT NULL,
+        rank INTEGER NOT NULL,
+        is_ai INTEGER DEFAULT 0,
+        UNIQUE (tournament_id, rank),
+        FOREIGN KEY (tournament_id) REFERENCES tournament(id)
+      )
+    `;
     await this._db.execute(query, []);
   }
 
-  /**
-   * Insert tournament (auto ID)
-   * @param ranking - array of 8 player IDs in order of their final ranking
-   */
-	async insertTournament(ranking: number[]): Promise<number> {
-		const query = `
-			INSERT INTO tournament (
-				winner_id, second_place_id, third_place_id, fourth_place_id,
-				fifth_place_id, sixth_place_id, seventh_place_id, eighth_place_id
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-		`;
+  async deleteTournamentTables() {
+    await this._db.execute(`DROP TABLE IF EXISTS tournament_result`, []);
+    await this._db.execute(`DROP TABLE IF EXISTS tournament`, []);
+  }
 
-		const result: any = await this._db.runWithResult(query, ranking);
-    console.log("New tournament ID =", result.lastID);  /*a supp */
-		return result.lastID;
-	}
+  /* =====================================================
+   * TOURNAMENT LIFECYCLE
+   * ===================================================== */
 
   /**
-   * Mark a tournament as uploaded to blockchain
-   * @param tournamentId 
+   * Create a new tournament (returns tournamentId)
    */
+  async createTournament(): Promise<number> {
+    const result: any = await this._db.runWithResult(
+      `INSERT INTO tournament (status) VALUES ('running')`,
+      []
+    );
+    return result.lastID;
+  }
+
+  /**
+   * Save final ranking (rank: 1~4)
+   * This should be called ONLY ONCE when tournament ends
+   */
+  async insertTournamentResults(
+    tournamentId: number,
+    ranking: number[]
+  ): Promise<void> {
+    if (ranking.length !== 4) {
+      throw new Error("Tournament ranking must contain exactly 4 players");
+    }
+
+    await this._db.execute("BEGIN TRANSACTION", []);
+
+    try {
+      for (let i = 0; i < ranking.length; i++) {
+        const playerId = ranking[i];
+
+        await this._db.execute(
+          `
+          INSERT INTO tournament_result (tournament_id, player_id, rank, is_ai)
+          VALUES (?, ?, ?, ?)
+          `,
+          [
+            tournamentId,
+            playerId,
+            i + 1,
+            playerId === -1 ? 1 : 0
+          ]
+        );
+      }
+
+      await this._db.execute(
+        `UPDATE tournament SET status = 'finished' WHERE id = ?`,
+        [tournamentId]
+      );
+
+      await this._db.execute("COMMIT", []);
+    } catch (err) {
+      await this._db.execute("ROLLBACK", []);
+      throw err;
+    }
+  }
+
+  /* =====================================================
+   * ONCHAIN
+   * ===================================================== */
+
   async markOnChain(tournamentId: number): Promise<void> {
-    const query = `
-      UPDATE tournament
-      SET onchain = 1
-      WHERE id = ?
-    `;
-    await this._db.execute(query, [tournamentId]);
+    await this._db.execute(
+      `UPDATE tournament SET onchain = 1 WHERE id = ?`,
+      [tournamentId]
+    );
   }
 
-  /**
-   * Get tournaments pending upload
-   */
   async getPendingOnChain(): Promise<any[]> {
-    const query = `
+    return await this._db.query(
+      `
       SELECT *
       FROM tournament
-      WHERE onchain = 0
+      WHERE status = 'finished' AND onchain = 0
       ORDER BY id ASC
-    `;
-    return await this._db.query(query, []);
+      `,
+      []
+    );
   }
 
+  /* =====================================================
+   * QUERY
+   * ===================================================== */
 
-  /**
-   * Get all tournaments
-   */
-  async getAllTournaments(): Promise<any[]> {
-    return await this._db.query(`SELECT * FROM tournament`);
-  }
-
-  /**
-   * Optional: get a tournament by ID
-   */
   async getTournamentById(tournamentId: number): Promise<any> {
-    const query = `
+    const rows = await this._db.query(
+      `SELECT * FROM tournament WHERE id = ?`,
+      [tournamentId]
+    );
+    return rows.length ? rows[0] : null;
+  }
+
+  async getTournamentResults(tournamentId: number): Promise<any[]> {
+    return await this._db.query(
+      `
+      SELECT player_id, rank, is_ai
+      FROM tournament_result
+      WHERE tournament_id = ?
+      ORDER BY rank ASC
+      `,
+      [tournamentId]
+    );
+  }
+
+  async getAllTournaments(): Promise<any[]> {
+    return await this._db.query(
+      `
       SELECT *
       FROM tournament
-      WHERE id = ?
-    `;
-    const rows = await this._db.query(query, [tournamentId]);
-    return rows.length > 0 ? rows[0] : null;
+      ORDER BY id DESC
+      `,
+      []
+    );
   }
 }
+
+
+

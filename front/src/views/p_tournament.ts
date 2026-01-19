@@ -7,21 +7,9 @@ export function TournamentView(): string {
 	return html;
 }
 
-function generateRandomRanking(): number[] {
-	const ranking: number[] = [];
-	while (ranking.length < 8) {
-		const randomId = Math.floor(Math.random() * 16) + 1;
-		if (!ranking.includes(randomId)) {
-			ranking.push(randomId);
-		}
-	}
-	return ranking;
-}
-
 // ===================== Events =====================
 function initTournamentPage() {
 	const createTournamentBtn = document.getElementById("create-tournament");
-	const createBtn = document.getElementById("create-test");
 	const showBtn = document.getElementById("show-onchain");
 	const backBtn = document.getElementById("back-to-home");
 
@@ -35,10 +23,6 @@ function initTournamentPage() {
 			navigateTo(`/brackets/${tournamentId}`);
 	});
 
-	createBtn?.addEventListener("click", async () => {
-		await testTournamentDB();
-	});
-
 	showBtn?.addEventListener("click", async () => {
 		await showDBOnChain();
 	});
@@ -48,33 +32,13 @@ function initTournamentPage() {
 	});
 }
 
-// ===================== Create test result =====================
-async function testTournamentDB() {
-	const testRanking = generateRandomRanking();
-	try {
-		const data = await genericFetch("/api/private/tournament/add", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ ranking: testRanking })
-		});
-		const dbPanel = document.getElementById("db-panel");
-		if (dbPanel) {
-			dbPanel.innerHTML = `
-				<div class="p-2 border-b">
-					<p class="text-green-700 font-bold">✅ Tournament Created!</p>
-					<p><strong>Ranking:</strong> ${testRanking.join(", ")}</p>
-					<p class="text-gray-600 text-sm">(Now stored in database)</p>
-				</div>
-			`;
-		}
-		console.log("Tournament response:", data);
-	} catch (err) {
-		console.error("Error creating tournament:", err);
-		showToast(err, "error", 2000, "Error creating tournament:");
-	}
+// ===================== Show DB vs Blockchain =====================
+function formatRanking(ranking: number[]): string {
+	return ranking
+		.map(id => id === -1 ? "AI" : id.toString())
+		.join(", ");
 }
 
-// ===================== Show DB vs Blockchain =====================
 async function showDBOnChain() {
 	try {
 		const data = await genericFetch("/api/private/tournament/all");
@@ -85,7 +49,7 @@ async function showDBOnChain() {
 		dbPanel.innerHTML = data.map((t: any) => `
 			<div class="p-2 border-b">
 				<p><strong>ID:</strong> ${t.tournamentId}</p>
-				<p><strong>Ranking:</strong> ${t.ranking.join(", ")}</p>
+				<p><strong>Ranking:</strong>  ${Array.isArray(t.ranking) ? formatRanking(t.ranking) : "N/A"} </p>
 				<p><strong>On Chain:</strong>
 					<span class="${t.onChain ? 'text-green-600' : 'text-red-600'}">
 						${t.onChain ? '✅ YES' : '❌ NO'}
@@ -97,10 +61,10 @@ async function showDBOnChain() {
 		chainPanel.innerHTML = data.map((t: any) => `
 			<div class="p-2 border-b">
 				<p><strong>ID:</strong> ${t.tournamentId}</p>
-				${t.onChain
-					? `<p><strong>Blockchain Ranking:</strong> ${t.blockchainRanking.join(", ")}</p>`
+				${t.onChain && Array.isArray(t.blockchainRanking)
+					? `<p><strong>Blockchain Ranking:</strong> ${formatRanking(t.blockchainRanking)} </p>`
 					: `<p class="text-red-600"><strong>Not On Chain ❌</strong></p>`
-				}
+				  }				  
 			</div>
 		`).join("");
 
@@ -109,4 +73,3 @@ async function showDBOnChain() {
 		showToast(err, "error", 2000, "Error loading DB/Blockchain comparison:");
 	}
 }
-
