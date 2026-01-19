@@ -85,11 +85,11 @@ if (nav && nav.type === "reload")
 
 const HISTORY_KEY = "historyStack";
 
-function getHistoryStack(): string[] {
+export function getHistoryStack(): string[] {
 	return JSON.parse(sessionStorage.getItem(HISTORY_KEY) ?? "[]");
 }
 
-function saveHistoryStack(stack: string[]) {
+export function saveHistoryStack(stack: string[]) {
 	sessionStorage.setItem(HISTORY_KEY, JSON.stringify(stack));
 }
 

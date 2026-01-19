@@ -1,4 +1,5 @@
-import { navigateTo } from "../router";
+
+import { goBackSkippingTerms } from "./terms_of_service";
 
 export function PriavacyPolicyView(): string
 {
@@ -9,10 +10,6 @@ export function InitPrivacyPolicy()
 {
     const btn = document.getElementById("go-back") as HTMLButtonElement;
     btn.addEventListener("click", () => {
-		if (window.history.length > 1) {
-            window.history.back()
-        } else {
-            navigateTo("/register");
-        }
+		goBackSkippingTerms();
     })
 }

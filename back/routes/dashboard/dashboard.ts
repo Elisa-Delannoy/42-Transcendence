@@ -10,6 +10,7 @@ export interface IDashBoard
 	WinLoose: {win:number, loose:number}
 	TotalScore: {scored:number, taken:number}
 	Elo: number;
+	userId: number;
 }
 
 export async function dashboardInfo(request: FastifyRequest, reply: FastifyReply)
@@ -45,6 +46,7 @@ export async function dashboardInfo(request: FastifyRequest, reply: FastifyReply
 		dashboard.WinLoose = await gameInfo.getWinsLosses(user_id);
 		dashboard.TotalScore = await gameInfo.getTotalScore(user_id);
 		dashboard.Elo = await users.getEloFromID(user_id);
+		dashboard.userId = user_id;
         reply.status(200).send(dashboard);
     }
     catch (err)

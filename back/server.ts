@@ -343,7 +343,7 @@ async function lunchDB()
 	// await friends.deleteFriendTable();
 	await friends.createFriendTable();
 	
-	await gameInfo.deleteGameInfoTable();
+	// await gameInfo.deleteGameInfoTable();
 	await gameInfo.createGameInfoTable();
 	
 	await tournamentDB.deleteTournamentTables();

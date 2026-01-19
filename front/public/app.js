@@ -222,9 +222,13 @@ async function initDashboard() {
         winnerpath.src = game.winner_avatar;
         winnerscore.textContent = game.winner_score.toString();
         winnerpseudo.textContent = game.winner_pseudo;
+        if (game.winner_id === dashboards.userId)
+          winnerpseudo.classList.add("font-semibold", "filter", "drop-shadow-[0_0_12px_rgba(34,255,120,0.9)]");
         loserpath.src = game.loser_avatar;
         loserscore.textContent = game.loser_score.toString();
         loserpseudo.textContent = game.loser_pseudo;
+        if (game.loser_id === dashboards.userId)
+          loserpseudo.classList.add("font-semibold", "filter", "drop-shadow-[0_0_10px_rgba(255,0,0,0.8)]");
         date.textContent = new Date(game.date_game).toLocaleDateString();
         duration.textContent = "Duration: " + formatDuration(game.duration_game);
         type.textContent = game.type;
