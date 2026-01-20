@@ -809,7 +809,7 @@
 									<a href="/gameonline" data-link class="btn mt-2 ml-3 w-20 text-center">1 VS 1</a>
 								</div>
 								<div id="opponent" class="h-full w-full pt-2 ">
-									<div id="opponent-list" class="h-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 w-full scrollbar-custom overflow-y-auto ">
+									<div id="opponent-list" class="h-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 w-full scrollbar-custom overflow-y-auto ">
 									</div>
 								</div>
 							</section>
@@ -850,13 +850,14 @@
 				</div>
 				<p id="pseudo" class="text-l text-amber-800 font-semibold truncate"></p>
 			</div>
-			<div class="flex items-center flex-col">
+			<div class="flex items-center flex-col relative mr-0">
+				<div class="flex items-center flex-row relative mr-0">
 					<button id="addordelete" class="bg-amber-700 px-2 py-2
-					sm:px-3 sm:py-1.5 md:px-4 md:py-2 lg:px-4 lg:py-2 text-xs sm:text-sm md:text-base lg:text-base text-white rounded cursor-pointer"></button>
-					<button id="addordeleteBIS" class=" mt-2 hidden bg-amber-900 px-2 py-2
-					sm:px-3 sm:py-1.5 md:px-4 md:py-2 lg:px-4 lg:py-2 text-xs sm:text-sm md:text-base lg:text-base text-white rounded cursor-pointer"></button>
-					<p id="date-friendship" class="mt-4 mr-4 italic text-xs text-gray-600"></p>
+						sm:px-3 sm:py-1.5 text-xs sm:text-sm text-white rounded cursor-pointer"></button>
+					<button id="addordeleteBIS" class=" hidden bg-amber-900 ml-2 px-2 py-2
+						sm:px-3 sm:py-1.5 text-xs sm:text-sm text-white rounded cursor-pointer"></button>
 				</div>
+			<p id="date-friendship" class="mt-4 mr-4 italic text-xs text-gray-600"></p>
 			</div>
 		</div>
 	</template>
@@ -871,7 +872,7 @@
 				<p id="pseudo" class="text-l text-amber-800 font-semibold text-xs sm:text-sm xl:text-base 2xl:text-xl truncate"></p>
 			</div>
 			<div class="flex items-center flex-col">
-				<button id="addordelete" class="bg-amber-700 px-2 py-2 sm:px-3 sm:py-1.5 text-xs sm:text-sm 2xl:text-base text-white rounded cursor-pointer"></button>
+				<button id="addordelete" class="bg-amber-700 px-2 py-2 sm:px-3 sm:py-1.5 text-xs sm:text-sm text-white rounded cursor-pointer"></button>
 				<p id="date-friendship" class="mt-4 mr-4 italic text-xs text-gray-600"></p>
 			</div>
 		</div>
