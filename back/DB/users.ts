@@ -89,7 +89,7 @@ export class Users
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		"",
 		0,
-		1000
+		0
 		];
 		await this._db.execute(query, parameters);
 	}
@@ -112,7 +112,7 @@ export class Users
 		new Date().toISOString().replace("T", " ").split(".")[0],
 		"",
 		0,
-		1000
+		0
 		];
 		await this._db.execute(query, parameters);
 	}
@@ -239,7 +239,7 @@ export class Users
 
 	async getPositionLeaderboard(userId: number): Promise<number>
 	{
-		const [rows] = await this._db.query(` SELECT rank FROM ( SELECT user_id, ROW_NUMBER() OVER (ORDER BY elo DESC) AS rank FROM Users) ranked WHERE user_id = ?;`,
+		const rows = await this._db.query(` SELECT rank FROM ( SELECT user_id, ROW_NUMBER() OVER (ORDER BY elo DESC) AS rank FROM Users) ranked WHERE user_id = ?;`,
 			[userId]
 		);
 		return rows.length ? rows[0].rank : -1;

@@ -6,31 +6,34 @@ export function TermsOfServiceView(): string
 }
 
 export function goBackSkippingTerms() {
-    let stack = getHistoryStack(); // Récupère ton historique perso
+    let stack = getHistoryStack();
     let target = null;
 
-    // On parcourt le stack à l'envers pour trouver la dernière page "valide"
-    for (let i = stack.length - 2; i >= 0; i--) {
+    for (let i = stack.length - 2; i >= 0; i--)
+	{
         const path = stack[i];
-        if (path !== "/termsofservice" && path !== "/privacypolicy") {
+        if (path !== "/termsofservice" && path !== "/privacypolicy")
+		{
             target = path;
-            stack = stack.slice(0, i + 1); // On coupe l'historique jusqu'à cette page
+            stack = stack.slice(0, i + 1); 
             break;
         }
     }
-
-    if (target) {
+    if (target)
+	{
         saveHistoryStack(stack);
         navigateTo(target);
-    } else {
-        // Pas de page valide trouvée, on peut rediriger ailleurs
+    }
+	else
+	{
         navigateTo("/register");
-        saveHistoryStack([target!]); // reset stack si nécessaire
+        saveHistoryStack([target!]);
     }
 }
 
 export function InitTermsOfService()
 {
+	(document.getElementById("header") as HTMLElement).classList.add("hidden");
 	const btn = document.getElementById("go-back") as HTMLButtonElement;
 	btn.addEventListener("click", () => {
     goBackSkippingTerms();

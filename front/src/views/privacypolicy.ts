@@ -8,6 +8,7 @@ export function PriavacyPolicyView(): string
 
 export function InitPrivacyPolicy()
 {
+	(document.getElementById("header") as HTMLElement).classList.add("hidden");
     const btn = document.getElementById("go-back") as HTMLButtonElement;
     btn.addEventListener("click", () => {
 		goBackSkippingTerms();

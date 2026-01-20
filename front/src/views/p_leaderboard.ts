@@ -52,7 +52,8 @@ export async function InitLeaderboard()
 		(document.getElementById("your-avatar") as HTMLImageElement).src = leaderboard.user.avatar;
 		(document.getElementById("your-pseudo") as HTMLParagraphElement).textContent = leaderboard.user.pseudo;
 		(document.getElementById("your-elo") as HTMLParagraphElement).textContent = leaderboard.user.elo.toString() + " 🥐";
+		(document.getElementById("your-position") as HTMLParagraphElement).textContent = "#" + leaderboard.user_position;
 	}
 	else
-		(document.getElementById("your-position") as HTMLDivElement).classList.add("hidden");
+		(document.getElementById("your-position-ok") as HTMLDivElement).classList.add("hidden");
 }
