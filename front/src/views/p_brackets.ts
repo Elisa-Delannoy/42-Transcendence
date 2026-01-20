@@ -14,8 +14,6 @@ export async function initBrackets(params?: any) {
 
 	const prev = getPreviousPath();
 	let beforePrev = getBeforePreviousPath();
-	console.log("prev : ", prev);
-	console.log("beforePrev : ", beforePrev);
 	if (prev === null || beforePrev === null || !beforePrev.startsWith("/tournament") || !prev.startsWith("/brackets"))
 	{
 		if (!beforePrev.startsWith("/pongmatch"))

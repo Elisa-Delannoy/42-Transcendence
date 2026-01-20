@@ -20,12 +20,8 @@ export async function initPongMatch(params?: any) {
 
 	const prev = getPreviousPath();
 	let beforePrev = getBeforePreviousPath();
-	console.log("prev : ", prev);
-	console.log("beforePrev : ", beforePrev);
 
 	const isNull = !prev || !beforePrev;
-
-	console.log("tournamentId : ", tournamentId);
 	if (tournamentId)
 	{
 		const cameFromPongMatch = prev.startsWith("/pongmatch") || beforePrev.startsWith("/pongmatch");
