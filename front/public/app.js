@@ -247,6 +247,7 @@ async function initDashboard() {
       item.classList.add("text-center");
       item.classList.add("text-3xl");
       item.classList.add("mt-68");
+      item.classList.add("dark:text-white");
       container.appendChild(item);
     }
     if (dashboards.WinLoose.win > 0 || dashboards.WinLoose.loose > 0) {
@@ -5392,8 +5393,8 @@ async function updateUsername() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newUsername, password })
       });
-      navigateTo("/profile");
-      showToast(`Username updated successfully to << ${response.pseudo} >>`, "success", 2e3);
+      navigateTo("/logout");
+      showToast(`Username updated successfully to << ${response.pseudo} >> Please re-login!`, "success", 2e3);
     } catch (err) {
       showToast(err, "error");
     }
@@ -5450,7 +5451,7 @@ async function initUpdatePassword() {
         body: JSON.stringify({ oldPw, newPw, confirm })
       });
       navigateTo("/logout");
-      showToast("Password is updated successfully! Please re-log in!", "success", 2e3);
+      showToast("Password is updated successfully! Please re-login!", "success", 2e3);
     } catch (err) {
       showToast(err.message, "error", 3e3, "Update password");
     }
@@ -5602,13 +5603,14 @@ async function initUpdate2fa() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code })
       });
-      showToast("2FA Enabled!", "success", 3e3);
       twofaEnableBtn.classList.add("hidden");
       twofaDisableBtn.classList.remove("hidden");
       twofaStatusText.textContent = "2FA Enabled";
       twofaQr.classList.add("hidden");
       verifyContainer.classList.add("hidden");
       verifyInput.value = "";
+      showToast("2FA Enabled successfully! Please re-login!", "success", 2e3);
+      navigateTo("/logout");
     } catch (err) {
       console.error(err);
       showToast(err, "error", 3e3, "Invalid code, please try again.");
@@ -5674,14 +5676,29 @@ var init_oauth_callback = __esm({
 function TermsOfServiceView() {
   return document.getElementById("terms-of-service").innerHTML;
 }
+function goBackSkippingTerms() {
+  let stack = getHistoryStack();
+  let target = null;
+  for (let i = stack.length - 2; i >= 0; i--) {
+    const path = stack[i];
+    if (path !== "/termsofservice" && path !== "/privacypolicy") {
+      target = path;
+      stack = stack.slice(0, i + 1);
+      break;
+    }
+  }
+  if (target) {
+    saveHistoryStack(stack);
+    navigateTo(target);
+  } else {
+    navigateTo("/register");
+    saveHistoryStack([target]);
+  }
+}
 function InitTermsOfService() {
   const btn = document.getElementById("go-back");
   btn.addEventListener("click", () => {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      navigateTo("/register");
-    }
+    goBackSkippingTerms();
   });
 }
 var init_terms_of_service = __esm({
@@ -5698,17 +5715,13 @@ function PriavacyPolicyView() {
 function InitPrivacyPolicy() {
   const btn = document.getElementById("go-back");
   btn.addEventListener("click", () => {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      navigateTo("/register");
-    }
+    goBackSkippingTerms();
   });
 }
 var init_privacypolicy = __esm({
   "front/src/views/privacypolicy.ts"() {
     "use strict";
-    init_router();
+    init_terms_of_service();
   }
 });
 
@@ -5786,7 +5799,8 @@ async function initAchievement() {
     const achievement = await genericFetch("/api/private/achievement", { method: "GET" });
     const container1 = document.getElementById("part1");
     const container2 = document.getElementById("part2");
-    console.log(achievement.locked);
+    const container3 = document.getElementById("part3");
+    const container4 = document.getElementById("part4");
     const unlockedMap = mapByCode(achievement.unlocked);
     const lockedMap = mapByCode(achievement.locked);
     const unlockedTemplate = document.getElementById("unlocked-achievement");
@@ -5817,7 +5831,14 @@ async function initAchievement() {
       description.textContent = achievement2.rarity === "Secret" && !isUnlocked ? "A secret achievement" : achievement2.description;
       rarity.textContent = achievement2.rarity;
       effect.classList.add(...rarityBackground[achievement2.rarity]);
-      (i <= 4 ? container1 : container2).appendChild(node);
+      if (i <= 2)
+        container1.appendChild(node);
+      else if (i > 2 && i <= 4)
+        container2.appendChild(node);
+      else if (i > 4 && i <= 6)
+        container3.appendChild(node);
+      else if (i > 6 && i <= 8)
+        container4.appendChild(node);
       i++;
     }
   } catch (err) {
