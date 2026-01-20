@@ -51,7 +51,7 @@
 					<div class="flex flex-row items-center w-full">
 						<span class="w-8 h-8 sm:w-12 sm:h-12 mr-4 bg-linear-to-br from-amber-500 to-orange-500 rounded-full flex items-center font-bold text-xl text-4xl justify-center text-white" id="lvl-header"></span>
 					</div>
-					<div class="flex flex-col items-center h-full min-w-[80px] max-w-[120px] sm:min-w-[160px] sm:max-w-[320px]">
+					<div class="flex flex-col items-center h-full w-[clamp(120px,40vw,320px)]">
 						<h1 class="w-full text-base sm:text-2xl font-medium text-center text-amber-900 dark:text-white truncate" id="pseudo-header"></h1>
 						<div class="w-full flex flex-col h-2 sm:h-3 mt-5 bg-amber-50 ring-1 ring-amber-900 dark:ring-white rounded-full overflow-hidden">
 							<div id="progress-xp" class="h-full w-0 rounded-full transition-all duration-700 bg-amber-500 ease-out">
@@ -62,23 +62,22 @@
 						<span id="status" class="absolute w-4 h-4 rounded-full border-2 border-white"></span>
 						<img class="rounded-full w-16 h-16 sm:w-20 sm:h-20" id="header-avatar" src="" alt="Your avatar" width="70"/>
 					</div>
-					<div class="mr-0 shrink-0 items-center">
-						<a href="/friends" id="notification" data-link class="hidden ml-4">
-							<img src="/src/image/wfriend.png" alt="notification"
-							class="w-12 sm:w-18 duration-200 hover:-translate-y-1 mt-3 dark:hidden notif">
-							
-							<img src="/src/image/bfriend.png" alt="notification"
-							class="w-12 sm:w-18 duration-200 hover:-translate-y-1 mt-3 hidden dark:block notif">
-						</a>
-					</div>
 				</div>
 				</label>
+				<div class="-mr-5 flex items-center">
+					<a href="/friends" id="notification" data-link class="hidden ml-4">
+						<img src="/src/image/wfriend.png" alt="notification"
+						class="w-12 sm:w-18 duration-200 hover:-translate-y-1 mt-3 dark:hidden notif">
+						<img src="/src/image/bfriend.png" alt="notification"
+						class="w-12 sm:w-18 duration-200 hover:-translate-y-1 mt-3 hidden dark:block notif">
+					</a>
+				</div>
 				<nav class="absolute top-28 right-0 bg-white/90 dark:bg-gray-800/90 dark:text-white shadow-lg w-48 rounded-lg p-4 
 						hidden flex-col space-y-3 text-lg font-medium mr-6
 						peer-checked:flex md:hidden duration-300">
 					<a href="/profile" data-link class="hover:text-amber-700 mx-auto w-36">Profile</a>
-					<a href="/dashboard" data-link class="hover:text-amber-700 mx-auto w-36">Dashboard</a>
 					<a href="/friends" data-link class="hover:text-amber-700 mx-auto w-36">Friends</a>
+					<a href="/dashboard" data-link class="hover:text-amber-700 mx-auto w-36">Dashboard</a>
 					<a href="/leaderboard" data-link class="hover:text-amber-700 mx-auto w-36">Leaderboard</a>
 					<a href="/achievement" data-link class="hover:text-amber-700 mx-auto w-36">Achievements</a>
 					<a href="/logout" data-link class="hover:text-amber-700 mx-auto w-36">Logout</a>
@@ -737,39 +736,42 @@
 			<a href="/privacypolicy" data-link class="hover:underline">Privacy Policy</a>
 			<p>© 2026 Croiscendence</p>
 		</footer>
-		<section id="gamepage" class="relative min-h-screen flex flex-col md:flex-row items-center w-full px-6">
+		<section id="gamepage" class="relative h-screen flex flex-col md:flex-row items-center w-full">
 			<!-- <img src="/src/image/gamepage.jpg"
 			alt="gamepage"
 			class="absolute inset-0 -z-10 object-cover w-full h-full"> -->
 			<video autoplay muted loop playsinline class="absolute inset-0 -z-10 object-cover w-full h-full">
-  				<source src="/src/image/bg-video.mp4" type="video/mp4">
-				<img src="/src/image/bg-video.jpg" alt="">
+  				<source src="/src/image/bg-wcroissant.mp4" type="video/mp4">
 			</video>
-			<div class="w-1/2">
-			</div>
-			<div class="w-1/2 mx-auto">
-				<ul class="flex flex-col gap-16 text-center mr-0 md:mr-24">
-					<li class="flex flex-col items-center">
-						<h1 class="text-2xl font-semibold tracking-wide">Local</h1>
-						<p class="text-sm opacity-60 mb-3">Play against a friend or an AI</p>
-						<a href="/gamelocal" data-link class="btn w-48">Player or AI</a>
-					</li>
-					<li class="flex flex-col items-center">
-						<h1 class="text-2xl font-semibold tracking-wide">Online</h1>
-						<p class="text-sm opacity-60 mb-3">Competitive online matches</p>
-						<a href="/gameonline" data-link class="btn w-48">1 VS 1</a>
-					</li>
-					<li class="flex flex-col items-center">
-						<h1 class="text-2xl font-semibold tracking-wide">Tournament</h1>
-						<p class="text-sm opacity-60 mb-3">4 players elimination bracket</p>
-						<a href="/tournament" data-link class="btn w-48">4 Players</a>
-					</li>
-				</ul>
+			<video autoplay muted loop playsinline class="hidden dark:block absolute inset-0 -z-10 object-cover w-full h-full">
+  				<source src="/src/image/bg-bcroissant.mp4" type="video/mp4">
+			</video>
+			<div class="relative flex flex-col h-full w-full">
+				<div class="flex relative h-1/4 w-full items-center justify-center">
+					<h1 class="text-center text-6xl sm:text-7xl md:text-8xl font-extrabold text-transparent [-webkit-text-stroke:1px_rgb(120,53,15)]
+					bg-clip-text bg-linear-to-r from-amber-700 via-orange-800 to-orange-900 [text-shadow:0_0_120px_rgba(255,120,50,1)]">SELECT YOUR GAME</h1>	
+				</div>
+				<div class="flex flex-col grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center gap-10 w-full h-3/4 px-4">
+					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl bg-amber-800/90 px-18 -mt-4 pb-18">
+						<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Local</h1>
+						<p class="text-base opacity-60 mt-16 text-amber-50 text-center">Play against a friend or an AI</p>
+						<a href="/gamelocal" data-link class="btn w-48 mb-4">Player or AI</a>
+					</div>
+					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl bg-amber-800/90 px-18 -mt-4 pb-18">
+						<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Online</h1>
+						<p class="text-base opacity-60 mt-16 text-amber-50 text-center">Competitive online matches against an user or an AI</p>
+						<a href="/gameonline" data-link class="btn w-48 mb-4">1 VS 1</a>
+					</div>
+					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl bg-amber-800/90 px-18 -mt-4 pb-18">
+						<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Tournament</h1>
+						<p class="text-base opacity-60 mt-16 text-amber-50 text-center">4 players (users and/or AI) elimination bracket</p>
+						<a href="/tournament" data-link class="btn w-48 mb-4">4 Players</a>
+					</div>
+				</div>
 			</div>
 		</section>
 	</template>
 
-<!-- autre : dark:bg-yellow-100/80  dark:text-amber-900  moi :  dark:text-amber-100  dark:bg-amber-800 chat:  dark:bg-yellow-950/90 -->
 	<template id="friendshtml">
 		<div class="flex flex-col h-[calc(100vh-112px)] px-2 sm:px-4 lg:px-8">
 			<div id ="search" class="relative flex flex-col w-full sm:w-2/3 md:1/3 md:w-2/4 xl:1/4 2xl:1/5 mx-auto pt-2">
@@ -779,30 +781,30 @@
 			</div>
 			<div class="flex flex-col lg:flex-row pt-3 gap-4 h-full">
 				<div class="w-full mah-h-full lg:w-1/2 lg:h-full flex flex-col">
-					<h1 class="relative z-20 font-bold text-base ml-5 w-28 md:ml-12 md:w-32 lg:text-2xl lg:ml-16 lg:w-40 2xl:text-3xl 2xl:w-48
+					<h1 class="relative z-20 font-bold text-base ml-5 w-28 md:ml-12 md:w-32 lg:text-2xl lg:ml-16 lg:w-40
 					text-stone-100 bg-amber-900 pl-4  rounded">My friends</h1>
 					<section class="max-h-[97%] bg-amber-100/80 dark:bg-amber-900/60 -mt-4 md:mx-4  xl:mx-8 2xl:mx-12 flex flex-col ring-2 ring-amber-400 dark:ring-amber-900  items-center rounded-lg p-4">
-						<div id="friend-list" class="h-full w-[95%] px-1 2xl:grid 2xl:grid-cols-2 scrollbar-custom overflow-y-auto mb-2 sm:text-base md:text-lg lg:text-base xl:text-xl 2xl:text-2xl">
+						<div id="friend-list" class="h-full w-[95%] px-1 2xl:grid 2xl:grid-cols-2 scrollbar-custom overflow-y-auto mb-2 sm:text-base md:text-lg lg:text-base 2xl:text-xl">
 						</div>
 					</section>
 				</div>
 				<div class="w-full lg:w-1/2 h-full flex flex-col lg:justify-between">
 					<div class="max-h-[70%]">
 						<div class="h-full" >
-							<h1 class="relative z-20 font-bold text-base ml-5 w-44 md:ml-12 md:w-48 lg:text-2xl lg:ml-16 lg:w-60 2xl:text-3xl 2xl:w-76
+							<h1 class="relative z-20 font-bold text-base ml-5 w-44 md:ml-12 md:w-48 lg:text-2xl lg:ml-16 lg:w-60
 							 text-stone-100 bg-amber-900 pl-4 rounded">Pending invitations</h1>
 							<section class="h-full bg-amber-100/80  dark:bg-amber-900/60 -mt-4 md:mx-4 xl:mx-8 2xl:mx-12 flex flex-col ring-2 ring-amber-400 dark:ring-amber-900 items-center rounded-lg p-4 z-10">
-								<div id="pending-list" class="w-full h-full 2xl:grid 2xl:grid-cols-2 px-1 scrollbar-custom overflow-y-auto mb-2 sm:text-base md:text-lg lg:text-base xl:text-xl 2xl:text-2xl">
+								<div id="pending-list" class="w-full h-full 2xl:grid 2xl:grid-cols-2 px-1 scrollbar-custom overflow-y-auto mb-2 sm:text-base md:text-lg lg:text-base 2xl:text-xl">
 								</div>
 							</section>
 						</div>
 					</div>
 					<div class="pt-8 lg:max-h-[25%] 2xl:min-h-[25%] 2xl:max-h-full pb-8">
 						<div class="lg:h-full 2xl:min-h-[25%] 2xl:max-h-full">
-							<h1 class="relative z-20 font-bold text-base ml-5 w-76 md:ml-12 md:w-84 lg:text-2xl lg:ml-16 lg:w-112 2xl:text-3xl 2xl:w-136
+							<h1 class="relative z-20 font-bold text-base ml-5 w-76 md:ml-12 md:w-84 lg:text-2xl lg:ml-16 lg:w-112
 								 text-stone-100 bg-amber-900 pl-4 rounded">Users you played with and may know</h1>
 							<section class="2xl:max-h-full bg-amber-100/80  dark:bg-amber-900/60 -mt-4 md:mx-4 xl:mx-8 2xl:mx-12 flex flex-col ring-2 ring-amber-400 dark:ring-amber-900 items-center rounded-lg relative">
-								<div id="no-opponent" class="flex flex-col hidden items-center sm:text-base md:text-lg lg:text-lg xl:text-xl 2xl:text-2xl">
+								<div id="no-opponent" class="flex flex-col hidden items-center sm:text-base md:text-lg lg:text-lg 2xl:text-xl">
 									<h1 id="no opponent text" class="mt-6 text-xl text-center font-semibold text-amber-800 dark:text-amber-50">Click below to begin a game and meet new users</h1>
 									<a href="/gameonline" data-link class="btn mt-2 ml-3 w-20 text-center">1 VS 1</a>
 								</div>
@@ -832,10 +834,10 @@
 		<li class="flex flex-row gap-3 justify-between px-2 py-2 hover:bg-amber-500/30 rounded-md">
 			<div class="flex flex-row mr-2">
 				<img id="avatar" class="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 2xl:w-16 2xl:h-16 rounded-full my-auto object-cover" src="" alt="avatar"/>
-				<p id="pseudo" class="my-auto ml-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl text-amber-900 dark:text-amber-50"></p>
+				<p id="pseudo" class="my-auto ml-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl runcate text-amber-900 dark:text-amber-50"></p>
 			</div>
 			<button id="addordelete" class="bg-amber-700 my-auto px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 lg:px-4 lg:py-2 xl:px-5 xl:py-2 2xl:px-6 2xl:py-3
-						text-xs sm:text-sm md:text-base lg:text-base xl:text-lg 2xl:text-xl text-amber-50 rounded cursor-pointer"></button>
+				text-xs sm:text-sm md:text-base lg:text-base xl:text-lg 2xl:text-xl text-amber-50 rounded cursor-pointer"></button>
 		</li>
 	</template>
 
@@ -844,39 +846,15 @@
 			<div class="flex flex-row items-center gap-3 relative">
 				<div>
 					<span id="f_status" class="absolute w-4 h-4 rounded-full"></span>
-					<img id="avatar" class="w-16 h-16 2xl:w-24 2xl:h-24 rounded-full my-auto object-cover" src="" alt="avatar"></img>
+					<img id="avatar" class="w-16 h-16 2xl:w-20 2xl:h-20 rounded-full my-auto object-cover" src="" alt="avatar"></img>
 				</div>
-				<p id="pseudo" class="text-l text-amber-800 font-semibold"></p>
+				<p id="pseudo" class="text-l text-amber-800 font-semibold truncate"></p>
 			</div>
 			<div class="flex items-center flex-col">
-				<!-- <div class="flex flex-row"> -->
 					<button id="addordelete" class="bg-amber-700 px-2 py-2
-					sm:px-3 sm:py-1.5 
-							md:px-4 md:py-2 
-							lg:px-4 lg:py-2 
-							xl:px-5 xl:py-2 
-							2xl:px-6 2xl:py-3
-							text-xs 
-							sm:text-sm 
-							md:text-base 
-							lg:text-base 
-							xl:text-lg 
-							2xl:text-xl
-					text-white rounded cursor-pointer"></button>
+					sm:px-3 sm:py-1.5 md:px-4 md:py-2 lg:px-4 lg:py-2 text-xs sm:text-sm md:text-base lg:text-base text-white rounded cursor-pointer"></button>
 					<button id="addordeleteBIS" class=" mt-2 hidden bg-amber-900 px-2 py-2
-					sm:px-3 sm:py-1.5 
-							md:px-4 md:py-2 
-							lg:px-4 lg:py-2 
-							xl:px-5 xl:py-2 
-							2xl:px-6 2xl:py-3
-							text-xs 
-							sm:text-sm 
-							md:text-base 
-							lg:text-base 
-							xl:text-lg 
-							2xl:text-xl
-					text-white rounded cursor-pointer"></button>
-					<!-- </div> -->
+					sm:px-3 sm:py-1.5 md:px-4 md:py-2 lg:px-4 lg:py-2 text-xs sm:text-sm md:text-base lg:text-base text-white rounded cursor-pointer"></button>
 					<p id="date-friendship" class="mt-4 mr-4 italic text-xs text-gray-600"></p>
 				</div>
 			</div>
@@ -890,15 +868,10 @@
 					<span id="f_status" class="absolute w-4 h-4 rounded-full"></span>
 					<img id="avatar" class="w-10 h-10 2xl:w-20 2xl:h-20 rounded-full my-auto object-cover" src="" alt="avatar"></img>
 				</div>
-				<p id="pseudo" class="text-l text-amber-800 font-semibold text-xs sm:text-sm xl:text-base 2xl:text-xl"></p>
+				<p id="pseudo" class="text-l text-amber-800 font-semibold text-xs sm:text-sm xl:text-base 2xl:text-xl truncate"></p>
 			</div>
 			<div class="flex items-center flex-col">
-				<button id="addordelete" class="bg-amber-700 px-2 py-2
-						sm:px-3 sm:py-1.5 
-						text-xs 
-						sm:text-sm 
-						2xl:text-base
-				text-white rounded cursor-pointer"></button>
+				<button id="addordelete" class="bg-amber-700 px-2 py-2 sm:px-3 sm:py-1.5 text-xs sm:text-sm 2xl:text-base text-white rounded cursor-pointer"></button>
 				<p id="date-friendship" class="mt-4 mr-4 italic text-xs text-gray-600"></p>
 			</div>
 		</div>
@@ -909,7 +882,7 @@
 			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] ring-4 ring-amber-900 flex flex-col w-full max-w-md rounded-lg mt-6 mx-auto shadow-2xl items-center pb-6">
 				<div class="flex w-full mt-3 items-center px-4">
 					<div class="w-6"></div>
-					<h1 class="text-2xl sm:text-3xl mx-auto font-bold text-amber-900 drop-shadow-lg"
+					<h1 class="text-2xl sm:text-3xl truncate mx-auto font-bold text-amber-900 drop-shadow-lg"
 						id="profile-pseudo"></h1>
 					<a class="size-6" href="/updateusername" data-link>
 						<img class="invert ring-1 p-0.5 ring-blue-950 rounded-md"
@@ -1908,7 +1881,7 @@
 				<button class="bg-amber-100 px-4 text-amber-900 hover:bg-amber-500 dark:bg-yellow-950 dark:text-amber-100 dark:hover:bg-amber-100 dark:hover:text-amber-800">Send</button>
 			</form>
 		</div>
-		<div id="chat-bar" class="bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 text-center 2xl:text-2xl 2xl:w-72">
+		<div id="chat-bar" class="bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg shadow cursor-pointer w-32 xl:w-60 text-center">
 			General Chat
 		</div>
 	</template>

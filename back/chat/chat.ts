@@ -26,7 +26,7 @@ export async function handleGeneralChatSocket(io: Server, socket: Socket) {
 				socket.emit("chatError", {error: "invalid message"});
 			message = message.trim();
 			if (message.length > 250)
-				return socket.emit("chatError", {error: "message too long"});
+				return socket.emit("chatError", {error: "message too long, max 250 characters"});
 			if (message.length === 0)
 				return socket.emit("chatError", {error: "empty message"});
 			const pseudo = socket.data.user.pseudo;
