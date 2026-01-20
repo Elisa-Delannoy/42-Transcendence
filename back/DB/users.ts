@@ -1,3 +1,4 @@
+import { PlayerGame } from "../pong/gameEngine";
 import { boardInfo } from "../routes/leaderboard/leaderboard";
 import { ManageDB } from "./manageDB";
 
@@ -140,6 +141,18 @@ export class Users
 		`;
 		await this._db.execute(query, [userId]);
 	}
+
+	async getPlayerGame(pseudo: string): Promise<PlayerGame>
+	{
+		const query = `SELECT pseudo, elo, avatar, lvl FROM Users WHERE pseudo = ?`;
+
+		const rows = await this._db.query(query, [pseudo]);
+
+		const player: PlayerGame = rows[0];
+		console.log(rows);
+		return player;
+	}
+
 
 	async getEmailUser(email: string)
 	{

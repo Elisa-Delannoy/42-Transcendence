@@ -1,3 +1,10 @@
+export interface PlayerGame {
+	pseudo: string;
+	elo: number;
+	avatar: string;
+	lvl: number;
+}
+
 export interface Ball {
 	x: number;
 	y: number;
@@ -28,9 +35,9 @@ export interface GameState {
 		player1: "up" | "down" | "stop",
 		player2: "up" | "down" | "stop"
 	};
-	pseudo: {
-		player1: string,
-		player2: string
+	users: {
+		user1: PlayerGame,
+		user2: PlayerGame
 	};
 }
 

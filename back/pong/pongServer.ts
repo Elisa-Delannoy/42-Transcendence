@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { applyInput, GameState, resetBall } from "./gameEngine";
 import { ServerGame, games_map, endGame } from "../routes/game/serverGame";
-import { gameInfo } from "../server";
+import { gameInfo, users } from "../server";
 import { tournaments_map } from "../routes/tournament/serverTournament";
 
 export function handleGameSocket(io: Server, socket: Socket) {
@@ -191,14 +191,14 @@ export function checkForWinner(game: ServerGame, io: Server)
 		game.duration = Math.round(duration * 10) / 10;
 		if (game.state.score.player1 > game.state.score.player2)
 		{
-			game.winner = game.state.pseudo.player1;
+			game.winner = game.state.users.user1.pseudo;
 			game.idwinner = game.idPlayer1;
 			game.idloser = game.idPlayer2;
 			endGame(game.idPlayer1, game.idPlayer2, game.state.score.player1, game.state.score.player2, game.duration , game.id, gameInfo, game.type, game.gameDate);
 		}
 		else
 		{
-			game.winner = game.state.pseudo.player2;
+			game.winner = game.state.users.user2.pseudo;
 			game.idwinner = game.idPlayer2;
 			game.idloser = game.idPlayer1;
 			endGame(game.idPlayer2, game.idPlayer1, game.state.score.player2, game.state.score.player1, game.duration , game.id, gameInfo, game.type, game.gameDate);
@@ -214,12 +214,12 @@ export function updateStateGame(state: GameState, status: "waiting" | "playing" 
 		paddles: state.paddles,
 		score: state.score,
 		status: status,
-		pseudo: { player1: state.pseudo.player1, player2: state.pseudo.player2 },
+		users: { user1: state.users.user1, user2: state.users.user2 },
 		type: type
 	};
 }
 
-function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number, pseudo: string) {
+async function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number, pseudo: string) {
 	
 	if (game.sockets.player1 === null && game.sockets.player2 === null)
 	{
@@ -229,8 +229,9 @@ function initLocal(game: ServerGame, io: Server, socket: Socket, gameId: number,
 	if (checkUser(io, socket, game) == -1)
 		return;
 	game.idPlayer2 = 0;
-	game.state.pseudo.player1 = pseudo;
-	game.state.pseudo.player2 = "Guest";
+	game.state.users.user1 = await users.getPlayerGame(pseudo);
+	console.log(game.state.users.user1);
+	game.state.users.user2 = { pseudo: "Guest", elo: 0, avatar: "/files/0.png", lvl:1};
 	if (game.status !== "disconnected")
 	{
 		game.state.ball.speedX = Math.random() < 0.5 ? -2.5 : 2.5;
@@ -258,7 +259,7 @@ async function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gam
 		if (checkUser(io, socket, game) == -1)
 			return;
 		role = "player1";
-		game.state.pseudo.player1 = pseudo;
+		game.state.users.user1 = await users.getPlayerGame(pseudo);
 	}
 	else if (playerId === game.idPlayer2)
 	{
@@ -266,7 +267,7 @@ async function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gam
 		if (checkUser(io, socket, game) == -1)
 			return;
 		role = "player2";
-		game.state.pseudo.player2 = pseudo;
+		game.state.users.user2 = await users.getPlayerGame(pseudo);
 		io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status, game.type));
 	}
 	else
@@ -284,7 +285,7 @@ async function initRemoteAndAi(game: ServerGame, io: Server, socket: Socket, gam
 	}
 
 	if (game.idPlayer2 == -1)
-		game.state.pseudo.player2 = "AI";
+		game.state.users.user2 = await users.getPlayerGame("AI");
 
 	// start countdown when 2 players are in the game
 	if ((game.sockets.player1 && game.idPlayer2 == -1) 
@@ -335,7 +336,7 @@ function checkDeconnections(io: Server, socket: Socket, playerId: number, game: 
 			game.status = "finished";
 			const duration = (Date.now() - game.duration) / 1000;
 			game.duration = Math.round(duration * 10) / 10;
-			game.winner = game.state.pseudo.player2;
+			game.winner = game.state.users.user2.pseudo;
 			game.idwinner = game.idPlayer2;
 			game.idloser = game.idPlayer1;
 			endGame(game.idPlayer2, game.idPlayer1, 11, 0, game.duration , game.id, gameInfo, game.type, game.gameDate);
@@ -353,7 +354,7 @@ function checkDeconnections(io: Server, socket: Socket, playerId: number, game: 
 			game.status = "finished";
 			const duration = (Date.now() - game.duration) / 1000;
 			game.duration = Math.round(duration * 10) / 10;
-			game.winner = game.state.pseudo.player1;
+			game.winner = game.state.users.user1.pseudo;
 			game.idwinner = game.idPlayer1;
 			game.idloser = game.idPlayer2;
 			endGame(game.idPlayer1, game.idPlayer2, 11, 0, game.duration , game.id, gameInfo, game.type, game.gameDate);

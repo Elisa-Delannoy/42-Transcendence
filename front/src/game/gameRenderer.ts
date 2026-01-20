@@ -82,7 +82,7 @@ export class GameRenderer {
 			this.ctx.textAlign = "center";
 			if (state.score.player1 > state.score.player2)
 			{
-				const pseudo = state.pseudo.player1;
+				const pseudo = state.users.user1.pseudo;
 				const str = pseudo + " wins!";
 				this.ctx.fillText(
 					str,
@@ -92,7 +92,7 @@ export class GameRenderer {
 			}
 			else
 			{
-				const pseudo = state.pseudo.player2;
+				const pseudo = state.users.user2.pseudo;
 				const str = pseudo + " wins!";
 				this.ctx.fillText(
 					str,

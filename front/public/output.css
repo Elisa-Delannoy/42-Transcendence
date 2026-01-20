@@ -778,8 +778,14 @@
   .w-\[clamp\(120px\,40vw\,320px\)\] {
     width: clamp(120px, 40vw, 320px);
   }
+  .w-auto {
+    width: auto;
+  }
   .w-full {
     width: 100%;
+  }
+  .w-min {
+    width: min-content;
   }
   .max-w-3xl {
     max-width: var(--container-3xl);
@@ -793,8 +799,20 @@
   .max-w-6xl {
     max-width: var(--container-6xl);
   }
+  .max-w-\[20px\] {
+    max-width: 20px;
+  }
   .max-w-\[85\%\] {
     max-width: 85%;
+  }
+  .max-w-\[240px\] {
+    max-width: 240px;
+  }
+  .max-w-\[280px\] {
+    max-width: 280px;
+  }
+  .max-w-\[320px\] {
+    max-width: 320px;
   }
   .max-w-\[450px\] {
     max-width: 450px;
@@ -807,6 +825,9 @@
   }
   .min-w-\[120px\] {
     min-width: 120px;
+  }
+  .min-w-\[160px\] {
+    min-width: 160px;
   }
   .min-w-\[280px\] {
     min-width: 280px;
@@ -1695,6 +1716,9 @@
   }
   .pt-8 {
     padding-top: calc(var(--spacing) * 8);
+  }
+  .pr-4 {
+    padding-right: calc(var(--spacing) * 4);
   }
   .pb-1 {
     padding-bottom: calc(var(--spacing) * 1);
@@ -2761,6 +2785,11 @@
   .lg\:w-112 {
     @media (width >= 64rem) {
       width: calc(var(--spacing) * 112);
+    }
+  }
+  .lg\:max-w-\[320px\] {
+    @media (width >= 64rem) {
+      max-width: 320px;
     }
   }
   .lg\:max-w-md {

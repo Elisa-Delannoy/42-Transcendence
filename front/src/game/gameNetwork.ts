@@ -1,11 +1,12 @@
 import { io, Socket } from "socket.io-client";
+import { PlayerGame } from "../../../back/pong/gameEngine";
 
 export interface GameState {
 	ball: { x: number; y: number };
 	paddles: { player1: number; player2: number };
 	score: { player1: number; player2: number };
 	status: "waiting" | "playing" | "finished" | "countdown" | "disconnected";
-	pseudo: { player1: string; player2: string };
+	users: {user1: PlayerGame, user2: PlayerGame};
 	type: "Local" | "AI" | "Online" | "Tournament";
 }
 

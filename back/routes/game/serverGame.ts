@@ -68,9 +68,9 @@ export class ServerGame {
 				player1: "stop",
 				player2: "stop"
 			},
-			pseudo: {
-				player1: "Waiting for Player 1",
-				player2: "Waiting for Player 2",
+			users: {
+				user1: { pseudo: "Waiting for Player 1", elo: 0, avatar: "/files/0.png", lvl: 1},
+				user2: { pseudo: "Waiting for Player 2", elo: 0, avatar: "/files/0.png", lvl: 1},
 			}
 		};
 	}
