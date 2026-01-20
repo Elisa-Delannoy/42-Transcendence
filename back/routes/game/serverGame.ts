@@ -23,6 +23,7 @@ export class ServerGame {
 	isLocal: boolean;
 	lastTick: number;
 	winner: string;
+	spectators: number[];
 	sockets: { player1: string | null, player2: string | null };
 	intervalId: NodeJS.Timeout;
 	disconnectTimer: NodeJS.Timeout | null;
@@ -47,6 +48,7 @@ export class ServerGame {
 		this.isLocal = isLocal;
 		this.lastTick = Date.now();
 		this.winner = "";
+		this.spectators = Array(2).fill(0);
 		this.io = io;
 		this.sockets = { player1: null, player2: null };
 		this.intervalId = setInterval(() => {
@@ -57,7 +59,7 @@ export class ServerGame {
 		this.state = {
 			ball: { x: width / 2, y: height / 2, speedX: 2.5, speedY: 2 },
 			paddles: { player1: height / 2 - 30, player2: height / 2 - 30 },
-			score: { player1: 0, player2: 0, max: 4 },
+			score: { player1: 0, player2: 0, max: 1 },
 			width,
 			height,
 			aiLastUpdate: 0,

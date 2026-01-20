@@ -25,9 +25,12 @@ export function handleGameSocket(io: Server, socket: Socket) {
 		const pseudo = socket.data.user.pseudo;
 		if (socket.data.user.id != game.idPlayer1 && socket.data.user.id != game.idPlayer2)
 		{
-			socket.data.kick = true;
-			io.to(socket.id).emit("kick");
-			return;
+			if (socket.data.user.id != game.spectators[0] && socket.data.user.id != game.spectators[1])
+			{
+				socket.data.kick = true;
+				io.to(socket.id).emit("kick");
+				return;
+			}
 		}
 		checkDeconnections(io, socket, playerId, game);
 
@@ -160,7 +163,12 @@ function checkUser(io: Server, socket: Socket, game: ServerGame) : number
 		return -1;
 	}
 	else if (socket.data.user.id != game.idPlayer1 && socket.data.user.id != game.idPlayer2)
-		io.to(socket.id).emit("kick");
+	{
+		if (socket.data.user.id != game.spectators[0] && socket.data.user.id != game.spectators[1])
+		{
+			io.to(socket.id).emit("kick");
+		}
+	}
 	return 0;
 }
 

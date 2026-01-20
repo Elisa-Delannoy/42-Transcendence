@@ -94,7 +94,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 		if (!tournament)
 			return;
 		let gameId = 2;
-		gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId);
+		gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId, true);
 		io.to(socket.id).emit("joinTournamentGame", gameId, tournamentId);
 	});
 
@@ -142,7 +142,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 							countdown--;
 							if (countdown < 0) {
 								clearInterval(interval);
-								gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId);
+								gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId, false);
 								io.to(socket.id).emit("joinTournamentGame", gameId, tournamentId);
 							}
 						}, 1000);
@@ -212,7 +212,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 					}
 					else
 					{
-						gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId);
+						gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId, false);
 						io.to(socket.id).emit("joinTournamentGame", gameId, tournamentId);
 					}
 				}

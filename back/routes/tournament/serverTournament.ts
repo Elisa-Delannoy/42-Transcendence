@@ -166,7 +166,7 @@ export function createTournamentGame(PlayerId: number, isLocal: boolean, type: "
 		return -2;
 }
 
-export function joinTournamentGame(playerId: number, gameId: number, tournamentID: number) : number
+export function joinTournamentGame(playerId: number, gameId: number, tournamentID: number, isWatching: boolean) : number
 {
 	const tournament = tournaments_map.get(tournamentID);
 	if (tournament)
@@ -178,8 +178,13 @@ export function joinTournamentGame(playerId: number, gameId: number, tournamentI
 		{
 			if (game.idPlayer2 == 0)
 				game.idPlayer2 = playerId;
-			else
-				console.log("Game is already full.");
+			else if (isWatching)
+			{
+				if (game.spectators[0] == 0)
+					game.spectators[0] = playerId;
+				else if (game.spectators[1] == 0)
+					game.spectators[1] = playerId;
+			}
 		}
 		return id;
 	}
