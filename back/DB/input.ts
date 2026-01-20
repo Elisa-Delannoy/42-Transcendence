@@ -69,9 +69,9 @@ async function newChatDB(): Promise <void> {
 	const chat1 = await users.getIDUser(3);
 	await generalChat.addMessageChat(chat1.user_id, chat1.pseudo, "Hello !", '2026-01-19T18:32:41.155Z')
 	const chat2 = await users.getIDUser(10);
-	await generalChat.addMessageChat(chat2.user_id, chat1.pseudo, "Hey, who wants to play ?", '2026-01-20T18:32:41.155Z')
+	await generalChat.addMessageChat(chat2.user_id, chat2.pseudo, "Hey, who wants to play ?", '2026-01-20T18:32:41.155Z')
 	const chat3 = await users.getIDUser(15);
-	await generalChat.addMessageChat(chat2.user_id, chat1.pseudo, "Yes me let's go!!", '2026-01-20T18:33:41.155Z')
+	await generalChat.addMessageChat(chat2.user_id, chat3.pseudo, "Yes me let's go!!", '2026-01-20T18:33:41.155Z')
 }
 
 async function newfriendDB(): Promise <void> {
