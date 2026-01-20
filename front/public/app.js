@@ -6088,7 +6088,6 @@ async function router() {
         return;
       }
     }
-    console.log("reload ?", isReloaded, "from ", history?.state?.from, "to ", window.location.pathname);
     if (auth.logged && (isReloaded && !publicPath.includes(window.location.pathname) || window.location.pathname === "/home" && (!history.state || publicPath.includes(history.state.from)))) {
       chatnet.connect(() => {
         chatnet.toKnowUserID();
@@ -6100,10 +6099,8 @@ async function router() {
     loadHeader10(auth);
     if (publicPath.includes(location.pathname) && auth.logged)
       navigateTo("/home");
-    if (!publicPath.includes(location.pathname) && !auth.logged && location.pathname !== "/termsofservice" && location.pathname !== "/privacypolicy") {
-      console.log("in if");
+    if (!publicPath.includes(location.pathname) && !auth.logged && location.pathname !== "/termsofservice" && location.pathname !== "/privacypolicy")
       navigateTo("/");
-    }
   }
   const { route, params } = match;
   document.querySelector("#header-container").innerHTML;
