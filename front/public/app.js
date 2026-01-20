@@ -4669,6 +4669,8 @@ async function initBrackets(params) {
     }
   }
   const startTournamentButton = document.getElementById("start-button");
+  const replayButton = document.getElementById("replay-button");
+  const homeButton = document.getElementById("home-button");
   const watchFinalButton = document.getElementById("watch-final");
   const pseudoP1 = document.getElementById("player1-name");
   const pseudoP2 = document.getElementById("player2-name");
@@ -4691,6 +4693,10 @@ async function initBrackets(params) {
       net2?.SetupSemiFinal();
     else if (currentTournament.getCurrentState().status == "final")
       net2?.SetupFinal();
+    else if (currentTournament.getCurrentState().status == "finished") {
+      replayButton?.classList.remove("hidden");
+      homeButton?.classList.remove("hidden");
+    }
   });
   net2.onsetWinner((winner, loser, status) => {
     if (status == "semifinal") {

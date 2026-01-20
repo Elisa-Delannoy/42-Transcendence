@@ -41,7 +41,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 		{
 			io.to(`tournament-${tournamentId}`).emit("state", updateStateTournament(tournament.state));
 			console.log("Client disconnected:", socket.id);
-			let countdown = 3;
+			let countdown = 1;
 			let interval = setInterval(() => {
 				countdown--;
 				if (countdown < 0) {

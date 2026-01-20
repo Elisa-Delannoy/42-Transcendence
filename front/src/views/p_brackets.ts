@@ -29,6 +29,8 @@ export async function initBrackets(params?: any) {
 	}
 
 	const startTournamentButton = document.getElementById("start-button");
+	const replayButton = document.getElementById("replay-button");
+	const homeButton = document.getElementById("home-button");
 	const watchFinalButton = document.getElementById("watch-final");
 	const pseudoP1 = document.getElementById("player1-name");
 	const pseudoP2 = document.getElementById("player2-name");
@@ -55,6 +57,11 @@ export async function initBrackets(params?: any) {
 			net?.SetupSemiFinal();
 		else if (currentTournament.getCurrentState().status == "final")
 			net?.SetupFinal();
+		else if (currentTournament.getCurrentState().status == "finished")
+		{
+			replayButton?.classList.remove("hidden");
+			homeButton?.classList.remove("hidden");
+		}
 	});
 
 	net.onsetWinner((winner: number, loser: number, status: "semifinal" | "final") => {
