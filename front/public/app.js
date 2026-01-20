@@ -394,7 +394,7 @@ function GameOnlineinit() {
       body: JSON.stringify({ localMode: false, type: "Online" })
     });
     if (gameId == -1)
-      alert("Your account is already in game.");
+      showToast("Your account is already in game.", "warning", 5e3);
     else
       navigateTo(`/pongmatch/${gameId}`);
   });
@@ -403,6 +403,7 @@ var init_p_gameonline = __esm({
   "front/src/views/p_gameonline.ts"() {
     "use strict";
     init_router();
+    init_show_toast();
   }
 });
 
@@ -4782,7 +4783,7 @@ function initTournamentPage() {
       method: "POST"
     });
     if (tournamentId == -1)
-      alert("Your account is already in a tournament.");
+      showToast("Your account is already in game.", "warning", 5e3);
     else
       navigateTo(`/brackets/${tournamentId}`);
   });

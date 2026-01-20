@@ -18,7 +18,7 @@ function initTournamentPage() {
 			method: "POST"
 		});
 		if (tournamentId == -1)
-			alert("Your account is already in a tournament.");
+			showToast("Your account is already in game.", "warning", 5000);
 		else
 			navigateTo(`/brackets/${tournamentId}`);
 	});

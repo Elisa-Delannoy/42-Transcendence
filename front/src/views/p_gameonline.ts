@@ -1,4 +1,5 @@
 import { navigateTo, genericFetch } from "../router";
+import { showToast } from "./show_toast";
 
 export function GameOnlineView(): string {
   	return (document.getElementById("gameonlinehtml") as HTMLTemplateElement).innerHTML;
@@ -13,7 +14,7 @@ export function GameOnlineinit() {
 			body: JSON.stringify({ localMode: false, type: "Online" })
 		});
 		if (gameId == -1)
-			alert("Your account is already in game.");
+			showToast("Your account is already in game.", "warning", 5000);
 		else
 			navigateTo(`/pongmatch/${gameId}`);
 	});
