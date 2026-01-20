@@ -61,8 +61,8 @@ export class UserStats {
 		}
 		if (online_wins === true)
 		{
-			fields.push("online_wins = online_wins + 10");
-			fields.push("wins_streak = wins_streak + 10");
+			fields.push("online_wins = online_wins + 1");
+			fields.push("wins_streak = wins_streak + 1");
 		}
 		if (online_wins === false)
 		{

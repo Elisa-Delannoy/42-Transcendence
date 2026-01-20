@@ -35,7 +35,7 @@ export async function initBrackets(params?: any) {
 		if(!currentTournament)
 			return;
 		currentTournament.applyServerState(state);
-		updateFrontGame();
+		updatePseudo();
 		if (currentTournament.getCurrentState().status == "semifinal")
 			net?.SetupSemiFinal();
 		else if (currentTournament.getCurrentState().status == "final")
@@ -94,7 +94,7 @@ export async function initBrackets(params?: any) {
 		net?.changeHost();
 	});
 
-	function updateFrontGame() {
+	function updatePseudo() {
 		if (currentTournament)
 		{
 			if (pseudoP1)

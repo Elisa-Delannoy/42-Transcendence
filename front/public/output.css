@@ -480,6 +480,9 @@
   .-mr-5 {
     margin-right: calc(var(--spacing) * -5);
   }
+  .mr-0 {
+    margin-right: calc(var(--spacing) * 0);
+  }
   .mr-1 {
     margin-right: calc(var(--spacing) * 1);
   }
@@ -773,9 +776,33 @@
   .w-\[95\%\] {
     width: 95%;
   }
+<<<<<<< HEAD
   .w-\[280px\] {
     width: 280px;
   }
+=======
+  .w-\[180px\] {
+    width: 180px;
+  }
+<<<<<<< HEAD
+<<<<<<< HEAD
+  .w-\[270px\] {
+    width: 270px;
+  }
+  .w-\[280px\] {
+    width: 280px;
+  }
+  .w-\[clamp\(120px\,40vw\,320px\)\] {
+    width: clamp(120px, 40vw, 320px);
+  }
+=======
+>>>>>>> elisa
+=======
+  .w-\[280px\] {
+    width: 280px;
+  }
+>>>>>>> elisa
+>>>>>>> main
   .w-auto {
     width: auto;
   }
