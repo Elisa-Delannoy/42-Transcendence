@@ -11,11 +11,9 @@ export async function initOAuthCallback() {
       return;
     }
     const data = await res.json();
-    // console.log('data', data);
     if (data.twofa) {
       navigateTo("/twofa");
     } else {
-      // console.log('data firstTimeLogin', data.firstTimeLogin);
       if (data.firstTimeLogin)
       {
         navigateTo("/setggpass");

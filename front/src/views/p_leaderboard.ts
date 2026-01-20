@@ -11,7 +11,6 @@ export async function InitLeaderboard()
 	const leaderboard: ILeaderboard = await genericFetch("/api/private/leaderboard", {
 			method: "GET" });
 	const container = document.getElementById("leaderboard-l") as HTMLUListElement;
-	console.log(leaderboard);
 	if (leaderboard.InfoUsers.length > 0)
 	{
 		(document.getElementById("avatar-1") as HTMLImageElement).src = leaderboard.InfoUsers[0].avatar;
@@ -56,6 +55,4 @@ export async function InitLeaderboard()
 	}
 	else
 		(document.getElementById("your-position") as HTMLDivElement).classList.add("hidden");
-
-	console.log(leaderboard);
 }

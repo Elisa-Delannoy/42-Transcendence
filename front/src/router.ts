@@ -95,7 +95,6 @@ export function saveHistoryStack(stack: string[]) {
 
 export function navigateTo(url: string) {
 	const state = { from: currentPath };
-	console.log("from =", state.from, "url =", url);
 	history.pushState(state, "", url);
 	currentPath = url;
 
@@ -318,7 +317,6 @@ export async function popState() {
 	const path = window.location.pathname;
 	const toIsPrivate = !publicPath.includes(path);
 	const fromIsPrivate = !publicPath.includes(currentPath);
-	console.log("path = ", path, "current path", currentPath);
 	if (!history?.state?.from && fromIsPrivate)
 	{
 		history.replaceState({ from: "/home" }, "", "/home");

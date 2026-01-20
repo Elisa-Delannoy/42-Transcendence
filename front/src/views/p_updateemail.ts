@@ -25,7 +25,6 @@ export async function initUpdateEmail() {
     const password = formEmail["password"].value;
 
     try {
-      console.log('here');
       const response = await genericFetch("/api/private/updateinfo/email", {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
