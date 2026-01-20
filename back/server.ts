@@ -329,24 +329,6 @@ async function lunchDB()
 	await tournamentDB.deleteTournamentTables();
 	await tournamentDB.createTournamentTable();
 	await tournamentDB.createTournamentResultTable();
-
-	await db.execute(
-	`
-    INSERT OR IGNORE INTO tournament (id, status, onchain, created_at)
-    VALUES (1, 'finished', 1, CURRENT_TIMESTAMP)
-    `
-    );
-    await db.execute(
-    `
-    INSERT OR IGNORE INTO tournament_result
-        (tournament_id, player_id, rank, is_ai)
-    VALUES
-        (1, -1, 1, 1),
-        (1, -1, 2, 1),
-        (1,  1, 3, 0),
-        (1, 11, 4, 0)
-    `
-    );
 	
 	await achievements.deleteTable();
 	await achievements.createAchievementsTable();
