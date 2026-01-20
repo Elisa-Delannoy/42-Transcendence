@@ -23,6 +23,7 @@ export class ServerGame {
 	isLocal: boolean;
 	lastTick: number;
 	winner: string;
+	spectators: number[];
 	sockets: { player1: string | null, player2: string | null };
 	intervalId: NodeJS.Timeout;
 	disconnectTimer: NodeJS.Timeout | null;
@@ -31,7 +32,7 @@ export class ServerGame {
 
 	private io?: Server;
 
-	constructor(id: number, isLocal: boolean, io?: Server, width = 600, height = 480)
+	constructor(id: number, isLocal: boolean, io?: Server, width = 900, height = 720)
 	{
 		this.id = id;
 		this.idPlayer1 = 0;
@@ -47,6 +48,7 @@ export class ServerGame {
 		this.isLocal = isLocal;
 		this.lastTick = Date.now();
 		this.winner = "";
+		this.spectators = Array(2).fill(0);
 		this.io = io;
 		this.sockets = { player1: null, player2: null };
 		this.intervalId = setInterval(() => {
@@ -56,8 +58,8 @@ export class ServerGame {
 
 		this.state = {
 			ball: { x: width / 2, y: height / 2, speedX: 2.5, speedY: 2 },
-			paddles: { player1: height / 2 - 30, player2: height / 2 - 30 },
-			score: { player1: 0, player2: 0, max: 4 },
+			paddles: { player1: height / 2 - 50, player2: height / 2 - 50 },
+			score: { player1: 0, player2: 0, max: 3 },
 			width,
 			height,
 			aiLastUpdate: 0,
@@ -66,9 +68,9 @@ export class ServerGame {
 				player1: "stop",
 				player2: "stop"
 			},
-			pseudo: {
-				player1: "Waiting for Player 1",
-				player2: "Waiting for Player 2",
+			users: {
+				user1: { pseudo: "Waiting for Player 1", elo: 0, avatar: "/files/0.png", lvl: 1},
+				user2: { pseudo: "Waiting for Player 2", elo: 0, avatar: "/files/0.png", lvl: 1},
 			}
 		};
 	}
@@ -107,7 +109,6 @@ export function createGame(PlayerId: number, isLocal: boolean, type: "Local" | "
 	const gameId = id;
 	const game = new ServerGame(gameId, isLocal);
 	game.idPlayer1 = PlayerId;
-	console.log("id player1 : ", game.idPlayer1);
 	game.type = type;
 	if (options.vsAI)
 	{

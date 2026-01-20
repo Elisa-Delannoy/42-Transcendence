@@ -192,9 +192,31 @@
 		</footer>
 	</template>
 
+	<template id="set-gg-password-html">
+		<main class="flex flex-col items-center">
+			<form id="set-gg-password-form" class="flex flex-col rounded-lg items-center justify-center text-center bg-white ring-4 ring-amber-300 dark:bg-black/20 backdrop-blur-lg shadow-lg mt-40 w-100 h-100 mx-auto">
+				<h1 class="text-xl font-bold text-amber-900 dark:text-white mb-6">Create A Password</h1>
+				<p class="text-sm text-amber-900 dark:text-gray-400 mt-3 mb-0.5">
+					🎉 Welcome! This is your first time login by Google Oauth 2.0, please create a <strong>strong password</strong> to protect your account.
+				</p>
+				<h2 class="text-2xl font-bold text-amber-900 dark:text-white my-3">Password</h2>
+				<input class="input" type="password" name="new-password" placeholder="••••••••••••" required />
+				<h2 class="text-2xl font-bold text-amber-900 dark:text-white my-3">Confirm Password</h2>
+				<input class="input" type="password" name="confirm-new-password" placeholder="••••••••••••" required />
+				<button type="submit"  class="btn w-40"> Create Password</button>
+			</form>
+			<p id="rules-password" class="mt-4 max-w-md text-center text-xs text-amber-900 dark:text-white opacity-50 px-4">
+			Password rules :<br>
+			- The password must contain at least 12 characters.<br>
+			- It must include at least one uppercase letter (A-Z), one lowercase letter (a-z) and one digit (0-9).<br>
+			- It must include at least one special character : !@#$%^&*()_-+=.?.<br>
+			</p>
+		</main>
+	</template>
+
 	<template id="registerhtml">
-		<div class="register-container min-h-screen flex flex-col items-center justify-start px-4">
-			<form id="register-form" class="mt-20 w-full max-w-md flex flex-col rounded-lg ring-4 ring-amber-300 bg-white dark:bg-black/20 backdrop-blur-lg shadow-lg px-8 py-6">
+		<div class="register-container flex flex-col items-center justify-start px-4">
+			<form id="register-form" class="mt-10 w-full max-w-md flex flex-col rounded-lg ring-4 ring-amber-300 bg-white dark:bg-black/20 backdrop-blur-lg shadow-lg px-8 py-6">
 				<h1 class="text-center text-xl font-bold text-amber-900 dark:text-white">
 					Registration
 					<span class="block text-lg font-normal opacity-50 mt-1">
@@ -715,7 +737,7 @@
 				<h1 class="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold
 							bg-linear-to-r from-amber-800 via-amber-600 to-orange-500
 							bg-clip-text text-transparent drop-shadow-lg animate-pulse w-full">
-					Welcome to Croiscendence
+					Welcome in Croiscendence
 				</h1>
 				<p class="mt-6 text-base sm:text-lg lg:text-xl opacity-60 max-w-md dark:text-white">
 					You can start playing by clicking the button below,
@@ -737,9 +759,6 @@
 			<p>© 2026 Croiscendence</p>
 		</footer>
 		<section id="gamepage" class="relative h-screen flex flex-col md:flex-row items-center w-full">
-			<!-- <img src="/src/image/gamepage.jpg"
-			alt="gamepage"
-			class="absolute inset-0 -z-10 object-cover w-full h-full"> -->
 			<video autoplay muted loop playsinline class="absolute inset-0 -z-10 object-cover w-full h-full">
   				<source src="/src/image/bg-wcroissant.mp4" type="video/mp4">
 			</video>
@@ -748,23 +767,25 @@
 			</video>
 			<div class="relative flex flex-col h-full w-full">
 				<div class="flex relative h-1/4 w-full items-center justify-center">
-					<h1 class="text-center text-6xl sm:text-7xl md:text-8xl font-extrabold text-transparent [-webkit-text-stroke:1px_rgb(120,53,15)]
-					bg-clip-text bg-linear-to-r from-amber-700 via-orange-800 to-orange-900 [text-shadow:0_0_120px_rgba(255,120,50,1)]">SELECT YOUR GAME</h1>	
+					<h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold 
+								bg-linear-to-r from-amber-900 via-yellow-900 to-orange-900 
+								dark:from-amber-400 dark:via-yellow-500 dark:to-orange-600
+								bg-clip-text text-transparent drop-shadow-lg">SELECT YOUR GAME</h1>	
 				</div>
-				<div class="flex flex-col grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center gap-10 w-full h-3/4 px-4">
-					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl bg-amber-800/90 px-18 -mt-4 pb-18">
-						<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Local</h1>
-						<p class="text-base opacity-60 mt-16 text-amber-50 text-center">Play against a friend or an AI</p>
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center gap-10 w-full h-3/4 px-4">
+					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl backdrop-blur-md bg-amber-800/40 px-18 -mt-4 pb-18">
+						<h1 class="text-4xl sm:text-5xl mt-4 md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Local</h1>
+						<p class="text-base opacity-60 mt-16 dark:text-amber-200 text-amber-950 text-center">Play against a friend or an AI</p>
 						<a href="/gamelocal" data-link class="btn w-48 mb-4">Player or AI</a>
 					</div>
-					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl bg-amber-800/90 px-18 -mt-4 pb-18">
-						<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Online</h1>
-						<p class="text-base opacity-60 mt-16 text-amber-50 text-center">Competitive online matches against an user or an AI</p>
+					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl backdrop-blur-md bg-amber-800/40 px-18 -mt-4 pb-18">
+						<h1 class="text-4xl sm:text-5xl mt-4 md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Online</h1>
+						<p class="text-base opacity-60 mt-16 dark:text-amber-200 text-amber-950 text-center">Competitive online matches against an user or an AI</p>
 						<a href="/gameonline" data-link class="btn w-48 mb-4">1 VS 1</a>
 					</div>
-					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl bg-amber-800/90 px-18 -mt-4 pb-18">
-						<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Tournament</h1>
-						<p class="text-base opacity-60 mt-16 text-amber-50 text-center">4 players (users and/or AI) elimination bracket</p>
+					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl backdrop-blur-md bg-amber-800/40 px-18 -mt-4 pb-18">
+						<h1 class="text-4xl sm:text-5xl mt-4 md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Tournament</h1>
+						<p class="text-base opacity-60 mt-16 dark:text-amber-200 text-amber-950 text-center">4 players (users and/or AI) elimination bracket</p>
 						<a href="/tournament" data-link class="btn w-48 mb-4">4 Players</a>
 					</div>
 				</div>
@@ -1130,76 +1151,6 @@
 		</footer>
 	</template>
 
-	<template id="set-gg-password-html">
-		<div>
-			<br>
-		</div>
-		<main class="flex">
-			<div class="bg-[linear-gradient(180deg,var(--color-amber-400)_20%,var(--color-amber-50)_20%)] 
-						ring-4 ring-amber-900 flex flex-col w-100 h-full rounded-lg mt-2 
-						mx-auto shadow-2xl items-center">
-				<div class="flex flex-row w-100 mt-3 justify-between">
-					<div class="w-5"></div>
-					<h1 class="text-3xl mx-auto font-bold text-amber-900
-						drop-shadow-lg" id="profile-pseudo">
-					</h1>
-					<a class="size-6 mt-2 justify-end mr-5 object-contain" href="/profile" data-link>
-						<img class="invert ring-1 p-0.5 ring-blue-950 rounded-md" src="src/image/back.png" alt="back">
-					</a>
-				</div>
-				<a class="mt-2 object-contain">
-					<img class="ring-4 ring-amber-900 rounded-full shadow-xl" id="profile-avatar" src="" alt="Your avatar" width="150">
-				</a>
-				<div class="flex flex-col mt-6">
-					<!-- Create Password -->
-					<div class="flex flex-col shadow-sm text-amber-900 bg-amber-300/20
-								w-80 ring-1 ring-amber-900 rounded-lg mt-6 p-3">
-						<h2 class="font-bold mb-2 text-center">Create A Password</h2>
-						<p class="text-sm text-amber-900 mt-3 mb-0.5">
-							🎉 Welcome! This is your first time login by Google Oauth 2.0, please create a <strong>strong password</strong> to protect your account.
-						</p>
-						<form id="set-gg-password-form" class="flex flex-col gap-2">
-							<h2 class="text-sm text-amber-900 mt-3 mb-0.5">Password</h2>
-							<input
-								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
-								type="password"
-								name="new-password"
-								placeholder="••••••••••••"
-								required />
-							<h2 class="text-sm text-amber-900 mt-3 mb-0.5">Confirm Password</h2>
-							<input
-								class="rounded-md px-2 py-1 ring-1 ring-amber-400"
-								type="password"
-								name="confirm-new-password"
-								placeholder="••••••••••••"
-								required />
-							<button
-								type="submit" 
-								class="btn w-40 mx-auto mt-20 block">
-								Create Password
-							</button>
-						</form>
-					</div>
-				</div>
-				<div>
-					<br>
-				</div>
-			</div>
-		</main>
-		<div>
-			<br>
-		</div>
-		<footer class="dark:text-white text-center text-sm opacity-60">
-			<div><br></div>
-			<div>
-					<a href="/termsofservice" data-link class="hover:underline">Terms of Service</a>
-					<span>|</span>
-					<a href="/privacypolicy" data-link class="hover:underline">Privacy Policy</a>
-			</div>
-			<p>© 2026 Croiscendence</p>
-			<div><br></div>
- 		</footer>
-	</template>
 
 	<template id="update-avatar-html">
 		<main class="flex-1 flex flex-col px-4">
@@ -1622,45 +1573,51 @@
 				</div>
 				<div class="flex flex-col sm:flex-row gap-4 justify-center">
 					<a href="/gameonline" id="replay-button" data-link class="btn px-10 py-4 text-lg  shadow-amber-900/50 transition-transform hover:scale-[1.02]">
-						Rejouer
+						Replay
 					</a>
 					<a href="/home" data-link class="text-center rounded-lg cursor-pointer block mt-10 duration-300 px-10 py-4 text-lg bg-amber-600/40 dark:bg-amber-950/50 hover:bg-amber-900/60 border border-amber-950/40 dark:border-amber-600/40 text-amber-950 dark:text-amber-100 transition-colors">
-						Retour à l'accueil
+						Back to home
 					</a>
 				</div>
 			</div>
 		</section>
 	</template>
 
-
-
 	<template id="pongmatchhtml">
-		<h1>Quick game</h1>
-
+		<h1 id="game-type" class="text-4xl mx-auto mb-6 sm:text-6xl lg:text-7xl font-bold bg-linear-to-r from-amber-300 via-yellow-400 to-orange-400 bg-clip-text text-transparent drop-shadow-l"></h1>
 		<div class="game-container">
-			<div class="flex justify-center items-center mx-auto w-full gap-4">
-
-				<!-- Player 1 -->
-				<div id="player1-info" class="w-32 text-right font-semibold text-blue-500">
-					<span id="player1-name">Waiting for Player 1</span>
+			<div class="flex justify-center flex-col lg:flex-row items-center mx-auto w-full gap-4">
+				<div id="player1-info" class="flex items-center gap-3 p-3 w-64 rounded-xl bg-amber-900/80 border border-amber-700 shadow-lg">
+					<img id="player1-avatar" src="/files/0.png" alt="Player avatar" class="w-12 h-12 rounded-full border-2 border-amber-500 object-cover"/>
+					<div class="flex flex-col">
+						<span id="player1-name" class="text-amber-600 font-semibold leading-tight">
+							Waiting for Player 1
+						</span>
+						<span class="text-sm text-slate-300 flex items-center gap-1" >
+							Level <span id="player1-lvl">40</span>
+						</span>
+						<span class="text-sm text-slate-300 flex items-center gap-1" >
+							<span id="player1-elo">400</span> 🥐
+						</span>
+					</div>
 				</div>
-
-				<!-- Canvas -->
-				<canvas id="canvas" width="600" height="480"></canvas>
-
-				<!-- Player 2 -->
-				<div id="player2-info" class="w-32 text-left font-semibold text-red-500">
-					<span id="player2-name">Waiting for Player 2</span>
+				<canvas id="canvas" width="900" height="720" class="border-4 border-amber-800 max-w-full h-auto sm:w-[480px] md:w-[560px] lg:w-[720px] xl:w-[900px]"></canvas>
+				<div id="player2-info" class="flex items-center gap-3 p-3 w-64 rounded-xl bg-yellow-900/80 border border-yellow-700 shadow-lg">
+					<img id="player2-avatar" src="/files/0.png" alt="Player avatar" class="w-12 h-12 rounded-full border-2 border-yellow-500 object-cover"/>
+					<div class="flex flex-col">
+						<span id="player2-name" class="text-yellow-400 font-semibold leading-tight">
+							Waiting for Player 2
+						</span>
+						<span class="text-sm text-slate-300 flex items-center gap-1" >
+							Level <span id="player2-lvl">40</span>
+						</span>
+						<span class="text-sm text-slate-300 flex items-center gap-1">
+							<span id="player2-elo">400</span> 🥐
+						</span>
+					</div>
 				</div>
-
 			</div>
-
-		<footer class="absolute bottom-4 w-full dark:text-white duration-300 text-center text-sm opacity-60">
-			<a href="/termsofservice" data-link class="hover:underline">Terms of Service</a>
-			<span>|</span>
-			<a href="/privacypolicy" data-link class="hover:underline">Privacy Policy</a>
-			<p>© 2026 Croiscendence</p>
-		</footer>
+		</div>
 	</template>
 
 	<template id="tournamenthtml">
@@ -1691,25 +1648,34 @@
 
 	<template id="bracketshtml">
 		<div id="header-container"></div>
-		<h1 class="text-3xl font-bold text-center mt-6">Brackets</h1>
+		<h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold mb-8 text-center text-transparent bg-clip-text
+						bg-linear-to-r from-amber-700 via-orange-800 to-amber-900
+						drop-shadow-[0_5px_20px_rgba(180,83,9,0.35)]">
+						BRACKETS
+		</h1>
 		<div class="tournament">
-			<div class="flex gap-16 p-10">
+			<div class="flex justify-center gap-16 px-16 text-center font-bold text-lg text-amber-600 opacity-80">
+				<div class="w-[280px] text-amber-800">SEMIFINAL</div>
+				<div class="w-[280px] text-amber-600">FINAL</div>
+				<div class="w-[280px] text-amber-400">CHAMPION</div>
+			</div>
+			<div class="flex justify-center gap-16 p-10 mx-auto w-full max-w-5xl">
 				<!-- Round 1 -->
 				<div class="flex flex-col justify-around gap-8">
-					<div class="w-[180px] border border-neutral-600 bg-neutral-900">
-						<div class="p-2.5 text-center border-neutral-700 font-bold text-white" id="player1-name">
+					<div class="w-[280px] border border-neutral-600 bg-neutral-900 dark:bg-amber-100">
+						<div class="py-4 px-2.5 text-center border-neutral-700 font-bold text-white dark:text-black" id="player1-name">
 							Player 1
 						</div>
-						<div class="p-2.5 text-center border-neutral-700 font-bold text-white" id="player2-name">
+						<div class="py-4 px-2.5 text-center border-neutral-700 font-bold text-white dark:text-black" id="player2-name">
 							Player 2
 						</div>
 					</div>
 
-					<div class="w-[180px] border border-neutral-600 bg-neutral-900">
-						<div class="p-2.5 text-center border-neutral-700 font-bold text-white" id="player3-name">
+					<div class="w-[280px] border border-neutral-600 bg-neutral-900 dark:bg-amber-100">
+						<div class="py-4 px-2.5 text-center border-neutral-700 font-bold text-white dark:text-black" id="player3-name">
 							Player 3
 						</div>
-						<div class="p-2.5 text-center font-bold text-white" id="player4-name">
+						<div class="py-4 px-2.5 text-center font-bold text-white dark:text-black" id="player4-name">
 							Player 4
 						</div>
 					</div>
@@ -1717,11 +1683,11 @@
 
 				<!-- Round 2 -->
 				<div class="flex flex-col justify-around">
-					<div class="w-[180px] border border-neutral-600 bg-neutral-900">
-						<div class="p-2.5 text-center border-neutral-700 font-bold text-white" id="finalist1">
+					<div class="w-[280px] border border-neutral-600 bg-neutral-900 dark:bg-amber-100">
+						<div class="py-4 px-2.5 text-center border-neutral-700 font-bold text-white dark:text-black" id="finalist1">
 							Winner Match 1
 						</div>
-						<div class="p-2.5 text-center font-bold text-white" id="finalist2">
+						<div class="py-4 px-2.5 text-center font-bold text-white dark:text-black" id="finalist2">
 							Winner Match 2
 						</div>
 					</div>
@@ -1730,23 +1696,25 @@
 
 				<!-- Final -->
 				<div class="flex flex-col justify-center">
-					<div class="w-[180px] border border-neutral-600 bg-neutral-800 font-bold">
-						<div class="p-2.5 text-center font-bold text-white" id="champion">
+					<div class="w-[280px] border border-neutral-600 bg-neutral-800 font-bold dark:bg-amber-100">
+						<div class="py-4 px-2.5 text-center font-bold text-white dark:text-black" id="champion">
 							Champion
 						</div>
 					</div>
 				</div>
 			</div>
 			<div id="start-button" class="game-buttons flex justify-center hidden mt-4">
-				<button class="btn mx-auto w-32" id="replay-btn">Start Tournament</button>
+				<button class="btn mx-auto w-32" id="start-btn">Start Tournament</button>
+			</div>
+			<div class="flex flex-col sm:flex-row gap-4 justify-center">
+				<a href="/tournament" id="replay-button" data-link class="hidden btn px-10 py-4 text-lg  shadow-amber-900/50 transition-transform hover:scale-[1.02]">
+					Replay
+				</a>
+				<a href="/home" data-link id="home-button" class="hidden text-center rounded-lg cursor-pointer block mt-10 duration-300 px-10 py-4 text-lg bg-amber-600/40 dark:bg-amber-950/50 hover:bg-amber-900/60 border border-amber-950/40 dark:border-amber-600/40 text-amber-950 dark:text-amber-100 transition-colors">
+					Back to home
+				</a>
 			</div>
 		</div>
-		<footer class="absolute bottom-4 w-full dark:text-white duration-300 text-center text-sm opacity-60">
-			<a href="/termsofservice" data-link class="hover:underline">Terms of Service</a>
-			<span>|</span>
-			<a href="/privacypolicy" data-link class="hover:underline">Privacy Policy</a>
-			<p>© 2026 Croiscendence</p>
-		</footer>
 	</template>
 
 	<template id="errorhtml">

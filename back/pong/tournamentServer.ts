@@ -22,7 +22,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 			tournament.disconnectTimer = null;
 		}
 	
-		fillSocketTournament(playerId, tournament, socket);
+		fillSocketTournament(playerId, tournament, socket, io);
 		updateBrackets(io, tournament, socket.data.tournamentId);
 		io.to(`tournament-${tournamentId}`).emit("state", updateStateTournament(tournament.state));
 	
@@ -41,7 +41,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 		{
 			io.to(`tournament-${tournamentId}`).emit("state", updateStateTournament(tournament.state));
 			console.log("Client disconnected:", socket.id);
-			let countdown = 3;
+			let countdown = 1;
 			let interval = setInterval(() => {
 				countdown--;
 				if (countdown < 0) {
@@ -94,7 +94,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 		if (!tournament)
 			return;
 		let gameId = 2;
-		gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId);
+		gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId, true);
 		io.to(socket.id).emit("joinTournamentGame", gameId, tournamentId);
 	});
 
@@ -142,7 +142,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 							countdown--;
 							if (countdown < 0) {
 								clearInterval(interval);
-								gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId);
+								gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId, false);
 								io.to(socket.id).emit("joinTournamentGame", gameId, tournamentId);
 							}
 						}, 1000);
@@ -212,7 +212,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 					}
 					else
 					{
-						gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId);
+						gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId, false);
 						io.to(socket.id).emit("joinTournamentGame", gameId, tournamentId);
 					}
 				}
@@ -414,10 +414,8 @@ function updateStateTournament(state: TournamentState)
 	};
 }
 
-function fillSocketTournament(playerId: number, tournament: serverTournament, socket: Socket)
+function fillSocketTournament(playerId: number, tournament: serverTournament, socket: Socket, io: Server)
 {
-	tournament.idPlayers[tournament.semi_index[tournament.index]] = playerId;
-
 	const pseudo = socket.data.user.pseudo;
 	if (playerId === tournament.idPlayers[0])
 	{
@@ -441,7 +439,7 @@ function fillSocketTournament(playerId: number, tournament: serverTournament, so
 	}
 	else
 	{
-		return;
+		io.to(socket.id).emit("kick");
 	}
 }
 

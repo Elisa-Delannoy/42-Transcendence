@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { google } from "googleapis";
-import { friends, users } from '../../server';
+import { friends, users, users_stats } from '../../server';
 import { createJWT, createTemp2FAToken } from "../../middleware/jwt";
 import { notification } from "../friends/friends";
 import bcrypt from "bcryptjs";
@@ -63,6 +63,7 @@ export async function callbackGoogle(request: FastifyRequest, reply: FastifyRepl
         const finalName = (existingUser.pseudo === cleanName) ? `google_${Math.random().toString(36).slice(2, 4)}` : cleanName
 
         await users.addUser(finalName!, email!, passwordGoogle, 500);
+		users_stats.addUser((await users.getPseudoUser(finalName!)).user_id);
         user = await users.getEmailUser(email!);
       }
 

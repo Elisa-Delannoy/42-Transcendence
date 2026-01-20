@@ -16,6 +16,7 @@ export class TournamentNetwork {
 	private onsetUpSpecFinalCallback?: () => void;
 	private onStartTournamentGameCallback?: (gameId: number, tournamentId: number) => void;
 	private onjoinTournamentGameCallback?: (gameId: number, loser: number) => void;
+	private onKickCallback?: () => void;
 	private onsetWinnerCallback?: (winner: number, tournamentId: number, status: "semifinal" | "final") => void;
 
 	constructor() {
@@ -54,6 +55,10 @@ export class TournamentNetwork {
 			this.onHostDisconnectedCallback?.();
 		});
 
+		this.socket.on("kick", () => {
+			this.onKickCallback?.();
+		});
+
 		this.socket.on("disconnection", () => {
 			this.onDisconnectionCallback?.();
 		});
@@ -81,6 +86,10 @@ export class TournamentNetwork {
 
 	SetupFinal() {
 		this.socket.emit("setupFinal");
+	}
+
+	onKick(cb: () => void) {
+		this.onKickCallback = cb;
 	}
 
 	onSetUpSpecFinal(cb: () => void) {

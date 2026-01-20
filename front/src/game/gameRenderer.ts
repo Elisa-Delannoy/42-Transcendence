@@ -5,12 +5,22 @@ export class GameRenderer {
 	private ctx: CanvasRenderingContext2D;
 	private paddleWidth: number;
 	private paddleHeight: number;
+	private paddleImgs: {
+		player1: HTMLImageElement;
+		player2: HTMLImageElement;
+	};
 
 	constructor() {
 		this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
 		this.ctx = this.canvas.getContext("2d")!;
-		this.paddleWidth = 10;
-		this.paddleHeight = 60;
+		this.paddleWidth = 20;
+		this.paddleHeight = 100;
+		this.paddleImgs = {
+			player1: new Image(),
+			player2: new Image(),
+		};
+		this.paddleImgs.player1.src = "/src/image/croissant-player1.png";
+		this.paddleImgs.player2.src = "/src/image/croissant-player2.png";
 	}
 
 	public drawCountdown(state: GameState, countdown: number) {
@@ -72,7 +82,7 @@ export class GameRenderer {
 			this.ctx.textAlign = "center";
 			if (state.score.player1 > state.score.player2)
 			{
-				const pseudo = state.pseudo.player1;
+				const pseudo = state.users.user1.pseudo;
 				const str = pseudo + " wins!";
 				this.ctx.fillText(
 					str,
@@ -82,7 +92,7 @@ export class GameRenderer {
 			}
 			else
 			{
-				const pseudo = state.pseudo.player2;
+				const pseudo = state.users.user2.pseudo;
 				const str = pseudo + " wins!";
 				this.ctx.fillText(
 					str,
@@ -91,8 +101,6 @@ export class GameRenderer {
 				);
 			}
 		}
-		if (state.type != "Tournament")
-			document.getElementById("buttons")?.classList.remove("hidden");
 	}
 
 	public draw(state: GameState, drawScore: boolean) {
@@ -132,7 +140,7 @@ export class GameRenderer {
 	private drawBall(ball: { x: number; y: number }) {
 		this.ctx.fillStyle = "white";
 		this.ctx.beginPath();
-		this.ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2);
+		this.ctx.arc(ball.x, ball.y, 7, 0, Math.PI * 2);
 		this.ctx.fill();
 	}
 
@@ -140,12 +148,19 @@ export class GameRenderer {
 		this.ctx.fillStyle = "white";
 
 		if (paddles.player1 !== undefined)
-			this.ctx.fillRect(0, paddles.player1, this.paddleWidth, this.paddleHeight);
+		{
+			if (this.paddleImgs.player1.complete && this.paddleImgs.player1.naturalWidth !== 0)
+				this.ctx.drawImage(this.paddleImgs.player1, 0, paddles.player1, this.paddleWidth, this.paddleHeight);
+			else
+				this.ctx.fillRect(0, paddles.player1, this.paddleWidth, this.paddleHeight);
+		}
 
 		if (paddles.player2 !== undefined)
 		{
-			this.ctx.fillStyle = "#6B8AA4";
-			this.ctx.fillRect(this.canvas.width - 10, paddles.player2, this.paddleWidth, this.paddleHeight);
+			if (this.paddleImgs.player2.complete && this.paddleImgs.player2.naturalWidth !== 0)
+				this.ctx.drawImage(this.paddleImgs.player2, this.canvas.width - 20, paddles.player2, this.paddleWidth, this.paddleHeight);
+			else
+				this.ctx.fillRect(this.canvas.width - 20, paddles.player2, this.paddleWidth, this.paddleHeight);
 		}
 	}
 

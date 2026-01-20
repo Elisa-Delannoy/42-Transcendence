@@ -1,6 +1,6 @@
 import { GameRenderer } from "../game/gameRenderer";
 import { GameNetwork } from "../game/gameNetwork";
-import { navigateTo, getPreviousPath, getBeforePreviousPath } from "../router";
+import { navigateTo } from "../router";
 import { GameInstance } from "../game/gameInstance";
 import { showToast } from "./show_toast";
 
@@ -17,36 +17,15 @@ export async function initPongMatch(params?: any) {
 	const gameID: string = params?.id;
 	const paramUrl = new URLSearchParams(window.location.search);
 	const tournamentId = paramUrl.get("tournamentId");
-
-	const prev = getPreviousPath();
-	let beforePrev = getBeforePreviousPath();
-
-	const isNull = !prev || !beforePrev;
-	if (tournamentId)
-	{
-		const cameFromPongMatch = prev.startsWith("/pongmatch") || beforePrev.startsWith("/pongmatch");
-		const allowedBeforePrev = beforePrev.startsWith("/brackets");
-		if (isNull || (!cameFromPongMatch && !allowedBeforePrev))
-		{
-			navigateTo("/home");
-			return;
-		}
-	}
-	else
-	{
-		const cameFromPongMatch = prev.startsWith("/pongmatch") || beforePrev.startsWith("/pongmatch");
-		const allowedBeforePrev = beforePrev.startsWith("/gameonline") || beforePrev.startsWith("/gamelocal");
-		if (isNull || (!cameFromPongMatch && !allowedBeforePrev))
-		{
-			navigateTo("/home");
-			return;
-		}
-	}
-
-
-	const dashboardBtn = document.getElementById("dashboard-btn");
-	const pseudoP1 = document.getElementById("player1-name");
-	const pseudoP2 = document.getElementById("player2-name");
+	const pseudoP1 = document.getElementById("player1-name") as HTMLSpanElement;
+	const pseudoP2 = document.getElementById("player2-name") as HTMLSpanElement;
+	const title = document.getElementById("game-type") as HTMLTitleElement;
+	const levelP1 = document.getElementById("player1-lvl") as HTMLSpanElement;
+	const levelP2 = document.getElementById("player2-lvl") as HTMLSpanElement;
+	const eloP1 = document.getElementById("player1-elo") as HTMLSpanElement;
+	const eloP2 = document.getElementById("player2-elo") as HTMLSpanElement;
+	const avatarP1 = document.getElementById("player1-avatar") as HTMLImageElement;
+	const avatarP2 = document.getElementById("player2-avatar") as HTMLImageElement;
 
 	let input1: "up" | "down" | "stop" = "stop";
 	let input2: "up" | "down" | "stop" = "stop";
@@ -82,7 +61,7 @@ export async function initPongMatch(params?: any) {
 		interval = setInterval(() => {
 			if (!currentGame || !renderer)
 				return;
-			updatePseudo();
+			updateFrontGame();
 			renderer.drawCountdown(currentGame.getCurrentState(), countdown);
 			countdown--;
 			if (countdown < 0) {
@@ -98,7 +77,7 @@ export async function initPongMatch(params?: any) {
 			return;
 
 		currentGame.applyServerState(state);
-		updatePseudo();
+		updateFrontGame();
 
 		renderer.draw(currentGame.getCurrentState(), false);
 	})
@@ -108,7 +87,7 @@ export async function initPongMatch(params?: any) {
 			return;
 
 		currentGame.applyServerState(state);
-		updatePseudo();
+		updateFrontGame();
 
 		renderer.draw(currentGame.getCurrentState(), true);
 		updateInput();
@@ -165,13 +144,21 @@ export async function initPongMatch(params?: any) {
 		}
 	}
 
-	function updatePseudo() {
+	function updateFrontGame() {
 		if (currentGame)
 		{
 			if (pseudoP1)
-				pseudoP1.innerText = currentGame.getCurrentState().pseudo.player1;
+				pseudoP1.innerText = currentGame.getCurrentState().users.user1.pseudo;
 			if (pseudoP2)
-				pseudoP2.innerText = currentGame.getCurrentState().pseudo.player2;
+				pseudoP2.innerText = currentGame.getCurrentState().users.user2.pseudo;
+			if (title)
+				title.textContent = currentGame.getCurrentState().type + " Game";
+			avatarP1.src = currentGame.getCurrentState().users.user1.avatar;
+			avatarP2.src = currentGame.getCurrentState().users.user2.avatar;
+			eloP1.innerText = currentGame.getCurrentState().users.user1.elo.toString();
+			eloP2.innerText = currentGame.getCurrentState().users.user2.elo.toString();
+			levelP1.innerText = currentGame.getCurrentState().users.user1.lvl.toString();
+			levelP2.innerText = currentGame.getCurrentState().users.user2.lvl.toString();
 		}
 	}
 
@@ -218,9 +205,6 @@ export async function initPongMatch(params?: any) {
 			}
 			}, 1000);
 		}
-		dashboardBtn?.addEventListener("click", async () => {
-			navigateTo(`/dashboard`);
-		});
 	});
 }
 

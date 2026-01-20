@@ -23,7 +23,7 @@ import { allMyFriendsAndOpponent, searchUser, addFriend, acceptFriend, deleteFri
 import fastifyMetrics from "fastify-metrics";
 import { dashboardInfo } from "./routes/dashboard/dashboard";
 import { checkTwoFA, disableTwoFA, enableTwoFA, setupTwoFA } from "./routes/twofa/twofa";
-import { createTournament, displayTournamentList, getIdPlayers, getTournamentGameType, joinTournament } from "./routes/tournament/serverTournament";
+import { createTournament, getTournamentGameType, tournaments_map } from "./routes/tournament/serverTournament";
 import { oauthStatus } from "./routes/login/oauth.status";
 import { registerGoogle, callbackGoogle } from "./routes/login/oauth.google";
 import { createWebSocket } from "./middleware/socket";
@@ -241,12 +241,17 @@ fastify.post("/api/private/tournament/create", async (request, reply) => {
 	let tournamentId: number;
 
 	tournamentId = createTournament(playerId);
+	if (tournamentId == -2)
+	{
+		for (const tournament of tournaments_map.values()) {
+			if (tournament.idPlayers.includes(playerId))
+			{
+				tournamentId = tournament.id;
+				break;
+			}
+		}
+	}
 	reply.send({ tournamentId });
-});
-
-fastify.get("/api/private/tournament/list", async (request, reply) => {
-	const list = await displayTournamentList();
-	return { tournaments: list };
 });
 
 fastify.get("/api/private/tournament/all", (req, reply) => {

@@ -1,3 +1,10 @@
+export interface PlayerGame {
+	pseudo: string;
+	elo: number;
+	avatar: string;
+	lvl: number;
+}
+
 export interface Ball {
 	x: number;
 	y: number;
@@ -28,14 +35,14 @@ export interface GameState {
 		player1: "up" | "down" | "stop",
 		player2: "up" | "down" | "stop"
 	};
-	pseudo: {
-		player1: string,
-		player2: string
+	users: {
+		user1: PlayerGame,
+		user2: PlayerGame
 	};
 }
 
-const paddleWidth = 10;
-const paddleHeight = 60;
+const paddleWidth = 20;
+const paddleHeight = 100;
 
 export function updateBall(game: GameState) {
 	// ball movement
@@ -78,10 +85,10 @@ export function updateBall(game: GameState) {
 }
 
 function modifyBallAngle(player: number, ball: Ball) {
-	const paddleCenter = player + 30;
+	const paddleCenter = player + 50;
 	let hitPos = ball.y - paddleCenter;
 
-	const normalized = hitPos / 30;
+	const normalized = hitPos / 50;
 	const bounceAngle = normalized * (Math.PI / 4);
 
 	const speed = Math.sqrt(
@@ -98,8 +105,8 @@ export function resetBall(game: GameState) {
 }
 
 export function resetPaddles(game: GameState) {
-	game.paddles.player1 = game.height / 2 - 30;
-	game.paddles.player2 = game.height / 2 - 30;
+	game.paddles.player1 = game.height / 2 - 50;
+	game.paddles.player2 = game.height / 2 - 50;
 }
 
 function increaseBallSpeed(ball: Ball)
@@ -118,7 +125,7 @@ export function applyInput(
 }
 
 export function updatePaddles(game: GameState, deltaTime: number) {
-	const speed = 450; // pixels / seconde
+	const speed = 600; // pixels / seconde
 
 	if (game.aiLastUpdate != 0)
 	{

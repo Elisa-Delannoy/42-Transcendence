@@ -181,7 +181,7 @@ export async function initDashboard()
 		}, 50);
 
     } catch (error) {
-        console.error("Erreur lors du chargement :", error);
+        console.error("Error while loading :", error);
 		showToast("Loading failed. Please try again later.", "error", 3000);
     }
 }
