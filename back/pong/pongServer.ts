@@ -104,7 +104,7 @@ export function handleGameSocket(io: Server, socket: Socket) {
 		if (game.status === "finished")
 		{
 			io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status, game.type));
-			let countdown = 5;
+			let countdown = 3;
 			let interval = setInterval(() => {
 				countdown--;
 				if (countdown < 0) {
@@ -118,15 +118,19 @@ export function handleGameSocket(io: Server, socket: Socket) {
 		{
 			console.log("Game deleted :", gameId);
 			games_map.delete(gameId);
+			io.in(`game-${gameId}`).socketsLeave(`game-${gameId}`);
 		}
 		else
 		{
 			if (game.type === "Local" || game.type === "AI")
 			{
+				io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status, game.type));
 				if (!game.disconnectTimer) {
 					game.disconnectTimer = setTimeout(() => {
-						console.log("Game deleted :", gameId);
+						console.log("Timeout disconnected game : ", gameId);
+						game.status = "disconnected";
 						games_map.delete(gameId);
+						io.in(`game-${gameId}`).socketsLeave(`game-${gameId}`);
 					}, 1 * 3 * 1000);
 				}
 			}
@@ -305,7 +309,6 @@ function getPlayer(game: ServerGame, socket: Socket) {
 
 function setDeconnections(playerId: number, game: ServerGame)
 {
-	console.log("game type : ", game.type);
 	if (game.type === "Online" || game.type === "Tournament")
 	{
 		if (playerId == game.idPlayer1)
@@ -320,14 +323,36 @@ function checkDeconnections(io: Server, socket: Socket, playerId: number, game: 
 	if (playerId == game.idPlayer1)
 	{
 		if (game.nbDeconnectionsP1 >= 2)
+		{
+			game.status = "finished";
+			const duration = (Date.now() - game.duration) / 1000;
+			game.duration = Math.round(duration * 10) / 10;
+			game.winner = game.state.pseudo.player2;
+			game.idwinner = game.idPlayer2;
+			game.idloser = game.idPlayer1;
+			endGame(game.idPlayer2, game.idPlayer1, 11, 0, game.duration , game.id, gameInfo, game.type, game.gameDate);
 			io.to(socket.id).emit("kick");
+			io.to(`game-${game.id}`).emit("gameOver");
+			io.in(`game-${game.id}`).socketsLeave(`game-${game.id}`);
+		}
 		else if (game.nbDeconnectionsP1 == 1)
 			io.to(socket.id).emit("warning");
 	}
 	else if (playerId == game.idPlayer2)
 	{
 		if (game.nbDeconnectionsP2 >= 2)
+		{
+			game.status = "finished";
+			const duration = (Date.now() - game.duration) / 1000;
+			game.duration = Math.round(duration * 10) / 10;
+			game.winner = game.state.pseudo.player1;
+			game.idwinner = game.idPlayer1;
+			game.idloser = game.idPlayer2;
+			endGame(game.idPlayer1, game.idPlayer2, 11, 0, game.duration , game.id, gameInfo, game.type, game.gameDate);
 			io.to(socket.id).emit("kick");
+			io.to(`game-${game.id}`).emit("gameOver");
+			io.in(`game-${game.id}`).socketsLeave(`game-${game.id}`);
+		}
 		else if (game.nbDeconnectionsP2 == 1)
 			io.to(socket.id).emit("warning");
 	}

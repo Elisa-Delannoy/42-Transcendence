@@ -32,7 +32,7 @@ export class ServerGame {
 
 	private io?: Server;
 
-	constructor(id: number, isLocal: boolean, io?: Server, width = 600, height = 480)
+	constructor(id: number, isLocal: boolean, io?: Server, width = 900, height = 720)
 	{
 		this.id = id;
 		this.idPlayer1 = 0;
@@ -58,8 +58,8 @@ export class ServerGame {
 
 		this.state = {
 			ball: { x: width / 2, y: height / 2, speedX: 2.5, speedY: 2 },
-			paddles: { player1: height / 2 - 30, player2: height / 2 - 30 },
-			score: { player1: 0, player2: 0, max: 11 },
+			paddles: { player1: height / 2 - 50, player2: height / 2 - 50 },
+			score: { player1: 0, player2: 0, max: 1 },
 			width,
 			height,
 			aiLastUpdate: 0,
@@ -109,7 +109,6 @@ export function createGame(PlayerId: number, isLocal: boolean, type: "Local" | "
 	const gameId = id;
 	const game = new ServerGame(gameId, isLocal);
 	game.idPlayer1 = PlayerId;
-	console.log("id player1 : ", game.idPlayer1);
 	game.type = type;
 	if (options.vsAI)
 	{

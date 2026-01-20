@@ -13,8 +13,8 @@ export class GameRenderer {
 	constructor() {
 		this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
 		this.ctx = this.canvas.getContext("2d")!;
-		this.paddleWidth = 10;
-		this.paddleHeight = 60;
+		this.paddleWidth = 20;
+		this.paddleHeight = 100;
 		this.paddleImgs = {
 			player1: new Image(),
 			player2: new Image(),
@@ -140,7 +140,7 @@ export class GameRenderer {
 	private drawBall(ball: { x: number; y: number }) {
 		this.ctx.fillStyle = "white";
 		this.ctx.beginPath();
-		this.ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2);
+		this.ctx.arc(ball.x, ball.y, 7, 0, Math.PI * 2);
 		this.ctx.fill();
 	}
 
@@ -158,9 +158,9 @@ export class GameRenderer {
 		if (paddles.player2 !== undefined)
 		{
 			if (this.paddleImgs.player2.complete && this.paddleImgs.player2.naturalWidth !== 0)
-				this.ctx.drawImage(this.paddleImgs.player2, this.canvas.width - 10, paddles.player2, this.paddleWidth, this.paddleHeight);
+				this.ctx.drawImage(this.paddleImgs.player2, this.canvas.width - 20, paddles.player2, this.paddleWidth, this.paddleHeight);
 			else
-				this.ctx.fillRect(this.canvas.width - 10, paddles.player2, this.paddleWidth, this.paddleHeight);
+				this.ctx.fillRect(this.canvas.width - 20, paddles.player2, this.paddleWidth, this.paddleHeight);
 		}
 	}
 
