@@ -5790,7 +5790,8 @@ async function initAchievement() {
     const achievement = await genericFetch("/api/private/achievement", { method: "GET" });
     const container1 = document.getElementById("part1");
     const container2 = document.getElementById("part2");
-    console.log(achievement.locked);
+    const container3 = document.getElementById("part3");
+    const container4 = document.getElementById("part4");
     const unlockedMap = mapByCode(achievement.unlocked);
     const lockedMap = mapByCode(achievement.locked);
     const unlockedTemplate = document.getElementById("unlocked-achievement");
@@ -5821,7 +5822,14 @@ async function initAchievement() {
       description.textContent = achievement2.rarity === "Secret" && !isUnlocked ? "A secret achievement" : achievement2.description;
       rarity.textContent = achievement2.rarity;
       effect.classList.add(...rarityBackground[achievement2.rarity]);
-      (i <= 4 ? container1 : container2).appendChild(node);
+      if (i <= 2)
+        container1.appendChild(node);
+      else if (i > 2 && i <= 4)
+        container2.appendChild(node);
+      else if (i > 4 && i <= 6)
+        container3.appendChild(node);
+      else if (i > 6 && i <= 8)
+        container4.appendChild(node);
       i++;
     }
   } catch (err) {
