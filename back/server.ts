@@ -8,7 +8,6 @@ import { manageRegister } from "./routes/register/register";
 import { GameInfo } from "./DB/gameinfo";
 import fastifyCookie from "@fastify/cookie";
 import { tokenOK } from "./middleware/jwt";
-import bcrypt from "bcryptjs";
 import { createGame, joinGame, getGameType, isCreator } from "./routes/game/serverGame";
 import fs from "fs";
 import { Tournament } from './DB/tournament';
@@ -35,6 +34,7 @@ import { UserStats } from "./DB/users_stats";
 import { UserAchievements } from "./DB/users_achievements";
 import { getAchivementInfo } from "./routes/achievements/achievementInfo";
 import { getEndGameInfo } from "./routes/endgame/endgame";
+import { newInputDB } from "./DB/input";
 
 export const db = new ManageDB("./back/DB/database.db");
 export const users = new Users(db);
@@ -315,27 +315,15 @@ async function lunchDB()
 	await users.createUserTable();
 	await users.CreateUserIA();
 	await users.CreateUserGuest();
-	const hashedPassword = await bcrypt.hash("42", 12);
-	await users.addUser("42", "42", hashedPassword, 200);
-	await users.addUser("43", "43", hashedPassword, 2800);
-	await users.addUser("44", "44", hashedPassword, 2800);
-	await users.addUser("45", "45", hashedPassword, 2800);
-	await users.addUser("420", "420", hashedPassword, 200);
-	await users.addUser("430", "430", hashedPassword, 2800);
-	await users.addUser("440", "440", hashedPassword, 2800);
-	await users.addUser("450", "450", hashedPassword, 2800);
-	await users.addUser("4200", "402", hashedPassword, 200);
-	await users.addUser("4300", "403", hashedPassword, 2800);
-	await users.addUser("4400", "404", hashedPassword, 2800);
-	await users.addUser("4500", "405", hashedPassword, 2800);
+
 	
 	await generalChat.deleteChatTableAndTrigger();
 	await generalChat.createChatTableAndTrigger();
-	
-	// await friends.deleteFriendTable();
+
+	await friends.deleteFriendTable();
 	await friends.createFriendTable();
 	
-	// await gameInfo.deleteGameInfoTable();
+	await gameInfo.deleteGameInfoTable();
 	await gameInfo.createGameInfoTable();
 	
 	await tournamentDB.deleteTournamentTables();
@@ -366,8 +354,6 @@ async function lunchDB()
 	
 	await users_stats.deleteTable();
 	await users_stats.createUserStatsTable();
-	await users_stats.addUser((await users.getPseudoUser("42")).user_id);
-	await users_stats.addUser((await users.getPseudoUser("43")).user_id);
 	
 	await users_achivements.deleteTable();
 	await users_achivements.createUserAchievementsTable();
@@ -380,18 +366,9 @@ const start = async () => {
 		console.log(`Server running on port ${PORT}`);
 		await db.connect();
 		await lunchDB();
-		//blockchainUpload();
-		// const hashedPasswor= await bcrypt.hash("42", 12);
-		// let hashedPassword = await bcrypt.hash("a", 12);
-		// users.addUser("a", "e@g.c", hashedPassword, 200);
-		// users.addUser("new", "e@g.c", hashedPassword, 300);
-		// users.addUser("ok", "e@g.c", hashedPassword, 500);
-		// users.addUser("b", "e@g.c", hashedPassword, 700);
-		// users.addUser("c", "e@g.c", hashedPassword, 1500);
-		// users.addUser("d", "e@g.c", hashedPassword,2300);
-		// users.addUser("42", "42", hashedPassword);
-		// friends.addFriendship(5, 6);
-		// friends.addFriendship(4, 5);
+		await newInputDB();
+		const testUser = await users.getPseudoUser("42")
+		console.log("You can test to connect with:\npseudo:",  testUser.pseudo, "\npasseword:42" );
 	} catch (err) {
 		console.log(err);
 		fastify.log.error(err);
