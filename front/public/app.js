@@ -6136,8 +6136,9 @@ async function router() {
       chatnet.connect(() => {
         chatnet.toKnowUserID();
         displayChat();
+        if (auth.user && auth.user.web_status)
+          auth.user.web_status = "online";
       });
-      auth.user.web_status = "online";
       isReloaded = false;
     }
     loadHeader10(auth);
