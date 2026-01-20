@@ -59,7 +59,7 @@ export class ServerGame {
 		this.state = {
 			ball: { x: width / 2, y: height / 2, speedX: 2.5, speedY: 2 },
 			paddles: { player1: height / 2 - 30, player2: height / 2 - 30 },
-			score: { player1: 0, player2: 0, max: 1 },
+			score: { player1: 0, player2: 0, max: 11 },
 			width,
 			height,
 			aiLastUpdate: 0,
