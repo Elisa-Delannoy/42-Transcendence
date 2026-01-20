@@ -737,9 +737,6 @@
 			<p>© 2026 Croiscendence</p>
 		</footer>
 		<section id="gamepage" class="relative h-screen flex flex-col md:flex-row items-center w-full">
-			<!-- <img src="/src/image/gamepage.jpg"
-			alt="gamepage"
-			class="absolute inset-0 -z-10 object-cover w-full h-full"> -->
 			<video autoplay muted loop playsinline class="absolute inset-0 -z-10 object-cover w-full h-full">
   				<source src="/src/image/bg-wcroissant.mp4" type="video/mp4">
 			</video>
@@ -748,23 +745,25 @@
 			</video>
 			<div class="relative flex flex-col h-full w-full">
 				<div class="flex relative h-1/4 w-full items-center justify-center">
-					<h1 class="text-center text-6xl sm:text-7xl md:text-8xl font-extrabold text-transparent [-webkit-text-stroke:1px_rgb(120,53,15)]
-					bg-clip-text bg-linear-to-r from-amber-700 via-orange-800 to-orange-900 [text-shadow:0_0_120px_rgba(255,120,50,1)]">SELECT YOUR GAME</h1>	
+					<h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold 
+								bg-linear-to-r from-amber-900 via-yellow-900 to-orange-900 
+								dark:from-amber-400 dark:via-yellow-500 dark:to-orange-600
+								bg-clip-text text-transparent drop-shadow-lg">SELECT YOUR GAME</h1>	
 				</div>
-				<div class="flex flex-col grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center gap-10 w-full h-3/4 px-4">
-					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl bg-amber-800/90 px-18 -mt-4 pb-18">
-						<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Local</h1>
-						<p class="text-base opacity-60 mt-16 text-amber-50 text-center">Play against a friend or an AI</p>
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center gap-10 w-full h-3/4 px-4">
+					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl backdrop-blur-md bg-amber-800/40 px-18 -mt-4 pb-18">
+						<h1 class="text-4xl sm:text-5xl mt-4 md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Local</h1>
+						<p class="text-base opacity-60 mt-16 dark:text-amber-200 text-amber-950 text-center">Play against a friend or an AI</p>
 						<a href="/gamelocal" data-link class="btn w-48 mb-4">Player or AI</a>
 					</div>
-					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl bg-amber-800/90 px-18 -mt-4 pb-18">
-						<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Online</h1>
-						<p class="text-base opacity-60 mt-16 text-amber-50 text-center">Competitive online matches against an user or an AI</p>
+					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl backdrop-blur-md bg-amber-800/40 px-18 -mt-4 pb-18">
+						<h1 class="text-4xl sm:text-5xl mt-4 md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Online</h1>
+						<p class="text-base opacity-60 mt-16 dark:text-amber-200 text-amber-950 text-center">Competitive online matches against an user or an AI</p>
 						<a href="/gameonline" data-link class="btn w-48 mb-4">1 VS 1</a>
 					</div>
-					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl bg-amber-800/90 px-18 -mt-4 pb-18">
-						<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Tournament</h1>
-						<p class="text-base opacity-60 mt-16 text-amber-50 text-center">4 players (users and/or AI) elimination bracket</p>
+					<div class="flex flex-col justify-between w-full h-full max-w-[450px] max-h-[350px] items-center ring-2 ring-amber-900 rounded-2xl backdrop-blur-md bg-amber-800/40 px-18 -mt-4 pb-18">
+						<h1 class="text-4xl sm:text-5xl mt-4 md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-orange-400 to-orange-600">Tournament</h1>
+						<p class="text-base opacity-60 mt-16 dark:text-amber-200 text-amber-950 text-center">4 players (users and/or AI) elimination bracket</p>
 						<a href="/tournament" data-link class="btn w-48 mb-4">4 Players</a>
 					</div>
 				</div>
@@ -1630,8 +1629,6 @@
 			</div>
 		</section>
 	</template>
-
-
 
 	<template id="pongmatchhtml">
 		<h1 id="game-type" class="text-4xl mx-auto mb-6 sm:text-6xl lg:text-7xl font-bold bg-linear-to-r from-amber-300 via-yellow-400 to-orange-400 bg-clip-text text-transparent drop-shadow-l"></h1>
