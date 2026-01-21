@@ -12,7 +12,7 @@ export class Chat
 		this._db = db;
 	}
 
-	async createChatTableAndTrigger()
+	async createChatTable()
 	{
 		await this._db.execute(`
 			CREATE TABLE IF NOT EXISTS Chat (
@@ -23,19 +23,6 @@ export class Chat
 				date TEXT NOT NULL
 			)
 		`);
-		
-		await this._db.execute(`
-			CREATE TRIGGER IF NOT EXISTS limit_chat_messages
-			AFTER INSERT ON Chat
-			BEGIN
-				DELETE FROM Chat
-				WHERE id NOT IN (
-					SELECT id FROM Chat
-					ORDER BY date DESC
-					LIMIT 25
-				);
-			END;
-		  `);
 	}
 
 	async addMessageChat(user_id: number, pseudo: string, message: string, date: string): Promise<void>
@@ -58,9 +45,22 @@ export class Chat
 		return history;
 	}
 
-	async deleteChatTableAndTrigger()
+	async deleteChatTable()
 	{ 
 		await this._db.execute(`DROP TRIGGER IF EXISTS limit_chat_messages`);
 		await this._db.execute(`DROP TABLE IF EXISTS Chat`);
 	}
+
+	async deletePreviosusMessage()
+	{
+	await this._db.execute(`
+		DELETE FROM Chat
+		WHERE id NOT IN (
+			SELECT id FROM Chat
+			ORDER BY date DESC
+			LIMIT 25
+		)
+	`);
+}
+
 }

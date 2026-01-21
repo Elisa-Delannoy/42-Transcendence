@@ -323,8 +323,8 @@ async function lunchDB()
 	await users.CreateUserGuest();
 
 	
-	await generalChat.deleteChatTableAndTrigger();
-	await generalChat.createChatTableAndTrigger();
+	await generalChat.deleteChatTable();
+	await generalChat.createChatTable();
 
 	await friends.deleteFriendTable();
 	await friends.createFriendTable();
