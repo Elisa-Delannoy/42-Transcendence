@@ -1,7 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { gameInfo } from '../../server';
 import { IGameInfo } from '../../DB/gameinfo';
-// import { getAvatarFromID } from '../avatar/avatar';
 import { users } from '../../server';
 
 export interface IDashBoard

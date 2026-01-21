@@ -1,4 +1,3 @@
-import { Program } from "typescript";
 import { ManageDB } from "./manageDB";
 
 export class UserAchievements {

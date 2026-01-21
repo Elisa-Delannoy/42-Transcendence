@@ -80,7 +80,7 @@ async function newfriendDB(): Promise <void> {
 		await friends.addFriendship(4, 1);
 		await friends.acceptFriendship(1, 5);
 		await friends.acceptFriendship(1, 6);
-		await friends.acceptFriendship(1, 7);
+		await friends.acceptFriendship(1, 7); 
 		await friends.acceptFriendship(1, 8);
 }
 
@@ -95,7 +95,6 @@ async function newAchievementDB() {
 	await users_achivements.unlockAchievement(1, 6);
 
 }
-
 
 export async function newInputDB() {
 	await newUsersDB();

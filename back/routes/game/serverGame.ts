@@ -1,4 +1,3 @@
-export const games_map = new Map<number, ServerGame>();
 import { GameInfo } from "../../DB/gameinfo";
 import { GameState, updateBall, updatePaddles } from "../../pong/gameEngine";
 import { simulateAI } from "../../pong/simulateAI";
@@ -7,6 +6,7 @@ import { Server } from "socket.io";
 import { users, users_stats } from "../../server";
 
 const TICK_RATE = 16;
+export const games_map = new Map<number, ServerGame>();
 
 export class ServerGame {
 	id: number;

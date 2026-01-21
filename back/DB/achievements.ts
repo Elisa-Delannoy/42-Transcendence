@@ -73,7 +73,6 @@ export class Achievements {
 		const stats = await users_stats.getUserStats(userId);
 		if (!stats) return {} as IAchievement[];
 		const level = await users.getLvlFromID(userId);
-		console.log(level);
 		const achievements = await this.getLockedAchievements(userId);
 		const unlocked = await users_achivements.checkSecretAllAchievement(userId);
 

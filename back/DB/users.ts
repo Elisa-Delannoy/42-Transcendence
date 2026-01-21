@@ -149,7 +149,6 @@ export class Users
 		const rows = await this._db.query(query, [pseudo]);
 
 		const player: PlayerGame = rows[0];
-		console.log(rows);
 		return player;
 	}
 
@@ -300,7 +299,7 @@ export class Users
 		let eloChange = Math.round(32 * multiplier * (score - expected));
 		if (eloChange < 5 && score === 1)
 			eloChange = 5;
-		if (eloChange < 5 && score === 0)
+		if (eloChange > -5 && score === 0)
 			eloChange = -5;
 		return eloChange;
 	}

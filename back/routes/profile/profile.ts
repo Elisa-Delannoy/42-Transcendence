@@ -1,8 +1,5 @@
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import { users } from '../../server';
-// import path from "path";
-// import fs from "fs";
-// import mime from "mime-types";
 
 export async function getProfile(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
 	try {

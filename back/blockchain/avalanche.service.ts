@@ -66,13 +66,11 @@ export async function addTournamentResult(
     try {
       const tx = await contract.addTournamentOnChain(tournamentId, ranking);
       await tx.wait();
-      console.log(`Tournament ${tournamentId} uploaded`);
     } catch (err: any) {
       const message =
         err?.reason ?? err?.error?.message ?? err?.message ?? "Unknown error";
 
       if (message.includes("Tournament already exists")) {
-        console.warn(`Tournament ${tournamentId} already on chain`);
         result = { status: "duplicate" };
       } else {
         console.error(`Tournament ${tournamentId} upload failed`, message);
@@ -107,10 +105,9 @@ export async function getTotalTournaments(): Promise<number> {
   try {
     const total: bigint = await contract.getTotalTournamentsOnChain();
     const numberTotal = Number(total);
-    console.log("Total tournaments onchain:", numberTotal);
     return numberTotal;
   } catch (err) {
-    console.error("❌ Error querying total tournaments onchain:", err);
+    console.error("Error querying total tournaments onchain:", err);
     throw new Error("Blockchain unavailable");
   }
 }
@@ -130,7 +127,7 @@ export async function getAllOnChainTournaments() {
         ranking: ranking.map((v) => Number(v)),
       });
     } catch (err) {
-      console.warn(`⚠️ Skip tournament ${id.toString()} due to error`);
+      console.warn(`Skip tournament ${id.toString()} due to error`);
     }
   }
 

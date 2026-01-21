@@ -22,7 +22,6 @@ export class ManageDB
 					reject(new Error(`Error connexion DB : ${error.message}`));
 				else
 				{
-					console.log("connexion ok"); /*a supp */
 					resolve();
 				}
 			});
@@ -42,7 +41,6 @@ export class ManageDB
 					reject(error);
 				else 
 				{
-					console.log("connexion closed"); /*a supp*/
 					resolve();
 				}
 			});

@@ -48,7 +48,7 @@ export async function login(username: string, password: string, form: HTMLFormEl
 			credentials: "include"
 		});
 		const result = await res.json();
-		if (!result.ok) {
+		if (result.ok === false) {
 			if (result.field === "username") {
 				document.getElementById("username-loginmsg")!.textContent = result.error;
 			}
@@ -57,7 +57,7 @@ export async function login(username: string, password: string, form: HTMLFormEl
 			}
 			return 0;
 		}
-		if (result.ok && result.twofa === true)
+		if (result.ok === true && result.twofa === true)
 			return 2;
 		return 1;
 	} catch (err) {

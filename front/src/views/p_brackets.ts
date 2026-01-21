@@ -1,4 +1,3 @@
-import { hostname } from "os";
 import { navigateTo } from "../router";
 import { TournamentInstance } from "../tournament/tournamentInstance";
 import { TournamentNetwork, TournamentState } from "../tournament/tournamentNetwork";

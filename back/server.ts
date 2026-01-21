@@ -197,7 +197,6 @@ fastify.post("/api/private/game/onlinegame", async (request, reply) => {
 	const playerId = request.user?.user_id as any;
 	let gameId: number;
 	const res = isCreator(playerId);
-	console.log("res onlinegame: ", res);
 	if (res == 0)
 		gameId = createGame(Number(playerId), localMode, type, { vsAI: false });
 	else
@@ -299,7 +298,6 @@ function blockchainUpload() {
 	(async () => {
 	  try {
 		await tournamentService.uploadPendingTournaments();
-		console.log("Pending tournaments uploaded successfully");
 	  } catch (err) {
 		console.error(
 		  "Initial uploadPendingTournaments failed, server will still start",
@@ -358,8 +356,6 @@ const start = async () => {
 		await lunchDB();
 		await newInputDB();
 		blockchainUpload();
-		const testUser = await users.getPseudoUser("42")
-		console.log("You can test to connect with:\npseudo: ",testUser.pseudo, "\npasseword: 42" );
 	} catch (err) {
 		console.log(err);
 		fastify.log.error(err);

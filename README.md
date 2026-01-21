@@ -30,6 +30,10 @@ The application respects the technical constraints imposed by the subject, such 
 - All forms and user inputs are properly validated in both the frontend and backend.
 - HTTPS is used
 - Docker-based deployment
+- Integration with blockchain technology for:
+  - Immutable transaction logs or records (Avalanche testnet: Fuji)
+  - Wallet-based authentication (MetaMask)
+  - Smart contract execution for automated business logic (Remix)
 
 ---
 
@@ -42,7 +46,7 @@ The application respects the technical constraints imposed by the subject, such 
 | edelanno | Product Owner & Developer | Product management, general decisions, stakeholders communication |
 | pmenard | Project Manager & Developer | Team organize, team communication, architecture |
 | tat-nguy | Scrum Master & Developer | Process and deadline tracking, infrastructure | 
-| layang | Back-end Lead & Developer | backend decisions, security, database |
+| layang | Back-end Lead & Developer | backend decisions, security, database, blockchain |
 | nrontard | Front-end Lead & Developer | Game logic, real-time features, Frontend decisions, UI/UX |
 
 
@@ -178,28 +182,21 @@ and workload distribution.
 
 Each chosen module was selected to enhance the project’s educational value and gameplay experience.
 
-> ( For every module:
-> - Motivation for choosing it
-> - Implementation details
-> - Team members involved
-> )
-
 ### I - Web
 
 #### 3. Minor: Use a backend framework (Fastify) (1 pt)
 
-- **Motivation**: It was a major module of the accient subject
+- **Motivation**: It was a major module of the accient subject.
 
 - **Details**:
 	- Fastify API helps to communicate between frontend and backend.
 
 - **PIC**: edelanno, layang, nrontard, pmenard and tat-nguy
 
+
 #### 4. Major: Implement real-time features using WebSockets or similar technology (2 pts)
 
-- **Motivation**:
-  
-Sockets are required to enable live chat functionality and are preferred for games and tournaments due to their higher stability between clients and better efficiency compared to traditional REST APIs.
+- **Motivation**: Sockets are required to enable live chat functionality and are preferred for games and tournaments due to their higher stability between clients and better efficiency compared to traditional REST APIs.
 
 - **Details**:
 	- WebSockets are used for the following features:
@@ -240,28 +237,38 @@ Sockets are required to enable live chat functionality and are preferred for gam
    
 - **PIC**: edelanno (chat, friend), tat-nguy (profile)
 
+
 #### 8. Minor: A complete notification system for all creation, update, and deletion actions (1 pt)
 
-- PIC: layang
+- **Motivation**: To be clear and noramliazation at user side, upgrading user experience.
+
+- **Details**:
+	- use *Toast* notification, with typr: sucess, warning and error.
+	- Duration personliazed and auto-string the source error message. 
+
+- **PIC**: layang (edelanno, nrontard update with some feature updates)
 
 
 ### III - User Management
 
 #### 1. Major: Standard user management and authentication (2 pts)
 
-- **Motivation**: Enhance user experience and user engagement of the game
+- **Motivation**: Enhance user experience and user engagement of the game.
   
-- **Module in details**:
+- **Details**:
   - Users have a profile page displaying all their information
   - User is allowed to change their own information such as *Username*, *Password*, *Email*, *2FA Enable*, *Online Status*, *Avatar*...
   - User is also allowed to delete their own profile, this action can't be recover, so we ask user to write a request, confirm their password, make sure that it's not a mistake and they really want to delete. 
   - The first time register and login with Google Oauth, users are asked to set up a password immeditately.
-  - Users can upload an avatar (with a default avatar if none provided). The avatar path is stored in the Users database. A default path is set initially. Each time the avatar is updated, it is renamed as user_id.type. Upload restrictions are enforced for file size and type (6 MB – PNG and JPEG).
+  - Users can upload an avatar (with a default avatar if none provided). The avatar path is stored in the Users database. A default path is set initially. Each time the avatar is updated, it is renamed as user_id.type. Upload restrictions are enforced for file size and type.
   - Users can add other users as friends and see their online status. On the friends page, users can send friend requests and view their friends along with their status.
 
 - **PIC**: edelanno, tat-nguy
 
+
 #### 2. Minor: Game statistics and match history (requires a game module) (1 pt)
+
+- **Motivation**:  We chose this module because it contains important and relevant features for a gaming platform.
 
 - **Details**:
 	- Player Statistics Tracking:
@@ -295,31 +302,53 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 #### 3. Minor: Implement remote authentication with OAuth 2.0 (Google) (1 pt)
 
-- PIC: layang
+- **Motivation**: Including a second register method to expand the login methods.
+
+- **Details**:
+	- Use Google authentication in google cloud.
+	- Callback at localhost after authentication in Google.
+
+- **PIC**: layang (nrontard update with front features)
 
 
 #### 6. Minor: Implement a complete 2FA (Two-Factor Authentication) system for the users (1 pt)
 
-- PIC: layang
+- **Motivation**: Including a second authentication method to enhance account security.
+
+- **Details**:
+	- Use Google authentication in google cloud.
+	- Callback at localhost after authentication in Google.
+
+- **PIC**: layang (nrontard update with front features)
 
 
 ### IV - Artificial Intelligence
 
 #### Major: Introduce an AI Opponent for games (2 pts)
 
-- PIC: layang
+- **Motivation**: 
+	
+  To allow matches to proceed even when a player chooses to play alone or when there are not enough real players available, ensuring uninterrupted gameplay.
+
+- **Details**:
+
+	- Implement a robot player that can participate in games alongside real players.
+	- Filling automatically empty slots and providing a consistent and competitive opponent experience.
+	- Implement a human-like AI opponent that uses the same movement and shot mechanics as real players.
+	- The AI includes configurable mistake probabilities and calculation inaccuracies to simulate realistic human errors, 	  making gameplay feel natural and balanced.
+	- The AI opponent participates in tournament rankings and is represented with its own dedicated avatar, making it feel like a real competitor.
+
+- **PIC**: 
+  layang (pmenard include it in the tournament and game, nrontard update with profil features)
 
 
 ### VI - Gaming and user experience
 
 #### 1. Major: Implement a complete web-based game where users can play against each other (2 pts)
 
-- **Motivation**:
-  
-	We started working on Transcendence about a month before the subject was updated. In the previous version of the subject, we were required to implement a Pong game, and we decided to continue in that direction by building upon the work we had already started.
+- **Motivation**: We started working on Transcendence about a month before the subject was updated. In the previous version of the subject, we were required to implement a Pong game, and we decided to continue in that direction by building upon the work we had already started.
 
-- **Implementation details**
-  
+- **Details**
 	The backend is responsible for the entire game logic. It manages the positions of the paddles and the ball, the score, collision detection, and all game-related rules. It continuously sends the necessary game state data to the frontend, which is only responsible for rendering the game for each player.
 
 	This architecture was chosen to ensure a more secure and fair gameplay experience, as it prevents players from manipulating the game state or cheating.
@@ -329,11 +358,9 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 #### 2. Major: Remote players — Enable two players on separate computers to play the same game in real-time (2 pts)
 
-- **Motivation**:
+- **Motivation**: From the very beginning, supporting remote players was an obvious choice for us. Our goal was to create a website that allows anyone to play on the same device against a friend, against an AI, or against another player using a different device.
 
-	From the very beginning, supporting remote players was an obvious choice for us. Our goal was to create a website that allows anyone to play on the same device against a friend, against an AI, or against another player using a different device.
-
-- **Implementation details**
+- **Details**
 
 	To support remote players, we initially started with a private API. However, we quickly realized that this approach was not well suited for real-time gameplay. We therefore switched to using WebSockets, which provide a more efficient and reliable way to handle real-time communication between players.
 
@@ -344,12 +371,9 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 #### 7. Minor: Implement a tournament system (1 pt)
 
-- **Motivation**:
+- **Motivation**: We believe that tournaments are a great addition to a game, as they introduce a stronger sense of competition and engagement for players.
 
-	We believe that tournaments are a great addition to a game, as they introduce a stronger sense of competition and engagement for players.
-
-- **Implementation details**:
-
+- **Details**:
 	The first player to join a tournament is designated as its creator. This player can either wait for other participants to join or start the tournament immediately, in which case any remaining slots are filled with AI players.
 
 	To improve readability and user experience, we also added visual indicators using colors to clearly show match results and distinguish winners from losers.
@@ -359,8 +383,9 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 #### 9. Minor: A gamification system to reward users for their actions (1 pt)
 
-- Details:
+- **Motivation**: We chose this module because it contains important and relevant features for a gaming platform.
 
+- **Details**:
 	- 4 implementations:
 	  	- Avhievements
 		- XP/level system
@@ -378,12 +403,9 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 #### 10. Minor: Implement spectator mode for games (1 pt)
 
-- **Motivatio**:
+- **Motivation**: We wanted to allow players who were eliminated from a tournament to watch the final match if they wished.
 
-	We wanted to allow players who were eliminated from a tournament to watch the final match if they wished.
-
-- **Implementation details**:
-
+- **Details**:
 	When the final match starts, an HTML button becomes available for eliminated players. By clicking on this button, they can join the game as spectators and watch the match in real time.
 
 - **PIC**: pmenard
@@ -395,7 +417,7 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 - **Motivation**: This helps monitoring the server system, analyzing performance and informing the team immediately when there's a trouble in operation of the server and used services.
 
-- **Module in details**:
+- **Details**:
   - Set up Prometheus to collect metrics
     
     Prometheus was deployed as the central metrics collector (http://localhost:9090)
@@ -440,7 +462,21 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 #### 1. Major: Store tournament scores on the Blockchain (2 pts)
 
-- PIC: layang
+- **Motivation**:
+
+  To ensure tournament results are immutable, transparent, and tamper-proof by storing final rankings on a public blockchain. This provides verifiable integrity of competitive outcomes and prevents any post-tournament manipulation of scores.
+  
+- **Details**:
+
+  - Tournament results are stored on the Avalanche Fuji Testnet using a custom Solidity smart contract.
+  - The smart contract is deployed on Remix IDE, enabling easy testing and verification on the Avalanche Fuji Testnet, and deployment transactions are signed and paid through the browser’s MetaMask extension
+  - Each tournament can upload at most 8 rankings written on-chain via a secure owner-only transaction.
+  - The backend integrates with the blockchain using ethers.js, supporting safe transaction queuing, duplicate detection, and robust error handling.
+  - On-chain data can be queried individually or in bulk, allowing the application to verify and display tournament results directly from the blockchain.
+  - Execute once on server startup, and keep uploading blockchain every minute with setInterval during runtime.
+
+- **PIC**: layang
+
 
 ### X - Modules of choice
 
