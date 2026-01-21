@@ -317,33 +317,24 @@ function blockchainUpload() {
 
 async function lunchDB()
 {
-	await users.deleteUserTable();
 	await users.createUserTable();
 	await users.CreateUserIA();
 	await users.CreateUserGuest();
 
-	
-	await generalChat.deleteChatTable();
 	await generalChat.createChatTable();
 
-	await friends.deleteFriendTable();
 	await friends.createFriendTable();
 	
-	await gameInfo.deleteGameInfoTable();
 	await gameInfo.createGameInfoTable();
-	
-	await tournamentDB.deleteTournamentTables();
+
 	await tournamentDB.createTournamentTable();
 	await tournamentDB.createTournamentResultTable();
 	
-	await achievements.deleteTable();
 	await achievements.createAchievementsTable();
 	await achievements.setupAchievements();
 	
-	await users_stats.deleteTable();
 	await users_stats.createUserStatsTable();
 	
-	await users_achivements.deleteTable();
 	await users_achivements.createUserAchievementsTable();
 }
 
