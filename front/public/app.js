@@ -200,10 +200,9 @@ async function initDashboard() {
   if (!container)
     return;
   try {
-    const response = await fetch(`/api/private/dashboard`, {
+    const dashboards = await genericFetch(`/api/private/dashboard`, {
       method: "GET"
     });
-    const dashboards = await response.json();
     if (dashboards.GamesInfo.length > 0) {
       dashboards.GamesInfo.forEach(async (game) => {
         const template = document.getElementById("history-dashboard");
@@ -287,6 +286,7 @@ var ranks, rankColors, progressionColors;
 var init_p_dashboard = __esm({
   "front/src/views/p_dashboard.ts"() {
     "use strict";
+    init_router();
     init_show_toast();
     ranks = [
       { min: 0, max: 400, src: "/src/image/rank1.png", type: "Wood" },
@@ -388,15 +388,18 @@ function GameOnlineView() {
 function GameOnlineinit() {
   const createGameButton = document.getElementById("create-onlinegame");
   createGameButton?.addEventListener("click", async () => {
-    const { gameId } = await genericFetch("/api/private/game/onlinegame", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ localMode: false, type: "Online" })
-    });
-    if (gameId == -1)
-      showToast("Your account is already in game.", "warning", 5e3);
-    else
-      navigateTo(`/pongmatch/${gameId}`);
+    try {
+      const { gameId } = await genericFetch("/api/private/game/onlinegame", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ localMode: false, type: "Online" })
+      });
+      if (gameId == -1)
+        showToast("Your account is already in game.", "warning", 5e3);
+      else
+        navigateTo(`/pongmatch/${gameId}`);
+    } catch (error) {
+    }
   });
 }
 var init_p_gameonline = __esm({
@@ -414,22 +417,28 @@ function GameLocalView() {
 function GameLocalinit() {
   const pvpButton = document.getElementById("pvp");
   pvpButton?.addEventListener("click", async () => {
-    const { gameId } = await genericFetch("/api/private/game/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ localMode: true, type: "Local" })
-    });
-    navigateTo(`/pongmatch/${gameId}`);
+    try {
+      const { gameId } = await genericFetch("/api/private/game/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ localMode: true, type: "Local" })
+      });
+      navigateTo(`/pongmatch/${gameId}`);
+    } catch (error) {
+    }
   });
   const pvaiButton = document.getElementById("pvai");
   pvaiButton?.addEventListener("click", async () => {
-    const vsAI = true;
-    const { gameId } = await genericFetch("/api/private/game/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ vsAI, type: "Local" })
-    });
-    navigateTo(`/pongmatch/${gameId}`);
+    try {
+      const vsAI = true;
+      const { gameId } = await genericFetch("/api/private/game/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ vsAI, type: "Local" })
+      });
+      navigateTo(`/pongmatch/${gameId}`);
+    } catch (err) {
+    }
   });
 }
 var init_p_gamelocal = __esm({
@@ -4804,24 +4813,27 @@ function TournamentView() {
   return html;
 }
 function initTournamentPage() {
-  const createTournamentBtn = document.getElementById("create-tournament");
-  const showBtn = document.getElementById("show-onchain");
-  const backBtn = document.getElementById("back-to-home");
-  createTournamentBtn?.addEventListener("click", async () => {
-    const { tournamentId } = await genericFetch("/api/private/tournament/create", {
-      method: "POST"
+  try {
+    const createTournamentBtn = document.getElementById("create-tournament");
+    const showBtn = document.getElementById("show-onchain");
+    const backBtn = document.getElementById("back-to-home");
+    createTournamentBtn?.addEventListener("click", async () => {
+      const { tournamentId } = await genericFetch("/api/private/tournament/create", {
+        method: "POST"
+      });
+      if (tournamentId == -1)
+        showToast("Your account is already in game.", "warning", 5e3);
+      else
+        navigateTo(`/brackets/${tournamentId}`);
     });
-    if (tournamentId == -1)
-      showToast("Your account is already in game.", "warning", 5e3);
-    else
-      navigateTo(`/brackets/${tournamentId}`);
-  });
-  showBtn?.addEventListener("click", async () => {
-    await showDBOnChain();
-  });
-  backBtn?.addEventListener("click", () => {
-    navigateTo("/home");
-  });
+    showBtn?.addEventListener("click", async () => {
+      await showDBOnChain();
+    });
+    backBtn?.addEventListener("click", () => {
+      navigateTo("/home");
+    });
+  } catch (err) {
+  }
 }
 function formatRanking(ranking) {
   return ranking.map((id) => id === -1 ? "AI" : id.toString()).join(", ");
@@ -5016,7 +5028,8 @@ var init_logout = __esm({
           credentials: "include"
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data?.error || "Logout failed");
+        if (!res.ok)
+          throw new Error(data?.error || "Logout failed");
         hideChat();
         navigateTo("/login");
       } catch (err) {
@@ -5343,18 +5356,18 @@ function UpdateEmailView() {
   return document.getElementById("update-email-html").innerHTML;
 }
 async function initUpdateEmail() {
-  const profile = await genericFetch("/api/private/profile", {
-    method: "GET"
-  });
-  const avatar = document.getElementById("profile-avatar");
-  avatar.src = profile.avatar + "?ts=" + Date.now();
-  document.getElementById("profile-pseudo").textContent = profile.pseudo;
-  const formEmail = document.getElementById("change-email-form");
-  formEmail.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const newEmail = formEmail["new-email"].value;
-    const password = formEmail["password"].value;
-    try {
+  try {
+    const profile = await genericFetch("/api/private/profile", {
+      method: "GET"
+    });
+    const avatar = document.getElementById("profile-avatar");
+    avatar.src = profile.avatar + "?ts=" + Date.now();
+    document.getElementById("profile-pseudo").textContent = profile.pseudo;
+    const formEmail = document.getElementById("change-email-form");
+    formEmail.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const newEmail = formEmail["new-email"].value;
+      const password = formEmail["password"].value;
       const response = await genericFetch("/api/private/updateinfo/email", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -5362,10 +5375,10 @@ async function initUpdateEmail() {
       });
       navigateTo("/profile");
       showToast(`Email updated successfully to << ${response.email} >>`, "success", 2e3);
-    } catch (err) {
-      showToast(err, "error", 3e3, "Update email");
-    }
-  });
+    });
+  } catch (err) {
+    showToast(err, "error", 3e3, "Update email");
+  }
 }
 var init_p_updateemail = __esm({
   "front/src/views/p_updateemail.ts"() {
@@ -5380,32 +5393,35 @@ function UpdateUsernameView() {
   return document.getElementById("update-username-html").innerHTML;
 }
 async function initUpdateUsername() {
-  const profile = await genericFetch("/api/private/profile", {
-    method: "GET"
-  });
-  const avatar = document.getElementById("profile-avatar");
-  avatar.src = profile.avatar + "?ts=" + Date.now();
-  document.getElementById("profile-pseudo").textContent = profile.pseudo;
-  const usernameBtn = document.getElementById("toggle-username");
-  const deleteBtn = document.getElementById("toggle-delete");
-  const usernameSection = document.getElementById("update-username-section");
-  const deleteSection = document.getElementById("delete-user-section");
-  const showUsernameSection = () => {
-    usernameBtn?.classList.add("hidden");
-    deleteBtn?.classList.remove("hidden");
-    usernameSection?.classList.remove("hidden");
-    deleteSection?.classList.add("hidden");
-  };
-  const showDeleteSection = () => {
-    usernameBtn?.classList.remove("hidden");
-    deleteBtn?.classList.add("hidden");
-    deleteSection?.classList.remove("hidden");
-    usernameSection?.classList.add("hidden");
-  };
-  deleteBtn?.addEventListener("click", showDeleteSection);
-  usernameBtn?.addEventListener("click", showUsernameSection);
-  await updateUsername();
-  await deleteUser();
+  try {
+    const profile = await genericFetch("/api/private/profile", {
+      method: "GET"
+    });
+    const avatar = document.getElementById("profile-avatar");
+    avatar.src = profile.avatar + "?ts=" + Date.now();
+    document.getElementById("profile-pseudo").textContent = profile.pseudo;
+    const usernameBtn = document.getElementById("toggle-username");
+    const deleteBtn = document.getElementById("toggle-delete");
+    const usernameSection = document.getElementById("update-username-section");
+    const deleteSection = document.getElementById("delete-user-section");
+    const showUsernameSection = () => {
+      usernameBtn?.classList.add("hidden");
+      deleteBtn?.classList.remove("hidden");
+      usernameSection?.classList.remove("hidden");
+      deleteSection?.classList.add("hidden");
+    };
+    const showDeleteSection = () => {
+      usernameBtn?.classList.remove("hidden");
+      deleteBtn?.classList.add("hidden");
+      deleteSection?.classList.remove("hidden");
+      usernameSection?.classList.add("hidden");
+    };
+    deleteBtn?.addEventListener("click", showDeleteSection);
+    usernameBtn?.addEventListener("click", showUsernameSection);
+    await updateUsername();
+    await deleteUser();
+  } catch (err) {
+  }
 }
 async function updateUsername() {
   const formUsername = document.getElementById("change-username-form");
@@ -5419,9 +5435,11 @@ async function updateUsername() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newUsername, password })
       });
+      console.log("repsonse", response);
       navigateTo("/logout");
-      showToast(`Username updated successfully to << ${response.pseudo} >> Please re-login!`, "success", 2e3);
+      showToast(`Username updated successfully to << ${response.pseudo} >> Please login again!`, "success", 2e3);
     } catch (err) {
+      console.log("error", err);
       showToast(err, "error");
     }
   });
@@ -5458,19 +5476,19 @@ function UpdatePasswordView() {
   return document.getElementById("update-password-html").innerHTML;
 }
 async function initUpdatePassword() {
-  const profile = await genericFetch("/api/private/profile", {
-    method: "GET"
-  });
-  const avatar = document.getElementById("profile-avatar");
-  avatar.src = profile.avatar + "?ts=" + Date.now();
-  document.getElementById("profile-pseudo").textContent = profile.pseudo;
-  const formPassword = document.getElementById("change-password-form");
-  formPassword.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const oldPw = formPassword["old-password"].value;
-    const newPw = formPassword["new-password"].value;
-    const confirm = formPassword["confirm-new-password"].value;
-    try {
+  try {
+    const profile = await genericFetch("/api/private/profile", {
+      method: "GET"
+    });
+    const avatar = document.getElementById("profile-avatar");
+    avatar.src = profile.avatar + "?ts=" + Date.now();
+    document.getElementById("profile-pseudo").textContent = profile.pseudo;
+    const formPassword = document.getElementById("change-password-form");
+    formPassword.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const oldPw = formPassword["old-password"].value;
+      const newPw = formPassword["new-password"].value;
+      const confirm = formPassword["confirm-new-password"].value;
       const response = await genericFetch("/api/private/updateinfo/password", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -5478,10 +5496,10 @@ async function initUpdatePassword() {
       });
       navigateTo("/logout");
       showToast("Password is updated successfully! Please re-login!", "success", 2e3);
-    } catch (err) {
-      showToast(err.message, "error", 3e3, "Update password");
-    }
-  });
+    });
+  } catch (err) {
+    showToast(err.message, "error", 3e3, "Update password");
+  }
 }
 var init_p_updatepassword = __esm({
   "front/src/views/p_updatepassword.ts"() {
@@ -5509,7 +5527,6 @@ async function initSetGGPassword() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ oldPw, newPw, confirm })
       });
-      console.log(response);
       navigateTo("/logout");
       showToast("Password is updated successfully! Please re-log in!", "success", 2e3);
     } catch (err) {
@@ -5530,24 +5547,27 @@ function UpdateAvatarView() {
   return document.getElementById("update-avatar-html").innerHTML;
 }
 async function initUpdateAvatar() {
-  const profile = await genericFetch("/api/private/profile", {
-    method: "GET"
-  });
-  const avatar = document.getElementById("profile-avatar");
-  avatar.src = profile.avatar + "?ts=" + Date.now();
-  document.getElementById("profile-pseudo").textContent = profile.pseudo;
-  const formAvatar = document.getElementById("upload_avatar");
-  if (formAvatar instanceof HTMLFormElement) {
-    formAvatar.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const avatarInput = formAvatar.querySelector('input[name="avatar"]');
-      const avatarFile = avatarInput?.files?.[0];
-      if (!avatarFile || avatarFile.size === 0 || !avatarFile.name) {
-        showToast("Please upload an avatar", "warning", 3e3);
-        return;
-      }
-      await uploadAvatar(avatarFile);
+  try {
+    const profile = await genericFetch("/api/private/profile", {
+      method: "GET"
     });
+    const avatar = document.getElementById("profile-avatar");
+    avatar.src = profile.avatar + "?ts=" + Date.now();
+    document.getElementById("profile-pseudo").textContent = profile.pseudo;
+    const formAvatar = document.getElementById("upload_avatar");
+    if (formAvatar instanceof HTMLFormElement) {
+      formAvatar.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const avatarInput = formAvatar.querySelector('input[name="avatar"]');
+        const avatarFile = avatarInput?.files?.[0];
+        if (!avatarFile || avatarFile.size === 0 || !avatarFile.name) {
+          showToast("Please upload an avatar", "warning", 3e3);
+          return;
+        }
+        await uploadAvatar(avatarFile);
+      });
+    }
+  } catch (err) {
   }
 }
 async function uploadAvatar(avatar) {
@@ -5578,81 +5598,84 @@ function Update2faView() {
   return document.getElementById("update-2fa-html").innerHTML;
 }
 async function initUpdate2fa() {
-  const profile = await genericFetch("/api/private/profile", {
-    method: "GET"
-  });
-  const avatar = document.getElementById("profile-avatar");
-  avatar.src = profile.avatar + "?ts=" + Date.now();
-  document.getElementById("profile-pseudo").textContent = profile.pseudo;
-  const twofaStatusText = document.getElementById("twofa-status");
-  const twofaEnableBtn = document.getElementById("twofa-enable-btn");
-  const twofaDisableBtn = document.getElementById("twofa-disable-btn");
-  const twofaQr = document.getElementById("twofa-qr");
-  const verifyContainer = document.getElementById("twofa-verify-container");
-  const verifyInput = document.getElementById("twofa-code-input");
-  const verifyBtn = document.getElementById("twofa-verify-btn");
-  twofaEnableBtn.classList.add("hidden");
-  twofaDisableBtn.classList.add("hidden");
-  twofaQr.classList.add("hidden");
-  verifyContainer.classList.add("hidden");
-  if (profile.twofa_enabled) {
-    twofaStatusText.textContent = "Enabled";
-    twofaDisableBtn.classList.remove("hidden");
-  } else {
-    twofaStatusText.textContent = "Disabled";
-    twofaEnableBtn.classList.remove("hidden");
-  }
-  twofaEnableBtn.addEventListener("click", async () => {
-    try {
-      const res = await genericFetch("/api/private/2fa/setup", { method: "POST" });
-      twofaQr.src = res.qr;
-      twofaQr.classList.remove("hidden");
-      verifyContainer.classList.remove("hidden");
-    } catch (err) {
-      console.error(err);
-      showToast(err, "error", 2e3, "Failed to setup 2FA");
-    }
-  });
-  verifyBtn.addEventListener("click", async () => {
-    const code = verifyInput.value.trim();
-    if (code.length !== 6) {
-      showToast("Please enter a valid 6-digit code.", "warning", 3e3);
-      return;
-    }
-    try {
-      await genericFetch("/api/private/2fa/enable", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code })
-      });
-      twofaEnableBtn.classList.add("hidden");
+  try {
+    const profile = await genericFetch("/api/private/profile", {
+      method: "GET"
+    });
+    const avatar = document.getElementById("profile-avatar");
+    avatar.src = profile.avatar + "?ts=" + Date.now();
+    document.getElementById("profile-pseudo").textContent = profile.pseudo;
+    const twofaStatusText = document.getElementById("twofa-status");
+    const twofaEnableBtn = document.getElementById("twofa-enable-btn");
+    const twofaDisableBtn = document.getElementById("twofa-disable-btn");
+    const twofaQr = document.getElementById("twofa-qr");
+    const verifyContainer = document.getElementById("twofa-verify-container");
+    const verifyInput = document.getElementById("twofa-code-input");
+    const verifyBtn = document.getElementById("twofa-verify-btn");
+    twofaEnableBtn.classList.add("hidden");
+    twofaDisableBtn.classList.add("hidden");
+    twofaQr.classList.add("hidden");
+    verifyContainer.classList.add("hidden");
+    if (profile.twofa_enabled) {
+      twofaStatusText.textContent = "Enabled";
       twofaDisableBtn.classList.remove("hidden");
-      twofaStatusText.textContent = "2FA Enabled";
-      twofaQr.classList.add("hidden");
-      verifyContainer.classList.add("hidden");
-      verifyInput.value = "";
-      showToast("2FA Enabled successfully! Please re-login!", "success", 2e3);
-      navigateTo("/logout");
-    } catch (err) {
-      console.error(err);
-      showToast(err, "error", 3e3, "Invalid code, please try again.");
-    }
-  });
-  twofaDisableBtn.addEventListener("click", async () => {
-    try {
-      await genericFetch("/api/private/2fa/disable", { method: "PUT" });
-      showToast("2FA Disabled!", "success", 3e3);
-      twofaDisableBtn.classList.add("hidden");
+    } else {
+      twofaStatusText.textContent = "Disabled";
       twofaEnableBtn.classList.remove("hidden");
-      twofaStatusText.textContent = "2FA Disabled";
-      twofaQr.classList.add("hidden");
-      verifyContainer.classList.add("hidden");
-      verifyInput.value = "";
-    } catch (err) {
-      console.error(err);
-      showToast(err, "error", 3e3, "Failed to disable 2FA");
     }
-  });
+    twofaEnableBtn.addEventListener("click", async () => {
+      try {
+        const res = await genericFetch("/api/private/2fa/setup", { method: "POST" });
+        twofaQr.src = res.qr;
+        twofaQr.classList.remove("hidden");
+        verifyContainer.classList.remove("hidden");
+      } catch (err) {
+        console.error(err);
+        showToast(err, "error", 2e3, "Failed to setup 2FA");
+      }
+    });
+    verifyBtn.addEventListener("click", async () => {
+      const code = verifyInput.value.trim();
+      if (code.length !== 6) {
+        showToast("Please enter a valid 6-digit code.", "warning", 3e3);
+        return;
+      }
+      try {
+        await genericFetch("/api/private/2fa/enable", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code })
+        });
+        twofaEnableBtn.classList.add("hidden");
+        twofaDisableBtn.classList.remove("hidden");
+        twofaStatusText.textContent = "2FA Enabled";
+        twofaQr.classList.add("hidden");
+        verifyContainer.classList.add("hidden");
+        verifyInput.value = "";
+        showToast("2FA Enabled successfully! Please re-login!", "success", 2e3);
+        navigateTo("/logout");
+      } catch (err) {
+        console.error(err);
+        showToast(err, "error", 3e3, "Invalid code, please try again.");
+      }
+    });
+    twofaDisableBtn.addEventListener("click", async () => {
+      try {
+        await genericFetch("/api/private/2fa/disable", { method: "PUT" });
+        showToast("2FA Disabled!", "success", 3e3);
+        twofaDisableBtn.classList.add("hidden");
+        twofaEnableBtn.classList.remove("hidden");
+        twofaStatusText.textContent = "2FA Disabled";
+        twofaQr.classList.add("hidden");
+        verifyContainer.classList.add("hidden");
+        verifyInput.value = "";
+      } catch (err) {
+        console.error(err);
+        showToast(err, "error", 3e3, "Failed to disable 2FA");
+      }
+    });
+  } catch (err) {
+  }
 }
 var init_p_update2fa = __esm({
   "front/src/views/p_update2fa.ts"() {
@@ -5668,17 +5691,17 @@ async function initOAuthCallback() {
     const res = await fetch("/api/auth/status", {
       credentials: "include"
     });
-    if (!res.ok) {
+    const data = await res.json();
+    if (data.ok === false || !res.ok) {
       navigateTo("/login");
       return;
     }
-    const data = await res.json();
     if (data.twofa) {
       navigateTo("/twofa");
     } else {
       if (data.firstTimeLogin) {
         navigateTo("/setggpass");
-        showToast("Welcome! This is your first login, please create a password for your account! \u{1F389}", "warning");
+        showToast("Welcome! This is your first login, please create a password for your account! \u{1F389}", "warning", 1e4);
       } else
         navigateTo("/home");
     }
@@ -5718,6 +5741,7 @@ function goBackSkippingTerms() {
   }
 }
 function InitTermsOfService() {
+  document.getElementById("header").classList.add("hidden");
   const btn = document.getElementById("go-back");
   btn.addEventListener("click", () => {
     goBackSkippingTerms();
@@ -5735,6 +5759,7 @@ function PriavacyPolicyView() {
   return document.getElementById("privacy-policy").innerHTML;
 }
 function InitPrivacyPolicy() {
+  document.getElementById("header").classList.add("hidden");
   const btn = document.getElementById("go-back");
   btn.addEventListener("click", () => {
     goBackSkippingTerms();
@@ -5752,46 +5777,50 @@ function LeaderboardView() {
   return document.getElementById("leaderboard").innerHTML;
 }
 async function InitLeaderboard() {
-  const leaderboard = await genericFetch("/api/private/leaderboard", {
-    method: "GET"
-  });
-  const container = document.getElementById("leaderboard-l");
-  if (leaderboard.InfoUsers.length > 0) {
-    document.getElementById("avatar-1").src = leaderboard.InfoUsers[0].avatar;
-    document.getElementById("pseudo-1").textContent = leaderboard.InfoUsers[0].pseudo;
-    document.getElementById("elo-1").textContent = leaderboard.InfoUsers[0].elo.toString() + " \u{1F950}";
-  }
-  if (leaderboard.InfoUsers.length > 1) {
-    document.getElementById("avatar-2").src = leaderboard.InfoUsers[1].avatar;
-    document.getElementById("pseudo-2").textContent = leaderboard.InfoUsers[1].pseudo;
-    document.getElementById("elo-2").textContent = leaderboard.InfoUsers[1].elo.toString() + " \u{1F950}";
-  }
-  if (leaderboard.InfoUsers.length > 2) {
-    document.getElementById("avatar-3").src = leaderboard.InfoUsers[2].avatar;
-    document.getElementById("pseudo-3").textContent = leaderboard.InfoUsers[2].pseudo;
-    document.getElementById("elo-3").textContent = leaderboard.InfoUsers[2].elo.toString() + " \u{1F950}";
-  }
-  for (let i = 3; i < 50; i++) {
-    const template = document.getElementById("leaderboard-list");
-    const li = template.content.cloneNode(true);
-    if (i < leaderboard.InfoUsers.length) {
-      li.getElementById("avatar").src = leaderboard.InfoUsers[i].avatar;
-      li.getElementById("pseudo").textContent = leaderboard.InfoUsers[i].pseudo;
-      li.getElementById("elo").textContent = leaderboard.InfoUsers[i].elo.toString() + " \u{1F950}";
-      if (leaderboard.user.pseudo === leaderboard.InfoUsers[i].pseudo) {
-        li.getElementById("background").classList.remove("bg-linear-to-r", "from-amber-50", "via-orange-50", "to-yellow-50");
-        li.getElementById("background").classList.add("bg-linear-to-r", "from-amber-100", "via-orange-100", "to-yellow-100");
-      }
+  try {
+    const leaderboard = await genericFetch("/api/private/leaderboard", {
+      method: "GET"
+    });
+    const container = document.getElementById("leaderboard-l");
+    if (leaderboard.InfoUsers.length > 0) {
+      document.getElementById("avatar-1").src = leaderboard.InfoUsers[0].avatar;
+      document.getElementById("pseudo-1").textContent = leaderboard.InfoUsers[0].pseudo;
+      document.getElementById("elo-1").textContent = leaderboard.InfoUsers[0].elo.toString() + " \u{1F950}";
     }
-    li.getElementById("position").textContent = "#" + (i + 1).toString();
-    container.appendChild(li);
+    if (leaderboard.InfoUsers.length > 1) {
+      document.getElementById("avatar-2").src = leaderboard.InfoUsers[1].avatar;
+      document.getElementById("pseudo-2").textContent = leaderboard.InfoUsers[1].pseudo;
+      document.getElementById("elo-2").textContent = leaderboard.InfoUsers[1].elo.toString() + " \u{1F950}";
+    }
+    if (leaderboard.InfoUsers.length > 2) {
+      document.getElementById("avatar-3").src = leaderboard.InfoUsers[2].avatar;
+      document.getElementById("pseudo-3").textContent = leaderboard.InfoUsers[2].pseudo;
+      document.getElementById("elo-3").textContent = leaderboard.InfoUsers[2].elo.toString() + " \u{1F950}";
+    }
+    for (let i = 3; i < 50; i++) {
+      const template = document.getElementById("leaderboard-list");
+      const li = template.content.cloneNode(true);
+      if (i < leaderboard.InfoUsers.length) {
+        li.getElementById("avatar").src = leaderboard.InfoUsers[i].avatar;
+        li.getElementById("pseudo").textContent = leaderboard.InfoUsers[i].pseudo;
+        li.getElementById("elo").textContent = leaderboard.InfoUsers[i].elo.toString() + " \u{1F950}";
+        if (leaderboard.user.pseudo === leaderboard.InfoUsers[i].pseudo) {
+          li.getElementById("background").classList.remove("bg-linear-to-r", "from-amber-50", "via-orange-50", "to-yellow-50");
+          li.getElementById("background").classList.add("bg-linear-to-r", "from-amber-100", "via-orange-100", "to-yellow-100");
+        }
+      }
+      li.getElementById("position").textContent = "#" + (i + 1).toString();
+      container.appendChild(li);
+    }
+    if (leaderboard.InfoUsers.length >= 50 && leaderboard.user.elo < leaderboard.InfoUsers[49].elo) {
+      document.getElementById("your-avatar").src = leaderboard.user.avatar;
+      document.getElementById("your-pseudo").textContent = leaderboard.user.pseudo;
+      document.getElementById("your-elo").textContent = leaderboard.user.elo.toString() + " \u{1F950}";
+      document.getElementById("your-position").textContent = "#" + leaderboard.user_position;
+    } else
+      document.getElementById("your-position-ok").classList.add("hidden");
+  } catch (err) {
   }
-  if (leaderboard.InfoUsers.length >= 50 && leaderboard.user.elo < leaderboard.InfoUsers[49].elo) {
-    document.getElementById("your-avatar").src = leaderboard.user.avatar;
-    document.getElementById("your-pseudo").textContent = leaderboard.user.pseudo;
-    document.getElementById("your-elo").textContent = leaderboard.user.elo.toString() + " \u{1F950}";
-  } else
-    document.getElementById("your-position").classList.add("hidden");
 }
 var init_p_leaderboard = __esm({
   "front/src/views/p_leaderboard.ts"() {
@@ -6039,6 +6068,7 @@ async function genericFetch(url2, options = {}) {
     credentials: "include"
   });
   const result = await res.json();
+  console.log(result);
   if (result.error) {
     throw new Error(result.error || result.message || "Unknown error");
   }
@@ -6144,12 +6174,6 @@ async function router() {
         setTimeout(() => navigateTo("/logout"), 300);
         return;
       }
-    }
-    console.log("from ", history?.state?.from, "to ", location.pathname, "is reloaded ", isReloaded);
-    if (history?.state?.from === "/oauth/callback" && location.pathname === "/home") {
-      console.log("in it)");
-      history.replaceState({ ...history.state ?? {}, from: "/home" }, "", "/home");
-      console.log("HISTI from ", history?.state?.from, "to ", location.pathname, "is reloaded ", isReloaded);
     }
     if (auth.logged && (isReloaded && !publicPath.includes(window.location.pathname) || window.location.pathname === "/home" && (!history.state || publicPath.includes(history.state.from) || history.state.from === "/oauth/callback"))) {
       chatnet.connect(() => {

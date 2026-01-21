@@ -18,7 +18,7 @@ export async function initOAuthCallback() {
       if (data.firstTimeLogin)
       {
         navigateTo("/setggpass");
-        showToast("Welcome! This is your first login, please create a password for your account! 🎉", "warning");
+        showToast("Welcome! This is your first login, please create a password for your account! 🎉", "warning", 10000);
       }
       else
         navigateTo("/home");

@@ -18,7 +18,7 @@ export async function getUpdateUsername(fastify: FastifyInstance, request: Fasti
 
 		const duplicate = await users.getPseudoUser(newUsername);
 		if (duplicate?.pseudo === newUsername) {
-			return reply.send({message: "Username already taken!"});
+			return reply.send({ ok: false, message: "Username already taken!"});
 		}
 
 		if (newUsername.length > 16 || newUsername.length < 1)
@@ -34,7 +34,7 @@ export async function getUpdateUsername(fastify: FastifyInstance, request: Fasti
 		}
 
 		const updatedUser = await users.updateUsername(id, newUsername);
-		return reply.code(200).send({ ok: false, message: "Username updated successfully", pseudo: updatedUser.pseudo });
+		return reply.code(200).send({ message: "Username updated successfully", pseudo: updatedUser.pseudo });
 
 	} catch (error) {
 		fastify.log.error(error);

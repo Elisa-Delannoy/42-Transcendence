@@ -63,7 +63,7 @@ async function updateUsername() {
       });
 
       navigateTo("/logout");
-      showToast(`Username updated successfully to << ${response.pseudo} >> Please re-login!`, "success", 2000);
+      showToast(`Username updated successfully to << ${response.pseudo} >> Please login again!`, "success", 2000);
       
 
     } catch (err: any) {

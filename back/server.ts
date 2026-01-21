@@ -354,8 +354,9 @@ const start = async () => {
 		await db.connect();
 		await lunchDB();
 		await newInputDB();
+		blockchainUpload();
 		const testUser = await users.getPseudoUser("42")
-		console.log("You can test to connect with:\npseudo:",  testUser.pseudo, "\npasseword:42" );
+		console.log("You can test to connect with:\npseudo: ",testUser.pseudo, "\npasseword: 42" );
 	} catch (err) {
 		console.log(err);
 		fastify.log.error(err);
