@@ -7,41 +7,44 @@ export function UpdateUsernameView(): string {
 }
 
 export async function initUpdateUsername() {
-  // get pseudo and avatar
-  const profile = await genericFetch("/api/private/profile", {
-	  method: "GET",
-	});
-	const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
-	avatar.src = profile.avatar + "?ts=" + Date.now();
-	(document.getElementById("profile-pseudo") as HTMLElement).textContent = profile.pseudo;
+  try {
+    // get pseudo and avatar
+    const profile = await genericFetch("/api/private/profile", {
+	    method: "GET",
+	  });
+	  const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
+	  avatar.src = profile.avatar + "?ts=" + Date.now();
+	  (document.getElementById("profile-pseudo") as HTMLElement).textContent = profile.pseudo;
 
 
-  // toggle logic
-  const usernameBtn = document.getElementById("toggle-username")
-  const deleteBtn = document.getElementById("toggle-delete")
+    // toggle logic
+    const usernameBtn = document.getElementById("toggle-username")
+    const deleteBtn = document.getElementById("toggle-delete")
 
-  const usernameSection = document.getElementById("update-username-section")
-  const deleteSection = document.getElementById("delete-user-section")
+    const usernameSection = document.getElementById("update-username-section")
+    const deleteSection = document.getElementById("delete-user-section")
 
-  const showUsernameSection = () => {
-    usernameBtn?.classList.add('hidden')
-    deleteBtn?.classList.remove('hidden')
-    usernameSection?.classList.remove('hidden')
-    deleteSection?.classList.add('hidden')
+    const showUsernameSection = () => {
+      usernameBtn?.classList.add('hidden')
+      deleteBtn?.classList.remove('hidden')
+      usernameSection?.classList.remove('hidden')
+      deleteSection?.classList.add('hidden')
+    }
+
+    const showDeleteSection = () => {
+      usernameBtn?.classList.remove('hidden')
+      deleteBtn?.classList.add('hidden')
+      deleteSection?.classList.remove('hidden')
+      usernameSection?.classList.add('hidden')
+    }
+
+    deleteBtn?.addEventListener('click', showDeleteSection)
+    usernameBtn?.addEventListener('click', showUsernameSection)
+
+    await updateUsername()
+    await deleteUser()
+  } catch (err) {
   }
-
-  const showDeleteSection = () => {
-    usernameBtn?.classList.remove('hidden')
-    deleteBtn?.classList.add('hidden')
-    deleteSection?.classList.remove('hidden')
-    usernameSection?.classList.add('hidden')
-  }
-  
-  deleteBtn?.addEventListener('click', showDeleteSection)
-  usernameBtn?.addEventListener('click', showUsernameSection)
-
-  await updateUsername()
-  await deleteUser()
 }
 
 async function updateUsername() {

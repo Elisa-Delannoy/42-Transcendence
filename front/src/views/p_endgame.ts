@@ -109,7 +109,6 @@ async function AddFriendEndG(id: number, pseudo: string) {
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ friendID: id })
 		});
-		console.log("result notif=", result);
 		if (result.message === "added")
 			showToast(`Invitation sent to ${pseudo}`, "success");
 		else

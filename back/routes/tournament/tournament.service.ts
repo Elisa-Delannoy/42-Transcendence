@@ -57,7 +57,7 @@ export async function getAllTournamentsDetailed(
     return reply.send(result);
   } catch (err) {
     request.log.error({ err }, "Fatal error in /tournament/all");
-    return reply.status(500).send({ error: "Internal server error" });
+    return reply.send({ ok: false, error: "Internal server error" });
   }
 }
 

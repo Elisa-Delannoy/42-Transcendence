@@ -16,6 +16,6 @@ export async function logout(request: FastifyRequest, reply: FastifyReply) {
 		return { message: "is logged out" };
 	} catch (err) {
 		console.error("Logout error:", err);
-		return reply.status(500).send({ error: "Logout failed" });
+		return reply.send({ ok:false, error: "Logout failed" });
 	}
 };

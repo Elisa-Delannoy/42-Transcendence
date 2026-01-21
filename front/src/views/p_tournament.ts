@@ -9,27 +9,30 @@ export function TournamentView(): string {
 
 // ===================== Events =====================
 function initTournamentPage() {
-	const createTournamentBtn = document.getElementById("create-tournament");
-	const showBtn = document.getElementById("show-onchain");
-	const backBtn = document.getElementById("back-to-home");
+	try {
+		const createTournamentBtn = document.getElementById("create-tournament");
+		const showBtn = document.getElementById("show-onchain");
+		const backBtn = document.getElementById("back-to-home");
 
-	createTournamentBtn?.addEventListener("click", async () => {
-		const { tournamentId } = await genericFetch("/api/private/tournament/create", {
-			method: "POST"
+		createTournamentBtn?.addEventListener("click", async () => {
+			const { tournamentId } = await genericFetch("/api/private/tournament/create", {
+				method: "POST"
+			});
+			if (tournamentId == -1)
+				showToast("Your account is already in game.", "warning", 5000);
+			else
+				navigateTo(`/brackets/${tournamentId}`);
 		});
-		if (tournamentId == -1)
-			showToast("Your account is already in game.", "warning", 5000);
-		else
-			navigateTo(`/brackets/${tournamentId}`);
-	});
 
-	showBtn?.addEventListener("click", async () => {
-		await showDBOnChain();
-	});
+		showBtn?.addEventListener("click", async () => {
+			await showDBOnChain();
+		});
 
-	backBtn?.addEventListener("click", () => {
-		navigateTo("/home");
-	});
+		backBtn?.addEventListener("click", () => {
+			navigateTo("/home");
+		});
+	} catch (err)  {
+	}
 }
 
 // ===================== Show DB vs Blockchain =====================

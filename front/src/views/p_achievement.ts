@@ -105,6 +105,5 @@ export async function initAchievement()
 	}
 	catch (err)
 	{
-		console.log(err);
 	}
 }

@@ -6,20 +6,19 @@ export async function initOAuthCallback() {
     const res = await fetch("/api/auth/status", {
       credentials: "include",
     });
-    if (!res.ok) {
+
+    const data = await res.json();
+    if (data.ok === false || !res.ok ) {
       navigateTo("/login");
       return;
     }
-    const data = await res.json();
-    // console.log('data', data);
     if (data.twofa) {
       navigateTo("/twofa");
     } else {
-      // console.log('data firstTimeLogin', data.firstTimeLogin);
       if (data.firstTimeLogin)
       {
         navigateTo("/setggpass");
-        showToast("Welcome! If this is your first login, please create a password for your account! 🎉", "warning");
+        showToast("Welcome! This is your first login, please create a password for your account! 🎉", "warning");
       }
       else
         navigateTo("/home");

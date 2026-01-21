@@ -26,14 +26,14 @@ export async function searchUser(request: FastifyRequest, reply: FastifyReply): 
 	const { member } = request.body as { member: string };
 	try {
 		if (!member)
-			return reply.code(400).send({ message: "Need pseudo to find members" });
+			return reply.send({ ok: false, message: "Need pseudo to find members" });
 		if (request.user!.user_id !== null) {
 			const allMembers = await users.searchMember(member, request.user!.user_id);
 			return reply.code(200).send(allMembers);
 		}
 	}
 	catch (err)  {
-		return reply.code(500).send({ error: err});
+		return reply.send({ ok: false, error: err});
 	}
 }
 

@@ -18,7 +18,7 @@ export async function manageRegister(pseudo: string, email: string, password: st
 	}
 	catch (err)
 	{
-		reply.status(401).send({ field: (err as any).field ?? null, ok:false, message: (err as Error).message });
+		reply.send({ field: (err as any).field ?? null, ok:false, message: (err as Error).message });
 	}
 }
 

@@ -1,5 +1,6 @@
 import { IGameInfo } from "../../../back/DB/gameinfo"
 import { IDashBoard } from "../../../back/routes/dashboard/dashboard";
+import { genericFetch } from "../router";
 import { showToast } from "./show_toast";
 
 export function DashboardView(): string {
@@ -86,11 +87,9 @@ export async function initDashboard()
 	if (!container) 
 		return;
     try {
-    	const response = await fetch(`/api/private/dashboard`, {
-								method: "GET"});
-			
-        const dashboards: IDashBoard = await response.json();
-		
+    	const dashboards: IDashBoard = await genericFetch(`/api/private/dashboard`, {
+			method: "GET"});
+					
 		if (dashboards.GamesInfo.length > 0)
 		{
 			dashboards.GamesInfo.forEach(async (game : IGameInfo) => {

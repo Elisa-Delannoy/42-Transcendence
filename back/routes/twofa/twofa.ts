@@ -27,7 +27,7 @@ export async function setupTwoFA(request: FastifyRequest, reply: FastifyReply) {
         });
     }catch(err) {
         console.error(err);
-        return reply.status(500).send({ error: "Failed to setup 2FA" });
+        return reply.send({ ok: false, error: "Failed to setup 2FA" });
     }
 }
 
@@ -41,7 +41,7 @@ export async function enableTwoFA(request: FastifyRequest, reply: FastifyReply) 
         // Retrieve user's stored secret
         const user = await users.getIDUser(userId);
         if (!user.twofa_secret) {
-            return reply.status(400).send({ error: "2FA not set up. Please run /setup first." });
+            return reply.send({ ok:false, error: "2FA not set up. Please run /setup first." });
         }
 
         const verified = speakeasy.totp.verify({
@@ -52,7 +52,7 @@ export async function enableTwoFA(request: FastifyRequest, reply: FastifyReply) 
         });
 
         if (!verified) {
-            return reply.status(400).send({ error: "Invalid 2FA code." });
+            return reply.send({ ok: false, error: "Invalid 2FA code." });
         }
 
         // Enable 2FA in DB
@@ -61,7 +61,7 @@ export async function enableTwoFA(request: FastifyRequest, reply: FastifyReply) 
         return reply.send({ ok: true, message: "2FA enabled successfully." });
     } catch (err) {
         console.error(err);
-        return reply.status(500).send({ error: "Failed to enable 2FA." });
+        return reply.send({ ok: false, error: "Failed to enable 2FA." });
     }
 }
 
@@ -75,7 +75,7 @@ export async function disableTwoFA(request: FastifyRequest, reply: FastifyReply)
         return reply.send({ ok: true, message: "2FA disabled successfully." });
     } catch (err) {
         console.error(err);
-        return reply.status(500).send({ error: "Failed to disable 2FA." });
+        return reply.send({ ok: false, error: "Failed to disable 2FA." });
     }
 }
 
@@ -92,7 +92,7 @@ export async function checkTwoFA(request: FastifyRequest, reply: FastifyReply, c
 		});
 		if (!verified)
 		{
-			return reply.status(401).send({ ok: false, field: "2fa", error: "Invalid 2FA code." });
+			return reply.send({ ok: false, field: "2fa", error: "Invalid 2FA code." });
 		}
 		const options: CookieSerializeOptions = {
 				httpOnly: true,
@@ -106,6 +106,6 @@ export async function checkTwoFA(request: FastifyRequest, reply: FastifyReply, c
 	}
 	catch (err)
 	{
-		reply.status(401).send({ error: err })
+		reply.send({ ok: false, error: err })
 	}
 }

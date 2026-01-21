@@ -28,7 +28,7 @@ export async function manageLogin(pseudo: string, password: string, reply: Fasti
 	}
 	catch (err)
 	{
-		reply.status(401).send({ field: (err as any).field ?? null, ok:false, error: (err as Error).message });
+		reply.send({ field: (err as any).field ?? null, ok:false, error: (err as Error).message });
 	}
 }
 

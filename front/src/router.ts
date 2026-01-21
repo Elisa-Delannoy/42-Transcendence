@@ -58,7 +58,7 @@ const routes = [
   { path: "/oauth/callback", init: initOAuthCallback },
 ];
 
-const publicPath = ["/", "/login", "/register", "/logout", "/registerok", "/oauth/callback", "/twofa"];
+const publicPath = ["/", "/login", "/register", "/logout", "/registerok", "/twofa"];
 
 let currentRoute: any = null;
 let currentPath: string;
@@ -95,7 +95,6 @@ export function saveHistoryStack(stack: string[]) {
 
 export function navigateTo(url: string) {
 	const state = { from: currentPath };
-	console.log("from =", state.from, "url =", url);
 	history.pushState(state, "", url);
 	currentPath = url;
 
@@ -154,7 +153,7 @@ export async function genericFetch(url: string, options: RequestInit = {})
 	if (result.error) {
 		throw new Error(result.error || result.message || "Unknown error");
 	}	
-	if (!res.ok){
+	if (result.ok === false || !res.ok){
 		throw new Error(result.error || result.message || "Unknown error");
 	}
 	return result;
@@ -257,6 +256,7 @@ export async function router() {
 		navigateTo("/error");
 		return;
 	}
+	
 	if (location.pathname !== "/logout") {
 		const auth: LogStatusAndInfo = await checkLogStatus();
 		if (auth.status === "expired" || auth.status === "error") {
@@ -271,7 +271,7 @@ export async function router() {
 				return;
 			}
 		}
-		if (auth.logged && ((isReloaded && !publicPath.includes(window.location.pathname)) || (window.location.pathname === "/home" && (!history.state || (publicPath.includes(history.state.from)))))) {
+		if (auth.logged && ((isReloaded && !publicPath.includes(window.location.pathname)) || (window.location.pathname === "/home" && (!history.state || (publicPath.includes(history.state.from)) || history.state.from === "/oauth/callback" )))) {
 			chatnet.connect( () => {
 				chatnet.toKnowUserID();
 				displayChat()
@@ -318,9 +318,9 @@ export async function popState() {
 	const path = window.location.pathname;
 	const toIsPrivate = !publicPath.includes(path);
 	const fromIsPrivate = !publicPath.includes(currentPath);
-	console.log("path = ", path, "current path", currentPath);
 	if (!history?.state?.from && fromIsPrivate)
 	{
+		console.log(history.state);
 		history.replaceState({ from: "/home" }, "", "/home");
 		currentPath = "/home";
 		navigateTo("/logout");
@@ -336,7 +336,7 @@ export async function popState() {
 		currentPath = "/home";
 	}
 	else {
-		history.state.from = currentPath;
+		history.pushState( { from: currentPath } , "", path );
 		currentPath = path;
 	}
 	await router();

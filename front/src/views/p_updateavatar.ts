@@ -6,26 +6,29 @@ export function UpdateAvatarView(): string {
 }
 
 export async function initUpdateAvatar() {
-	const profile = await genericFetch("/api/private/profile", {
-		method: "GET",
-	});
-	const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
-	avatar.src = profile.avatar + "?ts=" + Date.now();
-	(document.getElementById("profile-pseudo") as HTMLElement).textContent = profile.pseudo;
-	const formAvatar = document.getElementById("upload_avatar") as HTMLFormElement;
-	if (formAvatar instanceof HTMLFormElement) {
-		formAvatar.addEventListener("submit", async (e: SubmitEvent) => {
-		e.preventDefault();
-		const avatarInput = formAvatar.querySelector<HTMLInputElement>('input[name="avatar"]');
-		const avatarFile  = avatarInput?.files?.[0];
-		if (!avatarFile || avatarFile.size === 0 || !avatarFile.name)
-		{
-		  showToast("Please upload an avatar", "warning", 3000);
-		  return;
-		}     
-		await uploadAvatar(avatarFile);
+	try {
+		const profile = await genericFetch("/api/private/profile", {
+			method: "GET",
 		});
-  }
+		const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
+		avatar.src = profile.avatar + "?ts=" + Date.now();
+		(document.getElementById("profile-pseudo") as HTMLElement).textContent = profile.pseudo;
+		const formAvatar = document.getElementById("upload_avatar") as HTMLFormElement;
+		if (formAvatar instanceof HTMLFormElement) {
+			formAvatar.addEventListener("submit", async (e: SubmitEvent) => {
+			e.preventDefault();
+			const avatarInput = formAvatar.querySelector<HTMLInputElement>('input[name="avatar"]');
+			const avatarFile  = avatarInput?.files?.[0];
+			if (!avatarFile || avatarFile.size === 0 || !avatarFile.name)
+			{
+			  showToast("Please upload an avatar", "warning", 3000);
+			  return;
+			}     
+			await uploadAvatar(avatarFile);
+			});
+	  	}
+	} catch (err) {
+	}
 }
 
 async function uploadAvatar(avatar: File) {
@@ -37,8 +40,8 @@ async function uploadAvatar(avatar: File) {
 			body: form,
 			credentials: "include"
 		});
-	navigateTo("/profile");
-	showToast("Avatar uploaded successfully", "success", 2000);
+		navigateTo("/profile");
+		showToast("Avatar uploaded successfully", "success", 2000);
 	} catch (err) {
 		showToast(err, "error", 3000, "Upload avatar");
 	}

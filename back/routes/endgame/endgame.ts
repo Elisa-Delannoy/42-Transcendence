@@ -19,7 +19,7 @@ export async function getEndGameInfo(request: FastifyRequest, reply: FastifyRepl
 		const endgame : IEndGame = {} as IEndGame;
 		const userId = request.user?.user_id
 		if (!userId)
-			reply.status(400).send({ error: "Missing userId" });
+			reply.send({ ok: false, error: "Missing userId" });
 		else
 		{
 			endgame.gameinfo = await gameInfo.getLastGame(userId)

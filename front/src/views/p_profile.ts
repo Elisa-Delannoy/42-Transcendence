@@ -7,35 +7,39 @@ export function ProfileView(): string {
 }
 
 export async function initProfile() {
-  const profile: IUsers = await genericFetch("/api/private/profile", {
-	method: "GET",
-	});
-			
-	const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
-	avatar.src = profile.avatar + "?ts=" + Date.now();
-	(document.getElementById("profile-pseudo") as HTMLParagraphElement).textContent = profile.pseudo;
-	(document.getElementById("profile-email") as HTMLParagraphElement).textContent = profile.email;
-	const select = document.getElementById("profile-status") as HTMLSelectElement;
-	if (select) {
-		select.value = profile.status;
-		select.addEventListener("change", async (e) => {
-			const status = (e.target as HTMLSelectElement).value;
-			await genericFetch('/api/private/updateinfo/status', {
-	 			method: 'PUT',
-	  			headers: { 'Content-Type': 'application/json' },
-	  			body: JSON.stringify({ status })
+	try {
+		const profile: IUsers = await genericFetch("/api/private/profile", {
+			method: "GET",
 			});
-			navigateTo("/profile");
-			showToast(`Status updated successfully to << ${status} >>`, "success", 2000);
-  		});
+				
+		const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
+		avatar.src = profile.avatar + "?ts=" + Date.now();
+		(document.getElementById("profile-pseudo") as HTMLParagraphElement).textContent = profile.pseudo;
+		(document.getElementById("profile-email") as HTMLParagraphElement).textContent = profile.email;
+		const select = document.getElementById("profile-status") as HTMLSelectElement;
+		if (select) {
+			select.value = profile.status;
+			select.addEventListener("change", async (e) => {
+				const status = (e.target as HTMLSelectElement).value;
+				await genericFetch('/api/private/updateinfo/status', {
+		 			method: 'PUT',
+		  			headers: { 'Content-Type': 'application/json' },
+		  			body: JSON.stringify({ status })
+				});
+				navigateTo("/profile");
+				showToast(`Status updated successfully to << ${status} >>`, "success", 2000);
+  			});
+		}
+  		(document.getElementById("profile-elo") as HTMLParagraphElement).textContent = profile.elo.toString();
+	
+
+		const twofaStatusText = document.getElementById("twofa-status") as HTMLParagraphElement;
+		if (profile.twofa_enabled === 1)
+			twofaStatusText.textContent = "Enable";
+		else
+			twofaStatusText.textContent = "Disable";
+	} catch (err) {
+		showToast(err, "error", 3000, "Update status");
 	}
-  (document.getElementById("profile-elo") as HTMLParagraphElement).textContent = profile.elo.toString();
-
-
-	const twofaStatusText = document.getElementById("twofa-status") as HTMLParagraphElement;
-	if (profile.twofa_enabled === 1)
-		twofaStatusText.textContent = "Enable";
-	else
-		twofaStatusText.textContent = "Disable";
 
 }

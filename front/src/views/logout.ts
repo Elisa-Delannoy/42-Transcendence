@@ -10,7 +10,8 @@ export const initLogout = async() => {
 		});
 		const data = await res.json();
 
-		if (!res.ok) throw new Error(data?.error || "Logout failed");
+		if (!res.ok) 
+			throw new Error(data?.error || "Logout failed");
 		hideChat();
 		navigateTo("/login")
 	} catch (err: any) {

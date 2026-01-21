@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { google } from "googleapis";
-import { friends, users } from '../../server';
+import { friends, users, users_stats } from '../../server';
 import { createJWT, createTemp2FAToken } from "../../middleware/jwt";
 import { notification } from "../friends/friends";
 import bcrypt from "bcryptjs";
@@ -29,7 +29,7 @@ export async function registerGoogle(request: FastifyRequest, reply: FastifyRepl
 
   } catch (err) {
     request.log.error(err, "Google OAuth redirect failed");
-    return reply.status(500).send({
+    return reply.send({
       ok: false,
       error: "Failed to initiate Google OAuth login",
     });
@@ -44,7 +44,7 @@ export async function callbackGoogle(request: FastifyRequest, reply: FastifyRepl
       if (error)
           return reply.redirect(`${process.env.PUBLIC_BASE_URL}/login?oauth=error`);
       if (!code)
-          return reply.status(400).send({error: "Missing OAuth code"});
+          return reply.send({ ok: false, error: "Missing OAuth code"});
       const { tokens } = await oauth2Client.getToken(code);
       oauth2Client.setCredentials(tokens);
 
@@ -63,6 +63,7 @@ export async function callbackGoogle(request: FastifyRequest, reply: FastifyRepl
         const finalName = (existingUser.pseudo === cleanName) ? `google_${Math.random().toString(36).slice(2, 4)}` : cleanName
 
         await users.addUser(finalName!, email!, passwordGoogle, 500);
+		users_stats.addUser((await users.getPseudoUser(finalName!)).user_id);
         user = await users.getEmailUser(email!);
       }
 
@@ -89,6 +90,6 @@ export async function callbackGoogle(request: FastifyRequest, reply: FastifyRepl
       return reply.redirect(`${process.env.PUBLIC_BASE_URL}/oauth/callback`);
     } catch (err) {
       console.error(err);
-      reply.status(500).send({ ok: false, error: "OAuth Google login failed" });
+      reply.send({ ok: false, error: "OAuth Google login failed" });
     }
 }
