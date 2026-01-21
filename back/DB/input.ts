@@ -59,8 +59,8 @@ async function newUsersDB(): Promise <void> {
 
 	await Promise.all(
 		newU.map(async ([pseudo, elo]) => {
-			users.addUser(pseudo, `${pseudo}@g.c`, hashedPassword, elo);
-			users_stats.addUser((await users.getPseudoUser(pseudo)).user_id);
+			await users.addUser(pseudo, `${pseudo}@g.c`, hashedPassword, elo);
+			await users_stats.addUser((await users.getPseudoUser(pseudo)).user_id);
 		})
  	);
 }

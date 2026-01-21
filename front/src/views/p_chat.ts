@@ -5,7 +5,9 @@ export const chatnet: chatNetwork = new chatNetwork();
 export async function displayChat() {	
 	const template = document.getElementById("chat-template") as HTMLTemplateElement;
 	const clone = template.content.cloneNode(true);
-	document.getElementById("chat-container")!.appendChild(clone);
+	const ChatContainer = document.getElementById("chat-container") as HTMLDivElement;
+	if (ChatContainer)
+		ChatContainer.appendChild(clone);
 
 	const chatBar = document.getElementById("chat-bar");
 	const chatWindow = document.getElementById("chat-window");
@@ -23,6 +25,15 @@ export async function displayChat() {
 			}, 0);
 		}
 	});
+
+	document.addEventListener("click", (e) => {
+		 const target = e.target as Node | null
+  		if (chatWindow?.classList.contains("hidden")) return;
+
+  		if (!ChatContainer!.contains(target)) {
+			chatWindow!.classList.toggle("hidden");
+  }
+});
 
 	const container = document.getElementById("message-list") as HTMLDivElement;
 	chatnet.receiveHistory((messages) => {

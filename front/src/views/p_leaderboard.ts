@@ -1,5 +1,5 @@
 import { ILeaderboard } from "../../../back/routes/leaderboard/leaderboard";
-import { genericFetch, loadHeader } from "../router"
+import { genericFetch } from "../router"
 
 export function LeaderboardView(): string
 {
