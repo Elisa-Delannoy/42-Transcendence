@@ -70,7 +70,7 @@ export async function initBrackets(params?: any) {
 		}
 	});
 
-	net.onSetUpSpecFinal(() => {
+	net.onSetUpSpec(() => {
 		watchFinalButton?.classList.remove("hidden");
 		watchFinalButton?.addEventListener("click", async () => {
 			net?.watchFinal();

@@ -13,11 +13,13 @@ export function handleGameSocket(io: Server, socket: Socket) {
 		else
 			game = games_map.get(gameId);
 		if (!game)
+		{
+			io.to(socket.id).emit("kick");
 			return;
-	
+		}
+
 		socket.data.tournamentId = tournamentId;
 		socket.data.gameId = gameId;
-
 		game.setIo(io);
 	
 		const playerId = socket.data.user.id;

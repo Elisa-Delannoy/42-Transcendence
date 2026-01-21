@@ -4607,8 +4607,8 @@ var init_tournamentNetwork = __esm({
         this.socket.on("setWinner", (winner, loser, status) => {
           this.onsetWinnerCallback?.(winner, loser, status);
         });
-        this.socket.on("setupSpecFinal", () => {
-          this.onsetUpSpecFinalCallback?.();
+        this.socket.on("setupSpec", () => {
+          this.onsetUpSpecCallback?.();
         });
         this.socket.on("hostDisconnected", () => {
           this.onHostDisconnectedCallback?.();
@@ -4644,8 +4644,8 @@ var init_tournamentNetwork = __esm({
       onKick(cb) {
         this.onKickCallback = cb;
       }
-      onSetUpSpecFinal(cb) {
-        this.onsetUpSpecFinalCallback = cb;
+      onSetUpSpec(cb) {
+        this.onsetUpSpecCallback = cb;
       }
       onStartTournamentGame(cb) {
         this.onStartTournamentGameCallback = cb;
@@ -4660,7 +4660,7 @@ var init_tournamentNetwork = __esm({
         this.socket.emit("startTournament");
       }
       watchFinal() {
-        this.socket.emit("watchFinal");
+        this.socket.emit("watchGameTournament");
       }
       changeHost() {
         this.socket.emit("resetHost");
@@ -4728,7 +4728,7 @@ async function initBrackets(params) {
       currentTournament?.setChampion(champion);
     }
   });
-  net2.onSetUpSpecFinal(() => {
+  net2.onSetUpSpec(() => {
     watchFinalButton?.classList.remove("hidden");
     watchFinalButton?.addEventListener("click", async () => {
       net2?.watchFinal();

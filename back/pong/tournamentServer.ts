@@ -10,7 +10,10 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 		const playerId = socket.data.user.id;
 	
 		if (!tournament || playerId === undefined)
+		{
+			io.to(socket.id).emit("kick");
 			return;
+		}
 	
 		// join room
 		socket.join(`tournament-${tournamentId}`);
@@ -103,11 +106,12 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 		
 	});
 
-	socket.on("watchFinal", () => {
+	socket.on("watchGameTournament", () => {
 		const tournamentId = socket.data.tournamentId;
 		let tournament = tournaments_map.get(tournamentId);
 		if (!tournament)
 			return;
+
 		let gameId = 2;
 		gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId, true);
 		io.to(socket.id).emit("joinTournamentGame", gameId, tournamentId);
@@ -119,7 +123,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 		let tournament = tournaments_map.get(tournamentId);
 		if (!tournament)
 			return;
-		let ennemyId: number;
+		let ennemyId: number = 0;
 		let i = 0;
 		for (; i < 4; i++)
 		{
@@ -138,35 +142,27 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 		else
 			gameId = 1;
 
-		let countdown = 3;
-		let interval = setInterval(() => {
-			countdown--;
-			if (countdown <= 0) {
-				clearInterval(interval);
-				if (tournament.final_arr[0] == 0 && tournament.final_arr[1] == 0)
-				{
-					if (ennemyId == -1 || i % 2 == 0)
-					{
-						gameId = setupGameTournament(socket, ennemyId, tournament.id, gameId);
-						io.to(socket.id).emit("startTournamentGame", gameId, tournamentId);
-					}
-					else
-					{
-						let countdown = 5;
-						let interval = setInterval(() => {
-							countdown--;
-							if (countdown < 0) {
-								clearInterval(interval);
-								gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId, false);
-								io.to(socket.id).emit("joinTournamentGame", gameId, tournamentId);
-							}
-						}, 1000);
-					}
-				}
-			}
-		}, 1000);
 
-		
+		if (tournament.final_arr[0] == 0 && tournament.final_arr[1] == 0)
+		{
+			if (ennemyId == -1 || i % 2 == 0)
+			{
+				gameId = setupGameTournament(socket, ennemyId, tournament.id, gameId);
+				io.to(socket.id).emit("startTournamentGame", gameId, tournamentId);
+			}
+			else
+			{
+				let countdown = 5;
+				let interval = setInterval(() => {
+					countdown--;
+					if (countdown < 0) {
+						clearInterval(interval);
+						gameId = joinTournamentGame(socket.data.user.id, gameId, tournamentId, false);
+						io.to(socket.id).emit("joinTournamentGame", gameId, tournamentId);
+					}
+				}, 1000);
+			}
+		}
 	});
 
 	socket.on("setupFinal", () => {
@@ -251,7 +247,7 @@ export function handleTournamentSocket(io: Server, socket: Socket)
 				countdown--;
 				if (countdown < 0) {
 					clearInterval(interval);
-					io.to(`tournament-${tournamentId}`).emit("setupSpecFinal");
+					io.to(`tournament-${tournamentId}`).emit("setupSpec");
 				}
 			}, 1000);
 		}
