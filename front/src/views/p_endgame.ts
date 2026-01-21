@@ -1,8 +1,4 @@
-import { log } from "console";
-import { IAchievement } from "../../../back/DB/achievements";
 import { IEndGame } from "../../../back/routes/endgame/endgame";
-import { IFriendsAndNot } from "../../../back/routes/friends/friends";
-import { achievements } from "../../../back/server";
 import { genericFetch, navigateTo } from "../router";
 import { showToast } from "./show_toast";
 

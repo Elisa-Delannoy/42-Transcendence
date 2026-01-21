@@ -178,28 +178,21 @@ and workload distribution.
 
 Each chosen module was selected to enhance the project’s educational value and gameplay experience.
 
-> ( For every module:
-> - Motivation for choosing it
-> - Implementation details
-> - Team members involved
-> )
-
 ### I - Web
 
 #### 3. Minor: Use a backend framework (Fastify) (1 pt)
 
-- **Motivation**: It was a major module of the accient subject
+- **Motivation**: It was a major module of the accient subject.
 
 - **Details**:
 	- Fastify API helps to communicate between frontend and backend.
 
 - **PIC**: edelanno, layang, nrontard, pmenard and tat-nguy
 
+
 #### 4. Major: Implement real-time features using WebSockets or similar technology (2 pts)
 
-- **Motivation**:
-  
-Sockets are required to enable live chat functionality and are preferred for games and tournaments due to their higher stability between clients and better efficiency compared to traditional REST APIs.
+- **Motivation**: Sockets are required to enable live chat functionality and are preferred for games and tournaments due to their higher stability between clients and better efficiency compared to traditional REST APIs.
 
 - **Details**:
 	- WebSockets are used for the following features:
@@ -240,28 +233,36 @@ Sockets are required to enable live chat functionality and are preferred for gam
    
 - **PIC**: edelanno (chat, friend), tat-nguy (profile)
 
+
 #### 8. Minor: A complete notification system for all creation, update, and deletion actions (1 pt)
 
-- PIC: layang
+- **Motivation**: 
+
+- **Details**:
+
+- **PIC**: layang
 
 
 ### III - User Management
 
 #### 1. Major: Standard user management and authentication (2 pts)
 
-- **Motivation**: Enhance user experience and user engagement of the game
+- **Motivation**: Enhance user experience and user engagement of the game.
   
-- **Module in details**:
+- **Details**:
   - Users have a profile page displaying all their information
   - User is allowed to change their own information such as *Username*, *Password*, *Email*, *2FA Enable*, *Online Status*, *Avatar*...
   - User is also allowed to delete their own profile, this action can't be recover, so we ask user to write a request, confirm their password, make sure that it's not a mistake and they really want to delete. 
   - The first time register and login with Google Oauth, users are asked to set up a password immeditately.
-  - Users can upload an avatar (with a default avatar if none provided). The avatar path is stored in the Users database. A default path is set initially. Each time the avatar is updated, it is renamed as user_id.type. Upload restrictions are enforced for file size and type (6 MB – PNG and JPEG).
+  - Users can upload an avatar (with a default avatar if none provided). The avatar path is stored in the Users database. A default path is set initially. Each time the avatar is updated, it is renamed as user_id.type. Upload restrictions are enforced for file size and type.
   - Users can add other users as friends and see their online status. On the friends page, users can send friend requests and view their friends along with their status.
 
 - **PIC**: edelanno, tat-nguy
 
+
 #### 2. Minor: Game statistics and match history (requires a game module) (1 pt)
+
+- **Motivation**:  We chose this module because it contains important and relevant features for a gaming platform.
 
 - **Details**:
 	- Player Statistics Tracking:
@@ -295,31 +296,40 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 #### 3. Minor: Implement remote authentication with OAuth 2.0 (Google) (1 pt)
 
-- PIC: layang
+- **Motivation**: 
+
+- **Details**:
+
+- **PIC**: layang
 
 
 #### 6. Minor: Implement a complete 2FA (Two-Factor Authentication) system for the users (1 pt)
 
-- PIC: layang
+- **Motivation**: 
+
+- **Details**:
+
+- **PIC**: layang
 
 
 ### IV - Artificial Intelligence
 
 #### Major: Introduce an AI Opponent for games (2 pts)
 
-- PIC: layang
+- **Motivation**: 
+
+- **Details**:
+
+- **PIC**: layang
 
 
 ### VI - Gaming and user experience
 
 #### 1. Major: Implement a complete web-based game where users can play against each other (2 pts)
 
-- **Motivation**:
-  
-	We started working on Transcendence about a month before the subject was updated. In the previous version of the subject, we were required to implement a Pong game, and we decided to continue in that direction by building upon the work we had already started.
+- **Motivation**: We started working on Transcendence about a month before the subject was updated. In the previous version of the subject, we were required to implement a Pong game, and we decided to continue in that direction by building upon the work we had already started.
 
-- **Implementation details**
-  
+- **Details**
 	The backend is responsible for the entire game logic. It manages the positions of the paddles and the ball, the score, collision detection, and all game-related rules. It continuously sends the necessary game state data to the frontend, which is only responsible for rendering the game for each player.
 
 	This architecture was chosen to ensure a more secure and fair gameplay experience, as it prevents players from manipulating the game state or cheating.
@@ -329,11 +339,9 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 #### 2. Major: Remote players — Enable two players on separate computers to play the same game in real-time (2 pts)
 
-- **Motivation**:
+- **Motivation**: From the very beginning, supporting remote players was an obvious choice for us. Our goal was to create a website that allows anyone to play on the same device against a friend, against an AI, or against another player using a different device.
 
-	From the very beginning, supporting remote players was an obvious choice for us. Our goal was to create a website that allows anyone to play on the same device against a friend, against an AI, or against another player using a different device.
-
-- **Implementation details**
+- **Details**
 
 	To support remote players, we initially started with a private API. However, we quickly realized that this approach was not well suited for real-time gameplay. We therefore switched to using WebSockets, which provide a more efficient and reliable way to handle real-time communication between players.
 
@@ -344,12 +352,9 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 #### 7. Minor: Implement a tournament system (1 pt)
 
-- **Motivation**:
+- **Motivation**: We believe that tournaments are a great addition to a game, as they introduce a stronger sense of competition and engagement for players.
 
-	We believe that tournaments are a great addition to a game, as they introduce a stronger sense of competition and engagement for players.
-
-- **Implementation details**:
-
+- **Details**:
 	The first player to join a tournament is designated as its creator. This player can either wait for other participants to join or start the tournament immediately, in which case any remaining slots are filled with AI players.
 
 	To improve readability and user experience, we also added visual indicators using colors to clearly show match results and distinguish winners from losers.
@@ -359,8 +364,9 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 #### 9. Minor: A gamification system to reward users for their actions (1 pt)
 
-- Details:
+- **Motivation**: We chose this module because it contains important and relevant features for a gaming platform.
 
+- **Details**:
 	- 4 implementations:
 	  	- Avhievements
 		- XP/level system
@@ -378,12 +384,9 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 #### 10. Minor: Implement spectator mode for games (1 pt)
 
-- **Motivatio**:
+- **Motivation**: We wanted to allow players who were eliminated from a tournament to watch the final match if they wished.
 
-	We wanted to allow players who were eliminated from a tournament to watch the final match if they wished.
-
-- **Implementation details**:
-
+- **Details**:
 	When the final match starts, an HTML button becomes available for eliminated players. By clicking on this button, they can join the game as spectators and watch the match in real time.
 
 - **PIC**: pmenard
@@ -395,7 +398,7 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 - **Motivation**: This helps monitoring the server system, analyzing performance and informing the team immediately when there's a trouble in operation of the server and used services.
 
-- **Module in details**:
+- **Details**:
   - Set up Prometheus to collect metrics
     
     Prometheus was deployed as the central metrics collector (http://localhost:9090)
@@ -440,7 +443,12 @@ Sockets are required to enable live chat functionality and are preferred for gam
 
 #### 1. Major: Store tournament scores on the Blockchain (2 pts)
 
-- PIC: layang
+- **Motivation**: 
+
+- **Details**:
+
+- **PIC**: layang
+
 
 ### X - Modules of choice
 

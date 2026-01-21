@@ -96,7 +96,6 @@ async function newAchievementDB() {
 
 }
 
-
 export async function newInputDB() {
 	await newUsersDB();
 	await newChatDB();

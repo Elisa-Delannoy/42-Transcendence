@@ -1,7 +1,6 @@
 import { IAchievement } from "../../../back/DB/achievements";
 import { AchievementInfo } from "../../../back/routes/achievements/achievementInfo";
 import { genericFetch } from "../router";
-import { showToast } from "./show_toast";
 
 
 export function achievementsView(): string

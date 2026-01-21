@@ -1,7 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { IAchievement } from "../../DB/achievements";
 import { achievements } from "../../server";
-import { REPLServer } from "repl";
 
 export interface AchievementInfo
 {

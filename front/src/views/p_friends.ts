@@ -1,5 +1,5 @@
 import { IMyFriends } from "../../../back/DB/friend";
-import { displayStatus, genericFetch, loadHeader, navigateTo } from "../router";
+import { displayStatus, genericFetch, navigateTo } from "../router";
 import { IUsers } from "../../../back/DB/users";
 import { IFriendsAndNot } from "../../../back/routes/friends/friends";
 import { showToast } from "./show_toast";

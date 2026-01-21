@@ -1,8 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { google } from "googleapis";
-import { friends, users, users_stats } from '../../server';
+import { users, users_stats } from '../../server';
 import { createJWT, createTemp2FAToken } from "../../middleware/jwt";
-import { notification } from "../friends/friends";
 import bcrypt from "bcryptjs";
 
 // Google account password placeholder

@@ -39,15 +39,13 @@
 
 @layer components {
 	.btn {
-		@apply  /* Mobile */
+		@apply
 			bg-amber-500 text-white text-center py-3
 			rounded-lg cursor-pointer block mt-10 duration-300
 
-			/* Desktop */
 			md:bg-linear-to-r md:from-amber-400 md:via-amber-500 md:to-amber-600
 			md:py-4
 
-			/* Hover */
 			hover:bg-gray-700
 			md:hover:from-transparent md:hover:via-transparent md:hover:to-transparent;
 	}
@@ -147,12 +145,12 @@
   	}
 
 	.scrollbar-none {
-		scrollbar-width: none; /* Firefox */
+		scrollbar-width: none;
 	}
 
 	.scrollbar-custom {
-		scrollbar-width: thin; /* Firefox */ 
-		scrollbar-color: #d97706 #fef3c700; /* thumb / track amber-100/80 */
+		scrollbar-width: thin;
+		scrollbar-color: #d97706 #fef3c700;
 	}
   
 	.scrollbar-custom::-webkit-scrollbar {

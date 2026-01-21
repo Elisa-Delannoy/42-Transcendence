@@ -1,4 +1,3 @@
-export const tournaments_map = new Map<number, serverTournament>();
 import { ServerGame } from "../game/serverGame";
 
 interface TournamentState {
@@ -7,6 +6,8 @@ interface TournamentState {
 	finalists: { player1: string; player2: string };
 	champion: { player: string };
 }
+
+export const tournaments_map = new Map<number, serverTournament>();
 
 export class serverTournament {
 	id: number;

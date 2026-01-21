@@ -1,12 +1,5 @@
-import { genericFetch, loadHeader } from "../router";
-import { IMyFriends } from "../../../back/DB/friend";
-import { AsyncLocalStorage } from "async_hooks";
-import { navigateTo } from "../router";
-import { socketTokenOk } from "../../../back/middleware/jwt";
-import { chatNetwork, dataChat } from "../chat/chatNetwork";
-
 export function homeView(): string {
-		 return (document.getElementById("homehtml") as HTMLTemplateElement).innerHTML;
+	return (document.getElementById("homehtml") as HTMLTemplateElement).innerHTML;
 }
 
 function smoothScrollTo(targetY: number, duration: number) {

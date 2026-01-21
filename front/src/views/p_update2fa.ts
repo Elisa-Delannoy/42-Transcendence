@@ -1,5 +1,5 @@
 import { format } from "path";
-import { navigateTo, genericFetch, loadHeader } from "../router";
+import { navigateTo, genericFetch } from "../router";
 import { showToast } from "./show_toast";
 
 export function Update2faView(): string {

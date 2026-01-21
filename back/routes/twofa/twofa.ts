@@ -1,12 +1,9 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import speakeasy from "speakeasy";
 import qrcode from "qrcode";
-import { friends, users } from '../../server';
+import { users } from '../../server';
 import { checkTempToken, createJWT } from "../../middleware/jwt";
 import { CookieSerializeOptions } from "@fastify/cookie";
-import { devNull } from "os";
-import { IUsers } from "../../DB/users";
-import { notification } from "../friends/friends";
 
 // create secret + otpauth_url（for creating qrcode）
 export async function setupTwoFA(request: FastifyRequest, reply: FastifyReply) {
