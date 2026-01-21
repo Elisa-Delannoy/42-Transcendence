@@ -20,7 +20,7 @@ up:		$(NAME)
 $(NAME):
 	@$(COMPOSE) up -d --build
 	@echo "$(GREEN)\n 🤖  Build up successfully ✴️  $(NAME) ✴️$(RESET)\n"
-	@echo "$(GREEN)\n You can connect to https://localhost:3000\n You can test with pseudo: 42, password:42 or create an account\n $(RESET)"
+	@echo "$(GREEN)\n You can connect to https://localhost:3000\n You can test with pseudo: 42, password: 42 or create an account\n $(RESET)"
 
 down:
 	@$(COMPOSE) down

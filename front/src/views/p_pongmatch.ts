@@ -57,7 +57,7 @@ export async function initPongMatch(params?: any) {
 	net.join(Number(gameID), Number(tournamentId));
 
 	net.onCountdown(() => {
-		let countdown = 4;
+		let countdown = 1;
 		interval = setInterval(() => {
 			if (!currentGame || !renderer)
 				return;

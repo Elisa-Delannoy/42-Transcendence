@@ -143,16 +143,7 @@ export function handleGameSocket(io: Server, socket: Socket) {
 				setDeconnections(socket.data.user.id, game);
 				checkDeconnections(io, socket, socket.data.user.id, game);
 				io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status, game.type));
-				io.to(`game-${game.id}`).emit("disconnection", updateStateGame(game.state, game.status, game.type));
-		
-				if (!game.disconnectTimer) {
-					game.disconnectTimer = setTimeout(() => {
-						console.log("Timeout disconnected game : ", gameId);
-						io.to(`game-${game.id}`).emit("noReconnection");
-						game.status = "playing";
-						io.to(`game-${gameId}`).emit("state", updateStateGame(game.state, game.status, game.type));
-					}, 1 * 3 * 1000);
-				}
+				io.in(`game-${gameId}`).socketsLeave(`game-${gameId}`);
 			}
 		}
 	});
@@ -314,9 +305,9 @@ function setDeconnections(playerId: number, game: ServerGame)
 	if (game.type === "Online")
 	{
 		if (playerId == game.idPlayer1)
-			game.nbDeconnectionsP1++;
+			game.nbDeconnectionsP1+=2;
 		else if (playerId == game.idPlayer2)
-			game.nbDeconnectionsP2++;
+			game.nbDeconnectionsP2+=2;
 	}
 	if (game.type === "Tournament")
 	{

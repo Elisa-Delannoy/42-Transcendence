@@ -7,34 +7,36 @@ export function UpdatePasswordView(): string {
 
 export async function initUpdatePassword() {
   try {
-    // get pseudo and avatar
-    const profile = await genericFetch("/api/private/profile", {
-	    method: "GET",
-	  });
-	  const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
-	  avatar.src = profile.avatar + "?ts=" + Date.now();
-	  (document.getElementById("profile-pseudo") as HTMLElement).textContent = profile.pseudo;
+		// get pseudo and avatar
+		const profile = await genericFetch("/api/private/profile", {
+			method: "GET",
+		});
+		const avatar = document.getElementById("profile-avatar") as HTMLImageElement;
+		avatar.src = profile.avatar + "?ts=" + Date.now();
+		  (document.getElementById("profile-pseudo") as HTMLElement).textContent = profile.pseudo;
 
 
-    // form change password
-    const formPassword = document.getElementById("change-password-form") as HTMLFormElement;
-    formPassword.addEventListener("submit", async (e) => {
-      e.preventDefault();
+		// form change password
+		const formPassword = document.getElementById("change-password-form") as HTMLFormElement;
+		formPassword.addEventListener("submit", async (e) => {
+		try {
+			e.preventDefault();
 
-      const oldPw = formPassword["old-password"].value;
-      const newPw = formPassword["new-password"].value;
-      const confirm = formPassword["confirm-new-password"].value;
+	  		const oldPw = formPassword["old-password"].value;
+	  		const newPw = formPassword["new-password"].value;
+	  		const confirm = formPassword["confirm-new-password"].value;
 
-        const response = await genericFetch("/api/private/updateinfo/password", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({ oldPw, newPw, confirm })
-        });
-        navigateTo("/logout");
-        showToast("Password is updated successfully! Please re-login!", "success", 2000);
-      
-      });
-    } catch (err: any) {
-      showToast(err.message, "error", 3000, "Update password");
-    }
+			const response = await genericFetch("/api/private/updateinfo/password", {
+				method: "PUT",
+				headers: { "Content-Type": "application/json", },
+				body: JSON.stringify({ oldPw, newPw, confirm })
+			});
+			navigateTo("/logout");
+			showToast("Password is updated successfully! Please re-login!", "success", 2000);
+			} catch (err) {
+			showToast(err, "error", 3000, "Update password");
+		}
+	});
+	} catch (err: any) {
+	}
 }

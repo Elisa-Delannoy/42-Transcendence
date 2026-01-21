@@ -18,20 +18,23 @@ export async function initUpdateEmail() {
 		// form change email
 		const formEmail = document.getElementById("change-email-form") as HTMLFormElement;
 		formEmail.addEventListener("submit", async (e) => {
-			e.preventDefault();
-
-			const newEmail = formEmail["new-email"].value;
-			const password = formEmail["password"].value;
-
-			const response = await genericFetch("/api/private/updateinfo/email", {
-				method: "PUT",
-				headers: { "Content-Type": "application/json", },
-				body: JSON.stringify({ newEmail, password })
-			});
-		navigateTo("/profile");
-		showToast(`Email updated successfully to << ${response.email} >>`, "success", 2000);
+			try {
+				e.preventDefault();
+	
+				const newEmail = formEmail["new-email"].value;
+				const password = formEmail["password"].value;
+	
+				const response = await genericFetch("/api/private/updateinfo/email", {
+					method: "PUT",
+					headers: { "Content-Type": "application/json", },
+					body: JSON.stringify({ newEmail, password })
+				});
+				navigateTo("/profile");
+				showToast(`Email updated successfully to << ${response.email} >>`, "success", 2000);
+			} catch(err) {
+				showToast(err, "error", 3000, "Update email");
+			}
 	});
 	} catch (err: any) {
-		showToast(err, "error", 3000, "Update email");
 	}
 }
