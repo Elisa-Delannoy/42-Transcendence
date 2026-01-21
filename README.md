@@ -473,7 +473,7 @@ Each chosen module was selected to enhance the project’s educational value and
   - Each tournament can upload at most 8 rankings written on-chain via a secure owner-only transaction.
   - The backend integrates with the blockchain using ethers.js, supporting safe transaction queuing, duplicate detection, and robust error handling.
   - On-chain data can be queried individually or in bulk, allowing the application to verify and display tournament results directly from the blockchain.
-  - Execute once on server startup, and repeat every 2 seconds with setInterval during runtime.
+  - Execute once on server startup, and keep uploading blockchain every minute with setInterval during runtime.
 
 - **PIC**: layang
 
